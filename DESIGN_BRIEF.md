@@ -127,7 +127,7 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 5. (Done) Fixed character and learn-by-doing growth, earned perks, Keen Eye. Engine in `engine/growth.js`: `practice()`, `statAdd()`, `count()` and `PERK_RULES`.
 6. (Done) Melee vs guns trade-offs, ammo, noise. `tests/balance.js` guards the balance.
 7. (Done) Fixed-strength enemies, the Gutmaw, readable danger descriptions. Enemy table in `data/enemies.js`, Gutmaw in `scenes/gutmaw.js`.
-8. Seduction and jealousy.
+8. (Done) Seduction and jealousy. In `scenes/romance.js`. Ending is now slides, with a line for every relationship.
 9. After each step: run the bot tests (section 13) and play it.
 
 ## 13. Testing

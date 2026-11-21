@@ -33,6 +33,7 @@ const NPC = {
     loot: { gutglue: 2, buzz: 2 },
   },
   opal: { n: 'Madame Opal', g: 'f', i: '🌹', lvl: 3, loc: 'rustwater', home: 'rustwater', k: -1, teeth: 80 },
+  gloria: { n: 'Gloria', g: 'f', i: '💋', lvl: 2, loc: 'rustwater', home: 'rustwater', k: -1, teeth: 20 },
   jeb: { n: 'Caravan Jeb', i: '🦎', lvl: 4, loc: 'rustwater', home: 'rustwater', k: -1, fighter: 1, teeth: 100 },
   hector: { n: 'Hector', i: '🔫', lvl: 5, loc: 'farm', home: 'farm', k: -1, fighter: 1, wep: 'shotgun', teeth: 20 },
   bess: { n: 'Bess', g: 'f', i: '👩‍🌾', lvl: 3, loc: 'farm', home: 'farm', k: -2, fighter: 1 },

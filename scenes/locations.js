@@ -317,6 +317,7 @@ SC.hub = loc => {
     });
   const hs = IDS.filter(x => hostile(x) && S.n[x].loc === loc);
   if (hs.length && S.f.sneakIn !== loc) return go('ambush', loc);
+  if (catfightHere(loc)) return go('catfight', loc);
   if (S.f.sneakIn && S.f.sneakIn !== loc) S.f.sneakIn = null;
   spouseTalk();
   if (loc === 'rustwater' && S.f.raidNews && !S.f.raidSeen) {
@@ -341,6 +342,9 @@ SC.hub = loc => {
       HUBT[loc]() +
       (!S.f.gutDead && S.f.gutLoc === loc
         ? '\n\nThe ground here is churned into ridges, and the dogs are gone. Something the size of a car came through.'
+        : '') +
+      (loc === 'diner' && S.f.thursdayDone && alive('lou')
+        ? `\n\nThe board says THURSDAY SPECIAL: ${NPC[S.f.thursdayDone].n.toUpperCase()}. Lou winks at you.`
         : ''),
     cards,
     opts: [

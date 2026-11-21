@@ -28,7 +28,13 @@ SC.talk = id => {
   }
   const r = TALK[id]();
   if (!r) return;
-  show({ title: d.n, icon: d.i, sub: `${sizeUp(n.lvl)} · ${mood(n.op)}`, text: r.t, opts: [...r.o, atk, qk, back] });
+  show({
+    title: d.n,
+    icon: d.i,
+    sub: `${sizeUp(n.lvl)} · ${mood(n.op)}${lover(id) ? ' · yours' : ''}`,
+    text: r.t,
+    opts: [...r.o, ...romanceOpts(id), atk, qk, back],
+  });
 };
 const re = id => () => go('talk', id);
 const newsOpt = (id, dflt) => [
@@ -89,6 +95,7 @@ function stopKing(how) {
 function flirt(key) {
   if (attempt(key)) {
     quote('Bess: "Behind the barn. Ten minutes."');
+    becomeLover('bess');
     say("It's the most interesting thing to happen on this farm in eleven years. Then: the click of a shotgun.");
     go('wedding', 'bess');
   } else go('talk', 'bess');
@@ -1495,6 +1502,14 @@ const TALK = {
     };
   },
   junior: () => ({ t: 'Junior, 44, built like a bigger fridge. He grunts and keeps chopping.', o: [] }),
+  gloria: () => ({
+    t: lover('gloria')
+      ? S.lovers.gloria.how === 'won'
+        ? 'Gloria is packing a very small bag. "Green," she keeps saying. "Green."'
+        : 'Gloria winks. "Back again? I knew you\'d be back. They all come back."'
+      : 'Gloria works for Opal. She laughs like a cement mixer and counts teeth faster than anyone alive.',
+    o: [newsOpt('gloria', '"Nothing a girl could repeat, honey. Not for free."')],
+  }),
   krug: () => {
     const o = [],
       f = S.f;

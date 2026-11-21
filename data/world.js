@@ -41,6 +41,7 @@ const REL = {
     ['jeb', 'hector'],
     ['jeb', 'moe'],
     ['doc', 'moe'],
+    ['opal', 'gloria'],
   ],
   enemy: [
     ['mayor', 'sheriff'],

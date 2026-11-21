@@ -54,3 +54,15 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 36. **The Gutmaw** starts near the Sky-Bus and wanders one road every other day or so. Meet it on roads into or out of its location (40%), or anywhere by bad luck (2%). Options: run (hard), hide in a ditch (a sneak check), throw it meat, throw it Bacon Prime, shove your spouse at it, or fight. It has 110 health, hits for 9 to 20 and has 3 armour: in rags you last about four rounds. With a riot suit and a shotgun it is beatable. Killing it pays 120 teeth, gives the title Gutmaw Slayer, and everyone hears.
 37. **Signs of it:** the map marks its location "tremors", that place's description says the ground is churned, and Moe sometimes tells you where it's been seen.
 38. **Place danger is words** (quiet, rough, dangerous, deadly, hell) instead of "danger 3" on the map and in the header.
+
+## Step 8: seduction, jealousy, ending slides
+
+39. **Gloria is a new character** at the Velvet Rad in Rustwater (Opal's friend).
+40. **Becoming lovers is gossip**, so jealousy arrives through the gossip engine, usually days later. Marrying Bess counts too. Multiple lovers at once are fine until someone hears.
+41. **Bess:** won as in step 3. Jealous: she goes to wherever the other woman is. Turn up there within 3 days and you must stand with Bess, stand with the other woman, or stay out of it. If you don't turn up, it settles itself and the other woman drops you. Stay out with Lou, and Bess becomes the Thursday special.
+42. **Opal:** only offered when you have 100 teeth, which she takes. Hard: honesty (+15 if she's never heard you lie, -25 if she has), being rich (+10 at 250 teeth), and freeing Chainfield (+15). Doesn't care about other women.
+43. **Crane:** only offered once she has heard of two good deeds (the pump, the hanging, Pete, and so on), each worth more. Jealous: she dumps you, likes you less, and three days later re-opens every quiet killing she can tie to you.
+44. **Lou:** only offered once you've eaten her stew. Knowing what's in it and loving it anyway (+30), being in on it (+15), eating it often (up to +15). Jealous: she smiles and says nothing. Seven days later the other woman is dead, and the diner board names her as the Thursday special.
+45. **Gloria:** very easy to bed (three tries). Winning her heart is a single, nearly hopeless line. Doesn't care.
+46. **Fade to black** always, with one short line.
+47. **Ending slides:** the headline, then the fates three at a time, then a summary slide. Every lover, ex, jealous murder and catfight gets a line.

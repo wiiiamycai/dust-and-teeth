@@ -36,6 +36,8 @@ const EV = {
   nuked: { other: -100, spec: { king: 60 } },
   lied: { self: -15, family: -10, friend: -10, other: -3 },
   gutmaw: { other: 15 },
+  lover: { self: 10 },
+  eaten: { family: -40, friend: -20, other: -5, spec: { lou: 0, junior: 0 } },
   raidkill: {},
 };
 const LAW = { sheriff: 'rustwater', gus: 'scrapwell' };
@@ -78,6 +80,11 @@ const RXG = {
   married: { family: () => `"Welcome to the family. Don't make me regret it."` },
   nuked: { other: () => `"You... you did that? All those people?"` },
   gutmaw: { other: () => `"You killed the GUTMAW? You? Drinks on me. Everything on me."` },
+  eaten: {
+    family: (v, f) => `"My ${f} went to Lou's and never came back. They say it was over you."`,
+    friend: v => `"${v} ended up in Lou's pot. Over YOU."`,
+    other: v => `"They say ${v} was Lou's Thursday special. Lou was jealous. Of YOU."`,
+  },
   lied: {
     self: () => `"You lied to my face. I don't forget a liar."`,
     friend: v => `"${v} says you lie. I'll count my teeth after you go."`,

@@ -55,6 +55,7 @@ function newGame() {
     later: [],
     c: {},
     skx: {},
+    lovers: {},
   };
 }
 function P(sk, mod) {

@@ -608,5 +608,134 @@
       "Leave (map)",
       "EXPECT:!document.getElementById('map').children.some(c => /[Dd]anger d/.test(c.innerHTML))"
     ]
+  },
+  {
+    "name": "Romance: Opal wants honesty and money, and takes the money",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "EVAL:S.teeth = 300",
+      "Madame Opal",
+      "REAL",
+      "EVAL:globalThis.c = chanceOf('opal.honest')",
+      "EXPECT:c < 50",
+      "RAND:0",
+      "no lies left",
+      "EXPECT:lover('opal') && S.teeth === 200",
+      "SAY:yours"
+    ]
+  },
+  {
+    "name": "Romance: a caught liar has a much harder time with Opal",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EVAL:globalThis.c = chanceOf('opal.honest')",
+      "EVAL:learn('opal', event('lied', 'gus', { wit: [] }))",
+      "EXPECT:chanceOf('opal.honest') < c && spec('opal.honest').mods() <= -25"
+    ]
+  },
+  {
+    "name": "Romance: Crane won't look at you until you've done good in Rustwater",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Sheriff Crane",
+      "EXPECT:!cur.some(o => o[0].includes('buy you a drink'))",
+      "EVAL:learn('sheriff', event('pump', null, { loc: 'rustwater', wit: [] })); learn('sheriff', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
+      "Back",
+      "Sheriff Crane",
+      "SAY:buy you a drink"
+    ]
+  },
+  {
+    "name": "Romance: Lou loves a man who loves her cooking, all of it",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EVAL:S.f.stew = 1; globalThis.c = chanceOf('lou.cook')",
+      "EVAL:S.f.cannibal = 1",
+      "EXPECT:chanceOf('lou.cook') >= c + 25"
+    ]
+  },
+  {
+    "name": "Romance: Gloria is easy to bed and nearly impossible to win",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EXPECT:chanceOf('gloria.bed') >= 60 && chanceOf('gloria.win') <= 10"
+    ]
+  },
+  {
+    "name": "Jealousy: Crane hears about another woman, dumps you, then digs up your quiet killings",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.lovers.sheriff = { day: 1 }; event('murder', 'pell', { secret: true }); S.dead.pell = 1",
+      "EVAL:becomeLover('gloria'); learn('sheriff', S.ev[S.ev.length - 1])",
+      "EXPECT:!lover('sheriff') && S.f.craneSuspect && S.n.sheriff.op <= -20",
+      "EXPECT:!heard('sheriff', 'murder', 'pell')",
+      "WAIT:3",
+      "EXPECT:S.ev.some(e => e.type === 'murder' && e.v === 'pell' && !e.secret && e.wit.includes('sheriff'))"
+    ]
+  },
+  {
+    "name": "Jealousy: Lou smiles, says nothing, and a week later the other woman is the Thursday special",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.lovers.lou = { day: 1 }",
+      "EVAL:becomeLover('gloria'); learn('lou', S.ev[S.ev.length - 1])",
+      "EXPECT:S.f.thursday === 'gloria' && alive('gloria')",
+      "WAIT:6",
+      "EXPECT:alive('gloria')",
+      "WAIT:1",
+      "EXPECT:!alive('gloria') && S.f.thursdayDone === 'gloria'",
+      "EVAL:go('hub', 'diner')",
+      "SAY:THURSDAY SPECIAL: GLORIA"
+    ]
+  },
+  {
+    "name": "Jealousy: Bess goes after the other woman herself, and you have to pick a side",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.lovers.bess = { day: 1 }",
+      "EVAL:becomeLover('opal'); learn('bess', S.ev[S.ev.length - 1])",
+      "EXPECT:S.f.catfight === 'opal' && S.n.bess.loc === 'rustwater'",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "SAY:Tell her what we are",
+      "Stand with Bess",
+      "EXPECT:!lover('opal') && lover('bess') && S.f.catfightHow === 'bess' && S.n.bess.loc === 'farm'"
+    ]
+  },
+  {
+    "name": "Jealousy: Opal and Gloria don't care",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1 }",
+      "EVAL:becomeLover('sheriff'); learn('opal', S.ev[S.ev.length - 1]); learn('gloria', S.ev[S.ev.length - 1])",
+      "EXPECT:lover('opal') && lover('gloria') && !S.f.catfight && !S.f.thursday"
+    ]
+  },
+  {
+    "name": "Ending: Fallout-style slides, including every relationship",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1, how: 'won' }; S.end = { type: 'retired' }; go('ending')",
+      "SAY:You sit down in your shack",
+      "EXPECT:(() => { let seen = ''; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('Madame Opal kept a room') && seen.includes('Gloria came east with you') })()",
+      "SAY:This life is over"
+    ]
   }
 ]

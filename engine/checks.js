@@ -148,6 +148,8 @@ function migrate(s) {
   s.talks = s.talks || 0;
   s.later = s.later || [];
   s.c = s.c || {};
+  s.lovers = s.lovers || {};
+  if (!s.n.gloria) s.n.gloria = { loc: 'rustwater', op: 0, k: [], rx: [], lvl: 2, st: {}, ch: 0 };
   if (!s.f.gutLoc && !s.f.gutDead) s.f.gutLoc = 'skybus';
   s.skx = s.skx || {};
   IDS.forEach(id => {

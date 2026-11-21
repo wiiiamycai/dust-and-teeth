@@ -129,6 +129,8 @@ function sumEv(ev) {
       nuked: `you nuked ${ev.tgt && LOC[ev.tgt] ? LOC[ev.tgt].n : 'somewhere'}`,
       lied: `you lied to ${v}`,
       gutmaw: 'you killed the Gutmaw',
+      lover: `you've been with ${v}`,
+      eaten: `${v} ended up in Lou's pot, over you`,
     }[ev.type] || null
   );
 }

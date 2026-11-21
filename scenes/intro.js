@@ -132,11 +132,23 @@ SC.ending = () => {
             : 'Out east, the Big Tooth was still waking up.',
     );
   }
-  const you = `${S.day} days. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
-  const text = `${head}\n\n${L.filter(Boolean).join('\n')}\n\n${you}\n\nThis life is over. Your save is gone.`;
+  if (E.type !== 'nuke' && E.type !== 'destroyer') L.push(...loveLines());
+  const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
+  // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
+  const lines = L.filter(Boolean),
+    slides = [head];
+  for (let i = 0; i < lines.length; i += 3) slides.push(lines.slice(i, i + 3).join('\n\n'));
+  slides.push(`${head}\n\n${you}\n\nThis life is over. Your save is gone.`);
   wipe();
   S = null;
-  show({ title: 'The End', icon: '💀', text, opts: [['Start a new life', () => go('title')]] });
+  const slide = i =>
+    show({
+      title: i === 0 || i === slides.length - 1 ? 'The End' : 'What became of them',
+      icon: '💀',
+      text: slides[i],
+      opts: [i < slides.length - 1 ? ['Next', () => slide(i + 1)] : ['Start a new life', () => go('title')]],
+    });
+  slide(0);
 };
 function hud() {
   const h = $('hud');
