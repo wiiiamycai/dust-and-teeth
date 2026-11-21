@@ -405,7 +405,11 @@ const ENC = {
     S.f.queenMet = 1;
     const lv = clamp(4 + Math.floor((S.day - (S.n.bess.st.goneDay || S.day)) / 2), 4, 9);
     S.n.bess.lvl = lv;
-    const en = () => [foe('bess'), mkE('Her raider', '💀', lv - 2), mkE('Her raider', '💀', lv - 2)];
+    const en = () => [
+      foe('bess'),
+      spawn('raider', { n: 'Her raider' }),
+      spawn('raider', { n: 'Her raider', arm: 'jacket' }),
+    ];
     return {
       title: 'Raider Queen Bess',
       icon: '👑',

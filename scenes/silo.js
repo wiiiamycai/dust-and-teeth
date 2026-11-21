@@ -2,8 +2,7 @@
 // ================= SILO 9 =================
 function kingFight() {
   const en = [foe('king')];
-  if (!S.f.pitFreed)
-    en.push(mkE('Molar elite', '🦷', 7, { wep: 'molargun' }), mkE('Molar elite', '🦷', 7, { arm: 'spikes' }));
+  if (!S.f.pitFreed) en.push(spawn('molarElite'), spawn('molarElite'));
   if (S.f.sheriffAlly && alive('sheriff')) say('Sheriff Crane kicks the door in behind you.');
   fight(en, { started: true, win: 'go', args: ['console'], allies: S.f.sheriffAlly ? ['sheriff'] : [] });
 }

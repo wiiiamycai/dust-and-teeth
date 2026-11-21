@@ -207,7 +207,7 @@ const HUBO = {
           [
             'Attack the gate guards',
             () =>
-              fight([mkE('Molar guard', '🦷', 6), mkE('Molar guard', '🦷', 6, { arm: 'spikes' })], {
+              fight([spawn('molarGuard'), spawn('molarGuard')], {
                 started: true,
                 win: 'siloin',
                 back: ['map'],
@@ -223,7 +223,7 @@ const HUBO = {
                 goHere();
               } else {
                 bad('"Intruder!"');
-                fight([mkE('Molar guard', '🦷', 6), mkE('Molar guard', '🦷', 6)], { win: 'siloin', back: ['map'] });
+                fight([spawn('molarGuard'), spawn('molarGuard')], { win: 'siloin', back: ['map'] });
               }
             },
           ],
@@ -261,7 +261,7 @@ const HUBO = {
                     goHere();
                   } else {
                     bad('Alarm!');
-                    fight([mkE('Molar elite', '🦷', 7), mkE('Molar elite', '🦷', 7)], { win: 'back', back: ['map'] });
+                    fight([spawn('molarElite'), spawn('molarElite')], { win: 'back', back: ['map'] });
                   }
                 },
               ]
@@ -277,7 +277,7 @@ const HUBO = {
                     say("Chains drop. The diggers riot. The King's elite guards will be busy for a while.");
                   } else {
                     bad('A guard spots you.');
-                    return fight([mkE('Molar elite', '🦷', 7)], { win: 'back', back: ['map'] });
+                    return fight([spawn('molarElite')], { win: 'back', back: ['map'] });
                   }
                   goHere();
                 },

@@ -911,5 +911,47 @@
       "EVAL:S.f.krugHow = 'molars'; S.dead.krug = 1; S.f.craneHow = 'ambushed'; S.dead.sheriff = 1; S.end = { type: 'retired' }; go('ending')",
       "EXPECT:(() => { let seen = document.getElementById('text').innerHTML; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('The Molars burned Chainfield') && seen.includes('somebody sold her into') && !seen.includes('Without Krug') })()"
     ]
+  },
+  {
+    "name": "Loot: kill a raider and his pipe is yours, plus a pile of teeth",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
+      "FIGHT",
+      "EXPECT:S.weapons.includes('pipe') && S.teeth >= t + 16"
+    ]
+  },
+  {
+    "name": "Loot: a slaver's shotgun, shells and jacket, and better armour goes straight on",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([spawn('slaver')], { close: true })",
+      "FIGHT",
+      "EXPECT:S.weapons.includes('shotgun') && S.inv.ammo >= 3 && S.armor === 'jacket'",
+      "SAY:you put it on"
+    ]
+  },
+  {
+    "name": "Loot: gear you already have is stripped and sold for scrap",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.weapons.push('pipe'); globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
+      "FIGHT",
+      "SAY:a spare Lead Pipe (scrap, +5 teeth)",
+      "EXPECT:S.teeth >= t + 21"
+    ]
+  },
+  {
+    "name": "Loot: named people drop what they carry too",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.here = 'farm'; fight([foe('hector')], { started: true })",
+      "FIGHT",
+      "EXPECT:S.weapons.includes('shotgun')"
+    ]
   }
 ]

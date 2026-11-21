@@ -31,7 +31,7 @@ function mkE(n, i, lv, o) {
     d: [lv, 2 + lv * 2],
     dr: Math.floor(lv / 3),
     xp: lv * 20,
-    teeth: o.teeth != null ? o.teeth : lv * 3,
+    teeth: o.teeth != null ? o.teeth : lv * 4 + R(0, lv * 2),
     loot: o.loot || null,
     arm: o.arm || null,
     wep: o.wep || null,
@@ -335,27 +335,25 @@ function win() {
     gainXP(e.xp);
     const L = [];
     if (e.teeth) {
-      S.teeth += e.teeth;
-      L.push(e.teeth + ' teeth');
+      const t = e.teeth * 2;
+      S.teeth += t;
+      L.push(t + ' teeth');
     }
     if (e.loot)
       for (const k in e.loot) {
         give(k, e.loot[k]);
         L.push(ITEMS[k]);
       }
-    if (e.teeth > 0 && e.lvl >= 2 && roll(35)) {
+    if (e.wep && isGun(e.wep)) {
+      const b = R(3, 6);
+      give('ammo', b);
+      L.push(`${b} bullets`);
+    } else if (e.teeth > 0 && e.lvl >= 2 && roll(35)) {
       const b = R(1, 3);
       give('ammo', b);
       L.push(`${b} bullet${b > 1 ? 's' : ''}`);
     }
-    if (e.wep && !S.weapons.includes(e.wep)) {
-      S.weapons.push(e.wep);
-      L.push(W[e.wep].n);
-    }
-    if (e.arm && !S.armors.includes(e.arm)) {
-      S.armors.push(e.arm);
-      L.push(A[e.arm].n);
-    }
+    takeGear(e.wep, e.arm, L);
     if (L.length) say(`Loot: ${L.join(', ')}.`);
     S.f.corpse = e.n;
   }
@@ -372,6 +370,32 @@ function useBuzz() {
     statAdd('charm', -1, 'Buzz is rotting your teeth. Your smile has gone grey.');
   }
 }
+// Strip the body. New gear is yours; better armour goes straight on; spares are sold for scrap.
+function takeGear(wep, arm, L) {
+  if (wep && W[wep] && wep !== 'fists') {
+    if (!S.weapons.includes(wep)) {
+      S.weapons.push(wep);
+      L.push(W[wep].n);
+    } else if (W[wep].v) {
+      const t = Math.round(W[wep].v / 2);
+      S.teeth += t;
+      L.push(`a spare ${W[wep].n} (scrap, +${t} teeth)`);
+    }
+  }
+  if (arm && A[arm]) {
+    if (!S.armors.includes(arm)) {
+      S.armors.push(arm);
+      if (A[arm].dr > A[S.armor].dr) {
+        S.armor = arm;
+        L.push(`${A[arm].n} (you put it on)`);
+      } else L.push(A[arm].n);
+    } else if (A[arm].v) {
+      const t = Math.round(A[arm].v / 2);
+      S.teeth += t;
+      L.push(`a spare ${A[arm].n} (scrap, +${t} teeth)`);
+    }
+  }
+}
 function kill(id, how, loud) {
   if (S.dead[id]) return;
   S.dead[id] = 1;
@@ -382,8 +406,8 @@ function kill(id, how, loud) {
   gainXP(lvl(id) * 20);
   const L = [];
   if (d.teeth) {
-    S.teeth += d.teeth;
-    L.push(d.teeth + ' teeth');
+    S.teeth += d.teeth * 2;
+    L.push(d.teeth * 2 + ' teeth');
   }
   if (d.loot)
     for (const k in d.loot) {
@@ -400,14 +424,8 @@ function kill(id, how, loud) {
     S.f.coilGot = 1;
     L.push(ITEMS.coil);
   }
-  if (d.wep && !S.weapons.includes(d.wep)) {
-    S.weapons.push(d.wep);
-    L.push(W[d.wep].n);
-  }
-  if (d.arm && !S.armors.includes(d.arm)) {
-    S.armors.push(d.arm);
-    L.push(A[d.arm].n);
-  }
+  takeGear(S.n[id].st.wep || d.wep, d.arm, L);
+  if (S.n[id].st.wep && d.wep && S.n[id].st.wep !== d.wep) takeGear(d.wep, null, L);
   if (L.length) say(`From ${d.n}: ${L.join(', ')}.`);
   if (id === S.spouse) {
     S.spouse = null;

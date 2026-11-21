@@ -3,17 +3,20 @@
 // Every enemy type has ONE fixed strength. Nothing here reads the player's skills, perks or progress.
 // The world only gets worse through story (the Dentist King's army after the raid) and notoriety
 // (the bigger the enemies you make, the bigger the people they send). See molarCrew() and bountyCrew().
+// What they carry is what you get: kill them and their weapon and armour are yours.
 const ENEMY = {
-  raider: { n: 'Raider', i: '💀', lvl: 2 },
-  raiderBoss: { n: 'Raider boss', i: '☠️', lvl: 5, arm: 'spikes' },
+  raider: { n: 'Raider', i: '💀', lvl: 2, wep: 'pipe' },
+  raiderBoss: { n: 'Raider boss', i: '☠️', lvl: 5, wep: 'sledge', arm: 'spikes' },
   moledog: { n: 'Mole-dog', i: '🐕', lvl: 1, teeth: 0 },
-  molar: { n: 'Molar raider', i: '🦷', lvl: 4 },
-  molarVet: { n: 'Molar veteran', i: '🦷', lvl: 5, arm: 'spikes' },
-  slaver: { n: 'Slaver', i: '⛓️', lvl: 5 },
-  tracker: { n: "Krug's tracker", i: '⛓️', lvl: 7 },
-  deputy: { n: 'Deputy', i: '👮', lvl: 3 },
-  bounty: { n: 'Bounty hunter', i: '🎯', lvl: 5 },
-  bountyAce: { n: 'Bounty hunter', i: '🎯', lvl: 7, arm: 'jacket' },
+  molar: { n: 'Molar raider', i: '🦷', lvl: 4, wep: 'molargun' },
+  molarVet: { n: 'Molar veteran', i: '🦷', lvl: 5, wep: 'molargun', arm: 'spikes' },
+  molarGuard: { n: 'Molar guard', i: '🦷', lvl: 6, wep: 'molargun', arm: 'spikes' },
+  molarElite: { n: 'Molar elite', i: '🦷', lvl: 7, wep: 'molargun', arm: 'plate' },
+  slaver: { n: 'Slaver', i: '⛓️', lvl: 5, wep: 'shotgun', arm: 'jacket' },
+  tracker: { n: "Krug's tracker", i: '⛓️', lvl: 7, wep: 'rifle', arm: 'plate' },
+  deputy: { n: 'Deputy', i: '👮', lvl: 3, wep: 'rifle', arm: 'jacket' },
+  bounty: { n: 'Bounty hunter', i: '🎯', lvl: 5, wep: 'rifle', arm: 'jacket' },
+  bountyAce: { n: 'Bounty hunter', i: '🎯', lvl: 7, wep: 'molargun', arm: 'plate' },
 };
 const spawn = (k, o) => {
   const e = ENEMY[k];
@@ -23,7 +26,7 @@ const spawn = (k, o) => {
 const notoriety = () => S.kills + Math.max(0, -S.karma);
 // The King's army grows with the story, never with you.
 const molarCrew = () => [
-  spawn('molar', { wep: roll(25) ? 'molargun' : null }),
+  spawn('molar'),
   S.day >= 12 ? spawn('molarVet') : spawn('molar', { arm: roll(30) ? 'spikes' : null }),
   ...(S.day >= 17 ? [spawn('molar')] : []),
   ...(S.f.kingFed ? [spawn('molar')] : []), // you fed him Chainfield's people

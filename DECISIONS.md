@@ -75,3 +75,20 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 51. **The Dentist King:** show him the notebook (sure) or lie that Krug mocks him (hard, one try), at his throne or via a Molar tax gang on the road. Two days later the Molars burn Chainfield. Krug dies, everyone in the pens is marched east (Bess then becomes the Raider Queen, as in v2), and the King's gangs gain an extra raider for the rest of the game.
 52. **Hector:** if Krug has his child and he knows you sold them, talk him into going in himself (better with the rota). Next day he either shoots Krug and brings everyone home (35%, 60% with the rota) or dies, and his family blames you.
 53. Each outcome gets its own ending slide.
+
+## Bigger rewards for killing
+
+54. **Every armed enemy type carries real gear, and drops it:**
+    - raider: pipe
+    - raider boss: sledge and spikes
+    - Molar: repeater
+    - Molar veteran and guard: repeater and spikes
+    - Molar elite: repeater and car-door plate
+    - slaver: shotgun and jacket
+    - Krug's tracker: rifle and plate
+    - deputy: rifle and jacket
+    - bounty hunters: rifle and jacket, or repeater and plate
+55. **Teeth roughly tripled:** generic enemies now carry 4 to 6 per level and pay double that when killed (a raider is worth about 16 to 24). Named people pay double their purse.
+56. **Gunmen always drop 3 to 6 bullets.**
+57. **Better armour goes straight on** when you take it. Gear you already own is stripped and sold for half its scrap value on the spot.
+58. Enemies still hit by type, not by weapon, so a slaver with a shotgun hurts the same as before. Making their weapons matter in their hands would make fights harder again: your call.

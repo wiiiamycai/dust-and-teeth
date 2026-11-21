@@ -13,25 +13,26 @@ const PLAYER = {
 };
 const W = {
   // melee: no ammo, quiet, +10 to hit up close, can knock down (kd adds to the chance)
-  fists: { n: 'Fists', t: 'melee', d: [2, 5], a: 0, kd: 0 },
-  knife: { n: 'Rusty Knife', t: 'melee', d: [4, 9], a: 5, kd: 0 },
-  pipe: { n: 'Lead Pipe', t: 'melee', d: [6, 11], a: 0, kd: 10 },
-  sledge: { n: 'Sledgehammer', t: 'melee', d: [9, 18], a: -10, kd: 25 },
-  cleaver: { n: "Lou's Cleaver", t: 'melee', d: [6, 13], a: 5, kd: 5 },
-  drill: { n: "King's Drill", t: 'melee', d: [12, 24], a: 5, kd: 15 },
+  // v = scrap value in teeth. Loot you already own is stripped and sold for half of it.
+  fists: { n: 'Fists', t: 'melee', d: [2, 5], a: 0, kd: 0, v: 0 },
+  knife: { n: 'Rusty Knife', t: 'melee', d: [4, 9], a: 5, kd: 0, v: 8 },
+  pipe: { n: 'Lead Pipe', t: 'melee', d: [6, 11], a: 0, kd: 10, v: 10 },
+  sledge: { n: 'Sledgehammer', t: 'melee', d: [9, 18], a: -10, kd: 25, v: 30 },
+  cleaver: { n: "Lou's Cleaver", t: 'melee', d: [6, 13], a: 5, kd: 5, v: 25 },
+  drill: { n: "King's Drill", t: 'melee', d: [12, 24], a: 5, kd: 15, v: 80 },
   // guns: one bullet a shot, loud, best at range (-10 up close)
-  zipgun: { n: 'Zip Gun', t: 'guns', d: [4, 10], a: -5 },
-  rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10 },
-  shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0 },
-  molargun: { n: 'Molar Repeater', t: 'guns', d: [9, 18], a: 5 },
+  zipgun: { n: 'Zip Gun', t: 'guns', d: [4, 10], a: -5, v: 20 },
+  rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10, v: 50 },
+  shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0, v: 60 },
+  molargun: { n: 'Molar Repeater', t: 'guns', d: [9, 18], a: 5, v: 55 },
 };
 const A = {
-  rags: { n: 'Rags', dr: 0 },
-  jacket: { n: 'Leather Jacket', dr: 2 },
-  spikes: { n: 'Raider Spikes', dr: 3 },
-  vest: { n: "Sheriff's Vest", dr: 5 },
-  plate: { n: 'Car-Door Plate', dr: 7, tw: -2 },
-  riot: { n: 'Pre-War Riot Suit', dr: 10 },
+  rags: { n: 'Rags', dr: 0, v: 0 },
+  jacket: { n: 'Leather Jacket', dr: 2, v: 30 },
+  spikes: { n: 'Raider Spikes', dr: 3, v: 35 },
+  vest: { n: "Sheriff's Vest", dr: 5, v: 60 },
+  plate: { n: 'Car-Door Plate', dr: 7, tw: -2, v: 50 },
+  riot: { n: 'Pre-War Riot Suit', dr: 10, v: 100 },
 };
 const ITEMS = {
   gutglue: 'Gut Glue',
