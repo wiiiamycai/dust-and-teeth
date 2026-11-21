@@ -107,7 +107,7 @@ The player is a man. Most adult women can be seduced, each in her own way. Conte
 
 ## 11. Current state (v2) for reference
 
-Single file `index.html`, vanilla JS, no build step. Key systems already working:
+Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plain `<script src>` files in a fixed order: `engine/` (core, state, gossip, world clock, combat), `data/` (items, npcs, world, gossip tables), `scenes/` (map, locations, talk, silo, character, intro) and `main.js` (boot). They are classic scripts sharing one global scope, so load order matters and the game still opens straight from the file. A new file must be added to the script list in `index.html`. Key systems already working:
 
 - `S` is the whole game state, saved to localStorage key `dust_teeth_v2`.
 - `NPC` table with per-NPC runtime state in `S.n[id]` (loc, op = opinion, k = known event ids, rx = pending reaction lines, lvl, st).
@@ -120,8 +120,8 @@ Single file `index.html`, vanilla JS, no build step. Key systems already working
 
 ## 12. Suggested build order for v3
 
-1. Split `index.html` into modules (for example `data/npcs.js`, `data/dialogue.js`, `engine/gossip.js`, `engine/combat.js`, `engine/checks.js`, `scenes/*.js`) with a simple bundling step, or keep one file but cleanly sectioned. Keep it playable by opening a file in a browser.
-2. Set up git. Commit v2 as the baseline before any change.
+1. (Done) Split `index.html` into modules (for example `data/npcs.js`, `data/dialogue.js`, `engine/gossip.js`, `engine/combat.js`, `engine/checks.js`, `scenes/*.js`) with a simple bundling step, or keep one file but cleanly sectioned. Keep it playable by opening a file in a browser.
+2. (Done) Set up git. Commit v2 as the baseline before any change.
 3. Hidden checks with context modifiers, real dialogue lines, soft cues, one-shot checks.
 4. Gossip that makes people act (section 5).
 5. Fixed character and learn-by-doing growth, earned perks, Keen Eye.
@@ -132,13 +132,16 @@ Single file `index.html`, vanilla JS, no build step. Key systems already working
 
 ## 13. Testing
 
-`tests/` has three headless Node scripts that run the game without a browser by stubbing the DOM:
+`tests/` has headless Node scripts that run the game without a browser by stubbing the DOM. They load the game through `tests/load.js`, which reads every script `index.html` lists, in order:
 
 - `node tests/fuzz.js index.html 1500 rand` plays 1500 random games. `survive` mode avoids instant-ending options and tops up HP to reach deeper content. Reports crashes, dead ends (screens with no options), and any "undefined", "NaN" or "null" text on screen.
 - `node tests/reload.js index.html` plays random games while reloading mid-game to check saves.
 - `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`.
 
-All three must pass with zero errors after every change. Add scripted path tests for each new consequence chain.
+- `node tests/golden.js index.html` replays 300 fixed-seed games (with reloads) and compares a fingerprint of every screen and save against `tests/golden.json`. It must match after any refactor. When a change is meant to alter gameplay it will mismatch: re-record with `node tests/golden.js index.html record` and commit the new `golden.json` with that change.
+- For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`).
+
+Fuzz, reload and path must pass with zero errors after every change. Add scripted path tests for each new consequence chain.
 
 ## 14. Working with Will
 
