@@ -235,6 +235,10 @@ body::after {
   color: var(--dim);
   font-size: 11px;
 }
+#foot .ver {
+  float: right;
+  color: var(--a);
+}
 @media (max-width: 560px) {
   #hud {
     grid-template-columns: 1fr 1fr;

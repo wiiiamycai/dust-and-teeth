@@ -8,6 +8,11 @@ module.exports = function loadGame(file) {
   const dir = path.dirname(file), parts = [];
   const re = /<script(?:\s+src="([^"]+)")?\s*>([\s\S]*?)<\/script>/gi;
   let m;
-  while ((m = re.exec(src))) parts.push(m[1] ? fs.readFileSync(path.join(dir, m[1]), 'utf8') : m[2]);
-  return parts.join('\n');
+  while ((m = re.exec(src))) parts.push(m[1] ? fs.readFileSync(path.join(dir, m[1].split('?')[0]), 'utf8') : m[2]);
+  const code = parts.join('\n');
+  // Every ?v= cache-buster in index.html must match VERSION, or Will's browser may keep serving a stale build.
+  const ver = (code.match(/const VERSION = 'v([\d.]+)/) || [])[1];
+  const tags = [...src.matchAll(/="[^"]*\?v=([^"]*)"/g)].map(t => t[1]);
+  if (ver && tags.some(t => t !== ver)) throw new Error('index.html ?v= tags do not all match VERSION v' + ver);
+  return code;
 };

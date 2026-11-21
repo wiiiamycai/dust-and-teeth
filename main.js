@@ -1,6 +1,7 @@
 'use strict';
 // ================= BOOT =================
 (function boot() {
+  $('foot').innerHTML += ` <span class="ver">${VERSION}</span>`;
   const s = load();
   if (s && !s.end && s.scene && SC[s.scene] && s.n) {
     S = migrate(s);
