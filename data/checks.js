@@ -26,6 +26,14 @@ const CK = {
     likes: { 'krug.rota': 15 },
   },
   'plane.coil': { sk: 'science', base: 0, lock: 'none' },
+  // ---- the web: Junior leaves home ----
+  'junior.leave': {
+    sk: 'speech',
+    base: 10,
+    who: 'junior',
+    lock: 'change',
+    mods: () => (S.n.junior.op >= 20 ? 15 : 0) + (S.f.louReformed ? -20 : 0),
+  },
   // ---- the Mayor's toys ----
   'mayor.plasma': {
     sk: 'steal',

@@ -108,3 +108,22 @@ Will: "health should more or less be static and armor is what dictates strength.
     - two slavers: 3% with the starting knife, 26% with a shotgun and jacket, 56% with a repeater and vest, 99% for a seasoned fighter in a riot suit;
     - two Molars: 23% with the knife, 55% with a shotgun and jacket, 82% with a repeater and vest;
     - with the plasma rifle and power armour you win everything.
+
+## The web: everyone knows everyone (v3.3)
+
+Will: "every single character in the game should be linked", "the characters should have depth and layers". The readable version is `CAST.md`.
+
+67. **Ask anyone about anyone.** Every conversation has "Ask about someone": pick a place, then a person. 64 strong bonds have their own line from each side (family, friends, lovers, exes, debts, secret allies, enemies, rivals). Every other pair gets what the valley says about that person, coloured by who's talking.
+68. **Bonds feed the gossip web.** All 64 count as family, friend or enemy links for gossip, up from 23, so news now travels much further and hits harder. Example: kill Krug and the Mayor, Lou, Moe and the King all hear it as a friend's death.
+69. **A secret for every person,** known by two or three others. They tell you when you ask about that person, once they like you (opinion 25 or more, or three good chats). Before that, they let you see there's more.
+70. **Using a secret:** tell its owner you know. Lean on them for teeth (they hate you, karma drops), or promise to keep it (they warm to you). The ending counts both.
+71. **Five plots on their own clocks:**
+    - day 9: Lou takes Bacon Prime;
+    - day 10: Doc poisons the Mayor;
+    - day 11: Krug hits Jeb's caravan, the day before the Molars;
+    - day 16: Opal catches Gloria skimming;
+    - day 18: Lou finds Junior's cabbages.
+
+    Each can be learned, warned against, helped or sold, and each gets an ending slide. Ignored, it happens without you.
+72. **Junior can leave home.** Talk him into it and he opens Junior's Greens in Rustwater (cabbage soup, +15 HP). Lou does not take it well.
+73. **The King's secret** (he's terrified of dentists) can be learned, but there's nothing to do with it yet. That's a hook for later.

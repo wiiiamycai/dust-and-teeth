@@ -1,0 +1,623 @@
+'use strict';
+// ================= DATA: THE CAST BIBLE =================
+// Everyone in the valley knows everyone. This file says how, and why.
+//   BONDS:   the strong links. [a, b, kind, what a says about b, what b says about a]
+//            kind: family | friend | lover | ex | debt | ally (counted as friends for gossip)
+//                  enemy | rival                                (counted as enemies for gossip)
+//   REP:     what the valley says about each person. Every pair without a bond falls back on this.
+//   SECRETS: one per person. Who knows it, and will tell you once they like you.
+// Ask anyone about anyone: talk to them, "Ask about someone".
+// CAST.md is the readable version for Will. Regenerate it: node tools/castdoc.js > CAST.md
+const BONDS = [
+  // ---- Scrapwell ----
+  [
+    'elder',
+    'gus',
+    'friend',
+    '"Gus digs, Gus drinks, Gus turns up when the roof falls in. A good boy. Fifty-three."',
+    '"Ma\'s the only one who ever paid me on time. In soup, but on time."',
+  ],
+  [
+    'elder',
+    'crumb',
+    'friend',
+    '"Crumb thinks a toaster is God. It keeps him off the streets."',
+    '"Ma Thistle is a saint. A terrifying saint. She hit me with a ladle once and I saw the Light."',
+  ],
+  [
+    'elder',
+    'pell',
+    'friend',
+    '"Pell asked me to marry him in 61. I said no. He got a pig. We both did better."',
+    '"Ma turned me down. Best thing that ever happened to Bacon Prime."',
+  ],
+  [
+    'elder',
+    'nigel',
+    'family',
+    '"Nigel is my fourth husband\'s boy. Glows like his father did, near the end."',
+    '"Ma drops soup down the well. Soup good. Ma good. Ma loud."',
+  ],
+  [
+    'elder',
+    'krug',
+    'enemy',
+    '"Krug? I have dealt with Krug. Once. That was plenty."',
+    '"The old woman drives a hard bargain. Respect. Fear, even. A little."',
+  ],
+  [
+    'elder',
+    'mayor',
+    'enemy',
+    '"Fenwick was a Scrapwell boy. Stole the tips from the holy toaster. I ran him out with a broom."',
+    '"That woman has been dying for thirty years, purely to spite me."',
+  ],
+  [
+    'gus',
+    'crumb',
+    'friend',
+    '"Crumb blesses my pick every morning. Haven\'t lost a finger since. Lost a toe. Different blessing."',
+    '"Gus is a good man. Gus is a wet man, most nights, but a good man."',
+  ],
+  [
+    'gus',
+    'pell',
+    'friend',
+    '"Pell taught me cards. Then he taught me to lose at cards."',
+    '"Gus owes me eleven teeth. Has done since the old Mayor."',
+  ],
+  [
+    'gus',
+    'moe',
+    'debt',
+    '"I owe Moe forty teeth on the slate. He calls it forty. I call it a relationship."',
+    "\"Gus drinks like it's his job. Pays like it's someone else's.\"",
+  ],
+  [
+    'gus',
+    'king',
+    'enemy',
+    '"The Tooth King took my brother to dig. Said he\'d send him back. Sent his teeth."',
+    '"The miner\'s brother? Excellent digger. Short career."',
+  ],
+  [
+    'gus',
+    'bess',
+    'ex',
+    '"Me and Bess were going to marry. She said I smelled like a mine. I WORK in a mine."',
+    '"Gus? Sweet. Smells like a mine."',
+  ],
+  [
+    'crumb',
+    'doc',
+    'enemy',
+    '"Ratchet sells powder to the children of God. Also to adults. Mostly adults."',
+    '"Crumb prays outside my door. Terrible for business. Actually great for business. He gives everyone a headache."',
+  ],
+  [
+    'crumb',
+    'king',
+    'enemy',
+    '"I don\'t speak of the silo. I don\'t speak of the silo. Pass the bread."',
+    '"Brother Crumb! Tell him he left his pliers here. He\'ll know which ones."',
+  ],
+  [
+    'crumb',
+    'nigel',
+    'friend',
+    '"The Glower is a holy light. He disagrees. Holy lights are modest."',
+    '"Bread man pray at Nigel. Nigel shy."',
+  ],
+  ['crumb', 'junior', 'friend', '"Junior comes to service. Sits at the back. Weeps at the toast."', '"...Bread good."'],
+  [
+    'pell',
+    'pig',
+    'family',
+    '"Bacon Prime is the best of us. Look at him. LOOK at him."',
+    '"Bacon Prime regards you, then Pell, with equal and total love."',
+  ],
+  [
+    'pell',
+    'lou',
+    'enemy',
+    '"That woman looks at my pig like a menu."',
+    '"Pell\'s pig. Pedigree. One day, sweetie. One day."',
+  ],
+  [
+    'pell',
+    'hector',
+    'friend',
+    '"Me and Hector rode guard for Jeb\'s da, thirty years back. Hector was a coward then. Good coward. Lived."',
+    '"Pell taught me to shoot. Then he shot me. Accident. Mostly."',
+  ],
+  [
+    'nigel',
+    'doc',
+    'enemy',
+    '"Cereal man want Nigel\'s liver. Nigel need liver."',
+    '"The Glower is a walking pharmacy. Sadly, he keeps walking."',
+  ],
+  [
+    'nigel',
+    'king',
+    'enemy',
+    '"Nigel no talk about King. King bad tooth. Bad, bad tooth."',
+    '"My old teacher! He glows now? He always had a light in him."',
+  ],
+  [
+    'nigel',
+    'bert',
+    'friend',
+    '"Tractor man good. Tractor eight times weight."',
+    '"Nigel likes tractor facts. Nobody else does. I go down the well on Sundays."',
+  ],
+  // ---- Rustwater ----
+  [
+    'moe',
+    'sheriff',
+    'friend',
+    "\"Crane drinks here because I'm the only one who doesn't lie to her. That's a lie.\"",
+    '"Moe lies about everything except the beer. The beer really is that bad."',
+  ],
+  [
+    'moe',
+    'opal',
+    'friend',
+    '"Opal and me, we\'re the two honest crooks in town. Hers is the classier crime."',
+    '"Moe sends me customers. I send him drunks. It\'s an ecosystem, sugar."',
+  ],
+  [
+    'moe',
+    'doc',
+    'friend',
+    '"Doc and me split the hangover trade. I cause it, he cures it."',
+    '"Moe is my supply chain."',
+  ],
+  [
+    'moe',
+    'mayor',
+    'ally',
+    '"Fenwick charges me for water so I can sell it back to you as beer. We\'re both thieves. He\'s just worse at it."',
+    '"Moe? A dreadful man. Hears everything. Keep him close, I always say. Don\'t repeat that."',
+  ],
+  [
+    'moe',
+    'krug',
+    'debt',
+    '"Krug drinks here when he\'s in town. Never pays. I never ask. I like my knees."',
+    '"Moe is a friend to the business. A small, frightened friend."',
+  ],
+  [
+    'moe',
+    'gloria',
+    'rival',
+    '"Gloria took me for forty teeth at cards. Marked deck. MY marked deck."',
+    '"Moe waters the beer and cheats at cards. I respect one of those."',
+  ],
+  [
+    'mayor',
+    'sheriff',
+    'enemy',
+    '"The Sheriff asks too many questions. One day the questions will stop."',
+    '"Fenwick owns the pump, the town and most of the Council. He doesn\'t own me. That\'s the problem."',
+  ],
+  [
+    'mayor',
+    'krug',
+    'ally',
+    '"Krug supplies the town with labour. Volunteers. Enthusiastic, chained volunteers."',
+    '"Fenwick pays on time. A gentleman. A coward, but a gentleman."',
+  ],
+  [
+    'mayor',
+    'doc',
+    'friend',
+    '"Ratchet keeps me alive. Little drops in my tea, for the heart. Marvellous man."',
+    '"Fenwick? My best patient. He needs a LOT of medicine. More every week."',
+  ],
+  [
+    'mayor',
+    'opal',
+    'enemy',
+    '"Opal? A pillar of the community. A pillar with a shotgun under it."',
+    '"Fenwick taxes my house twice and drinks here for free. I keep a list, sugar. It\'s a long list."',
+  ],
+  [
+    'mayor',
+    'jeb',
+    'enemy',
+    '"Jeb\'s lizards drink from my pump. The road tax pays for the road. The road is very expensive to look at."',
+    '"Fenwick charges my LIZARDS to drink. My lizards."',
+  ],
+  [
+    'mayor',
+    'hector',
+    'enemy',
+    '"Hector owes me six months of water. He keeps paying in threats."',
+    '"Fenwick charges me to water my own corn. One day I\'ll water him."',
+  ],
+  [
+    'sheriff',
+    'opal',
+    'friend',
+    '"Opal never offers me a bribe. That\'s how I know she\'s scared of me. Good."',
+    '"Crane is the only one in town who knocks."',
+  ],
+  [
+    'sheriff',
+    'doc',
+    'friend',
+    '"Ratchet has killed more people than I have. Fewer on purpose. Still the only medic in fifty miles."',
+    '"The Sheriff brings me everyone she shoots. Repeat business."',
+  ],
+  [
+    'sheriff',
+    'lou',
+    'enemy',
+    '"Lou\'s diner. Every missing person in this valley ate there last."',
+    '"The Sheriff never orders the stew. Rude."',
+  ],
+  [
+    'sheriff',
+    'pete',
+    'friend',
+    '"Pete. Brave as a mouse. Says sorry when he gets shot."',
+    '"The Sheriff said I could be a deputy if I stop crying. I\'m nearly there."',
+  ],
+  [
+    'sheriff',
+    'krug',
+    'enemy',
+    '"Krug sells people out of a car park and I can\'t prove a thing. Yet."',
+    '"The Sheriff and me go back. Further than she\'d like."',
+  ],
+  [
+    'sheriff',
+    'king',
+    'enemy',
+    '"Whatever the Dentist King is digging up out east, I want it to stay buried."',
+    '"The lawwoman. She has lovely molars. I\'d keep them in a jar by the bed."',
+  ],
+  [
+    'doc',
+    'lou',
+    'ally',
+    '"Lou? Wonderful cook. Sends me... spare parts. For medicine. Don\'t ask which parts."',
+    '"Doc takes the bits nobody orders. Waste not, sweetie."',
+  ],
+  [
+    'doc',
+    'opal',
+    'friend',
+    '"Opal pays cash and never asks what\'s in the needle. My favourite patient."',
+    '"Ratchet checks my girls once a month. Fake degree. Real hands."',
+  ],
+  [
+    'doc',
+    'king',
+    'ally',
+    '"The King buys my gas. For the patients. He doesn\'t use it on the patients."',
+    '"Ratchet\'s gas makes the screaming stop. Mine, mostly."',
+  ],
+  [
+    'opal',
+    'gloria',
+    'friend',
+    '"Gloria is the best earner I\'ve got and the worst liar I\'ve met. I like that in a girl."',
+    '"Opal took me in when nobody would. I owe her everything. That\'s the problem with owing."',
+  ],
+  [
+    'opal',
+    'krug',
+    'enemy',
+    '"Krug took my sister. Sold her twice. I want him dead and I want to watch."',
+    '"Opal hates me with a passion I find almost flattering."',
+  ],
+  [
+    'opal',
+    'teo',
+    'friend',
+    '"Teo saw my sister last. I send him food. He gives it to the others."',
+    "\"Opal's sister? Marigold. Sang in the pens. I'm sorry. I'm so sorry.\"",
+  ],
+  [
+    'gloria',
+    'jeb',
+    'lover',
+    '"Jeb\'s taking me east one day. He doesn\'t know yet."',
+    '"Gloria keeps asking about the green. I keep telling her it\'s probably a rumour."',
+  ],
+  [
+    'jeb',
+    'pete',
+    'friend',
+    "\"Pete's the best guard I've got. Not the best guard. The best I've got.\"",
+    '"Jeb hired me when nobody else would. Then I got eaten. Nearly. Not his fault."',
+  ],
+  [
+    'jeb',
+    'hector',
+    'friend',
+    '"Hector waters my lizards for free. Only man in the valley who does."',
+    '"Jeb drinks, Jeb exaggerates, Jeb is the best friend I\'ve got."',
+  ],
+  [
+    'jeb',
+    'moe',
+    'friend',
+    '"Moe keeps my gin cold. That\'s friendship, out here."',
+    '"Jeb tips. Nobody tips. I\'d die for that man. Not literally."',
+  ],
+  [
+    'jeb',
+    'krug',
+    'enemy',
+    '"Krug wants my road east. He wants to drive people down it in chains."',
+    '"Jeb\'s road goes east. So do my products. We should talk. He won\'t talk."',
+  ],
+  [
+    'jeb',
+    'bess',
+    'rival',
+    '"Somebody hits my caravan on the farm road every month. Polite raiders. They say thank you."',
+    '"Jeb? Nice man. Rich man. Mostly rich."',
+  ],
+  // ---- the farm and the diner ----
+  [
+    'hector',
+    'bess',
+    'family',
+    '"Bess is the best shot in the valley and the worst daughter. I\'d die for her. I might have to."',
+    '"Pa thinks I\'m still twelve. Pa thinks a lot of things."',
+  ],
+  [
+    'hector',
+    'bert',
+    'family',
+    '"Bert\'s a good boy. Slow. Kind. Slow."',
+    '"Pa says tractors can\'t love you back. Pa doesn\'t know tractors."',
+  ],
+  [
+    'bess',
+    'bert',
+    'family',
+    '"Bert? I love him. I\'d never say it to his face. He wouldn\'t understand it anyway."',
+    "\"Bess goes out at night. I don't ask. A tractor doesn't ask the field where it's been.\"",
+  ],
+  [
+    'bess',
+    'junior',
+    'friend',
+    '"Junior leaves flowers on our fence. Dead ones. It\'s the thought."',
+    'Junior goes red to the ears and chops faster.',
+  ],
+  [
+    'hector',
+    'krug',
+    'enemy',
+    "\"Krug took my wife's brother. I had the shotgun. I didn't fire. I'm not proud of the shot I didn't take.\"",
+    '"Hector shot one of my men in \'88. I let it go. I let nothing go."',
+  ],
+  [
+    'hector',
+    'lou',
+    'ally',
+    '"I sell Lou hogs. She buys more meat than I sell her. I don\'t do maths."',
+    '"Hector\'s hogs are lovely. A bit lean."',
+  ],
+  [
+    'lou',
+    'junior',
+    'family',
+    '"Junior\'s my boy. Big heart. Bigger hands. Hasn\'t said a full sentence since the Bombs Day picnic."',
+    '"...Mama."',
+  ],
+  [
+    'lou',
+    'pete',
+    'enemy',
+    '"Pete got away. Nobody gets away. It\'s bad for the brand."',
+    '"Lou had me in a cage for five days. She sang to me. I still hear it."',
+  ],
+  [
+    'lou',
+    'krug',
+    'ally',
+    '"Krug sends me what won\'t sell. Waste not, sweetie."',
+    '"Lou takes the returns. Everybody wins. Almost everybody."',
+  ],
+  // ---- Chainfield and the silo ----
+  [
+    'krug',
+    'teo',
+    'enemy',
+    '"Teo is a model prisoner. Model prisoners make me nervous."',
+    '"Krug. I\'ve watched him sell four hundred people. I\'ve counted. Somebody has to."',
+  ],
+  [
+    'krug',
+    'king',
+    'ally',
+    '"The King pays in teeth. Lots of teeth. Sometimes his own."',
+    '"Krug delivers. Krug overcharges. One day Krug becomes a delivery."',
+  ],
+  [
+    'teo',
+    'king',
+    'enemy',
+    '"I dug for the King, before Krug. He\'s digging up the end of the world. Didn\'t care for the pension plan."',
+    '"Teo! Lazy digger. Kept asking what we were digging FOR."',
+  ],
+];
+// The valley's view of each person: what anyone says about someone they have no strong feelings about.
+const REP = {
+  elder: 'runs Scrapwell from a rocking chair. Nobody argues. Nobody dares.',
+  gus: "digs all day and drinks all night. Decent, if you don't need him sober.",
+  crumb: 'prays to a toaster. Harmless. Loud, but harmless.',
+  pell: 'loves that pig more than most people love people.',
+  pig: 'a pig with better manners than the Mayor.',
+  nigel: "lives down the Scrapwell well and glows. Don't stare.",
+  moe: 'runs the bar. Hears everything. Believe about half.',
+  mayor: 'owns the pump, so he owns Rustwater. Smiles like an invoice.',
+  sheriff: 'the law in Rustwater. All of it. With a rifle.',
+  doc: 'fixes people. Sometimes the right bits.',
+  opal: 'runs the Velvet Rad. Warm smile, shotgun under the counter.',
+  gloria: 'works for Opal. Laughs like a cement mixer, counts teeth faster than you can lose them.',
+  jeb: 'runs the caravan east. Always leaving, never quite gone.',
+  pete: "guards Jeb's caravan. Nice lad. Very easy to kidnap, apparently.",
+  hector: 'farms with a shotgun and two grown kids. Keep off his corn.',
+  bess: "Hector's girl. Prettier than the farm deserves, meaner than she looks.",
+  bert: "Hector's boy. Knows everything about tractors and nothing else.",
+  lou: "cooks at the diner. Best stew in the valley. Don't ask what's in it.",
+  junior: "Lou's boy. Big. Quiet. Holds a cleaver like a pen.",
+  krug: 'the slaver at Chainfield. Sells people by the pound.',
+  teo: "an old man in Krug's pens. Sold himself, they say.",
+  king: 'the Dentist King, out east. Pays in teeth. Pulls them too.',
+};
+// One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
+// pay: what the secret is worth to its owner if you lean on them.
+const SECRETS = {
+  elder: {
+    tell: ['krug', 'gus'],
+    pay: 30,
+    short: 'about your third husband',
+    t: 'Ma sold her third husband to Krug. For a goat and a new rocking chair. She says it was the best deal she ever made.',
+  },
+  gus: {
+    tell: ['moe', 'pell'],
+    pay: 20,
+    short: "about Ma's ring",
+    t: "Gus pawned Ma Thistle's wedding ring to Moe for a week of drink. She thinks she lost it down the well. He's been paying it off for two years.",
+  },
+  crumb: {
+    tell: ['teo', 'king', 'nigel'],
+    pay: 25,
+    short: 'that you were a Molar',
+    t: "Brother Crumb was a Molar. The King's tooth-puller. He found the Toaster the night he ran away, and he's been praying for forgiveness ever since.",
+  },
+  pell: {
+    tell: ['lou', 'gus'],
+    pay: 10,
+    short: 'about the other Bacon Primes',
+    t: 'That pig is Bacon Prime the Fifth. Pell ate the other four. He weeps every time. Then he gets another one.',
+  },
+  nigel: {
+    tell: ['elder', 'king'],
+    pay: 40,
+    short: 'that you taught the King',
+    t: 'Before he glowed, Nigel was a dentist. A real one. He taught the Dentist King everything. He hides in the well because of what his student became.',
+  },
+  moe: {
+    tell: ['krug', 'gloria'],
+    pay: 40,
+    short: 'about you and Krug',
+    t: 'Moe sells Krug a description of every stranger who drinks at his bar. Ten teeth a head. Including, probably, you.',
+  },
+  mayor: {
+    tell: ['krug', 'teo'],
+    pay: 80,
+    short: 'about the night shift at the pump',
+    t: "Fenwick buys Krug's slaves to work the pump at night. Chained in the dark, so the town never sees who pumps its water.",
+  },
+  sheriff: {
+    tell: ['krug', 'moe'],
+    pay: 30,
+    short: "about Krug's money",
+    t: "Years ago, Crane took Krug's money to look the other way. Once. She has been trying to shoot her way back from it ever since.",
+  },
+  doc: {
+    tell: ['gloria', 'opal'],
+    pay: 60,
+    short: "about the Mayor's tea",
+    t: 'The "little drops for his heart" Doc puts in Fenwick\'s tea are poison. Slow. Doc wants the pump. Fenwick has about ten days.',
+  },
+  opal: {
+    tell: ['teo', 'krug'],
+    pay: 50,
+    short: 'about your sister',
+    t: "Nobody took Opal's sister. Opal sold her to Krug to pay off the house's debts. Her hatred for Krug is the only thing that keeps her from hating herself.",
+  },
+  gloria: {
+    tell: ['jeb', 'moe'],
+    pay: 30,
+    short: "about Opal's takings",
+    t: "Gloria has been skimming Opal's takings for years, saving for the green out east. Opal is going to count properly soon.",
+  },
+  jeb: {
+    tell: ['pell', 'pete'],
+    pay: 50,
+    short: 'that you have never been east',
+    t: "Jeb has never been east. Every trip he goes past the mountains, waits a month in a cave, and comes back. Nobody knows if it's green.",
+  },
+  pete: {
+    tell: ['lou', 'junior'],
+    pay: 15,
+    short: 'about Sal',
+    t: 'In the cage, Pete told Lou that Sal was fatter. To save himself. Sal was the soup of the day.',
+  },
+  hector: {
+    tell: ['bert'],
+    pay: 40,
+    short: "about Bess's raiders",
+    t: "Hector knows exactly who robs Jeb's caravan on the farm road. He takes a cut, and he tells himself it's for the farm.",
+  },
+  bess: {
+    tell: ['bert', 'gus'],
+    pay: 40,
+    short: 'about the raiders',
+    t: "Bess leads the raiders who hit Jeb's caravan every month. Polite ones. She says thank you.",
+  },
+  bert: {
+    tell: ['bess', 'nigel'],
+    pay: 5,
+    short: 'that you cannot read',
+    t: "Bert can't read. He's been looking at the same tractor magazine every night for years because of the pictures.",
+  },
+  lou: {
+    tell: ['sheriff', 'moe'],
+    pay: 40,
+    short: 'that you wore a badge',
+    t: 'Lou was the Sheriff of Rustwater, before Crane. She handed in her badge the day she found out she liked meat more than law.',
+  },
+  junior: {
+    tell: ['crumb', 'bess'],
+    pay: 10,
+    short: 'about the cabbages',
+    t: "Junior grows cabbages behind the diner, in secret. He wants to cook vegetables. If Lou finds out, he doesn't know what she'll do.",
+  },
+  krug: {
+    tell: ['teo', 'king'],
+    pay: 100,
+    short: 'that you were in the pens',
+    t: "Krug was in the pens once, as a grown man. He bought his way out by selling the man chained next to him. He's been selling ever since.",
+  },
+  teo: {
+    tell: ['hector', 'pell'],
+    pay: 5,
+    short: 'about the farm',
+    t: "Teo had a farm once. Hector's farm. He sold it to Hector's father to pay a debt to Krug, and when that wasn't enough, he sold himself.",
+  },
+  king: {
+    tell: ['nigel', 'crumb'],
+    pay: 0,
+    short: '',
+    t: "The Dentist King is terrified of dentists. Nobody has ever been allowed near his mouth. Every tooth in his crown is someone else's.",
+  },
+};
+// Bonds feed the gossip web: news travels along them and hits harder.
+(() => {
+  const FRIENDLY = ['friend', 'lover', 'ex', 'debt', 'ally'];
+  for (const [a, b, kind] of BONDS) {
+    if (relOf(a, b)) continue; // already linked in world.js
+    const k = kind === 'family' ? 'family' : FRIENDLY.includes(kind) ? 'friend' : 'enemy';
+    REL[k].push([a, b]);
+  }
+  FAMW.elder = Object.assign(FAMW.elder || {}, { nigel: 'stepson' });
+  FAMW.nigel = Object.assign(FAMW.nigel || {}, { elder: 'stepmother' });
+})();
+const BOND = {};
+for (const [a, b, kind, ab, ba] of BONDS) {
+  BOND[a + '|' + b] = { kind, line: ab };
+  BOND[b + '|' + a] = { kind, line: ba };
+}
+const bondOf = (a, b) => BOND[a + '|' + b] || null;

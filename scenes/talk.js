@@ -33,7 +33,7 @@ SC.talk = id => {
     icon: d.i,
     sub: `${sizeUp(n.lvl)} · ${mood(n.op)}${lover(id) ? ' · yours' : ''}`,
     text: r.t,
-    opts: [...r.o, ...romanceOpts(id), atk, qk, back],
+    opts: [...r.o, ...webOpts(id), ...romanceOpts(id), atk, qk, back],
   });
 };
 const re = id => () => go('talk', id);

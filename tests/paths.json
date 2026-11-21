@@ -1059,5 +1059,147 @@
    "EXPECT:S.weapon === 'rifle'",
    "EXPECT:!S.armors.includes('power') && !SC.shop.toString().includes('plasma:')"
   ]
+ },
+ {
+  "name": "Web: everyone has something to say about everyone, and no em dashes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:IDS.every(a => IDS.every(b => a === b || (tieLine(a, b).length > 5 && !tieLine(a, b).includes('—'))))",
+   "EXPECT:Object.values(SECRETS).every(s => !s.t.includes('—')) && IDS.filter(x => !NPC[x].animal).every(x => SECRETS[x])"
+  ]
+ },
+ {
+  "name": "Web: bonds feed the gossip web",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:relOf('mayor', 'krug') === 'friend' && relOf('elder', 'nigel') === 'family' && relOf('jeb', 'krug') === 'enemy' && relOf('moe', 'sheriff') === 'friend' && BONDS.length >= 60"
+  ]
+ },
+ {
+  "name": "Web: ask Gus about Ma Thistle; once he likes you, he tells her secret",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Gus",
+   "Ask about someone",
+   "Scrapwell",
+   "Ma Thistle",
+   "EXPECT:!knew('elder.secret')",
+   "SAY:Not yet",
+   "EVAL:S.n.gus.op = 30",
+   "Ma Thistle",
+   "EXPECT:knew('elder.secret')",
+   "SAY:third husband"
+  ]
+ },
+ {
+  "name": "Web: lean on Ma with her secret for teeth, and she hates you for it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('elder.secret')",
+   "Ma Thistle",
+   "I know about your third husband",
+   "EVAL:S.teeth = 0",
+   "Keep it quiet",
+   "EXPECT:S.teeth === 30 && S.n.elder.op < 0 && S.f.sec_elder === 'squeezed' && S.c.squeezed === 1"
+  ]
+ },
+ {
+  "name": "Plot: Doc poisons the Mayor by day 10 if nobody stops him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "WAIT:10",
+   "EXPECT:!alive('mayor') && S.f.docPump && S.f.plot_poison === 'done'"
+  ]
+ },
+ {
+  "name": "Plot: warn Fenwick about the tea and he lives",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('doc.secret')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "Stop drinking the Doc's tea",
+   "EXPECT:S.f.plot_poison === 'stopped'",
+   "EVAL:S.day = 20; runPlots()",
+   "EXPECT:alive('mayor') && S.n.doc.op <= -40"
+  ]
+ },
+ {
+  "name": "Plot: Moe lets slip that Krug is after Jeb's road; warn Jeb and he keeps it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "Ask about someone",
+   "Rustwater",
+   "Caravan Jeb",
+   "EXPECT:knew('plot.route')",
+   "Back",
+   "Back",
+   "Caravan Jeb",
+   "Krug's men are coming",
+   "EXPECT:S.f.plot_route === 'stopped' && S.f.jebCheap",
+   "EVAL:S.day = 13; runPlots()",
+   "EXPECT:alive('jeb') && !S.f.routeHit"
+  ]
+ },
+ {
+  "name": "Plot: sell Jeb's road to Krug and Jeb dies on day 11",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.route'); S.n.krug.op = 0",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "I know which road Jeb takes",
+   "EXPECT:S.f.routeSold",
+   "EVAL:S.day = 12; runPlots()",
+   "EXPECT:!alive('jeb') && S.f.plot_route === 'done'"
+  ]
+ },
+ {
+  "name": "Plot: Lou takes Bacon Prime on day 9 unless Pell is warned",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "WAIT:9",
+   "EXPECT:!alive('pig') && S.f.porkDone"
+  ]
+ },
+ {
+  "name": "Plot: Junior leaves home to cook cabbages in Rustwater",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('junior.secret')",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "RAND:0",
+   "You could cook your cabbages",
+   "EXPECT:S.n.junior.loc === 'rustwater' && S.f.juniorFree && S.f.plot_cabbage === 'stopped'",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:Junior's Greens"
+  ]
+ },
+ {
+  "name": "Plot: the ending remembers the plots",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.plot_pork = 'done'; S.f.juniorFree = 1",
+   "EXPECT:webLines().some(l => l.includes('Pell never got another pig')) && webLines().some(l => l.includes(\"Junior's Greens\"))"
+  ]
  }
 ]
