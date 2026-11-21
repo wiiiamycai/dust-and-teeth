@@ -1,0 +1,19 @@
+"use strict";
+// ================= DATA =================
+const PRESETS={
+  lump:{name:'Knuckles',title:'the Lump',desc:'Strong, tough, very dumb. Hits first.',
+    stats:{brawn:9,eyes:4,guts:8,charm:3,brains:2,twitch:5,luck:5},skills:{melee:70,guns:25,sneak:15,steal:10,speech:10,science:5},hp:45,teeth:15,weapons:['fists','pipe'],weapon:'pipe',inv:{gutglue:2}},
+  mouth:{name:'Velvet',title:'the Mouth',desc:'Talks her way out of anything. Mostly.',
+    stats:{brawn:4,eyes:6,guts:4,charm:9,brains:7,twitch:5,luck:6},skills:{melee:25,guns:50,sneak:35,steal:45,speech:70,science:35},hp:30,teeth:60,weapons:['fists','zipgun'],weapon:'zipgun',inv:{gutglue:2}},
+  rat:{name:'Weasel',title:'the Rat',desc:'Quick, quiet, light-fingered.',
+    stats:{brawn:5,eyes:8,guts:5,charm:4,brains:6,twitch:9,luck:7},skills:{melee:45,guns:55,sneak:75,steal:75,speech:30,science:50},hp:32,teeth:30,weapons:['fists','knife','zipgun'],weapon:'knife',inv:{gutglue:3}}
+};
+const W={fists:{n:'Fists',t:'melee',d:[1,4],a:0},knife:{n:'Rusty Knife',t:'melee',d:[3,7],a:5},pipe:{n:'Lead Pipe',t:'melee',d:[4,9],a:0},
+  sledge:{n:'Sledgehammer',t:'melee',d:[7,15],a:-10},cleaver:{n:"Lou's Cleaver",t:'melee',d:[5,11],a:5},drill:{n:"King's Drill",t:'melee',d:[11,22],a:5},
+  zipgun:{n:'Zip Gun',t:'guns',d:[4,10],a:-5},rifle:{n:'Hunting Rifle',t:'guns',d:[8,16],a:10},shotgun:{n:'Shotgun',t:'guns',d:[10,20],a:0},molargun:{n:'Molar Repeater',t:'guns',d:[9,18],a:5}};
+const A={rags:{n:'Rags',dr:0},jacket:{n:'Leather Jacket',dr:2},spikes:{n:'Raider Spikes',dr:3},vest:{n:"Sheriff's Vest",dr:5},plate:{n:'Car-Door Plate',dr:7,tw:-2},riot:{n:'Pre-War Riot Suit',dr:10}};
+const ITEMS={gutglue:'Gut Glue',buzz:'Buzz',hat:'Hat',tophat:'Top hat',ledger:"Mayor's ledger",coil:'Heating coil',toaster:'Holy Toaster',meat:'Questionable meat',beer:'Warm beer',radbegone:'Rad-Be-Gone',pig:'Bacon Prime (in a sack)',badge:'Guard badge',key:'Launch key'};
+const PERKS={eater:{n:'Messy Eater',d:'Corpses heal double, no karma hit.'},tongue:{n:'Silver Tongue',d:'+15 Speech.'},hombre:{n:'Bad Hombre',d:'Weaker nobodies sometimes flee.'},
+  gut:{n:'Iron Gut',d:'Immune to addiction and the rash.'},eagle:{n:'Eagle Eye',d:'Aimed shots lose half the usual penalty.'},skin:{n:'Thick Skin',d:'+3 damage reduction.'},
+  fingers:{n:'Sticky Fingers',d:'+15 Steal and Sneak.'},hands:{n:'Bloody Hands',d:'+30% melee damage.'},lucky:{n:'Lucky Bastard',d:'+10% crit chance.'},
+  tax:{n:'Tax Exempt',d:'Everything costs 25% less.'},wind:{n:'Second Wind',d:'Once per fight, survive a killing blow.'},butcher:{n:"Butcher's Pal",d:'Lou and Krug pay double.'}};
