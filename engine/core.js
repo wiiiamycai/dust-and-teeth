@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v3.5 (23 Nov 2026)';
+const VERSION = 'v3.6 (23 Nov 2026)';
 let S = null,
   pend = [],
   cur = [];
@@ -50,7 +50,6 @@ function quote(t) {
   pend.push(['q', t]);
 }
 function show(v) {
-  cur = (v.opts || []).filter(Boolean);
   $('head').innerHTML = v.title
     ? `<span class="ic">${v.icon || ''}</span><div><h1>${esc(v.title)}</h1>${v.sub ? `<div class="sub">${esc(v.sub)}</div>` : ''}</div>`
     : '';
@@ -81,6 +80,21 @@ function show(v) {
     mp.hidden = true;
     mp.innerHTML = '';
   }
+  const vw = $('view');
+  if (v.view) {
+    vw.hidden = false;
+    vw.innerHTML = v.view;
+  } else {
+    vw.hidden = true;
+    vw.innerHTML = '';
+  }
+  drawOpts(v.opts);
+  hud();
+  save();
+  if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo(0, 0);
+}
+function drawOpts(list) {
+  cur = (list || []).filter(Boolean);
   const o = $('opts');
   o.innerHTML = '';
   cur.forEach((op, i) => {
@@ -90,9 +104,6 @@ function show(v) {
     b.onclick = () => choose(i);
     o.appendChild(b);
   });
-  hud();
-  save();
-  if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo(0, 0);
 }
 function choose(i) {
   const op = cur[i];

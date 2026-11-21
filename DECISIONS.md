@@ -174,3 +174,15 @@ Will said "just build" it before bed, so I made his three open calls myself. Ove
 
     Ignored, she's caught and sold.
 88. **Rook's code** opens Silo 9's back door, a way in without fighting the gate guards.
+
+## The 2D view (v3.6)
+
+Will picked option 2 (turn-based 2D, Fallout 2 style) and asked for all 8 places in one go.
+
+89. **Every place is a tile map you walk around**, 9 in all (the 8 towns plus the well). Click a tile to walk there (it finds the path), or use the arrow keys or WASD. Walk into a person to talk, into an object to use it, and onto an exit arrow to leave. A clickable list of who's here sits under the map.
+90. **Nothing about the game itself changed.** Talking, checks, plots, shops and fights are the same screens. Each place's options are claimed by the objects they belong to (the well, the pump, the tables, the pen gate, the cockpit) and show up when you stand next to them. Anything no object claims is always listed, so nothing can get lost.
+91. **The map view is the default in the browser.** "📜 List view" switches back to the old list, and "🗺️ Walk around" switches to the map again. Your choice is saved.
+92. **Walking takes no time.** Days still pass only by travelling and sleeping.
+93. **Combat is still the fight screen, not a tactical grid.** Grid combat means rebuilding range, movement and enemy behaviour, and rebalancing everything. I'd do it as its own step once you've walked the towns. It's your call.
+94. **Objects can come and go:** Junior's Greens appears only once it exists, and the cabbage patch only once you could know about it. The silo gate opens into the inside once you're in.
+95. **The art is emoji on an amber grid,** in the same style as the rest of the game. Real tiles or sprites can replace them later without touching the logic.

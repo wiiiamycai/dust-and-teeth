@@ -332,13 +332,15 @@ SC.hub = loc => {
         `Smoke. The Molars hit Rustwater.${S.f.raidDead.length ? ' ' + S.f.raidDead.map(x => NPC[x].n).join(' and ') + " didn't make it." : ''}${S.f.mayorTribute ? " Funny: the Mayor's office wasn't touched." : ''}`,
       );
   }
-  const cards =
+  const ids =
     loc === 'silo' && !S.f.siloIn
       ? []
       : IDS.filter(
           x => alive(x) && x !== S.spouse && (S.n[x].loc === loc || (loc === 'chainfield' && S.n[x].loc === 'pen')),
-        ).map(card);
-  show({
+        );
+  const cards = ids.map(card);
+  (is2D() ? v => townShow(loc, v) : show)({
+    ids,
     title: L.n,
     icon: L.i,
     sub: `${cap(placeWord(L.lvl))} · Day ${S.day}`,
@@ -356,6 +358,7 @@ SC.hub = loc => {
       corpseOpt(),
       loc === 'well' ? ['Climb back up', () => go('hub', 'scrapwell')] : ['Leave (map)', () => go('map')],
       charOpt(),
+      is2D() ? null : viewOpt(),
     ],
   });
 };

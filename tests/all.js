@@ -25,6 +25,12 @@ try {
 } catch (e) {
   ok('balance: melee is not strictly worse than guns', false, String(e.stdout).trim());
 }
+try {
+  run('walk.js', [quick ? '60' : '300']);
+  ok('walk: every map is reachable, and walking works', true);
+} catch (e) {
+  ok('walk: every map is reachable, and walking works', false, String(e.stdout || e.message).trim().slice(0, 600));
+}
 const r = run('reload.js', []);
 ok('reload', /errs: \{\}, bad: \{\}/.test(r), r.trim().slice(0, 600));
 if (fs.existsSync(T('paths.json')))
