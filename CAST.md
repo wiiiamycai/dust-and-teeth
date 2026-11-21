@@ -6,8 +6,6 @@ Generated from `data/cast.js` by `node tools/castdoc.js > CAST.md`. Mark it up a
 
 ### 👵 Ma Thistle
 
-**What the valley says:** runs Scrapwell from a rocking chair. Nobody argues. Nobody dares.
-
 **Secret:** Ma sold her third husband to Krug. For a goat and a new rocking chair. She says it was the best deal she ever made.
 
 Told by: Krug, Gus. Worth 30 teeth to keep quiet.
@@ -22,8 +20,6 @@ Told by: Krug, Gus. Worth 30 teeth to keep quiet.
 - enemy, Mayor Fenwick: "Fenwick was a Scrapwell boy. Stole the tips from the holy toaster. I ran him out with a broom."
 
 ### ⛏️ Gus
-
-**What the valley says:** digs all day and drinks all night. Decent, if you don't need him sober.
 
 **Secret:** Gus pawned Ma Thistle's wedding ring to Moe for a week of drink. She thinks she lost it down the well. He's been paying it off for two years.
 
@@ -40,8 +36,6 @@ Told by: Moe, Old Pell. Worth 20 teeth to keep quiet.
 
 ### 🍞 Brother Crumb
 
-**What the valley says:** prays to a toaster. Harmless. Loud, but harmless.
-
 **Secret:** Brother Crumb was a Molar. The King's tooth-puller. He found the Toaster the night he ran away, and he's been praying for forgiveness ever since.
 
 Told by: Old Teo, The Dentist King, Nigel the Glower. Worth 25 teeth to keep quiet.
@@ -57,8 +51,6 @@ Told by: Old Teo, The Dentist King, Nigel the Glower. Worth 25 teeth to keep qui
 
 ### 👴 Old Pell
 
-**What the valley says:** loves that pig more than most people love people.
-
 **Secret:** That pig is Bacon Prime the Fifth. Pell ate the other four. He weeps every time. Then he gets another one.
 
 Told by: Mama Lou, Gus. Worth 10 teeth to keep quiet.
@@ -73,15 +65,11 @@ Told by: Mama Lou, Gus. Worth 10 teeth to keep quiet.
 
 ### 🐖 Bacon Prime
 
-**What the valley says:** a pig with better manners than the Mayor.
-
 **Bonds:**
 
 - family, Old Pell: "Bacon Prime regards you, then Pell, with equal and total love."
 
 ### 🟢 Nigel the Glower
-
-**What the valley says:** lives down the Scrapwell well and glows. Don't stare.
 
 **Secret:** Before he glowed, Nigel was a dentist. A real one. He taught the Dentist King everything. He hides in the well because of what his student became.
 
@@ -98,8 +86,6 @@ Told by: Ma Thistle, The Dentist King. Worth 40 teeth to keep quiet.
 ## Rustwater
 
 ### 🍺 Moe
-
-**What the valley says:** runs the bar. Hears everything. Believe about half.
 
 **Secret:** Moe sells Krug a description of every stranger who drinks at his bar. Ten teeth a head. Including, probably, you.
 
@@ -118,8 +104,6 @@ Told by: Krug, Gloria. Worth 40 teeth to keep quiet.
 
 ### 🎩 Mayor Fenwick
 
-**What the valley says:** owns the pump, so he owns Rustwater. Smiles like an invoice.
-
 **Secret:** Fenwick buys Krug's slaves to work the pump at night. Chained in the dark, so the town never sees who pumps its water.
 
 Told by: Krug, Old Teo. Worth 80 teeth to keep quiet.
@@ -136,8 +120,6 @@ Told by: Krug, Old Teo. Worth 80 teeth to keep quiet.
 - enemy, Hector: "Hector owes me six months of water. He keeps paying in threats."
 
 ### ⭐ Sheriff Crane
-
-**What the valley says:** the law in Rustwater. All of it. With a rifle.
 
 **Secret:** Years ago, Crane took Krug's money to look the other way. Once. She has been trying to shoot her way back from it ever since.
 
@@ -156,8 +138,6 @@ Told by: Krug, Moe. Worth 30 teeth to keep quiet.
 
 ### 💉 Doc Ratchet
 
-**What the valley says:** fixes people. Sometimes the right bits.
-
 **Secret:** The "little drops for his heart" Doc puts in Fenwick's tea are poison. Slow. Doc wants the pump. Fenwick has about ten days.
 
 Told by: Gloria, Madame Opal. Worth 60 teeth to keep quiet.
@@ -175,8 +155,6 @@ Told by: Gloria, Madame Opal. Worth 60 teeth to keep quiet.
 
 ### 🌹 Madame Opal
 
-**What the valley says:** runs the Velvet Rad. Warm smile, shotgun under the counter.
-
 **Secret:** Nobody took Opal's sister. Opal sold her to Krug to pay off the house's debts. Her hatred for Krug is the only thing that keeps her from hating herself.
 
 Told by: Old Teo, Krug. Worth 50 teeth to keep quiet.
@@ -193,8 +171,6 @@ Told by: Old Teo, Krug. Worth 50 teeth to keep quiet.
 
 ### 💋 Gloria
 
-**What the valley says:** works for Opal. Laughs like a cement mixer, counts teeth faster than you can lose them.
-
 **Secret:** Gloria has been skimming Opal's takings for years, saving for the green out east. Opal is going to count properly soon.
 
 Told by: Caravan Jeb, Moe. Worth 30 teeth to keep quiet.
@@ -206,8 +182,6 @@ Told by: Caravan Jeb, Moe. Worth 30 teeth to keep quiet.
 - lover, Caravan Jeb: "Jeb's taking me east one day. He doesn't know yet."
 
 ### 🦎 Caravan Jeb
-
-**What the valley says:** runs the caravan east. Always leaving, never quite gone.
 
 **Secret:** Jeb has never been east. Every trip he goes past the mountains, waits a month in a cave, and comes back. Nobody knows if it's green.
 
@@ -225,8 +199,6 @@ Told by: Old Pell, Pete. Worth 50 teeth to keep quiet.
 
 ### 🛡️ Pete
 
-**What the valley says:** guards Jeb's caravan. Nice lad. Very easy to kidnap, apparently.
-
 **Secret:** In the cage, Pete told Lou that Sal was fatter. To save himself. Sal was the soup of the day.
 
 Told by: Mama Lou, Junior. Worth 15 teeth to keep quiet.
@@ -240,8 +212,6 @@ Told by: Mama Lou, Junior. Worth 15 teeth to keep quiet.
 ## Hector's Farm
 
 ### 🔫 Hector
-
-**What the valley says:** farms with a shotgun and two grown kids. Keep off his corn.
 
 **Secret:** Hector knows exactly who robs Jeb's caravan on the farm road. He takes a cut, and he tells himself it's for the farm.
 
@@ -259,8 +229,6 @@ Told by: Bert. Worth 40 teeth to keep quiet.
 
 ### 👩‍🌾 Bess
 
-**What the valley says:** Hector's girl. Prettier than the farm deserves, meaner than she looks.
-
 **Secret:** Bess leads the raiders who hit Jeb's caravan every month. Polite ones. She says thank you.
 
 Told by: Bert, Gus. Worth 40 teeth to keep quiet.
@@ -275,8 +243,6 @@ Told by: Bert, Gus. Worth 40 teeth to keep quiet.
 
 ### 🚜 Bert
 
-**What the valley says:** Hector's boy. Knows everything about tractors and nothing else.
-
 **Secret:** Bert can't read. He's been looking at the same tractor magazine every night for years because of the pictures.
 
 Told by: Bess, Nigel the Glower. Worth 5 teeth to keep quiet.
@@ -290,8 +256,6 @@ Told by: Bess, Nigel the Glower. Worth 5 teeth to keep quiet.
 ## Mama Lou's
 
 ### 🍲 Mama Lou
-
-**What the valley says:** cooks at the diner. Best stew in the valley. Don't ask what's in it.
 
 **Secret:** Lou was the Sheriff of Rustwater, before Crane. She handed in her badge the day she found out she liked meat more than law.
 
@@ -309,8 +273,6 @@ Told by: Sheriff Crane, Moe. Worth 40 teeth to keep quiet.
 
 ### 🔪 Junior
 
-**What the valley says:** Lou's boy. Big. Quiet. Holds a cleaver like a pen.
-
 **Secret:** Junior grows cabbages behind the diner, in secret. He wants to cook vegetables. If Lou finds out, he doesn't know what she'll do.
 
 Told by: Brother Crumb, Bess. Worth 10 teeth to keep quiet.
@@ -324,8 +286,6 @@ Told by: Brother Crumb, Bess. Worth 10 teeth to keep quiet.
 ## Chainfield
 
 ### ⛓️ Krug
-
-**What the valley says:** the slaver at Chainfield. Sells people by the pound.
 
 **Secret:** Krug was in the pens once, as a grown man. He bought his way out by selling the man chained next to him. He's been selling ever since.
 
@@ -346,8 +306,6 @@ Told by: Old Teo, The Dentist King. Worth 100 teeth to keep quiet.
 
 ### 🧓 Old Teo
 
-**What the valley says:** an old man in Krug's pens. Sold himself, they say.
-
 **Secret:** Teo had a farm once. Hector's farm. He sold it to Hector's father to pay a debt to Krug, and when that wasn't enough, he sold himself.
 
 Told by: Hector, Old Pell. Worth 5 teeth to keep quiet.
@@ -361,8 +319,6 @@ Told by: Hector, Old Pell. Worth 5 teeth to keep quiet.
 ## Silo 9
 
 ### 🦷 The Dentist King
-
-**What the valley says:** the Dentist King, out east. Pays in teeth. Pulls them too.
 
 **Secret:** The Dentist King is terrified of dentists. Nobody has ever been allowed near his mouth. Every tooth in his crown is someone else's.
 
@@ -380,9 +336,19 @@ Told by: Nigel the Glower, Brother Crumb. Worth 0 teeth to keep quiet.
 
 ## Plots (people against people)
 
-- **Day 9, Lou takes Bacon Prime.** Clue: ask Lou or Junior about Pell or the pig, or Hector about Lou. Warn Pell to stop it.
-- **Day 10, Doc poisons the Mayor.** Learn Doc's secret (Gloria, Opal). Warn Fenwick (60 teeth), or help Doc speed it up (80 teeth, he dies tomorrow).
-- **Day 11, Krug hits Jeb's caravan.** Clue: ask Moe or Teo about Jeb or Krug, or Pete about Krug. Warn Jeb (half price forever), or sell Krug the road (80 teeth, Jeb dies). Ignored: Jeb lives, prices up, Pete dies guarding.
-- **Day 16, Opal counts the takings.** Learn Gloria's secret (Jeb, Moe). Warn Gloria (she runs east with Jeb), or tell Opal (Gloria is thrown out, and knows who told).
-- **Day 18, Lou finds Junior's cabbages.** Learn Junior's secret (Crumb, Bess). Talk him into leaving (speech): he opens Junior's Greens in Rustwater.
-- Already in the game: the Mayor's hit on the Sheriff, Opal's bounty on Krug, and every way to get Krug killed by someone else.
+Each leaves a sign in one place in the days before. You only hear how it ended if you knew or were there; otherwise you find the aftermath.
+
+- **Day 9, Lou takes Bacon Prime.** Sign: the specials board at the diner. Clue: Lou, Junior, Hector. Change it: warn Pell; steal the pig for Lou yourself; sit up at the sty and scare off, fight, or let Junior go.
+- **Day 10, Doc poisons the Mayor.** Sign: through Doc's window in Rustwater. Clue: Gloria, Opal, or Doc's secret. Change it: warn Fenwick (60 teeth); help Doc (80 teeth, Fenwick dies tomorrow); swap the vial (Steal); tell Crane (Doc hangs, no healer).
+- **Day 11, Krug hits Jeb's caravan.** Sign: Krug's men at Moe's bar. Clue: Moe, Teo, Pete. Change it: warn Jeb (half price forever); ride guard and fight; tell Crane; sell Krug the road (80 teeth, Jeb dies). Ignored: Jeb lives, prices up, Pete dies.
+- **Day 16, Opal counts the takings.** Sign: Opal and her ledger, late. Clue: Jeb, Moe, or Gloria's secret. Change it: warn Gloria (she runs east with Jeb); pay back the 150 yourself; tell Opal (Gloria is thrown out).
+- **Day 18, Lou finds Junior's cabbages.** Sign: the cabbages behind the diner. Clue: Crumb, Bess. Change it: talk Junior into leaving (Junior's Greens in Rustwater); hide the patch (Sneak); tell Lou yourself (Speech: cabbage Tuesdays, or she salts it).
+
+## Ripples (a death changes the lives tied to it)
+
+- Krug: water goes up (no night shift at the pump), Moe's debt is gone, Lou's stew thins, Opal sleeps.
+- Mayor: Crane breaks the pump lock and water is free (unless Doc took the pump).
+- Jeb: Pete leaves the valley, Gloria is stuck, no shop and no ride east.
+- Lou: Junior moves to Rustwater and opens Junior's Greens.
+- Sheriff: Fenwick puts water up. Opal: Gloria runs the Velvet Rad. Hector: Bess takes the farm road, Jeb's prices rise.
+- Everyone else: the people tied to them say so, in their own words, the next time you talk.

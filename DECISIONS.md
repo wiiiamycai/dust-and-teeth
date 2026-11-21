@@ -127,3 +127,14 @@ Will: "every single character in the game should be linked", "the characters sho
     Each can be learned, warned against, helped or sold, and each gets an ending slide. Ignored, it happens without you.
 72. **Junior can leave home.** Talk him into it and he opens Junior's Greens in Rustwater (cabbage soup, +15 HP). Lou does not take it well.
 73. **The King's secret** (he's terrified of dentists) can be learned, but there's nothing to do with it yet. That's a hook for later.
+
+## The web, reworked (v3.4)
+
+Will: "not in a literal sense... certain people knowing about certain people, that affects their lives if you done something." And: "no point letting the audience know about it unless the player can affect things, and everything can be affected."
+
+74. **"Ask about someone" is gone**, along with the generic "what the valley says" lines. This replaces #67. People only talk about the people they're tied to: with no news, "Any news?" gives one of their bond lines.
+75. **Secrets come out by themselves.** This replaces #69. When someone who knows a secret trusts you (opinion 25 or more, or three days of chats), they tell you unprompted when you next talk. One secret a day.
+76. **Plots leave signs.** Four days before each one, there's something to see in one place (the specials board, Doc's window, Krug's men at Moe's, Opal's ledger, the cabbages), and seeing it means you know. The people tied to it mention it too, in the last five days.
+77. **No news you couldn't have acted on.** If you didn't know about a plot and weren't there, it happens silently and you find the aftermath on arrival: the empty sty, the black bunting, the burnt wagons, Gloria on the steps, the salt.
+78. **Three or more ways to change every plot**, listed in `CAST.md`. Waiting at the sty or riding guard skips the days in between.
+79. **Ripples:** when someone dies, the people tied to them change. Some changes are in the game's rules: water goes up when Krug or Crane dies, the pump goes free when Fenwick dies (unless Doc took it), Pete leaves when Jeb dies, Junior opens Junior's Greens when Lou dies, Gloria takes the Velvet Rad when Opal dies, and the farm road gets worse when Hector dies. The rest come out in what the bonded people say when you next talk to them.

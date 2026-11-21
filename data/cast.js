@@ -1,12 +1,10 @@
 'use strict';
 // ================= DATA: THE CAST BIBLE =================
-// Everyone in the valley knows everyone. This file says how, and why.
+// Certain people are tied to certain people. This file says who, and why. What you do to one lands on the others.
 //   BONDS:   the strong links. [a, b, kind, what a says about b, what b says about a]
 //            kind: family | friend | lover | ex | debt | ally (counted as friends for gossip)
 //                  enemy | rival                                (counted as enemies for gossip)
-//   REP:     what the valley says about each person. Every pair without a bond falls back on this.
 //   SECRETS: one per person. Who knows it, and will tell you once they like you.
-// Ask anyone about anyone: talk to them, "Ask about someone".
 // CAST.md is the readable version for Will. Regenerate it: node tools/castdoc.js > CAST.md
 const BONDS = [
   // ---- Scrapwell ----
@@ -449,31 +447,6 @@ const BONDS = [
     '"Teo! Lazy digger. Kept asking what we were digging FOR."',
   ],
 ];
-// The valley's view of each person: what anyone says about someone they have no strong feelings about.
-const REP = {
-  elder: 'runs Scrapwell from a rocking chair. Nobody argues. Nobody dares.',
-  gus: "digs all day and drinks all night. Decent, if you don't need him sober.",
-  crumb: 'prays to a toaster. Harmless. Loud, but harmless.',
-  pell: 'loves that pig more than most people love people.',
-  pig: 'a pig with better manners than the Mayor.',
-  nigel: "lives down the Scrapwell well and glows. Don't stare.",
-  moe: 'runs the bar. Hears everything. Believe about half.',
-  mayor: 'owns the pump, so he owns Rustwater. Smiles like an invoice.',
-  sheriff: 'the law in Rustwater. All of it. With a rifle.',
-  doc: 'fixes people. Sometimes the right bits.',
-  opal: 'runs the Velvet Rad. Warm smile, shotgun under the counter.',
-  gloria: 'works for Opal. Laughs like a cement mixer, counts teeth faster than you can lose them.',
-  jeb: 'runs the caravan east. Always leaving, never quite gone.',
-  pete: "guards Jeb's caravan. Nice lad. Very easy to kidnap, apparently.",
-  hector: 'farms with a shotgun and two grown kids. Keep off his corn.',
-  bess: "Hector's girl. Prettier than the farm deserves, meaner than she looks.",
-  bert: "Hector's boy. Knows everything about tractors and nothing else.",
-  lou: "cooks at the diner. Best stew in the valley. Don't ask what's in it.",
-  junior: "Lou's boy. Big. Quiet. Holds a cleaver like a pen.",
-  krug: 'the slaver at Chainfield. Sells people by the pound.',
-  teo: "an old man in Krug's pens. Sold himself, they say.",
-  king: 'the Dentist King, out east. Pays in teeth. Pulls them too.',
-};
 // One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
 // pay: what the secret is worth to its owner if you lean on them.
 const SECRETS = {

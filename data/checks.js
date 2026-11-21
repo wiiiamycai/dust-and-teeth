@@ -34,6 +34,16 @@ const CK = {
     lock: 'change',
     mods: () => (S.n.junior.op >= 20 ? 15 : 0) + (S.f.louReformed ? -20 : 0),
   },
+  'doc.vial': { sk: 'steal', base: -10, who: 'doc', lock: 'once' },
+  'diner.hide': { sk: 'sneak', base: 0, who: 'lou', lock: 'once' },
+  'lou.cabbage': {
+    sk: 'speech',
+    base: -25,
+    who: 'lou',
+    lock: 'once',
+    mods: () => (S.f.louReformed ? 30 : 0) + (S.f.louFriend ? 15 : 0),
+  },
+  'sty.scare': { sk: 'speech', base: 0, who: 'junior', lock: 'once', mods: () => (S.n.junior.op >= 20 ? 15 : 0) },
   // ---- the Mayor's toys ----
   'mayor.plasma': {
     sk: 'steal',

@@ -79,9 +79,9 @@ const HUBO = {
           },
         ]
       : [
-          `Cup of water (10 teeth, +15 HP)`,
+          `Cup of water (${waterCost()} teeth, +15 HP)`,
           () => {
-            if (pay(10)) say(`+${heal(15)} HP. Tastes faintly of the Mayor.`);
+            if (pay(waterCost())) say(`+${heal(15)} HP. Tastes faintly of the Mayor.`);
             goHere();
           },
         ],
