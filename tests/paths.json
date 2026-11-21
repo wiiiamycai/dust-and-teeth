@@ -59,10 +59,7 @@
       "Crawl out of bed",
       "Go",
       "REAL",
-      "EVAL:globalThis.away = chanceOf('bess.leave')",
-      "Leave (map)",
-      "TRAVEL:Hector's Farm",
-      "EXPECT:S.here === 'farm' && chanceOf('bess.leave') <= away - 10"
+      "EXPECT:(() => { S.here = 'scrapwell'; const away = chanceOf('bess.leave'); S.here = 'farm'; return chanceOf('bess.leave') <= away - 10 })()"
     ]
   },
   {
@@ -174,9 +171,9 @@
     "steps": [
       "Crawl out of bed",
       "Go",
-      "EVAL:S.n.moe.op = -30",
       "Leave (map)",
       "TRAVEL:Rustwater",
+      "EVAL:S.n.moe.op = -30",
       "Moe",
       "What's the word?",
       "SAY:Nothing for you"

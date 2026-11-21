@@ -4,6 +4,8 @@ function mk(){const e={_h:'',children:[],hidden:false,style:{},appendChild(c){th
 const els={},store={};const M=Object.create(Math);let seq=null;M.random=()=>seq!==null?seq:Math.random();
 const ctx={console,Math:M,JSON,String,Object,Array,document:{getElementById:id=>els[id]||(els[id]=mk()),createElement:()=>({style:{},innerHTML:'',onclick:null}),addEventListener(){}},localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}},window:{}};
 vm.createContext(ctx);vm.runInContext(code,ctx);
+// Random road encounters are off by default so travel is predictable. ENCOUNTERS turns them back on.
+const _pickEnc=vm.runInContext('pickEnc',ctx);vm.runInContext('pickEnc = () => null',ctx);
 const strip=h=>h.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const clickables=()=>[...els.opts.children,...els.cards.children.filter(c=>c.onclick),...(els.map&&!els.map.hidden?els.map.children:[])];
 const screen=()=>strip(els.head.innerHTML)+' | '+strip(els.log.innerHTML)+' | '+strip(els.text.innerHTML);
@@ -20,6 +22,7 @@ for(const s of steps){god();if(process.env.V)console.log('>>',s,'::',screen().sl
  if(s==='FIGHT'){fightOut();continue}
  if(s.startsWith('TRAVEL:')){travel(s.slice(7));continue}
  if(s.startsWith('EVAL:')){console.log('EVAL',vm.runInContext(s.slice(5),ctx));continue}
+ if(s==='ENCOUNTERS'){ctx._pe=_pickEnc;vm.runInContext('pickEnc = _pe',ctx);continue}
  if(s==='REAL'){realSkills=true;vm.runInContext('S.skills={...PLAYER.skills}',ctx);continue}
  // RAND:0.99 fixes every dice roll (0.99 fails almost any check, 0 passes it). RAND:off goes back to random.
  if(s.startsWith('RAND:')){seq=s.slice(5)==='off'?null:+s.slice(5);continue}
