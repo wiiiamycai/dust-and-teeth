@@ -1,5 +1,5 @@
 // Scripted playthrough. Usage: node tests/path.js index.html '["Go","Leave (map)","TRAVEL:Rustwater","EVAL:S.day"]'
-const fs=require('fs'),vm=require('vm');const _src=fs.readFileSync(process.argv[2],'utf8');const code=_src.includes('<script>')?_src.split('<script>')[1].split('</script>')[0]:_src;
+const fs=require('fs'),vm=require('vm');const code=require('./load')(process.argv[2]);
 function mk(){const e={_h:'',children:[],hidden:false,style:{},appendChild(c){this.children.push(c)}};Object.defineProperty(e,'innerHTML',{get(){return this._h},set(v){this._h=v;this.children=[]}});return e}
 const els={},store={};const M=Object.create(Math);let seq=null;M.random=()=>seq!==null?seq:Math.random();
 const ctx={console,Math:M,JSON,String,Object,Array,document:{getElementById:id=>els[id]||(els[id]=mk()),createElement:()=>({style:{},innerHTML:'',onclick:null}),addEventListener(){}},localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}},window:{}};

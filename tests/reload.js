@@ -1,5 +1,5 @@
 // Random playthroughs with mid-game reloads to test saving. Usage: node tests/reload.js index.html
-const fs=require('fs'),vm=require('vm');const _src=fs.readFileSync(process.argv[2],'utf8');const code=_src.includes('<script>')?_src.split('<script>')[1].split('</script>')[0]:_src;
+const fs=require('fs'),vm=require('vm');const code=require('./load')(process.argv[2]);
 function mk(){const e={_h:'',children:[],hidden:false,style:{},appendChild(c){this.children.push(c)}};Object.defineProperty(e,'innerHTML',{get(){return this._h},set(v){this._h=v;this.children=[]}});return e}
 let errs={},bad={},rl=0;
 for(let g=0;g<800;g++){const store={};let els,ctx;const boot=()=>{els={};ctx={console,Math,JSON,String,Object,Array,document:{getElementById:id=>els[id]||(els[id]=mk()),createElement:()=>({style:{}}),addEventListener(){}},localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}},window:{}};vm.createContext(ctx);vm.runInContext(code,ctx)};

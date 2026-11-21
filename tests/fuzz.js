@@ -1,6 +1,6 @@
 // Headless random playthroughs. Usage: node tests/fuzz.js index.html [games] [rand|survive]
 const fs=require('fs'),vm=require('vm');
-const _src=fs.readFileSync(process.argv[2],'utf8');const code=_src.includes('<script>')?_src.split('<script>')[1].split('</script>')[0]:_src;const N=+process.argv[3]||1000;const MODE=process.argv[4]||'rand';
+const code=require('./load')(process.argv[2]);const N=+process.argv[3]||1000;const MODE=process.argv[4]||'rand';
 function mk(){const e={_h:'',children:[],hidden:false,style:{},appendChild(c){this.children.push(c)}};Object.defineProperty(e,'innerHTML',{get(){return this._h},set(v){this._h=v;this.children=[]}});return e}
 const st={games:0,ends:{},errors:{},dead:{},bad:{},capped:0,maxLvl:{},scenes:{},maxDay:0,titles:{}};
 for(let g=0;g<N;g++){const store={};const els={};
