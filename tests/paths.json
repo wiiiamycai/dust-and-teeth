@@ -438,5 +438,95 @@
       "FIGHT",
       "EXPECT:S.c.fights === 2"
     ]
+  },
+  {
+    "name": "Combat: guns cost a bullet a shot, and with none you can't shoot",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.weapons.push('zipgun'); S.weapon = 'zipgun'; S.inv.ammo = 2",
+      "EVAL:fight([mkE('Rat', 'R', 9)], {})",
+      "Shoot Rat",
+      "EXPECT:S.inv.ammo === 1",
+      "Shoot Rat",
+      "EXPECT:!S.inv.ammo",
+      "EXPECT:!cur.some(o => o[0].startsWith('Shoot'))",
+      "SAY:Switch to Rusty Knife"
+    ]
+  },
+  {
+    "name": "Combat: no percentages on fight options",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([mkE('Rat', 'R', 3)], { close: true })",
+      "EXPECT:!cur.some(o => /d+%/.test(o[0]))",
+      "SAY:Hit Rat"
+    ]
+  },
+  {
+    "name": "Combat: on the road melee has to close in first, and you take a free round",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([mkE('Rat', 'R', 3)], {})",
+      "SAY:at range",
+      "EXPECT:!cur.some(o => o[0].startsWith('Hit '))",
+      "RAND:0",
+      "Close in",
+      "EXPECT:S.fight.close && S.fight.round === 2",
+      "SAY:Rat hits you",
+      "SAY:Hit Rat"
+    ]
+  },
+  {
+    "name": "Combat: a melee hit can knock a man down",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([mkE('Ox', 'O', 9)], { close: true })",
+      "RAND:0.3",
+      "EVAL:S.weapon = 'knife'; S.stats.brawn = 10; atk(0, null)",
+      "SAY:Ox goes down",
+      "SAY:Ox is on the ground"
+    ]
+  },
+  {
+    "name": "Combat: a knife kill with nobody around stays secret",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Climb down the well",
+      "EVAL:fight([foe('nigel')], { started: true })",
+      "FIGHT",
+      "EXPECT:S.ev.some(e => e.v === 'nigel' && e.type === 'murder' && e.secret)"
+    ]
+  },
+  {
+    "name": "Combat: a gunshot kill is heard next door",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Climb down the well",
+      "EVAL:S.weapons.push('rifle'); S.weapon = 'rifle'; S.inv.ammo = 50",
+      "EVAL:fight([foe('nigel')], { started: true })",
+      "FIGHT",
+      "EXPECT:S.ev.some(e => e.v === 'nigel' && e.loud && !e.secret && e.wit.includes('gus'))"
+    ]
+  },
+  {
+    "name": "Combat: Moe sells bullets and a zip gun",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.teeth = 200",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Moe",
+      "Bullets",
+      "EXPECT:S.inv.ammo === 6",
+      "Zip gun",
+      "EXPECT:S.weapons.includes('zipgun') && S.inv.ammo === 9"
+    ]
   }
 ]

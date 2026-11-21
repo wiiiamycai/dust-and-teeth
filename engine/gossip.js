@@ -11,11 +11,18 @@ function event(type, v, o) {
     secret: !!o.secret,
     wit: [],
     tgt: o.tgt || null,
+    loud: !!o.loud,
   };
   S.ev.push(ev);
   if (o.wit) ev.wit = o.wit.filter(x => alive(x));
-  else if (!ev.secret)
-    ev.wit = IDS.filter(x => x !== v && alive(x) && !NPC[x].animal && (S.n[x].loc === ev.loc || x === S.spouse));
+  else if (!ev.secret) {
+    // Gunfire carries: people one road away hear it too.
+    const near = ev.loud ? neighbours(ev.loc) : [];
+    ev.wit = IDS.filter(
+      x =>
+        x !== v && alive(x) && !NPC[x].animal && (S.n[x].loc === ev.loc || x === S.spouse || near.includes(S.n[x].loc)),
+    );
+  }
   ev.wit.forEach(x => learn(x, ev));
   if (v && alive(v) && !NPC[v].animal) learn(v, ev);
   if (o.all)
@@ -97,6 +104,7 @@ function spread() {
       if (['hector', 'bess', 'bert', 'lou', 'junior'].includes(id) && alive('jeb') && S.n.jeb.k.includes(ev.id))
         p = Math.max(p, 50);
       if (ev.v && relOf(id, ev.v) === 'family') p = Math.max(p, 35);
+      if (ev.loud) p = Math.min(95, Math.max(p + 20, 25)); // people talk about gunfire
       if (p && roll(p)) learn(id, ev);
     }
   }

@@ -12,12 +12,14 @@ const PLAYER = {
   inv: { gutglue: 2 },
 };
 const W = {
-  fists: { n: 'Fists', t: 'melee', d: [1, 4], a: 0 },
-  knife: { n: 'Rusty Knife', t: 'melee', d: [3, 7], a: 5 },
-  pipe: { n: 'Lead Pipe', t: 'melee', d: [4, 9], a: 0 },
-  sledge: { n: 'Sledgehammer', t: 'melee', d: [7, 15], a: -10 },
-  cleaver: { n: "Lou's Cleaver", t: 'melee', d: [5, 11], a: 5 },
-  drill: { n: "King's Drill", t: 'melee', d: [11, 22], a: 5 },
+  // melee: no ammo, quiet, +10 to hit up close, can knock down (kd adds to the chance)
+  fists: { n: 'Fists', t: 'melee', d: [2, 5], a: 0, kd: 0 },
+  knife: { n: 'Rusty Knife', t: 'melee', d: [4, 9], a: 5, kd: 0 },
+  pipe: { n: 'Lead Pipe', t: 'melee', d: [6, 11], a: 0, kd: 10 },
+  sledge: { n: 'Sledgehammer', t: 'melee', d: [9, 18], a: -10, kd: 25 },
+  cleaver: { n: "Lou's Cleaver", t: 'melee', d: [6, 13], a: 5, kd: 5 },
+  drill: { n: "King's Drill", t: 'melee', d: [12, 24], a: 5, kd: 15 },
+  // guns: one bullet a shot, loud, best at range (-10 up close)
   zipgun: { n: 'Zip Gun', t: 'guns', d: [4, 10], a: -5 },
   rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10 },
   shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0 },
@@ -45,6 +47,7 @@ const ITEMS = {
   pig: 'Bacon Prime (in a sack)',
   badge: 'Guard badge',
   key: 'Launch key',
+  ammo: 'Bullets',
 };
 const PERKS = {
   eater: { n: 'Messy Eater', d: 'Corpses heal double, no karma hit.' },

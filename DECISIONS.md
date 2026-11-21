@@ -34,3 +34,13 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 22. **How each perk is earned:** Read People 15 conversations, Silver Tongue 8 speech wins, Sticky Fingers 8 steals, Bloody Hands 10 melee kills, Eagle Eye 10 aimed hits, Keen Eye 8 fights and 6 aimed hits, Bad Hombre 15 kills, Thick Skin 150 damage taken, Lucky Bastard 8 crits, Second Wind 3 fights ended near death, Messy Eater 5 corpses eaten, Iron Gut beating Buzz addiction at Doc's, Tax Exempt getting the taxman to quit, Butcher's Pal selling flesh to Lou or Krug twice.
 23. **Without Keen Eye** people and enemies show as harmless / can handle themselves / dangerous / very dangerous / deadly, and in a fight as unhurt / scratched / wounded / badly hurt / barely standing, with no health bar. With it you see level, armour, gear and the health bar.
 24. Combat hit chances like "Hit Raider (62%)" are still on screen. They go in step 6.
+
+## Step 6: melee vs guns
+
+25. **Range.** Road fights start at range. Fights you pick with someone in the room, and kitchen/pen/throne fights, start up close. Melee at range must "close in" first: a round with no attack where enemies get +20 to hit you.
+26. **Guns** use one bullet per shot, -10 to hit up close. Bullets: Moe sells 6 for about 12 teeth, enemies drop 1 to 3 sometimes, the Sky-Bus rifle comes with 5, Hector's shotgun with 4. Moe also sells a zip gun (40, with 3 bullets). You start with no gun.
+27. **Noise.** The first shot of a fight is announced ("That will be heard for miles"). A killing with gunfire is witnessed by people one road away too, and that news spreads faster. A melee killing with nobody else present stays secret.
+28. **Melee** gets +10 to hit, harder weapons (knife 4-9, pipe 6-11, sledge 9-18, cleaver 6-13, drill 12-24, fists 2-5), and a knockdown chance on a normal hit (better with Brawn and heavy weapons) that costs the enemy their next turn.
+29. **Swap weapons mid-fight for free**, to the best weapon of the other kind. Shoot them on the way in, then switch to the pipe.
+30. **No numbers on fight options.** "Hit for the eyes (hard, but it can end it)" instead of "(38%, big crit)".
+31. **Balance check** (`tests/balance.js`): against a mid raider, the knife and pipe now beat the zip gun clearly, and the sledge and cleaver roughly match the rifle and shotgun. Guns still win on range, groups and safety, and pay for it in bullets and noise.

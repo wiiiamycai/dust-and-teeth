@@ -674,6 +674,28 @@ const TALK = {
   moe: () => {
     const o = [];
     o.push([
+      `Bullets, a handful of 6 (${cost(12, 'moe')})`,
+      () => {
+        if (pay(cost(12, 'moe'))) {
+          give('ammo', 6);
+          say('Six bullets, some of them nearly round.');
+        }
+        go('talk', 'moe');
+      },
+    ]);
+    if (!S.weapons.includes('zipgun'))
+      o.push([
+        `Zip gun (${cost(40, 'moe')})`,
+        () => {
+          if (pay(cost(40, 'moe'))) {
+            S.weapons.push('zipgun');
+            give('ammo', 3);
+            say('A pipe, a spring, and a prayer. Comes with 3 bullets.');
+          }
+          go('talk', 'moe');
+        },
+      ]);
+    o.push([
       `Warm beer (${cost(3, 'moe')})`,
       () => {
         if (pay(cost(3, 'moe'))) {
@@ -1347,7 +1369,8 @@ const TALK = {
         () => {
           if (pay(cost(200, 'hector'))) {
             S.weapons.push('shotgun');
-            quote('Hector: "Treat her right." He goes inside to cry.');
+            give('ammo', 4);
+            quote('Hector: "Treat her right. Four shells. Make them count." He goes inside to cry.');
           }
           go('talk', 'hector');
         },

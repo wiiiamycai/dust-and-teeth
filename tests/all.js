@@ -18,6 +18,13 @@ for (const mode of ['rand', 'survive']) {
   const probs = { errors: j.errors, dead: j.dead, bad: j.bad };
   ok(`fuzz ${mode} x${N}`, !Object.values(probs).some(o => Object.keys(o).length), JSON.stringify(probs).slice(0, 600));
 }
+try {
+  const b = run('balance.js', [quick ? '500' : '2000']);
+  ok('balance: melee is not strictly worse than guns', true);
+  if (!quick) console.log(b.replace(/^/gm, '      ').trimEnd());
+} catch (e) {
+  ok('balance: melee is not strictly worse than guns', false, String(e.stdout).trim());
+}
 const r = run('reload.js', []);
 ok('reload', /errs: \{\}, bad: \{\}/.test(r), r.trim().slice(0, 600));
 if (fs.existsSync(T('paths.json')))

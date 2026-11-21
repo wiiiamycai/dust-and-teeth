@@ -51,6 +51,12 @@ const REL = {
     ['lou', 'pete'],
   ],
 };
+const neighbours = loc => {
+  const out = ROADS.filter(r => r.includes(loc)).map(r => (r[0] === loc ? r[1] : r[0]));
+  if (loc === 'scrapwell') out.push('well');
+  if (loc === 'well') out.push('scrapwell');
+  return out;
+};
 function relOf(a, b) {
   if (!a || !b) return null;
   if (a === b) return 'self';

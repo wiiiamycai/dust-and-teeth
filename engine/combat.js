@@ -55,8 +55,15 @@ function crew(id) {
 const pdr = () => A[S.armor].dr + (perk('skin') ? 3 : 0);
 const ptw = () => S.stats.twitch + (A[S.armor].tw || 0);
 const fleeP = () => clamp(ptw() * 7 + S.stats.luck * 2, 5, 90);
+// ---- melee vs guns ----
+// Guns: strong at range, cost bullets, and LOUD. Gunfire is heard next door and gossip about it moves faster.
+// Melee: no ammo, quiet (kill with nobody around and nobody knows), easy to land up close, can knock a man
+// down. But a fight on the road starts at range, and closing in costs you a round of free hits.
+const isGun = w => W[w].t === 'guns';
+const ammo = () => S.inv.ammo || 0;
 function hit(t, mod) {
-  const w = W[S.weapon];
+  const w = W[S.weapon],
+    F = S.fight;
   return clamp(
     S.skills[w.t] +
       w.a +
@@ -64,10 +71,16 @@ function hit(t, mod) {
       (S.addicted && !S.buzzOn ? 10 : 0) -
       t.lvl * 2 +
       mod +
-      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 : 0),
+      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 - (F && F.close ? 10 : 0) : 10),
     5,
     95,
   );
+}
+// The best weapon of the other kind, for a quick switch mid-fight.
+function otherWeapon() {
+  const gun = isGun(S.weapon),
+    pool = S.weapons.filter(w => w !== S.weapon && isGun(w) !== gun && (!isGun(w) || ammo() > 0));
+  return pool.sort((a, b) => W[b].d[1] - W[a].d[1])[0] || null;
 }
 function fight(en, o) {
   o = o || {};
@@ -97,6 +110,10 @@ function fight(en, o) {
     stun: [],
     wind: false,
     log: [],
+    // You start up close if you picked the fight with someone in front of you, or were jumped indoors.
+    close: !!(o.close || o.started),
+    charge: false,
+    loud: false,
   };
   go('fight');
 }
@@ -105,6 +122,8 @@ SC.fight = () => {
   if (!F) return goHere();
   if (!F.en[F.t] || F.en[F.t].hp <= 0) F.t = F.en.findIndex(e => e.hp > 0);
   const t = F.en[F.t],
+    w = W[S.weapon],
+    gun = w.t === 'guns',
     ea = perk('eagle') ? -15 : -30,
     ga = perk('eagle') ? -10 : -20;
   const kn = keen();
@@ -129,16 +148,42 @@ SC.fight = () => {
   F.al.forEach(a => {
     if (alive(a)) cards.push({ icon: NPC[a].i, name: NPC[a].n, sub: 'on your side' });
   });
+  const o = [];
+  if (gun && ammo() <= 0) o.push(null);
+  else if (!gun && !F.close) o.push([`Close in with your ${w.n}`, () => closeIn(), 'danger']);
+  else {
+    const v = gun ? 'Shoot' : 'Hit';
+    o.push(
+      [`${v} ${t.n}`, () => atk(0, null)],
+      [`${v} for the eyes (hard, but it can end it)`, () => atk(ea, 'eyes')],
+      [`${v} for the groin (tricky, a good one stuns)`, () => atk(ga, 'groin')],
+    );
+  }
+  const ow = otherWeapon();
+  if (ow)
+    o.push([
+      `Switch to ${W[ow].n}${isGun(ow) ? ` (${ammo()} bullets)` : ''}`,
+      () => {
+        S.weapon = ow;
+        go('fight');
+      },
+    ]);
+  if (gun && ammo() <= 0 && !ow)
+    o.push([
+      'Click. No bullets. Use your fists',
+      () => {
+        S.weapon = 'fists';
+        go('fight');
+      },
+    ]);
   show({
     title: `Fight · round ${F.round}`,
     icon: '⚔️',
-    sub: F.en.filter(e => e.hp > 0).length > 1 ? 'Click an enemy to target it' : `${W[S.weapon].n} · armour ${pdr()}`,
+    sub: `${w.n}${gun ? ` · ${ammo()} bullets` : ''} · ${F.close ? 'up close' : 'at range'}${F.en.filter(e => e.hp > 0).length > 1 ? ' · click an enemy to target it' : ''}`,
     text: F.log.join('\n'),
     cards,
     opts: [
-      [`Hit ${t.n} (${hit(t, 0)}%)`, () => atk(0, null)],
-      [`Aim for the eyes (${hit(t, ea)}%, big crit)`, () => atk(ea, 'eyes')],
-      [`Aim for the groin (${hit(t, ga)}%, crits stun)`, () => atk(ga, 'groin')],
+      ...o,
       has('gutglue')
         ? [
             `Gut Glue +20 HP (${S.inv.gutglue} left)`,
@@ -151,7 +196,7 @@ SC.fight = () => {
         : null,
       has('buzz') && !S.buzzOn
         ? [
-            'Snort Buzz (+15% to hit)',
+            'Snort Buzz (sharper aim)',
             () => {
               F.log = [];
               useBuzz();
@@ -179,18 +224,32 @@ SC.fight = () => {
     ],
   });
 };
+function closeIn() {
+  const F = S.fight;
+  F.log = [pick(['You charge.', 'You run at them, yelling.', 'You close the gap, head down.'])];
+  F.close = true;
+  F.charge = true;
+  enemy();
+}
 function atk(mod, part) {
   const F = S.fight,
     t = F.en[F.t],
     w = W[S.weapon];
   F.log = [];
+  if (w.t === 'guns') {
+    take('ammo');
+    if (!F.loud) F.log.push('BANG. That will be heard for miles.');
+    F.loud = true;
+  }
   const landed = roll(hit(t, mod));
   practice(w.t, landed ? 1 : 0.4);
   if (landed) {
     if (part) count('aimHit');
     let d = R(w.d[0], w.d[1]) + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
     if (w.t === 'melee' && perk('hands')) d = Math.round(d * 1.3);
+    let crit = false;
     if (roll(S.stats.luck * 2 + (perk('lucky') ? 10 : 0) + (part === 'eyes' ? 30 : part === 'groin' ? 12 : 0))) {
+      crit = true;
       d *= part === 'eyes' ? 3 : 2;
       count('crit');
       F.log.push(pick(CRIT[part || 'body'])(t.n));
@@ -203,6 +262,14 @@ function atk(mod, part) {
       t.hp = 0;
       F.log.push(pick(KILLED)(t.n));
       if (w.t === 'melee') count('meleeKill');
+    } else if (
+      w.t === 'melee' &&
+      !crit &&
+      !F.stun.includes(F.t) &&
+      roll(clamp(10 + (S.stats.brawn - 5) * 6 + (w.kd || 0), 5, 60))
+    ) {
+      F.stun.push(F.t);
+      F.log.push(`${t.n} goes down.`);
     }
   } else F.log.push(pick(MISS));
   for (const a of F.al) {
@@ -228,10 +295,10 @@ function enemy() {
     const e = F.en[i];
     if (e.hp <= 0) continue;
     if (F.stun.includes(i)) {
-      F.log.push(`${e.n} is busy clutching themselves.`);
+      F.log.push(`${e.n} is on the ground.`);
       continue;
     }
-    if (roll(clamp(e.skill - ptw() * 3, 5, 95))) {
+    if (roll(clamp(e.skill - ptw() * 3 + (F.charge ? 20 : 0), 5, 95))) {
       const d = Math.max(1, R(e.d[0], e.d[1]) - pdr());
       S.hp -= d;
       count('dmgTaken', d);
@@ -249,6 +316,7 @@ function enemy() {
     } else F.log.push(`${e.n} misses.`);
   }
   F.stun = [];
+  F.charge = false;
   F.round++;
   go('fight');
 }
@@ -260,7 +328,7 @@ function win() {
   survived();
   for (const e of F.en) {
     if (e.npc) {
-      kill(e.npc, F.started ? 'murder' : 'slain');
+      kill(e.npc, F.started ? 'murder' : 'slain', F.loud);
       continue;
     }
     S.kills++;
@@ -275,6 +343,11 @@ function win() {
         give(k, e.loot[k]);
         L.push(ITEMS[k]);
       }
+    if (e.teeth > 0 && e.lvl >= 2 && roll(35)) {
+      const b = R(1, 3);
+      give('ammo', b);
+      L.push(`${b} bullet${b > 1 ? 's' : ''}`);
+    }
     if (e.wep && !S.weapons.includes(e.wep)) {
       S.weapons.push(e.wep);
       L.push(W[e.wep].n);
@@ -299,7 +372,7 @@ function useBuzz() {
     statAdd('charm', -1, 'Buzz is rotting your teeth. Your smile has gone grey.');
   }
 }
-function kill(id, how) {
+function kill(id, how, loud) {
   if (S.dead[id]) return;
   S.dead[id] = 1;
   const d = NPC[id];
@@ -344,8 +417,10 @@ function kill(id, how) {
   if (id === 'nigel' && !S.f.nigel) S.f.nigel = 'dead';
   if (id === 'bess' && S.n.bess.loc === 'wastes') S.f.queenFate = 'killed';
   if (id === 'elder') S.end = { type: 'elder' };
-  if (how === 'murder') event('murder', id);
-  else if (how === 'slain') event('slain', id);
+  // A quiet kill with nobody else in the room stays secret. A gunshot never does.
+  const nobody = !IDS.some(x => x !== id && alive(x) && !NPC[x].animal && S.n[x].loc === S.here);
+  if ((how === 'murder' || how === 'slain') && !loud && nobody) event(how, id, { secret: true });
+  else if (how === 'murder' || how === 'slain') event(how, id, { loud: !!loud });
   else if (how === 'secret') {
     const pres = IDS.filter(x => x !== id && alive(x) && !NPC[x].animal && S.n[x].loc === S.here);
     if (pres.length && roll(25)) {

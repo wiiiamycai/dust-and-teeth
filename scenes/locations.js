@@ -164,8 +164,9 @@ const HUBO = {
                 () => {
                   S.f.cockpit = 1;
                   if (!S.weapons.includes('rifle')) S.weapons.push('rifle');
+                  give('ammo', 5);
                   say(
-                    'A skeleton pilot. A Hunting Rifle in the locker. A note: "We are cleared for landing. So is everything else."',
+                    'A skeleton pilot. A Hunting Rifle and 5 bullets in the locker. A note: "We are cleared for landing. So is everything else."',
                   );
                   goHere();
                 },
