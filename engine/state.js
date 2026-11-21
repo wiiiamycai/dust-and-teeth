@@ -5,15 +5,14 @@ const lvl = id => S.n[id].lvl;
 const hostile = id => alive(id) && NPC[id].fighter && S.n[id].op <= -60 && S.n[id].loc !== 'party';
 const perk = p => S.perks.includes(p);
 const evById = i => S.ev[i];
-function newGame(k) {
-  const p = PRESETS[k];
+function newGame() {
+  const p = PLAYER;
   const n = {};
   IDS.forEach(id => {
     const d = NPC[id];
     n[id] = { loc: d.loc, op: d.op || 0, k: [], rx: [], lvl: d.lvl, st: {}, ch: 0 };
   });
   S = {
-    preset: k,
     name: p.name,
     stats: { ...p.stats },
     skills: { ...p.skills },
@@ -54,6 +53,8 @@ function newGame(k) {
     know: {},
     talks: 0,
     later: [],
+    c: {},
+    skx: {},
   };
 }
 function P(sk, mod) {
@@ -132,21 +133,9 @@ function karmaTitle() {
           ? 'Scumbag'
           : 'Walking Atrocity';
 }
-const xpFor = L => (75 * (L - 1) * L) / 2;
+// No levels in v3. XP is only a quiet tally of what you've done.
 function gainXP(n) {
   S.xp += n;
-  while (S.level < 12 && S.xp >= xpFor(S.level + 1)) {
-    S.level++;
-    const pts = 10 + S.stats.brains * 2,
-      hp = 3 + Math.floor(S.stats.guts / 2);
-    S.pts += pts;
-    S.maxhp += hp;
-    S.hp += hp;
-    if (S.level % 2 === 0) S.perkPend++;
-    say(
-      `LEVEL UP! Level ${S.level}. +${pts} skill points, +${hp} max HP${S.level % 2 === 0 ? ', and a new perk' : ''}. Open Character to spend them.`,
-    );
-  }
 }
 function die(cause) {
   cueQ = [];
@@ -174,7 +163,7 @@ function mood(op) {
             : '😍 loyal';
 }
 const charOpt = () => [
-  'Character (stats, gear, level up)',
+  'Character (stats, gear, perks)',
   () => {
     S.ret = { scene: S.scene, args: S.args };
     go('char');
@@ -186,6 +175,7 @@ function corpseOpt() {
     `Eat ${S.f.corpse}`,
     () => {
       const h = heal(perk('eater') ? 40 : 20);
+      count('eat');
       say(`You eat ${S.f.corpse}. +${h} HP. Peppery.`);
       if (!perk('eater')) karma(-1);
       S.f.corpse = null;

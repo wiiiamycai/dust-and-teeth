@@ -5,14 +5,16 @@ SC.title = () =>
     title: 'DUST & TEETH',
     icon: '🦷',
     sub: 'a nasty little wasteland',
-    text: "The bombs fell 200 years ago. You're a nobody from Scrapwell. No quest. No prophecy. Teeth for money.\n\nEveryone remembers what you do, and word gets around. Somewhere out east, something is waking up.\n\nNo reloads. Who are you?",
-    opts: Object.keys(PRESETS).map(k => [
-      `${PRESETS[k].name}, ${PRESETS[k].title}. ${PRESETS[k].desc}`,
-      () => {
-        newGame(k);
-        go('intro');
-      },
-    ]),
+    text: "The bombs fell 200 years ago. You're a nobody from Scrapwell. Not strong, not clever, not anything yet. No quest. No prophecy. Teeth for money.\n\nEveryone remembers what you do, and word gets around. Somewhere out east, something is waking up.\n\nNo reloads.",
+    opts: [
+      [
+        'Crawl out of bed',
+        () => {
+          newGame();
+          go('intro');
+        },
+      ],
+    ],
   });
 SC.intro = () =>
   show({
@@ -130,7 +132,7 @@ SC.ending = () => {
             : 'Out east, the Big Tooth was still waking up.',
     );
   }
-  const you = `${S.level > 1 ? 'Level ' + S.level + '. ' : ''}${S.day} days. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
+  const you = `${S.day} days. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
   const text = `${head}\n\n${L.filter(Boolean).join('\n')}\n\n${you}\n\nThis life is over. Your save is gone.`;
   wipe();
   S = null;
@@ -142,8 +144,5 @@ function hud() {
     h.innerHTML = '<b>DUST &amp; TEETH</b>';
     return;
   }
-  const lo = xpFor(S.level),
-    hi = xpFor(S.level + 1),
-    xp = S.level >= 12 ? 100 : clamp(((S.xp - lo) * 100) / (hi - lo), 0, 100);
-  h.innerHTML = `<b>${esc(S.name)} · Lv ${S.level}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div><div class="bl">XP ${S.xp}${S.level < 12 ? '/' + hi : ''}</div><div class="bar xp"><i style="width:${xp}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span>🛡️ ${A[S.armor].n}</span><span>⚔️ ${W[S.weapon].n}</span><span>${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.pts || S.perkPend ? '<span class="bang">▲ Level up! Open Character</span>' : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div>`;
+  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span>🛡️ ${A[S.armor].n}</span><span>⚔️ ${W[S.weapon].n}</span><span>${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div>`;
 }

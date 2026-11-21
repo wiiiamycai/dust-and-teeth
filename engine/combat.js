@@ -78,7 +78,7 @@ function fight(en, o) {
     if (alive(a) && !al.includes(a) && !E.some(e => e.npc === a)) al.push(a);
   });
   if (perk('hombre')) {
-    const fl = E.filter(e => !e.npc && e.lvl < S.level && roll(40));
+    const fl = E.filter(e => !e.npc && e.lvl <= 3 && roll(40));
     if (fl.length) {
       say(`${fl.length} of them take one look at you and run.`);
       E = E.filter(e => !fl.includes(e));
@@ -107,11 +107,14 @@ SC.fight = () => {
   const t = F.en[F.t],
     ea = perk('eagle') ? -15 : -30,
     ga = perk('eagle') ? -10 : -20;
+  const kn = keen();
   const cards = F.en.map((e, i) => ({
     icon: e.i,
     name: e.n,
-    sub: `Lv ${e.lvl}${e.hp <= 0 ? ' · dead' : ''}`,
-    hp: e.hp,
+    sub: kn
+      ? `Lv ${e.lvl} · armour ${e.dr}${e.hp <= 0 ? ' · dead' : ''}${e.wep || e.arm || e.loot ? ' · has ' + [e.wep && W[e.wep].n, e.arm && A[e.arm].n, ...Object.keys(e.loot || {}).map(k => ITEMS[k])].filter(Boolean).join(', ') : ''}`
+      : `${dangerWord(e.lvl)} · ${condWord(e.hp, e.max)}`,
+    hp: kn ? e.hp : null,
     max: e.max,
     sel: i === F.t,
     dead: e.hp <= 0,
@@ -181,11 +184,15 @@ function atk(mod, part) {
     t = F.en[F.t],
     w = W[S.weapon];
   F.log = [];
-  if (roll(hit(t, mod))) {
+  const landed = roll(hit(t, mod));
+  practice(w.t, landed ? 1 : 0.4);
+  if (landed) {
+    if (part) count('aimHit');
     let d = R(w.d[0], w.d[1]) + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
     if (w.t === 'melee' && perk('hands')) d = Math.round(d * 1.3);
     if (roll(S.stats.luck * 2 + (perk('lucky') ? 10 : 0) + (part === 'eyes' ? 30 : part === 'groin' ? 12 : 0))) {
       d *= part === 'eyes' ? 3 : 2;
+      count('crit');
       F.log.push(pick(CRIT[part || 'body'])(t.n));
       if (part === 'groin') F.stun.push(F.t);
     }
@@ -195,6 +202,7 @@ function atk(mod, part) {
     if (t.hp <= 0) {
       t.hp = 0;
       F.log.push(pick(KILLED)(t.n));
+      if (w.t === 'melee') count('meleeKill');
     }
   } else F.log.push(pick(MISS));
   for (const a of F.al) {
@@ -226,6 +234,7 @@ function enemy() {
     if (roll(clamp(e.skill - ptw() * 3, 5, 95))) {
       const d = Math.max(1, R(e.d[0], e.d[1]) - pdr());
       S.hp -= d;
+      count('dmgTaken', d);
       F.log.push(`${e.n} hits you for ${d}.`);
       if (S.hp <= 0) {
         if (perk('wind') && !F.wind) {
@@ -248,6 +257,7 @@ function win() {
   S.fight = null;
   S.buzzOn = false;
   F.log.forEach(l => say(l));
+  survived();
   for (const e of F.en) {
     if (e.npc) {
       kill(e.npc, F.started ? 'murder' : 'slain');
@@ -286,6 +296,7 @@ function useBuzz() {
   if (!perk('gut') && !S.addicted && !roll(S.stats.luck * 6 + 25)) {
     S.addicted = true;
     bad('You are now addicted to Buzz. -10% to hit without it.');
+    statAdd('charm', -1, 'Buzz is rotting your teeth. Your smile has gone grey.');
   }
 }
 function kill(id, how) {

@@ -5,7 +5,7 @@ function card(x) {
   return {
     icon: NPC[x].i,
     name: NPC[x].n,
-    sub: `Lv ${n.lvl} · ${mood(n.op)}${n.loc === 'pen' ? ' · in chains' : ''}`,
+    sub: `${sizeUp(n.lvl)} · ${mood(n.op)}${n.loc === 'pen' ? ' · in chains' : ''}`,
     bang: n.rx.length > 0,
     on: () => (x === 'king' ? go('throne') : go('talk', x)),
   };
@@ -360,7 +360,7 @@ SC.ambush = loc => {
     icon: '⚠️',
     sub: 'They remember you',
     text: `${hs.map(x => NPC[x].n).join(' and ')} ${hs.length > 1 ? 'are' : 'is'} waiting for you.`,
-    cards: en.map(e => ({ icon: e.i, name: e.n, sub: 'Lv ' + e.lvl })),
+    cards: en.map(e => ({ icon: e.i, name: e.n, sub: sizeUp(e.lvl) })),
     opts: [
       ['Fight', () => fight(en, { win: 'hub', args: [loc], back: ['map'] }), 'danger'],
       [

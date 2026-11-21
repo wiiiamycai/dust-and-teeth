@@ -17,7 +17,7 @@ SC.throne = () => {
   show({
     title: 'The Dentist King',
     icon: '🦷',
-    sub: `Lv ${lvl('king')}`,
+    sub: sizeUp(lvl('king')),
     text: "A pre-war dentist's coat. A crown of other people's teeth. \"The world has a rotten tooth. I'm going to pull it.\"",
     opts: [
       [

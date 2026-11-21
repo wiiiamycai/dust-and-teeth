@@ -126,6 +126,7 @@ const ENC = {
             S.maxhp -= 3;
             S.hp = Math.min(S.hp, S.maxhp);
             say('Pliers. Pain. They admire the root.');
+            statAdd('charm', -1, 'There is a gap in your smile now.');
             go('hub', d);
           },
         ],
@@ -149,6 +150,7 @@ const ENC = {
             karma(1);
             gainXP(30);
             say('He sits in the sand. "Then what was it all for?" He wanders off to become a raider.');
+            count('taxman');
           } else bad('"That\'s what a tax evader would say."');
           go('hub', d);
         },
@@ -165,6 +167,7 @@ const ENC = {
                 'He hands you 15 teeth of severance and walks into the desert.',
             );
             gain(15);
+            count('taxman');
           } else bad('"Nice try. Where\'s your badge?"');
           go('hub', d);
         },
@@ -217,6 +220,7 @@ const ENC = {
             'Eat him',
             () => {
               say(`+${heal(20)} HP. Mostly jerky already.`);
+              count('eat');
               if (!perk('eater')) karma(-1);
               go('hub', d);
             },
@@ -296,6 +300,7 @@ const ENC = {
             S.maxhp += 5;
             heal(5);
             say('You feel incredible. +5 max HP.');
+            statAdd('charm', 1, "You can't stop smiling. People seem to like it.");
           } else {
             const l = Math.min(10, S.teeth);
             S.teeth -= l;
@@ -333,7 +338,7 @@ const ENC = {
     return {
       title: 'Raider Queen Bess',
       icon: '👑',
-      t: `A raider gang blocks the road. Their queen wears Krug's chains as a necklace. It's Bess. Level ${lv} now. "Remember me?"`,
+      t: `A raider gang blocks the road. Their queen wears Krug's chains as a necklace. It's Bess. She looks harder now. "Remember me?"`,
       o: [
         ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
         canTry('queen.sorry') && [

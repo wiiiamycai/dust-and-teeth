@@ -20,7 +20,7 @@ for(const s of steps){god();if(process.env.V)console.log('>>',s,'::',screen().sl
  if(s==='FIGHT'){fightOut();continue}
  if(s.startsWith('TRAVEL:')){travel(s.slice(7));continue}
  if(s.startsWith('EVAL:')){console.log('EVAL',vm.runInContext(s.slice(5),ctx));continue}
- if(s==='REAL'){realSkills=true;vm.runInContext('S.skills={...PRESETS[S.preset].skills}',ctx);continue}
+ if(s==='REAL'){realSkills=true;vm.runInContext('S.skills={...PLAYER.skills}',ctx);continue}
  // RAND:0.99 fixes every dice roll (0.99 fails almost any check, 0 passes it). RAND:off goes back to random.
  if(s.startsWith('RAND:')){seq=s.slice(5)==='off'?null:+s.slice(5);continue}
  // EXPECT:<js> stops the run with an error unless the expression is truthy.

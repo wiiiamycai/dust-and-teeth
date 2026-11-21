@@ -70,8 +70,12 @@ function attempt(key, arg) {
     rec = S.tried[lk];
   const p = chance(s, rec),
     r = Math.random() * 100;
-  if (r < p) {
+  const won = r < p;
+  practice(s.sk, won ? 1.5 : 0.75); // you learn from failing too, just slower
+  if (won) {
     gainXP(10);
+    if (s.sk === 'speech') count('talkWin');
+    if (s.sk === 'steal') count('stealWin');
     return true;
   }
   const lock = s.lock || 'change';
@@ -134,10 +138,8 @@ function chatted(id) {
   n.cd = S.day;
   n.ch = (n.ch || 0) + 1;
   S.talks = (S.talks || 0) + 1;
-  if (S.talks >= 15 && !perk('reader')) {
-    S.perks.push('reader');
-    say("You've started to read people: the twitch before a yes, the breath before a no. (Perk: Read People)");
-  }
+  practice('speech', 0.3);
+  checkPerks();
 }
 // Fill in fields added after v2 so old saves keep working.
 function migrate(s) {
@@ -145,6 +147,8 @@ function migrate(s) {
   s.know = s.know || {};
   s.talks = s.talks || 0;
   s.later = s.later || [];
+  s.c = s.c || {};
+  s.skx = s.skx || {};
   IDS.forEach(id => {
     if (s.n[id]) s.n[id].ch = s.n[id].ch || 0;
   });

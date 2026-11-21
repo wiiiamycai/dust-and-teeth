@@ -2,7 +2,7 @@
   {
     "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Climb down the well",
       "Nigel",
@@ -20,7 +20,7 @@
   {
     "name": "Bess: hearing her dream makes the leaving line land, and the cheesy line is worse",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Leave (map)",
       "TRAVEL:Hector's Farm",
@@ -36,7 +36,7 @@
   {
     "name": "Bess: three failed lines and she shuts you out for good",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Leave (map)",
       "TRAVEL:Hector's Farm",
@@ -56,7 +56,7 @@
   {
     "name": "Hector in earshot makes flirting with Bess harder",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "EVAL:globalThis.away = chanceOf('bess.leave')",
@@ -68,7 +68,7 @@
   {
     "name": "Once-locked checks never reopen, whatever changes",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "RAND:0.99",
@@ -81,7 +81,7 @@
   {
     "name": "Haggling: each failure raises Jeb's price, three and he stops listening",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Leave (map)",
       "TRAVEL:Rustwater",
@@ -100,10 +100,11 @@
   {
     "name": "Lou: the fingernail in the stew opens a better line",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Leave (map)",
       "TRAVEL:Mama Lou's",
+      "EVAL:S.teeth = 50",
       "Order the stew",
       "Order the stew",
       "EXPECT:knew('lou.polish')",
@@ -117,7 +118,7 @@
   {
     "name": "Hearing that Jeb drinks makes lying to Hector easier",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "EXPECT:chanceOf('hector.drunk') <= chanceOf('hector.lying')",
@@ -128,7 +129,7 @@
   {
     "name": "The taxman believes a man in a Sheriff's vest",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "EVAL:globalThis.b = chanceOf('taxman.fired')",
@@ -139,7 +140,7 @@
   {
     "name": "Read People: earned by talking to people, gives a hint, never a number",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:S.talks = 14",
       "Gus",
@@ -152,7 +153,7 @@
   {
     "name": "Rapport: one chat a day counts, re-opening the same chat does not",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "Gus",
       "EXPECT:S.n.gus.ch === 1",
@@ -163,7 +164,7 @@
   {
     "name": "A v2 save without the new fields still loads",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"
     ]
@@ -171,7 +172,7 @@
   {
     "name": "Gossip: Moe stops sharing rumours with people he dislikes",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:S.n.moe.op = -30",
       "Leave (map)",
@@ -184,7 +185,7 @@
   {
     "name": "Gossip: Moe lies to people he hates, and the lie makes the pens a trap",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "EVAL:globalThis.p = chanceOf('pens.open')",
@@ -194,13 +195,13 @@
       "Moe",
       "What's the word?",
       "SAY:Krug went east",
-      "EXPECT:knew('moe.lie') && chanceOf('pens.open') <= p - 25"
+      "EXPECT:knew('moe.lie') && spec('pens.open').mods() <= -30 && chanceOf('pens.open') < p"
     ]
   },
   {
     "name": "Gossip: Doc won't sell Buzz once he hears you eat people",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:learn('doc', event('cannibal', null, { loc: 'diner', wit: [] }))",
       "Leave (map)",
@@ -214,7 +215,7 @@
   {
     "name": "Gossip: Opal hears you freed Chainfield and tells you the Silo's back door",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] }))",
       "Leave (map)",
@@ -230,7 +231,7 @@
   {
     "name": "Gossip: Jeb hears you saved Pete and gives you half price",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:learn('jeb', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
       "Leave (map)",
@@ -243,7 +244,7 @@
   {
     "name": "Gossip: Ma Thistle hears two good deeds and gives you a gift",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:learn('elder', event('tfixed', null, { wit: [] })); learn('elder', event('pump', null, { loc: 'rustwater', wit: [] }))",
       "EVAL:globalThis.g = S.inv.gutglue || 0",
@@ -255,7 +256,7 @@
   {
     "name": "Gossip: Hector warns Bert, who turns hostile and armed",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:S.n.hector.op = -80",
       "WAIT:1",
@@ -265,7 +266,7 @@
   {
     "name": "Gossip: someone who hates you tips off Krug, and two days later slavers come for you in your sleep",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:S.n.gus.op = -60",
       "WAIT:1",
@@ -281,7 +282,7 @@
   {
     "name": "Gossip: the Sheriff vouches for you around Rustwater, two days after she hears",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:globalThis.m = S.n.moe.op",
       "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
@@ -293,7 +294,7 @@
   {
     "name": "Gossip: kill Junior's mother and he hunts you on the road",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "EVAL:S.n.junior.op = -80; learn('junior', event('murder', 'lou', { loc: 'diner', wit: [] }))",
       "EXPECT:avengers().includes('junior')",
@@ -303,12 +304,139 @@
   {
     "name": "Gossip: a caught lie spreads, and liars find talking harder",
     "steps": [
-      "Weasel",
+      "Crawl out of bed",
       "Go",
       "REAL",
       "EVAL:globalThis.c = chanceOf('nigel.move')",
       "EVAL:learn('nigel', event('lied', 'gus', { wit: [] }))",
       "EXPECT:liarTo('nigel') && chanceOf('nigel.move') <= c - 10"
+    ]
+  },
+  {
+    "name": "Growth: one fixed, average man, no presets",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EXPECT:S.name === 'Nobody' && Object.values(S.stats).every(v => v === 5)",
+      "EXPECT:Object.values(S.skills).every(v => v >= 30 && v <= 35)"
+    ]
+  },
+  {
+    "name": "Growth: no levels, no XP bar, no skill points",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:!/Lv |XP|Level up/.test(document.getElementById('hud').innerHTML)",
+      "Character",
+      "EXPECT:!/skill points|PERK:|Level/.test(document.getElementById('text').innerHTML + document.getElementById('head').innerHTML + cur.map(o => o[0]).join())"
+    ]
+  },
+  {
+    "name": "Growth: skills grow by use, and slower when high",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EVAL:globalThis.a = S.skills.steal; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.lo = S.skills.steal - a",
+      "EVAL:S.skills.steal = 85; S.skx.steal = 0; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.hi = S.skills.steal - 85",
+      "EXPECT:lo >= 12 && hi >= 1 && hi <= lo / 3"
+    ]
+  },
+  {
+    "name": "Growth: you learn from failed conversations too",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Climb down the well",
+      "Nigel",
+      "REAL",
+      "RAND:0.99",
+      "EVAL:globalThis.s = S.skills.speech + S.skx.speech || S.skills.speech",
+      "crashed plane",
+      "EXPECT:S.skills.speech + (S.skx.speech || 0) > s"
+    ]
+  },
+  {
+    "name": "Growth: skills and stats show as words without Keen Eye, numbers with it",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "Character",
+      "SAY:Speech: Clumsy",
+      "SAY:Brawn: average",
+      "EXPECT:!document.getElementById('text').innerHTML.includes('Speech: Clumsy (')",
+      "Close",
+      "EVAL:S.perks.push('keen')",
+      "Character",
+      "SAY:Speech: Clumsy (35)"
+    ]
+  },
+  {
+    "name": "Growth: Silver Tongue is earned by talking people round",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.c.talkWin = 7",
+      "Climb down the well",
+      "Nigel",
+      "RAND:0",
+      "crashed plane",
+      "EXPECT:perk('tongue')",
+      "SAY:Perk: Silver Tongue"
+    ]
+  },
+  {
+    "name": "Growth: without Keen Eye, enemies are words and no health bar; with it you see everything",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([mkE('Raider', 'R', 4, { arm: 'spikes' })], {})",
+      "EXPECT:!document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
+      "SAY:can handle themselves",
+      "SAY:unhurt",
+      "EVAL:S.perks.push('keen'); go('fight')",
+      "EXPECT:document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
+      "SAY:Lv 4",
+      "SAY:Raider Spikes"
+    ]
+  },
+  {
+    "name": "Growth: stats change only through story. Doc's Meat Tonic can make you strong",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Doc Ratchet",
+      "RAND:0",
+      "Meat Tonic",
+      "EXPECT:S.stats.brawn === 8"
+    ]
+  },
+  {
+    "name": "Growth: a bad Brain Juice makes you dumb, and the world talks down to you",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Doc Ratchet",
+      "RAND:0.99",
+      "Brain Juice",
+      "EXPECT:S.stats.brains === 3 && dumb()"
+    ]
+  },
+  {
+    "name": "Growth: surviving fights makes you a little tougher",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:(() => { const m = S.maxhp; survived(); return S.maxhp === m + 1 && S.c.fights === 1 })()",
+      "EVAL:fight([mkE('Rat', 'R', 1)], {})",
+      "FIGHT",
+      "EXPECT:S.c.fights === 2"
     ]
   }
 ]

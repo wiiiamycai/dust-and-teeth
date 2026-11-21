@@ -124,7 +124,7 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 2. (Done) Set up git. Commit v2 as the baseline before any change.
 3. (Done) Hidden checks with context modifiers, real dialogue lines, soft cues, one-shot checks. Engine in `engine/checks.js`, every check's spec in `data/checks.js`, facts the player has learned in `S.know`, failed checks in `S.tried`. New checks go through `attempt(key)`, `canTry(key)` and `hint(key)`, never a raw roll.
 4. (Done) Gossip that makes people act (section 5). Hooks in `engine/react.js`: `heard()`, `onLearn()`, `later()`, `reactions()`. Decisions in `DECISIONS.md`.
-5. Fixed character and learn-by-doing growth, earned perks, Keen Eye.
+5. (Done) Fixed character and learn-by-doing growth, earned perks, Keen Eye. Engine in `engine/growth.js`: `practice()`, `statAdd()`, `count()` and `PERK_RULES`.
 6. Melee vs guns trade-offs, ammo, noise.
 7. Fixed-strength enemies, the Gutmaw, readable danger descriptions.
 8. Seduction and jealousy.

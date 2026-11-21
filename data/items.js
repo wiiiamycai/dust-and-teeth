@@ -1,42 +1,15 @@
 'use strict';
 // ================= DATA =================
-const PRESETS = {
-  lump: {
-    name: 'Knuckles',
-    title: 'the Lump',
-    desc: 'Strong, tough, very dumb. Hits first.',
-    stats: { brawn: 9, eyes: 4, guts: 8, charm: 3, brains: 2, twitch: 5, luck: 5 },
-    skills: { melee: 70, guns: 25, sneak: 15, steal: 10, speech: 10, science: 5 },
-    hp: 45,
-    teeth: 15,
-    weapons: ['fists', 'pipe'],
-    weapon: 'pipe',
-    inv: { gutglue: 2 },
-  },
-  mouth: {
-    name: 'Velvet',
-    title: 'the Mouth',
-    desc: 'Talks her way out of anything. Mostly.',
-    stats: { brawn: 4, eyes: 6, guts: 4, charm: 9, brains: 7, twitch: 5, luck: 6 },
-    skills: { melee: 25, guns: 50, sneak: 35, steal: 45, speech: 70, science: 35 },
-    hp: 30,
-    teeth: 60,
-    weapons: ['fists', 'zipgun'],
-    weapon: 'zipgun',
-    inv: { gutglue: 2 },
-  },
-  rat: {
-    name: 'Weasel',
-    title: 'the Rat',
-    desc: 'Quick, quiet, light-fingered.',
-    stats: { brawn: 5, eyes: 8, guts: 5, charm: 4, brains: 6, twitch: 9, luck: 7 },
-    skills: { melee: 45, guns: 55, sneak: 75, steal: 75, speech: 30, science: 50 },
-    hp: 32,
-    teeth: 30,
-    weapons: ['fists', 'knife', 'zipgun'],
-    weapon: 'knife',
-    inv: { gutglue: 3 },
-  },
+// The one and only player: an average man. Everything else is earned.
+const PLAYER = {
+  name: 'Nobody',
+  stats: { brawn: 5, eyes: 5, guts: 5, charm: 5, brains: 5, twitch: 5, luck: 5 },
+  skills: { melee: 35, guns: 30, sneak: 30, steal: 30, speech: 35, science: 30 },
+  hp: 35,
+  teeth: 25,
+  weapons: ['fists', 'knife'],
+  weapon: 'knife',
+  inv: { gutglue: 2 },
 };
 const W = {
   fists: { n: 'Fists', t: 'melee', d: [1, 4], a: 0 },
@@ -86,5 +59,6 @@ const PERKS = {
   tax: { n: 'Tax Exempt', d: 'Everything costs 25% less.' },
   wind: { n: 'Second Wind', d: 'Once per fight, survive a killing blow.' },
   butcher: { n: "Butcher's Pal", d: 'Lou and Krug pay double.' },
-  reader: { n: 'Read People', d: 'You can tell when someone is close to yes.', earned: 1 },
+  reader: { n: 'Read People', d: 'You can tell when someone is close to yes.' },
+  keen: { n: 'Keen Eye', d: "You see a fighter's health, strength, armour and gear, and your own skills in numbers." },
 };

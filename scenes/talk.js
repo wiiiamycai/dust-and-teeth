@@ -20,7 +20,7 @@ SC.talk = id => {
     show({
       title: d.n,
       icon: d.i,
-      sub: `Lv ${n.lvl} · ${mood(n.op)}`,
+      sub: `${sizeUp(n.lvl)} · ${mood(n.op)}`,
       text: `${d.n} won't talk to you.`,
       opts: [atk, qk, back],
     });
@@ -28,7 +28,7 @@ SC.talk = id => {
   }
   const r = TALK[id]();
   if (!r) return;
-  show({ title: d.n, icon: d.i, sub: `Lv ${n.lvl} · ${mood(n.op)}`, text: r.t, opts: [...r.o, atk, qk, back] });
+  show({ title: d.n, icon: d.i, sub: `${sizeUp(n.lvl)} · ${mood(n.op)}`, text: r.t, opts: [...r.o, atk, qk, back] });
 };
 const re = id => () => go('talk', id);
 const newsOpt = (id, dflt) => [
@@ -57,6 +57,7 @@ function sellSpouse(to) {
         : `Krug inspects Bess. Bess inspects Krug. "Still more exciting than the farm," she says. Her eyes say something else.`,
     );
     gain(perk('butcher') ? 600 : 300);
+    count('flesh');
     go('talk', 'krug');
   } else {
     S.dead[x] = 1;
@@ -66,6 +67,7 @@ function sellSpouse(to) {
     event('stew', x, { loc: 'diner' });
     quote(`Lou has a "special room for couples". One short scream. "Come back Thursday. ${nm} is the special."`);
     gain(perk('butcher') ? 400 : 200);
+    count('flesh');
     go('talk', 'lou');
   }
 }
@@ -962,6 +964,7 @@ const TALK = {
           if (pay(c(50))) {
             S.addicted = false;
             say('A day strapped to a chair while he yells at you. Clean.');
+            count('clean');
           }
           go('talk', 'doc');
         },
@@ -1017,9 +1020,7 @@ const TALK = {
                 : 'Your thoughts get sharper. (+3 Brains, +10 Speech and Science)',
             );
           } else {
-            S.maxhp -= 5;
-            S.hp = Math.min(S.hp, S.maxhp);
-            bad('You can taste colours now. Mostly beige. -5 max HP.');
+            statAdd('brains', -2, 'You can taste colours now. Mostly beige. Thinking is harder.');
           }
           go('talk', 'doc');
         },
@@ -1033,6 +1034,23 @@ const TALK = {
           S.hp = Math.min(S.hp, S.maxhp);
           gain(90);
           quote('Doc: "You had two! Greedy."');
+          statAdd('guts', -1, 'You feel lopsided inside.');
+          go('talk', 'doc');
+        },
+      ]);
+    if (!S.f.meatTonic)
+      o.push([
+        'Drink his Meat Tonic (he pays 30)',
+        () => {
+          S.f.meatTonic = 1;
+          gain(30);
+          if (roll(S.stats.luck * 7 + 20))
+            statAdd('brawn', 3, "Your shirt splits down the back. Your arms are somebody else's now.");
+          else {
+            S.maxhp -= 5;
+            S.hp = Math.min(S.hp, S.maxhp);
+            bad('Something in you curdles. -5 max HP.');
+          }
           go('talk', 'doc');
         },
       ]);
@@ -1435,6 +1453,7 @@ const TALK = {
           take('pig');
           f.pigFate = 'stew';
           gain(perk('butcher') ? 80 : 40);
+          count('flesh');
           quote('Lou: "Pedigree. You can taste a pedigree."');
           go('talk', 'lou');
         },
@@ -1481,6 +1500,7 @@ const TALK = {
           take('pig');
           f.pigFate = 'slave';
           gain(10);
+          count('flesh');
           quote('Krug laughs till he cries. "Ten teeth. He can pull a cart."');
           go('talk', 'krug');
         },
@@ -1567,17 +1587,17 @@ SC.confront = () =>
         },
       ],
       [
-        S.stats.brawn >= 9
+        S.stats.brawn >= 8
           ? 'Hold Junior over the stew pot'
           : '"Dead customers don\'t come back, Lou. Think of the repeat business."' + hint('lou.stop'),
         () => {
-          if (S.stats.brawn >= 9 || attempt('lou.stop')) {
+          if (S.stats.brawn >= 8 || attempt('lou.stop')) {
             S.f.louReformed = 1;
             karma(3);
             gainXP(150);
             addTitle('Reformer of Cannibals');
             say(
-              S.stats.brawn >= 9
+              S.stats.brawn >= 8
                 ? 'You hold Junior over the stew pot. Lou agrees to switch to mole-dog.'
                 : "Repeat business, you explain. Dead customers don't come back. She sighs and switches to mole-dog.",
             );
