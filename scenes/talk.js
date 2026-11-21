@@ -9,12 +9,14 @@ SC.talk = id => {
     bad(`${d.n} attacks!`);
     return fight(crew(id), { win: 'back', back: ['map'] });
   }
+  const refuses = n.op <= -35 && !['hector', 'bess', 'bert', 'pete'].includes(id);
+  if (!d.animal && !refuses) chatted(id); // before any labels, so a newly earned Read People shows at once
   const back = ['Back', () => goHere()];
   const atk = NPC[id].animal
     ? null
     : [`Attack ${d.n}`, () => fight(crew(id), { started: true, win: 'back', back: ['map'] }), 'danger'];
   const qk = id === 'king' ? null : [`Murder ${d.n} quietly` + hint('murder', id), () => quiet(id), 'danger'];
-  if (n.op <= -35 && !['hector', 'bess', 'bert', 'pete'].includes(id)) {
+  if (refuses) {
     show({
       title: d.n,
       icon: d.i,
@@ -24,7 +26,6 @@ SC.talk = id => {
     });
     return;
   }
-  if (!d.animal) chatted(id);
   const r = TALK[id]();
   if (!r) return;
   show({ title: d.n, icon: d.i, sub: `Lv ${n.lvl} · ${mood(n.op)}`, text: r.t, opts: [...r.o, atk, qk, back] });
@@ -83,15 +84,12 @@ function stopKing(how) {
   S.f.kingHow = how;
   gainXP(300);
 }
-function flirt(x) {
-  if (attempt('bess.flirt')) {
-    quote(`${NPC[x].n}: "Behind the barn. Ten minutes."`);
+function flirt(key) {
+  if (attempt(key)) {
+    quote('Bess: "Behind the barn. Ten minutes."');
     say("It's the most interesting thing to happen on this farm in eleven years. Then: the click of a shotgun.");
-    go('wedding', x);
-  } else {
-    bad(`${NPC[x].n} laughs at you. For quite a while.`);
-    go('talk', x);
-  }
+    go('wedding', 'bess');
+  } else go('talk', 'bess');
 }
 function penTalk(x) {
   return {
@@ -168,7 +166,10 @@ function stew() {
   if (f.louReformed || f.cannibal || f.stew === 1) {
     say(`${f.louReformed ? 'Mole-dog. Mostly.' : "Rich, gamey, a texture you can't place."} +${heal(12)} HP.`);
     goHere();
-  } else go('stewreveal');
+  } else {
+    know('lou.polish');
+    go('stewreveal');
+  }
 }
 SC.stewreveal = () =>
   show({
@@ -596,6 +597,7 @@ const TALK = {
       '"What ARE you?"',
       () => {
         f.nLore = 1;
+        know('nigel.lore');
         quote(
           'Nigel: "Ex-dentist. Glowing rock. Long story. My scalp glows so bright I can\'t sleep. A hat would change my life."',
         );
@@ -1138,22 +1140,30 @@ const TALK = {
       },
       'danger',
     ]);
-    if (!f.jebCheap)
-      o.push(
-        canTry('jeb.haggle') && [
-          '"Half price, and I ride with the lizards."' + hint('jeb.haggle'),
-          () => {
-            if (attempt('jeb.haggle')) {
-              f.jebCheap = 1;
-              quote('Jeb: "Half price. You ride with the lizards."');
-            } else {
-              f.jebUp = (f.jebUp || 0) + 1;
-              quote('Jeb: "Price just went up. Keep talking, it\'ll go up again."');
-            }
-            go('talk', 'jeb');
-          },
-        ],
-      );
+    const haggle = k => () => {
+      if (attempt(k)) {
+        f.jebCheap = 1;
+        quote('Jeb: "Half price. You ride with the lizards."');
+      } else {
+        f.jebUp = (f.jebUp || 0) + 1;
+        quote('Jeb: "Price just went up. Keep talking, it\'ll go up again."');
+      }
+      go('talk', 'jeb');
+    };
+    if (!f.jebCheap && canTry('jeb.haggle')) {
+      o.push(['"Half price, and I ride with the lizards."' + hint('jeb.haggle'), haggle('jeb.haggle')]);
+      if (f.jebPaid)
+        o.push(['"I found your guard. That should be worth a discount."' + hint('jeb.found'), haggle('jeb.found')]);
+    }
+    if (!knew('jeb.drinks'))
+      o.push([
+        '"Rough trip?"',
+        () => {
+          know('jeb.drinks');
+          quote('Jeb: "Every trip. That\'s why God made gin." He takes a long pull from a flask.');
+          go('talk', 'jeb');
+        },
+      ]);
     o.push(newsOpt('jeb', '"Roads are quiet. Too quiet. I hate saying that."'));
     return {
       t: 'Caravan Jeb. Six pack-lizards and a cart. Heading east, past the mountains. "They say it\'s green."',
@@ -1177,6 +1187,18 @@ const TALK = {
           go('talk', 'teo');
         },
       ],
+      S.f.knowSilo && !knew('king.mother')
+        ? [
+            '"What do you know about the King?"',
+            () => {
+              know('king.mother');
+              quote(
+                'Teo: "Dentist\'s boy. His mother ran the practice. He still talks to her. She\'s been dead forty years."',
+              );
+              go('talk', 'teo');
+            },
+          ]
+        : null,
       [
         '"Who buys from Krug?"',
         () => {
@@ -1220,6 +1242,21 @@ const TALK = {
               }
             },
           ],
+          knew('jeb.drinks') &&
+            canTry('hector.lying') && [
+              '"Jeb was drunk when he said it. You know how he gets."' + hint('hector.drunk'),
+              () => {
+                if (attempt('hector.drunk')) {
+                  S.n.hector.op = Math.max(S.n.hector.op, -20);
+                  quote('Hector: "...He was at the gin, yeah." The gun goes down. For now.');
+                  go('talk', 'hector');
+                } else {
+                  bad('Hector: "Drunk or not, Jeb don\'t lie about Bess."');
+                  S.n.hector.op = -100;
+                  fight([foe('hector')], { win: 'back', back: ['map'] });
+                }
+              },
+            ],
         ],
       };
     let t = '"What." Hector doesn\'t do questions.';
@@ -1262,12 +1299,15 @@ const TALK = {
               ? 'Bess: "Krug fed us once a day. I thought about you every meal."'
               : 'Bess: "Daddy says outside is full of killers. It sounds amazing."',
           );
+          if (!sold) know('bess.dreams');
           go('talk', 'bess');
         },
       ],
     ];
-    if (!S.spouse && !f.spouseFate && !sold && canTry('bess.flirt'))
-      o.push(['"Ever thought about leaving this farm?"' + hint('bess.flirt'), () => flirt('bess')]);
+    if (!S.spouse && !f.spouseFate && !sold && canTry('bess.leave')) {
+      o.push(['"Ever thought about leaving this farm?"' + hint('bess.leave'), () => flirt('bess.leave')]);
+      o.push(['"You must be the prettiest girl in the county."' + hint('bess.pretty'), () => flirt('bess.pretty')]);
+    }
     return {
       t: sold
         ? '"You sold me." She keeps sharpening her hoe. She looks at you while she does it.'
@@ -1288,13 +1328,12 @@ const TALK = {
         },
       ],
     ];
-
     return { t: 'Bert, 31, has read the same tractor magazine every night of his adult life.', o };
   },
   lou: () => {
     const o = [],
       f = S.f;
-    if (!f.louAsk)
+    if (!f.louAsk) {
       o.push([
         '"Seen two caravan guards? Pete and Sal?"' + hint('lou.guards'),
         () => {
@@ -1307,6 +1346,20 @@ const TALK = {
           go('talk', 'lou');
         },
       ]);
+      if (knew('lou.polish'))
+        o.push([
+          '"Sal\'s Sunday Best. Lovely polish. I found some in my stew."' + hint('lou.polish'),
+          () => {
+            f.louAsk = 1;
+            quote(
+              attempt('lou.polish')
+                ? 'Lou: "You do notice things, honey." The smile stays. The eyes don\'t. "Pete\'s still fresh. Tuesday."'
+                : 'Lou: "Lots of girls wear that, honey." Junior stops chopping.',
+            );
+            go('talk', 'lou');
+          },
+        ]);
+    }
     if (!f.louConfront)
       o.push([
         '"I know what\'s in the stew."',
@@ -1425,13 +1478,16 @@ function moeWord() {
   }
   const n = news('moe', null);
   if (n && roll(70)) return n.replace('"Heard', '"Word is');
-  return pick([
+  const w = pick([
+    '"Jeb drinks like a lizard at a puddle. Believes half what he hears, repeats all of it."',
     '"Lou\'s stew is the best in the wastes. Nobody asks what\'s in it."',
     '"The Mayor keeps a ledger in his fridge desk. Next to his feelings."',
     '"Krug buys anything that walks. Opal wants him dead."',
     '"There\'s a dead plane out east. Very quiet passengers."',
     '"Doc pays you to drink his stuff. Last guy can hear the colour blue."',
   ]);
+  if (w.startsWith('"Jeb drinks')) know('jeb.drinks');
+  return w;
 }
 SC.confront = () =>
   show({

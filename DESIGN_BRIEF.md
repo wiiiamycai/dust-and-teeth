@@ -122,7 +122,7 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 
 1. (Done) Split `index.html` into modules (for example `data/npcs.js`, `data/dialogue.js`, `engine/gossip.js`, `engine/combat.js`, `engine/checks.js`, `scenes/*.js`) with a simple bundling step, or keep one file but cleanly sectioned. Keep it playable by opening a file in a browser.
 2. (Done) Set up git. Commit v2 as the baseline before any change.
-3. Hidden checks with context modifiers, real dialogue lines, soft cues, one-shot checks.
+3. (Done) Hidden checks with context modifiers, real dialogue lines, soft cues, one-shot checks. Engine in `engine/checks.js`, every check's spec in `data/checks.js`, facts the player has learned in `S.know`, failed checks in `S.tried`. New checks go through `attempt(key)`, `canTry(key)` and `hint(key)`, never a raw roll.
 4. Gossip that makes people act (section 5).
 5. Fixed character and learn-by-doing growth, earned perks, Keen Eye.
 6. Melee vs guns trade-offs, ammo, noise.
@@ -134,14 +134,15 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 
 `tests/` has headless Node scripts that run the game without a browser by stubbing the DOM. They load the game through `tests/load.js`, which reads every script `index.html` lists, in order:
 
-- `node tests/fuzz.js index.html 1500 rand` plays 1500 random games. `survive` mode avoids instant-ending options and tops up HP to reach deeper content. Reports crashes, dead ends (screens with no options), and any "undefined", "NaN" or "null" text on screen.
+- **`node tests/all.js` runs everything below and prints PASS/FAIL per test.** It takes about 4 minutes. `--quick` uses 300 fuzz games instead of 1500 for fast iteration; always do a full run before committing.
+- `node tests/fuzz.js index.html 1500 rand` plays 1500 random games. `survive` mode avoids instant-ending options and tops up HP to reach deeper content. Reports crashes, dead ends (screens with no options), any "undefined", "NaN" or "null" text on screen, and any visible check (`[Speech 62%]`, `[Brains]`, `Run (40%)`).
 - `node tests/reload.js index.html` plays random games while reloading mid-game to check saves.
-- `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`.
-
+- `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. God mode tops up HP and maxes skills before each step. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`, `REAL` (restore real skills, so checks can be measured), `RAND:<0..1>` / `RAND:off` (fix every dice roll: 0.99 fails almost any check), `EXPECT:<js>` (fail unless truthy), `SAY:<text>` (fail unless the text is on screen).
+- `tests/paths.json` holds the scripted consequence tests that `all.js` runs. Add one for each new consequence chain.
 - `node tests/golden.js index.html` replays 300 fixed-seed games (with reloads) and compares a fingerprint of every screen and save against `tests/golden.json`. It must match after any refactor. When a change is meant to alter gameplay it will mismatch: re-record with `node tests/golden.js index.html record` and commit the new `golden.json` with that change.
-- For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`).
+- For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`). The browser caches the scripts: force fresh copies before checking a change.
 
-Fuzz, reload and path must pass with zero errors after every change. Add scripted path tests for each new consequence chain.
+`node tests/all.js` must pass after every change.
 
 ## 14. Working with Will
 

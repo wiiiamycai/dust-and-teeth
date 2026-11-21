@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
+    "steps": ["Weasel", "Go", "Climb down the well", "Nigel", "REAL", "RAND:0.99",
+      "crashed plane",
+      "EXPECT:!canTry('nigel.move')",
+      "EXPECT:!cur.some(o => o[0].includes('crashed plane'))",
+      "SAY:looks at you like you're the weather",
+      "\"What ARE you?\"",
+      "EXPECT:canTry('nigel.move')",
+      "SAY:crashed plane"]
+  },
+  {
+    "name": "Bess: hearing her dream makes the leaving line land, and the cheesy line is worse",
+    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Hector's Farm", "Bess", "REAL",
+      "EVAL:globalThis.before = chanceOf('bess.leave')",
+      "What do you do for fun",
+      "EXPECT:knew('bess.dreams')",
+      "EXPECT:chanceOf('bess.leave') >= before + 20",
+      "EXPECT:chanceOf('bess.pretty') < chanceOf('bess.leave')"]
+  },
+  {
+    "name": "Bess: three failed lines and she shuts you out for good",
+    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Hector's Farm", "Bess", "REAL", "RAND:0.99",
+      "leaving this farm", "prettiest girl", "leaving this farm",
+      "SAY:Stop. Just stop.",
+      "EXPECT:!canTry('bess.leave')",
+      "EXPECT:!cur.some(o => /leaving this farm|prettiest/.test(o[0]))",
+      "EVAL:S.day += 30; know('bess.other'); S.n.bess.op += 50",
+      "EXPECT:!canTry('bess.leave')"]
+  },
+  {
+    "name": "Hector in earshot makes flirting with Bess harder",
+    "steps": ["Weasel", "Go", "REAL",
+      "EVAL:globalThis.away = chanceOf('bess.leave')",
+      "Leave (map)", "TRAVEL:Hector's Farm",
+      "EXPECT:S.here === 'farm' && chanceOf('bess.leave') <= away - 10"]
+  },
+  {
+    "name": "Once-locked checks never reopen, whatever changes",
+    "steps": ["Weasel", "Go", "REAL", "RAND:0.99",
+      "EVAL:attempt('king.talk')",
+      "EXPECT:!canTry('king.talk')",
+      "EVAL:know('king.mother'); S.n.king.op += 50; S.day += 30",
+      "EXPECT:!canTry('king.talk') && !canTry('king.mother')"]
+  },
+  {
+    "name": "Haggling: each failure raises Jeb's price, three and he stops listening",
+    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Rustwater", "Caravan Jeb", "REAL", "RAND:0.99",
+      "EVAL:globalThis.p0 = chanceOf('jeb.haggle')",
+      "Half price",
+      "EXPECT:S.f.jebUp === 1 && chanceOf('jeb.haggle') < p0",
+      "Half price", "Half price",
+      "EXPECT:S.f.jebUp === 3 && !canTry('jeb.haggle')",
+      "EXPECT:!cur.some(o => o[0].includes('Half price'))"]
+  },
+  {
+    "name": "Lou: the fingernail in the stew opens a better line",
+    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Mama Lou's", "Order the stew", "Order the stew",
+      "EXPECT:knew('lou.polish')",
+      "Spit it out", "Mama Lou",
+      "SAY:Sal's Sunday Best",
+      "REAL",
+      "EXPECT:chanceOf('lou.polish') > chanceOf('lou.guards') + 20"]
+  },
+  {
+    "name": "Hearing that Jeb drinks makes lying to Hector easier",
+    "steps": ["Weasel", "Go", "REAL",
+      "EXPECT:chanceOf('hector.drunk') <= chanceOf('hector.lying')",
+      "EVAL:know('jeb.drinks')",
+      "EXPECT:chanceOf('hector.drunk') > chanceOf('hector.lying') + 20"]
+  },
+  {
+    "name": "The taxman believes a man in a Sheriff's vest",
+    "steps": ["Weasel", "Go", "REAL",
+      "EVAL:globalThis.b = chanceOf('taxman.fired')",
+      "EVAL:S.armors.push('vest'); S.armor = 'vest'",
+      "EXPECT:chanceOf('taxman.fired') >= b + 25"]
+  },
+  {
+    "name": "Read People: earned by talking to people, gives a hint, never a number",
+    "steps": ["Weasel", "Go",
+      "EVAL:S.talks = 14",
+      "Gus",
+      "EXPECT:perk('reader')",
+      "SAY:Read People",
+      "EXPECT:cur.some(o => /\\((he|she)'s|might go for it|laugh at you|looks doable|either way|long shot|near hopeless\\)/.test(o[0]))",
+      "EXPECT:!cur.some(o => /\\d+%/.test(o[0]))"]
+  },
+  {
+    "name": "Rapport: one chat a day counts, re-opening the same chat does not",
+    "steps": ["Weasel", "Go", "Gus",
+      "EXPECT:S.n.gus.ch === 1",
+      "Any news?",
+      "EXPECT:S.n.gus.ch === 1"]
+  },
+  {
+    "name": "A v2 save without the new fields still loads",
+    "steps": ["Weasel", "Go",
+      "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"]
+  }
+]

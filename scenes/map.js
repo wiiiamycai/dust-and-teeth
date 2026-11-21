@@ -150,6 +150,22 @@ const ENC = {
         },
       ],
       [
+        '"I AM the government. You\'re fired."' + hint('taxman.fired'),
+        () => {
+          if (attempt('taxman.fired')) {
+            gainXP(30);
+            say(
+              (S.armor === 'vest'
+                ? 'He looks at your vest. He salutes. '
+                : 'He believes you. Nobody has ever lied to him. ') +
+                'He hands you 15 teeth of severance and walks into the desert.',
+            );
+            gain(15);
+          } else bad('"Nice try. Where\'s your badge?"');
+          go('hub', d);
+        },
+      ],
+      [
         'Audit him with your fists',
         () => {
           karma(-1);
@@ -330,6 +346,21 @@ const ENC = {
             }
           },
         ],
+        knew('bess.dreams') &&
+          canTry('queen.out') && [
+            '"You got out. You always wanted out. Maybe I helped."' + hint('queen.out'),
+            () => {
+              if (attempt('queen.out')) {
+                S.f.queenFate = 'spared';
+                S.n.bess.op += 20;
+                quote('Bess laughs. It is not a nice laugh. "Maybe you did. Get off my road before I thank you."');
+                go('hub', d);
+              } else {
+                bad('Bess: "Helped? You SOLD me."');
+                fight(en(), { win: 'enc', args: [d], back: ['hub', d] });
+              }
+            },
+          ],
         [
           'Give her all your teeth',
           () => {

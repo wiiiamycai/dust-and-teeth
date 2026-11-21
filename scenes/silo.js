@@ -45,6 +45,34 @@ SC.throne = () => {
             },
           ]
         : null,
+      !f.kingStopped && !knew('king.mother')
+        ? [
+            '"Who were you, before?"',
+            () => {
+              know('king.mother');
+              quote('King: "My mother\'s boy. She ran the practice. Said I had gentle hands."');
+              go('throne');
+            },
+          ]
+        : null,
+      !f.kingStopped && knew('king.mother') && canTry('king.mother')
+        ? [
+            '"Your mother said you had gentle hands. Use them. Put it down."' + hint('king.mother'),
+            () => {
+              if (attempt('king.mother')) {
+                stopKing('talked');
+                give('key');
+                quote(
+                  'The King looks at his hands for a long time. Then he takes off the crown and gives you the key.',
+                );
+                go('console');
+              } else {
+                bad('King: "Don\'t you DARE talk about her."');
+                kingFight();
+              }
+            },
+          ]
+        : null,
       !f.kingStopped && S.stats.brains >= 8 && canTry('king.zero')
         ? [
             '"It launches from HERE. You\'re ground zero."' + hint('king.zero'),
