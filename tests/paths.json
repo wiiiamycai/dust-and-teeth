@@ -528,5 +528,85 @@
       "Zip gun",
       "EXPECT:S.weapons.includes('zipgun') && S.inv.ammo === 9"
     ]
+  },
+  {
+    "name": "Enemies: a raider is the same raider near home, far away, and however good you get",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:(() => { ENC.raiders('farm').o[0][1](); const a = S.fight.en.map(e => e.lvl + ':' + e.max).join(); S.fight = null; for (const k in S.skills) S.skills[k] = 95; S.c.fights = 60; S.perks.push('keen'); ENC.raiders('chainfield').o[0][1](); const b = S.fight.en.map(e => e.lvl + ':' + e.max).join(); return a === b })()"
+    ]
+  },
+  {
+    "name": "Enemies: the King's army grows with the story, not with you",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:molarCrew().length === 2 && molarCrew().every(e => e.lvl === 4)",
+      "EVAL:S.day = 12",
+      "EXPECT:molarCrew().some(e => e.lvl === 5)",
+      "EVAL:S.day = 17",
+      "EXPECT:molarCrew().length === 3"
+    ]
+  },
+  {
+    "name": "Enemies: bounty hunters come only for the notorious, and the worse you are the better they are",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:notoriety() < 12",
+      "EVAL:S.kills = 13",
+      "EXPECT:bountyCrew().length === 2",
+      "EVAL:S.kills = 30",
+      "EXPECT:bountyCrew().length === 3 && bountyCrew().some(e => e.lvl === 7)",
+      "EVAL:go('enc', 'bounty', 'farm')",
+      "SAY:expensive ones"
+    ]
+  },
+  {
+    "name": "Gutmaw: its danger is plain, and early on you can feed it and walk away",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:give('meat'); go('enc', 'gutmaw', 'farm')",
+      "SAY:the size of a car",
+      "SAY:Lie flat in a ditch",
+      "Throw it your meat",
+      "EXPECT:S.scene === 'hub' && S.here === 'farm' && !S.inv.meat"
+    ]
+  },
+  {
+    "name": "Gutmaw: it roams the roads, and the place it's in shows the signs",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:(() => { const seen = new Set(); for (let i = 0; i < 30; i++) { roamGutmaw(); seen.add(S.f.gutLoc) } return seen.size > 2 && !seen.has('well') && [...seen].every(k => LOC[k]) })()",
+      "EVAL:S.f.gutLoc = 'farm'",
+      "Leave (map)",
+      "EXPECT:document.getElementById('map').children.some(c => c.innerHTML.includes('tremors'))",
+      "EVAL:go('hub', 'farm')",
+      "SAY:Something the size of a car came through"
+    ]
+  },
+  {
+    "name": "Gutmaw: it can be killed, and everyone hears",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:fight([gutmawE()], { win: 'gutmaw', args: ['farm'] })",
+      "FIGHT",
+      "EXPECT:S.f.gutDead && S.titles.includes('Gutmaw Slayer')",
+      "EXPECT:heard('moe', 'gutmaw')"
+    ]
+  },
+  {
+    "name": "Places show danger as words, not numbers",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EXPECT:!/[Dd]anger d/.test(document.getElementById('head').innerHTML)",
+      "Leave (map)",
+      "EXPECT:!document.getElementById('map').children.some(c => /[Dd]anger d/.test(c.innerHTML))"
+    ]
   }
 ]

@@ -33,7 +33,7 @@ function newGame() {
     perkOpts: null,
     karma: 0,
     titles: [],
-    f: {},
+    f: { gutLoc: 'skybus' },
     dead: {},
     kills: 0,
     spouse: null,

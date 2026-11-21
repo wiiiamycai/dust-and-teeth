@@ -51,6 +51,7 @@ function world() {
     event('murder', 'sheriff', { loc: 'rustwater', secret: true });
     S.n.mayor.rx.push(`"You took too long. I found someone cheaper. Molars work for scraps."`);
   }
+  roamGutmaw();
   if (!f.kingStopped) {
     if (d >= 8 && !f.omen1) {
       f.omen1 = 1;

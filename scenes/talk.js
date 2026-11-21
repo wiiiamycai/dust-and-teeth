@@ -1578,6 +1578,8 @@ function moeWord() {
     f.knowRaid = 1;
     return '"Molars are sniffing round town, counting our guns. Something\'s coming. Soon."';
   }
+  if (!f.gutDead && f.gutLoc && roll(30))
+    return `"Gutmaw's been seen round ${LOC[f.gutLoc].n}. Ground's moving there. Stay off those roads, or take something it likes better than you."`;
   const n = news('moe', null);
   if (n && roll(70)) return n.replace('"Heard', '"Word is');
   const w = pick([

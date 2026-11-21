@@ -14,7 +14,7 @@ function fightOut(){let n=0;while(/Fight · round/.test(strip(els.head.innerHTML
 let realSkills=false;
 const god=()=>vm.runInContext(realSkills?'if(S){S.hp=S.maxhp=999}':'if(S){S.hp=S.maxhp=999;for(const k in S.skills)S.skills[k]=200;}',ctx);
 function travel(dest){click(dest);// may hit encounter
- for(let k=0;k<3;k++){const h=strip(els.head.innerHTML);if((/On the road|Raider Queen|A posse|Krug's hunters|A survivor/.test(h)||/🔫Hector$/.test(h))){const b=clickables();const f=b.find(x=>/Fight|Leave him|Pay|Loot him|Leave them|Decline|Buy it|government is gone/.test(strip(x.innerHTML)))||b[0];f.onclick();fightOut();}}}
+ for(let k=0;k<3;k++){const h=strip(els.head.innerHTML);if(/Heading to|A survivor/.test(h)){const b=clickables();const f=b.find(x=>/Fight|Leave him|Pay|Loot him|Leave them|Decline|Buy it|government is gone/.test(strip(x.innerHTML)))||b[0];f.onclick();fightOut();}}}
 const steps=JSON.parse(process.argv[3]);
 for(const s of steps){god();if(process.env.V)console.log('>>',s,'::',screen().slice(0,250));
  if(s==='FIGHT'){fightOut();continue}

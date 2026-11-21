@@ -30,6 +30,7 @@ const CK = {
   'silo.pit': { sk: 'steal', base: -10, lock: 'none' },
   'silo.shaft': { sk: 'science', base: -20, lock: 'none' },
   'ambush.sneak': loc => ({ sk: 'sneak', base: -15, lock: 'none' }),
+  'gutmaw.hide': { sk: 'sneak', base: -5, lock: 'none' },
 
   // ---- the road (strangers: one try per meeting is enough) ----
   'raiders.talk': { sk: 'speech', base: 0, lock: 'none', mods: () => (S.kills >= 10 ? 10 : 0) },

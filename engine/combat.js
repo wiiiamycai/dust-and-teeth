@@ -42,8 +42,8 @@ const foe = id => {
   const d = NPC[id];
   return mkE(d.n, d.i, lvl(id), { hpm: d.hpm, npc: id, teeth: 0, wep: S.n[id].st.wep || null });
 };
-const dep = () => mkE('Deputy', '👮', 3);
-const slv = () => mkE('Slaver', '⛓️', 5);
+const dep = () => spawn('deputy');
+const slv = () => spawn('slaver');
 function crew(id) {
   const e = [foe(id)];
   if (id === 'sheriff') e.push(dep(), dep());

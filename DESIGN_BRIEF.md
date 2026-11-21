@@ -126,7 +126,7 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 4. (Done) Gossip that makes people act (section 5). Hooks in `engine/react.js`: `heard()`, `onLearn()`, `later()`, `reactions()`. Decisions in `DECISIONS.md`.
 5. (Done) Fixed character and learn-by-doing growth, earned perks, Keen Eye. Engine in `engine/growth.js`: `practice()`, `statAdd()`, `count()` and `PERK_RULES`.
 6. (Done) Melee vs guns trade-offs, ammo, noise. `tests/balance.js` guards the balance.
-7. Fixed-strength enemies, the Gutmaw, readable danger descriptions.
+7. (Done) Fixed-strength enemies, the Gutmaw, readable danger descriptions. Enemy table in `data/enemies.js`, Gutmaw in `scenes/gutmaw.js`.
 8. Seduction and jealousy.
 9. After each step: run the bot tests (section 13) and play it.
 

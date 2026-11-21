@@ -148,6 +148,7 @@ function migrate(s) {
   s.talks = s.talks || 0;
   s.later = s.later || [];
   s.c = s.c || {};
+  if (!s.f.gutLoc && !s.f.gutDead) s.f.gutLoc = 'skybus';
   s.skx = s.skx || {};
   IDS.forEach(id => {
     if (s.n[id]) s.n[id].ch = s.n[id].ch || 0;

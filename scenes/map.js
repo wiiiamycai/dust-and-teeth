@@ -17,7 +17,7 @@ function drawMap(mp) {
       b.className = 'node' + (S.here === k ? ' here' : '');
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
-      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${c ? 'crater' : 'danger ' + L.lvl}${S.here === k ? ' · you' : ''}</span>`;
+      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${c ? 'crater' : placeWord(L.lvl)}${!S.f.gutDead && S.f.gutLoc === k ? ' · tremors' : ''}${S.here === k ? ' · you' : ''}</span>`;
       b.onclick = () => travel(k);
       mp.appendChild(b);
     });
@@ -57,18 +57,94 @@ function pickEnc(dest) {
   }
   if (hostile('krug') && roll(25)) return 'slavers';
   if (alive('bess') && S.n.bess.loc === 'wastes' && !f.queenMet && roll(55)) return 'queen';
+  if (gutNear(dest) ? roll(40) : !f.gutDead && roll(2)) return 'gutmaw';
+  if (notoriety() >= 12 && roll(clamp(notoriety(), 10, 35))) return 'bounty';
   if (!roll(clamp(36 - S.stats.luck * 2, 12, 40))) return null;
-  const pool = ['raiders', 'taxman', 'moles', 'wanderer', 'salesman', 'cow', 'cult'];
-  if (S.day >= 4 && !f.kingStopped) pool.push('molars', 'molars', 'molars');
-  return pick(pool);
+  // Danger is mixed everywhere. Far from home the bad ones are just more likely.
+  const far = (LOC[dest] ? LOC[dest].lvl : 2) >= 4;
+  const pool = [
+    ['raiders', 3],
+    ['gang', far ? 2 : 0.5],
+    ['taxman', 1],
+    ['moles', far ? 1 : 3],
+    ['wanderer', 2],
+    ['salesman', 2],
+    ['cow', far ? 1 : 2],
+    ['cult', 1],
+  ];
+  if (S.day >= 4 && !f.kingStopped) pool.push(['molars', far ? 4 : 2]);
+  let r = Math.random() * pool.reduce((a, p) => a + p[1], 0);
+  for (const [k, w] of pool) if ((r -= w) < 0) return k;
+  return pool[0][0];
 }
-const areaLv = d => clamp((LOC[d] ? LOC[d].lvl : 2) - 1, 1, 8);
 const ENC = {
-  raiders: d => {
-    const lv = Math.max(2, areaLv(d)),
-      en = () => [mkE('Raider', '💀', lv), mkE('Raider', '💀', lv, { arm: roll(35) ? 'spikes' : null })];
+  gang: d => {
+    const en = () => [spawn('raiderBoss'), spawn('raider'), spawn('raider')];
     return {
-      t: 'Two raiders. Both tattoos say MOM. "20 teeth or your face."',
+      title: 'A raider gang',
+      icon: '☠️',
+      t: 'A raider boss and two of his boys. The boss is huge, and every scar on him won a fight. "Everything you have. Then we decide about you."',
+      o: [
+        ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
+        [
+          `Hand over everything (${S.teeth} teeth)`,
+          () => {
+            S.teeth = 0;
+            say('They take every tooth. The boss pats your cheek. "Good dog."');
+            go('hub', d);
+          },
+        ],
+        [
+          'Run',
+          () => {
+            if (roll(fleeP())) {
+              say('You run. They laugh too hard to chase you far.');
+              go('hub', d);
+            } else {
+              bad('The boss is faster than he looks.');
+              fight(en(), { win: 'enc', args: [d] });
+            }
+          },
+        ],
+      ],
+    };
+  },
+  bounty: d => {
+    const en = bountyCrew();
+    return {
+      title: 'Bounty hunters',
+      icon: '🎯',
+      t: `${en.length === 3 ? 'Three' : 'Two'} bounty hunters. One holds a poster with your face on it. Fair likeness. The price says you've been busy.${en.length === 3 ? ' These are the expensive ones.' : ''}`,
+      o: [
+        ['Fight', () => fight(en, { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
+        [
+          `Pay them more than the bounty (${40 + notoriety() * 3} teeth)`,
+          () => {
+            if (pay(40 + notoriety() * 3)) {
+              say('They count it, tear up the poster, and print another one as you leave.');
+              go('hub', d);
+            } else go('enc', 'bounty', d);
+          },
+        ],
+        [
+          'Run',
+          () => {
+            if (roll(fleeP() - 10)) {
+              say('You lose them in the rocks. For now.');
+              go('hub', d);
+            } else {
+              bad('They do this for a living.');
+              fight(en, { win: 'enc', args: [d] });
+            }
+          },
+        ],
+      ],
+    };
+  },
+  raiders: d => {
+    const en = () => [spawn('raider'), spawn('raider', { arm: roll(35) ? 'spikes' : null })];
+    return {
+      t: 'Two raiders. Skinny, sunburnt, more mouth than muscle. Both tattoos say MOM. "20 teeth or your face."',
       o: [
         ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
         [
@@ -104,13 +180,9 @@ const ENC = {
     };
   },
   molars: d => {
-    const lv = Math.max(4, areaLv(d)) + (S.day >= 12 ? 1 : 0),
-      en = () => [
-        mkE('Molar raider', '🦷', lv, { wep: roll(25) ? 'molargun' : null }),
-        mkE('Molar raider', '🦷', lv - 1, { arm: roll(30) ? 'spikes' : null }),
-      ];
+    const en = molarCrew;
     return {
-      t: 'Raiders in necklaces of teeth. "Tooth tax. One of yours."',
+      t: `Raiders in necklaces of teeth.${S.day >= 17 ? ' Three of them now. The King is recruiting.' : S.day >= 12 ? ' These ones have done this before.' : ''} "Tooth tax. One of yours."`,
       o: [
         ['Fight', () => fight(en(), { win: 'molars', args: [d], back: ['hub', d] }), 'danger'],
         [
@@ -183,8 +255,7 @@ const ENC = {
     ],
   }),
   moles: d => {
-    const lv = Math.max(1, areaLv(d) - 1),
-      en = () => [mkE('Mole-dog', '🐕', lv, { loot: { meat: 1 }, teeth: 0 }), mkE('Mole-dog', '🐕', lv, { teeth: 0 })];
+    const en = () => [spawn('moledog', { loot: { meat: 1 } }), spawn('moledog')];
     return {
       t: 'Mole-dogs burst from the sand. Dog body. Mole face. No manners.',
       o: [
@@ -386,9 +457,18 @@ const ENC = {
   posse: d => ({
     title: 'A posse',
     icon: '⭐',
-    t: 'Sheriff Crane and two deputies. "Time to answer for it."',
+    t: `Sheriff Crane and ${notoriety() >= 20 ? 'three' : 'two'} deputies. "Time to answer for it."`,
     o: [
-      ['Fight', () => fight(crew('sheriff'), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
+      [
+        'Fight',
+        () =>
+          fight([...crew('sheriff'), ...(notoriety() >= 20 ? [dep()] : [])], {
+            win: 'enc',
+            args: [d],
+            back: ['hub', d],
+          }),
+        'danger',
+      ],
       [
         'Run',
         () => {
@@ -447,9 +527,18 @@ const ENC = {
   slavers: d => ({
     title: "Krug's hunters",
     icon: '⛓️',
-    t: 'Three slavers with nets. "Krug wants you back. Alive, he said. Mostly."',
+    t: `Three slavers with nets${notoriety() >= 20 ? ", and Krug's tracker, who has never lost anyone" : ''}. "Krug wants you back. Alive, he said. Mostly."`,
     o: [
-      ['Fight', () => fight([slv(), slv(), slv()], { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
+      [
+        'Fight',
+        () =>
+          fight([slv(), slv(), slv(), ...(notoriety() >= 20 ? [spawn('tracker')] : [])], {
+            win: 'enc',
+            args: [d],
+            back: ['hub', d],
+          }),
+        'danger',
+      ],
       [
         'Run',
         () => {

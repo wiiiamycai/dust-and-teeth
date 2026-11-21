@@ -44,3 +44,13 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 29. **Swap weapons mid-fight for free**, to the best weapon of the other kind. Shoot them on the way in, then switch to the pipe.
 30. **No numbers on fight options.** "Hit for the eyes (hard, but it can end it)" instead of "(38%, big crit)".
 31. **Balance check** (`tests/balance.js`): against a mid raider, the knife and pipe now beat the zip gun clearly, and the sledge and cleaver roughly match the rifle and shotgun. Guns still win on range, groups and safety, and pay for it in bullets and noise.
+
+## Step 7: fixed-strength enemies, the Gutmaw, readable danger
+
+32. **Every enemy type has one fixed strength** (`data/enemies.js`): raider 2, raider boss 5, mole-dog 1, Molar 4, Molar veteran 5, slaver 5, Krug's tracker 7, deputy 3, bounty hunter 5 and 7. v2 made raiders, Molars and mole-dogs stronger the further you went. That is gone.
+33. **Mixed danger:** a new raider gang (a boss and two raiders) can turn up anywhere, but is four times likelier far from home. Mole-dogs and two-headed cows are likelier near home, Molars likelier far away.
+34. **Story makes it worse:** from day 12 Molar packs include a veteran, and from day 17 there are three of them.
+35. **Notoriety** = kills plus how far your karma is below zero. From 12, bounty hunters can appear; from 25 they send three, one of them stronger. From 20, the Sheriff's posse brings an extra deputy and Krug's hunters bring his tracker.
+36. **The Gutmaw** starts near the Sky-Bus and wanders one road every other day or so. Meet it on roads into or out of its location (40%), or anywhere by bad luck (2%). Options: run (hard), hide in a ditch (a sneak check), throw it meat, throw it Bacon Prime, shove your spouse at it, or fight. It has 110 health, hits for 9 to 20 and has 3 armour: in rags you last about four rounds. With a riot suit and a shotgun it is beatable. Killing it pays 120 teeth, gives the title Gutmaw Slayer, and everyone hears.
+37. **Signs of it:** the map marks its location "tremors", that place's description says the ground is churned, and Moe sometimes tells you where it's been seen.
+38. **Place danger is words** (quiet, rough, dangerous, deadly, hell) instead of "danger 3" on the map and in the header.

@@ -336,8 +336,12 @@ SC.hub = loc => {
   show({
     title: L.n,
     icon: L.i,
-    sub: `Danger ${L.lvl} · Day ${S.day}`,
-    text: HUBT[loc](),
+    sub: `${cap(placeWord(L.lvl))} · Day ${S.day}`,
+    text:
+      HUBT[loc]() +
+      (!S.f.gutDead && S.f.gutLoc === loc
+        ? '\n\nThe ground here is churned into ridges, and the dogs are gone. Something the size of a car came through.'
+        : ''),
     cards,
     opts: [
       ...(HUBO[loc] ? HUBO[loc]() : []),
