@@ -1,7 +1,7 @@
 'use strict';
 // ================= DATA: PEOPLE =================
 const NPC = {
-  elder: { n: 'Ma Thistle', i: '👵', lvl: 1, loc: 'scrapwell', home: 'scrapwell', k: -3, op: 15, teeth: 5 },
+  elder: { n: 'Ma Thistle', g: 'f', i: '👵', lvl: 1, loc: 'scrapwell', home: 'scrapwell', k: -3, op: 15, teeth: 5 },
   gus: { n: 'Gus', i: '⛏️', lvl: 3, loc: 'scrapwell', home: 'scrapwell', k: -1, op: 15, fighter: 1, teeth: 10 },
   crumb: { n: 'Brother Crumb', i: '🍞', lvl: 1, loc: 'scrapwell', home: 'scrapwell', k: -1, op: 15, teeth: 15 },
   pell: { n: 'Old Pell', i: '👴', lvl: 2, loc: 'scrapwell', home: 'scrapwell', k: -1, op: 15, fighter: 1, teeth: 3 },
@@ -10,6 +10,7 @@ const NPC = {
   moe: { n: 'Moe', i: '🍺', lvl: 3, loc: 'rustwater', home: 'rustwater', k: -1, teeth: 40, loot: { beer: 2 } },
   mayor: { n: 'Mayor Fenwick', i: '🎩', lvl: 2, loc: 'rustwater', home: 'rustwater', k: 1, teeth: 120 },
   sheriff: {
+    g: 'f',
     n: 'Sheriff Crane',
     i: '⭐',
     lvl: 6,
@@ -31,12 +32,13 @@ const NPC = {
     teeth: 60,
     loot: { gutglue: 2, buzz: 2 },
   },
-  opal: { n: 'Madame Opal', i: '🌹', lvl: 3, loc: 'rustwater', home: 'rustwater', k: -1, teeth: 80 },
+  opal: { n: 'Madame Opal', g: 'f', i: '🌹', lvl: 3, loc: 'rustwater', home: 'rustwater', k: -1, teeth: 80 },
   jeb: { n: 'Caravan Jeb', i: '🦎', lvl: 4, loc: 'rustwater', home: 'rustwater', k: -1, fighter: 1, teeth: 100 },
   hector: { n: 'Hector', i: '🔫', lvl: 5, loc: 'farm', home: 'farm', k: -1, fighter: 1, wep: 'shotgun', teeth: 20 },
-  bess: { n: 'Bess', i: '👩‍🌾', lvl: 3, loc: 'farm', home: 'farm', k: -2, fighter: 1 },
+  bess: { n: 'Bess', g: 'f', i: '👩‍🌾', lvl: 3, loc: 'farm', home: 'farm', k: -2, fighter: 1 },
   bert: { n: 'Bert', i: '🚜', lvl: 3, loc: 'farm', home: 'farm', k: -2, fighter: 1 },
   lou: {
+    g: 'f',
     n: 'Mama Lou',
     i: '🍲',
     lvl: 5,

@@ -158,7 +158,7 @@ SC.fight = () => {
         : null,
       F.back
         ? [
-            `Run (${fleeP()}%)`,
+            'Run',
             () => {
               if (roll(fleeP())) {
                 say('You run. Your dignity covers your escape.');
@@ -344,8 +344,8 @@ function kill(id, how) {
     } else event('murder', id, { secret: true });
   }
 }
-function quiet(id, m) {
-  if (chk('sneak', m)) {
+function quiet(id) {
+  if (attempt('murder', id)) {
     say(pick(QUIET)(NPC[id].n));
     kill(id, 'secret');
     if (S.end) return go('ending');

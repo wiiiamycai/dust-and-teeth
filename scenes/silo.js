@@ -27,11 +27,11 @@ SC.throne = () => {
           go('throne');
         },
       ],
-      !f.kingStopped
+      !f.kingStopped && canTry('king.talk')
         ? [
-            `Talk him down ${tag('speech', -35)}`,
+            '"Put the key down. Nobody needs pulling."' + hint('king.talk'),
             () => {
-              if (chk('speech', -35)) {
+              if (attempt('king.talk')) {
                 stopKing('talked');
                 give('key');
                 quote(
@@ -45,11 +45,11 @@ SC.throne = () => {
             },
           ]
         : null,
-      !f.kingStopped && S.stats.brains >= 8
+      !f.kingStopped && S.stats.brains >= 8 && canTry('king.zero')
         ? [
-            `[Brains] "It launches from HERE. You're ground zero." ${tag('speech', 10)}`,
+            '"It launches from HERE. You\'re ground zero."' + hint('king.zero'),
             () => {
-              if (chk('speech', 10)) {
+              if (attempt('king.zero')) {
                 stopKing('talked');
                 give('key');
                 quote('He goes very pale. He had not considered that. He hands you the key.');
@@ -63,9 +63,9 @@ SC.throne = () => {
         : null,
       !f.kingStopped
         ? [
-            `Lift the launch key off his neck ${tag('steal', -30)}`,
+            'Lift the launch key off his neck' + hint('king.key'),
             () => {
-              if (chk('steal', -30)) {
+              if (attempt('king.key')) {
                 stopKing('stolen');
                 give('key');
                 quote('You lift the key mid-monologue. He keeps monologuing.');

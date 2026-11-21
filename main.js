@@ -3,7 +3,7 @@
 (function boot() {
   const s = load();
   if (s && !s.end && s.scene && SC[s.scene] && s.n) {
-    S = s;
+    S = migrate(s);
     if (S.scene === 'fight' && !S.fight) {
       S.scene = 'hub';
       S.args = [S.here || 'scrapwell'];

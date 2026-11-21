@@ -13,6 +13,8 @@ for(let g=0;g<N;g++){const store={};const els={};
     const all=[...(els.opts?els.opts.children:[]),...(els.cards?els.cards.children:[]).filter(c=>c.onclick),...(els.map&&!els.map.hidden?els.map.children:[])];
     const txt=(els.text?els.text.innerHTML:'')+(els.log?els.log.innerHTML:'')+(els.head?els.head.innerHTML:'')+(els.hud?els.hud.innerHTML:'')+(els.opts?els.opts.children.map(c=>c.innerHTML).join(''):'');
     if(/undefined|NaN|\[object|null/.test(txt)){const m=txt.match(/.{0,60}(undefined|NaN|\[object|null).{0,30}/)[0];st.bad[m]=(st.bad[m]||0)+1}
+    // visible checks are banned: no [Speech 62%], no [Brains], no Run (40%)
+    {const vc=txt.match(/.{0,40}(\[[A-Z][a-z]+ \d+%\]|\[(Brains|Brawn|Charm)\]|Run \(\d+%\)).{0,20}/);if(vc){const k='VISIBLE CHECK: '+vc[0];st.bad[k]=(st.bad[k]||0)+1}}
     let info;try{info=vm.runInContext('S?{sc:S.scene,l:S.level,d:S.day,t:S.titles.join("|")}:null',ctx)}catch(e){info=null}
     if(info){st.scenes[info.sc]=(st.scenes[info.sc]||0)+1;lastLvl=info.l;st.maxDay=Math.max(st.maxDay,info.d)}
     if(/This life is over/.test(els.text?els.text.innerHTML:'')){const k=(els.text.innerHTML.split(/[.!]/)[0]).slice(0,30);st.ends[k]=(st.ends[k]||0)+1;ended=true;break}

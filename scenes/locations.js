@@ -107,10 +107,10 @@ const HUBO = {
     alive('lou')
       ? [
           [`Order the stew (5 teeth)`, () => stew()],
-          [
-            S.f.kitchen ? 'Go into the kitchen' : `Sneak into the kitchen ${tag('sneak', -10)}`,
+          (S.f.kitchen || canTry('kitchen.sneak')) && [
+            S.f.kitchen ? 'Go into the kitchen' : 'Sneak into the kitchen' + hint('kitchen.sneak'),
             () => {
-              if (S.f.kitchen || chk('sneak', -10)) {
+              if (S.f.kitchen || attempt('kitchen.sneak')) {
                 S.f.kitchen = 1;
                 go('kitchen');
               } else {
@@ -125,10 +125,10 @@ const HUBO = {
     S.f.freed
       ? []
       : [
-          [
-            `Open the pens at night ${tag('steal', S.f.slaver ? 0 : -15)}`,
+          canTry('pens.open') && [
+            'Open the pens at night' + hint('pens.open'),
             () => {
-              if (chk('steal', S.f.slaver ? 0 : -15)) freePens();
+              if (attempt('pens.open')) freePens();
               else {
                 bad('A lock squeals. Floodlights. "Thief!"');
                 fight([...(alive('krug') ? [foe('krug')] : []), slv(), slv()], {
@@ -169,9 +169,9 @@ const HUBO = {
             : null,
           !S.f.coilGot && !has('coil')
             ? [
-                `Salvage the galley heating coil ${tag('science')}`,
+                'Salvage the galley heating coil' + hint('plane.coil'),
                 () => {
-                  if (chk('science')) {
+                  if (attempt('plane.coil')) {
                     give('coil');
                     S.f.coilGot = 1;
                     say('One heating coil. It might toast.');
@@ -210,9 +210,9 @@ const HUBO = {
             'danger',
           ],
           [
-            `Sneak past ${tag('sneak', -25)}`,
+            'Sneak past' + hint('silo.sneak'),
             () => {
-              if (chk('sneak', -25)) {
+              if (attempt('silo.sneak')) {
                 S.f.siloIn = 1;
                 say('You slip in behind a cart of diggers.');
                 goHere();
@@ -246,9 +246,9 @@ const HUBO = {
       : [
           !S.armors.includes('riot')
             ? [
-                `Break into the armoury ${tag('steal', -15)}`,
+                'Break into the armoury' + hint('silo.armoury'),
                 () => {
-                  if (chk('steal', -15)) {
+                  if (attempt('silo.armoury')) {
                     S.armors.push('riot');
                     S.armor = 'riot';
                     gainXP(100);
@@ -263,9 +263,9 @@ const HUBO = {
             : null,
           !S.f.pitFreed
             ? [
-                `Free the diggers in the pit ${tag('steal', -10)}`,
+                'Free the diggers in the pit' + hint('silo.pit'),
                 () => {
-                  if (chk('steal', -10)) {
+                  if (attempt('silo.pit')) {
                     S.f.pitFreed = 1;
                     karma(3);
                     gainXP(150);
@@ -280,9 +280,9 @@ const HUBO = {
             : null,
           !S.f.kingStopped
             ? [
-                `Crawl the maintenance shaft to the launch console ${tag('science', -20)}`,
+                'Crawl the maintenance shaft to the launch console' + hint('silo.shaft'),
                 () => {
-                  if (chk('science', -20)) {
+                  if (attempt('silo.shaft')) {
                     stopKing('sabotage');
                     S.f.sabotaged = 1;
                     say('You cut the right wires. The Big Tooth goes quiet. Nobody knows yet.');
@@ -360,9 +360,9 @@ SC.ambush = loc => {
     opts: [
       ['Fight', () => fight(en, { win: 'hub', args: [loc], back: ['map'] }), 'danger'],
       [
-        `Sneak in ${tag('sneak', -15)}`,
+        'Sneak in' + hint('ambush.sneak', loc),
         () => {
-          if (chk('sneak', -15)) {
+          if (attempt('ambush.sneak', loc)) {
             S.f.sneakIn = loc;
             say('You slip past them.');
             go('hub', loc);

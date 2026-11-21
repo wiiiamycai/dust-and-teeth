@@ -13,14 +13,7 @@ SC.talk = id => {
   const atk = NPC[id].animal
     ? null
     : [`Attack ${d.n}`, () => fight(crew(id), { started: true, win: 'back', back: ['map'] }), 'danger'];
-  const qk =
-    id === 'king'
-      ? null
-      : [
-          `Murder ${d.n} quietly ${tag('sneak', -(d.fighter ? 25 : 10))}`,
-          () => quiet(id, -(d.fighter ? 25 : 10)),
-          'danger',
-        ];
+  const qk = id === 'king' ? null : [`Murder ${d.n} quietly` + hint('murder', id), () => quiet(id), 'danger'];
   if (n.op <= -35 && !['hector', 'bess', 'bert', 'pete'].includes(id)) {
     show({
       title: d.n,
@@ -31,6 +24,7 @@ SC.talk = id => {
     });
     return;
   }
+  if (!d.animal) chatted(id);
   const r = TALK[id]();
   if (!r) return;
   show({ title: d.n, icon: d.i, sub: `Lv ${n.lvl} · ${mood(n.op)}`, text: r.t, opts: [...r.o, atk, qk, back] });
@@ -90,7 +84,7 @@ function stopKing(how) {
   gainXP(300);
 }
 function flirt(x) {
-  if (chk('speech', -5) || S.stats.charm >= 8) {
+  if (attempt('bess.flirt')) {
     quote(`${NPC[x].n}: "Behind the barn. Ten minutes."`);
     say("It's the most interesting thing to happen on this farm in eleven years. Then: the click of a shotgun.");
     go('wedding', x);
@@ -109,11 +103,9 @@ function penTalk(x) {
         : '"Hi," says Bert, in chains. "Krug says I have good teeth."',
     o: [
       [
-        alive('krug')
-          ? `Pick her lock tonight ${tag('steal', -10)}`.replace('her', x === 'bess' ? 'her' : 'his')
-          : 'Open the pen',
+        alive('krug') ? `Pick ${x === 'bess' ? 'her' : 'his'} lock tonight` + hint('pen.lock', x) : 'Open the pen',
         () => {
-          if (!alive('krug') || chk('steal', -10)) go('freed1', x);
+          if (!alive('krug') || attempt('pen.lock', x)) go('freed1', x);
           else {
             bad('A slaver spots you.');
             if (alive('krug')) S.n.krug.op -= 30;
@@ -145,11 +137,11 @@ SC.freed1 = x => {
           goHere();
         },
       ],
-      S.f.spouseWho === x
+      S.f.spouseWho === x && canTry('spouse.back', x)
         ? [
-            `"Come back to me." ${tag('speech', -25)}`,
+            '"Come back to me."' + hint('spouse.back', x),
             () => {
-              if (chk('speech', -25)) {
+              if (attempt('spouse.back', x)) {
                 S.spouse = x;
                 S.n[x].loc = 'party';
                 S.f.spouseFate = null;
@@ -236,9 +228,9 @@ SC.kitchen = () => {
         },
       ]);
     o.push([
-      `Pick the cage lock ${tag('steal', -10)}`,
+      'Pick the cage lock' + hint('kitchen.cage'),
       () => {
-        if (chk('steal', -10)) {
+        if (attempt('kitchen.cage')) {
           p.loc = 'rustwater';
           karma(2);
           gainXP(100);
@@ -318,12 +310,12 @@ SC.wedding = x => {
           go('hub', 'farm');
         },
       ],
-      [
-        `Talk your way out ${tag('speech', -20)}`,
+      canTry('wedding.out') && [
+        '"I can\'t. I\'m already married. To a toaster."' + hint('wedding.out'),
         () => {
-          if (chk('speech', -20)) {
+          if (attempt('wedding.out')) {
             S.f.spouseFate = 'refused';
-            say('You claim you\'re already married to a toaster. He\'s too confused to shoot. "Get off my farm."');
+            say('Hector is too confused to shoot. "Get off my farm."');
             go('map');
           } else {
             bad('"Nice speech. Wedding\'s still on."');
@@ -333,7 +325,7 @@ SC.wedding = x => {
       ],
       ['Fight Hector', () => fight([foe('hector')], { started: true, win: 'back', back: ['map'] }), 'danger'],
       [
-        `Run (${fleeP()}%)`,
+        'Run',
         () => {
           if (roll(fleeP())) {
             S.f.spouseFate = 'refused';
@@ -377,7 +369,7 @@ const TALK = {
       ]);
     if (f.nigel && !f.elderTold)
       o.push([
-        'Tell her about the well',
+        '"I found out what\'s in the well."',
         () => {
           f.elderTold = 1;
           quote(
@@ -426,9 +418,9 @@ const TALK = {
           },
         ]);
         o.push([
-          `Lie: say you killed it ${tag('speech')}`,
+          '"It\'s dead. I killed it."' + hint('gus.lie'),
           () => {
-            if (chk('speech')) {
+            if (attempt('gus.lie')) {
               f.nigel = 'lied';
               f.gusPaid = 1;
               quote('Gus: "Good riddance."');
@@ -470,9 +462,9 @@ const TALK = {
     if (!f.tfixed && !f.tstolen) {
       if (has('coil'))
         o.push([
-          `Fix the Toaster with your coil ${S.stats.brains >= 8 ? '[Brains]' : tag('science')}`,
+          'Fix the Toaster with your coil' + (S.stats.brains >= 8 ? '' : hint('toaster.fix')),
           () => {
-            if (S.stats.brains >= 8 || chk('science')) {
+            if (S.stats.brains >= 8 || attempt('toaster.fix')) {
               take('coil');
               f.tfixed = 1;
               karma(2);
@@ -489,22 +481,24 @@ const TALK = {
             go('talk', 'crumb');
           },
         ]);
-      o.push([
-        `Steal the Toaster ${tag('steal', -10)}`,
-        () => {
-          if (chk('steal', -10)) {
-            f.tstolen = 1;
-            give('toaster');
-            karma(-2);
-            event('tstolen', null, { wit: [] });
-            say("You swap it for a rock. He won't notice for hours.");
-          } else {
-            bad('He catches you. He just looks at you. Worse than a fight.');
-            S.n.crumb.op -= 20;
-          }
-          go('talk', 'crumb');
-        },
-      ]);
+      o.push(
+        canTry('toaster.steal') && [
+          'Steal the Toaster' + hint('toaster.steal'),
+          () => {
+            if (attempt('toaster.steal')) {
+              f.tstolen = 1;
+              give('toaster');
+              karma(-2);
+              event('tstolen', null, { wit: [] });
+              say("You swap it for a rock. He won't notice for hours.");
+            } else {
+              bad('He catches you. He just looks at you. Worse than a fight.');
+              S.n.crumb.op -= 20;
+            }
+            go('talk', 'crumb');
+          },
+        ],
+      );
     }
     if (S.spouse)
       o.push([
@@ -566,9 +560,9 @@ const TALK = {
         },
       ],
       [
-        alive('pell') ? `Steal him ${tag('steal', -15)}` : 'Take him',
+        alive('pell') ? 'Steal him' + hint('pig.steal') : 'Take him',
         () => {
-          if (!alive('pell') || chk('steal', -15)) {
+          if (!alive('pell') || attempt('pig.steal')) {
             S.dead.pig = 1;
             S.f.pigStolen = 1;
             give('pig');
@@ -622,22 +616,24 @@ const TALK = {
           go('talk', 'nigel');
         },
       ]);
-    o.push([
-      `Talk him into moving out ${tag('speech', -10)}`,
-      () => {
-        if (chk('speech', -10)) {
-          f.nigel = 'moved';
-          S.n.nigel.loc = 'skybus';
-          karma(1);
-          gainXP(75);
-          say('You sell him on the crashed plane. Quiet neighbours. He packs his chicken and goes.');
-          goHere();
-        } else {
-          bad('"You just want me gone." He hugs his chicken.');
-          go('talk', 'nigel');
-        }
-      },
-    ]);
+    o.push(
+      canTry('nigel.move') && [
+        '"There\'s a crashed plane east. Quiet neighbours. All dead."' + hint('nigel.move'),
+        () => {
+          if (attempt('nigel.move')) {
+            f.nigel = 'moved';
+            S.n.nigel.loc = 'skybus';
+            karma(1);
+            gainXP(75);
+            say('You sell him on the crashed plane. Quiet neighbours. He packs his chicken and goes.');
+            goHere();
+          } else {
+            bad('"You just want me gone." He hugs his chicken.');
+            go('talk', 'nigel');
+          }
+        },
+      ],
+    );
     if (dumb())
       o.push([
         '"You glow. Glow bad?"',
@@ -708,7 +704,7 @@ const TALK = {
     const o = [],
       f = S.f;
     o.push([
-      'Ask about the water',
+      '"Why does water cost teeth here?"',
       () => {
         f.mWell = 1;
         quote('Fenwick: "There was a free well. Filled up with corpses. Tragic. Nobody knows how." He winks.');
@@ -716,20 +712,22 @@ const TALK = {
       },
     ]);
     if (f.mWell && !f.pumpOpen)
-      o.push([
-        `Persuade him to open the pump ${tag('speech', -30)}`,
-        () => {
-          if (chk('speech', -30)) {
-            f.pumpOpen = 1;
-            karma(4);
-            addTitle('Bringer of Water');
-            event('pump', null);
-            gainXP(150);
-            quote('You describe angry mobs. In detail. With diagrams. He opens the pump, hating every second.');
-          } else bad('Fenwick: "Free water? Next you\'ll want free funerals."');
-          go('talk', 'mayor');
-        },
-      ]);
+      o.push(
+        canTry('mayor.pump') && [
+          '"Open the pump, before the town opens you."' + hint('mayor.pump'),
+          () => {
+            if (attempt('mayor.pump')) {
+              f.pumpOpen = 1;
+              karma(4);
+              addTitle('Bringer of Water');
+              event('pump', null);
+              gainXP(150);
+              quote('You describe angry mobs. In detail. With diagrams. He opens the pump, hating every second.');
+            } else bad('Fenwick: "Free water? Next you\'ll want free funerals."');
+            go('talk', 'mayor');
+          },
+        ],
+      );
     if (!f.mayorJob && alive('sheriff'))
       o.push([
         '"Any work?"',
@@ -769,9 +767,9 @@ const TALK = {
       ]);
     if (!f.ledgerTaken)
       o.push([
-        `Steal the ledger from his fridge desk ${tag('steal', -15)}`,
+        'Steal the ledger from his fridge desk' + hint('mayor.ledger'),
         () => {
-          if (chk('steal', -15)) {
+          if (attempt('mayor.ledger')) {
             f.ledgerTaken = 1;
             give('ledger');
             say('Got it. Every corpse in the free well. Dates. Prices. Neat handwriting.');
@@ -784,20 +782,22 @@ const TALK = {
         },
       ]);
     if (!has('tophat') && !f.hatTaken)
-      o.push([
-        `Lift his top hat ${tag('steal', -25)}`,
-        () => {
-          if (chk('steal', -25)) {
-            f.hatTaken = 1;
-            give('tophat');
-            say('He blames a bird.');
-          } else bad('"Hands where I can see them."');
-          go('talk', 'mayor');
-        },
-      ]);
+      o.push(
+        canTry('mayor.hat') && [
+          'Lift his top hat' + hint('mayor.hat'),
+          () => {
+            if (attempt('mayor.hat')) {
+              f.hatTaken = 1;
+              give('tophat');
+              say('He blames a bird.');
+            } else bad('"Hands where I can see them."');
+            go('talk', 'mayor');
+          },
+        ],
+      );
     if (S.stats.brains >= 8 && f.mayorTribute && !f.tributeSpotted)
       o.push([
-        '[Brains] "Funny how the Molars skipped your office."',
+        '"Funny how the Molars skipped your office."',
         () => {
           f.tributeSpotted = 1;
           S.n.mayor.op -= 20;
@@ -817,7 +817,7 @@ const TALK = {
     const o = [],
       f = S.f;
     o.push([
-      'Ask about the Mayor',
+      '"What do you make of the Mayor?"',
       () => {
         quote('Crane: "He poisoned the free well to sell us water. Get me his ledger. Then he swings."');
         go('talk', 'sheriff');
@@ -874,7 +874,7 @@ const TALK = {
       ]);
     if (f.knowSilo && !f.kingStopped && !f.sheriffAlly)
       o.push([
-        `Ask her to ride with you to Silo 9${S.n.sheriff.op >= 40 ? '' : ' (needs her trust)'}`,
+        '"Ride with me to Silo 9."',
         () => {
           if (S.n.sheriff.op >= 40) {
             f.sheriffAlly = 1;
@@ -1005,7 +1005,7 @@ const TALK = {
       ]);
     if (S.stats.brains >= 7 && !S.f.docFix)
       o.push([
-        '[Brains] Correct his chemistry',
+        '"Your ratios are backwards, Doc."',
         () => {
           S.f.docFix = 1;
           give('buzz', 2);
@@ -1014,20 +1014,22 @@ const TALK = {
           go('talk', 'doc');
         },
       ]);
-    o.push([
-      `Steal some Buzz ${tag('steal', -10)}`,
-      () => {
-        if (chk('steal', -10)) {
-          give('buzz', 2);
-          say('Two hits of Buzz, pocketed.');
-        } else {
-          bad("He throws a jar of something. It's still moving. -4 HP.");
-          S.n.doc.op -= 20;
-          if (hurt(4, 'Killed by a thrown jar of something.')) return;
-        }
-        go('talk', 'doc');
-      },
-    ]);
+    o.push(
+      canTry('doc.buzz') && [
+        'Steal some Buzz' + hint('doc.buzz'),
+        () => {
+          if (attempt('doc.buzz')) {
+            give('buzz', 2);
+            say('Two hits of Buzz, pocketed.');
+          } else {
+            bad("He throws a jar of something. It's still moving. -4 HP.");
+            S.n.doc.op -= 20;
+            if (hurt(4, 'Killed by a thrown jar of something.')) return;
+          }
+          go('talk', 'doc');
+        },
+      ],
+    );
     return {
       t: 'Doc Ratchet. His degree is a cereal box with DOCTOR on it. "What\'s broken, besides your spirit?"',
       o,
@@ -1089,7 +1091,7 @@ const TALK = {
   jeb: () => {
     const o = [],
       f = S.f,
-      c = cost(300, 'jeb');
+      c = Math.round(cost(300, 'jeb') * (1 + 0.1 * (S.f.jebUp || 0)));
     if (!f.jebQ)
       o.push([
         '"Need anything?"',
@@ -1136,18 +1138,22 @@ const TALK = {
       },
       'danger',
     ]);
-    if (!f.haggle)
-      o.push([
-        `Haggle ${tag('speech', -15)}`,
-        () => {
-          f.haggle = 1;
-          if (chk('speech', -15)) {
-            f.jebCheap = 1;
-            quote('Jeb: "Half price. You ride with the lizards."');
-          } else quote('Jeb: "Full price. The lizards pay full price."');
-          go('talk', 'jeb');
-        },
-      ]);
+    if (!f.jebCheap)
+      o.push(
+        canTry('jeb.haggle') && [
+          '"Half price, and I ride with the lizards."' + hint('jeb.haggle'),
+          () => {
+            if (attempt('jeb.haggle')) {
+              f.jebCheap = 1;
+              quote('Jeb: "Half price. You ride with the lizards."');
+            } else {
+              f.jebUp = (f.jebUp || 0) + 1;
+              quote('Jeb: "Price just went up. Keep talking, it\'ll go up again."');
+            }
+            go('talk', 'jeb');
+          },
+        ],
+      );
     o.push(newsOpt('jeb', '"Roads are quiet. Too quiet. I hate saying that."'));
     return {
       t: 'Caravan Jeb. Six pack-lizards and a cart. Heading east, past the mountains. "They say it\'s green."',
@@ -1200,10 +1206,10 @@ const TALK = {
               go('talk', 'hector');
             },
           ],
-          [
-            `"Jeb\'s lying." ${tag('speech', -25)}`,
+          canTry('hector.lying') && [
+            '"Jeb\'s lying."' + hint('hector.lying'),
             () => {
-              if (chk('speech', -25)) {
+              if (attempt('hector.lying')) {
                 S.n.hector.op = Math.max(S.n.hector.op, -20);
                 quote('Hector: "...Jeb does drink." The gun goes down. For now.');
                 go('talk', 'hector');
@@ -1220,7 +1226,7 @@ const TALK = {
     if (f.bessHome && alive('bess')) t = '"You brought her home. I still want to shoot you. Less, though."';
     else if (f.bessQ && S.n.bess.loc === 'pen') t = '"Well? Where is she?"';
     o.push([
-      'Ask about his kids',
+      '"Your kids ever leave the farm?"',
       () => {
         quote(
           'Hector: "Bess is 29, Bert is 31. Neither leaves this farm. Not since the Hendersons went to Lou\'s for dinner and became dinner."',
@@ -1249,7 +1255,7 @@ const TALK = {
     const sold = knows('bess', 'sold', 'bess');
     const o = [
       [
-        'Chat',
+        '"What do you do for fun out here?"',
         () => {
           quote(
             sold
@@ -1260,7 +1266,8 @@ const TALK = {
         },
       ],
     ];
-    if (!S.spouse && !f.spouseFate && !sold) o.push([`Flirt ${tag('speech', -5)}`, () => flirt('bess')]);
+    if (!S.spouse && !f.spouseFate && !sold && canTry('bess.flirt'))
+      o.push(['"Ever thought about leaving this farm?"' + hint('bess.flirt'), () => flirt('bess')]);
     return {
       t: sold
         ? '"You sold me." She keeps sharpening her hoe. She looks at you while she does it.'
@@ -1274,14 +1281,14 @@ const TALK = {
     if (n.loc === 'pen') return penTalk('bert');
     const o = [
       [
-        'Chat',
+        '"Read anything good lately?"',
         () => {
           quote('Bert: "A tractor can pull eight times its own weight." You know that now. Forever.');
           go('talk', 'bert');
         },
       ],
     ];
-    if (!S.spouse && !f.spouseFate) o.push([`Flirt ${tag('speech', -5)}`, () => flirt('bert')]);
+
     return { t: 'Bert, 31, has read the same tractor magazine every night of his adult life.', o };
   },
   lou: () => {
@@ -1289,11 +1296,11 @@ const TALK = {
       f = S.f;
     if (!f.louAsk)
       o.push([
-        `Ask about two missing caravan guards ${tag('speech', -10)}`,
+        '"Seen two caravan guards? Pete and Sal?"' + hint('lou.guards'),
         () => {
           f.louAsk = 1;
           quote(
-            chk('speech', -10)
+            attempt('lou.guards')
               ? 'Lou: "Pete and Sal? Lovely boys. Sal was so tender..." She stops. "Never seen \'em. More stew?"'
               : 'Lou: "Never seen \'em, honey. More stew?" Junior stops chopping.',
           );
@@ -1445,9 +1452,11 @@ SC.confront = () =>
         },
       ],
       [
-        `Make her stop serving people ${S.stats.brawn >= 9 ? '[Brawn]' : tag('speech', -15)}`,
+        S.stats.brawn >= 9
+          ? 'Hold Junior over the stew pot'
+          : '"Dead customers don\'t come back, Lou. Think of the repeat business."' + hint('lou.stop'),
         () => {
-          if (S.stats.brawn >= 9 || chk('speech', -15)) {
+          if (S.stats.brawn >= 9 || attempt('lou.stop')) {
             S.f.louReformed = 1;
             karma(3);
             gainXP(150);

@@ -6,7 +6,7 @@ SC.char = () => {
     o = [];
   if (S.perkPend > 0) {
     if (!S.perkOpts || !S.perkOpts.length)
-      S.perkOpts = shuffle(Object.keys(PERKS).filter(p => !S.perks.includes(p))).slice(0, 3);
+      S.perkOpts = shuffle(Object.keys(PERKS).filter(p => !S.perks.includes(p) && !PERKS[p].earned)).slice(0, 3);
     S.perkOpts.forEach(p =>
       o.push([
         `PERK: ${PERKS[p].n}. ${PERKS[p].d}`,

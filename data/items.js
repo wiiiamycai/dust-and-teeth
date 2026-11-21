@@ -86,4 +86,5 @@ const PERKS = {
   tax: { n: 'Tax Exempt', d: 'Everything costs 25% less.' },
   wind: { n: 'Second Wind', d: 'Once per fight, survive a killing blow.' },
   butcher: { n: "Butcher's Pal", d: 'Lou and Krug pay double.' },
+  reader: { n: 'Read People', d: 'You can tell when someone is close to yes.', earned: 1 },
 };

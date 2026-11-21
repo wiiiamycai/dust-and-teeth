@@ -52,6 +52,10 @@ function show(v) {
   $('head').innerHTML = v.title
     ? `<span class="ic">${v.icon || ''}</span><div><h1>${esc(v.title)}</h1>${v.sub ? `<div class="sub">${esc(v.sub)}</div>` : ''}</div>`
     : '';
+  if (cueQ.length) {
+    cueQ.forEach(t => pend.push(['m', t]));
+    cueQ = [];
+  }
   $('log').innerHTML = pend
     .slice(-9)
     .map(([c, t]) => `<p class="${c}">${esc(t)}</p>`)

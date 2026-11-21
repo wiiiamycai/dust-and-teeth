@@ -10,7 +10,7 @@ function newGame(k) {
   const n = {};
   IDS.forEach(id => {
     const d = NPC[id];
-    n[id] = { loc: d.loc, op: d.op || 0, k: [], rx: [], lvl: d.lvl, st: {} };
+    n[id] = { loc: d.loc, op: d.op || 0, k: [], rx: [], lvl: d.lvl, st: {}, ch: 0 };
   });
   S = {
     preset: k,
@@ -50,6 +50,9 @@ function newGame(k) {
     ev: [],
     evN: 0,
     crater: {},
+    tried: {},
+    know: {},
+    talks: 0,
   };
 }
 function P(sk, mod) {
@@ -64,12 +67,6 @@ function P(sk, mod) {
   }
   if (sk === 'science') v += (S.stats.brains - 5) * 2;
   return clamp(v, 5, 95);
-}
-const tag = (sk, mod) => `[${cap(sk)} ${P(sk, mod)}%]`;
-function chk(sk, mod) {
-  const ok = roll(P(sk, mod));
-  if (ok) gainXP(10);
-  return ok;
 }
 function cost(base, id) {
   const op = id && S.n[id] ? S.n[id].op : 0;
@@ -151,6 +148,7 @@ function gainXP(n) {
   }
 }
 function die(cause) {
+  cueQ = [];
   S.end = { type: 'death', cause };
   S.fight = null;
   go('ending');

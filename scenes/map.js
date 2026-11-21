@@ -75,9 +75,9 @@ const ENC = {
           },
         ],
         [
-          `Talk past them ${tag('speech')}`,
+          '"Raider Guild inspection. Permits, please."' + hint('raiders.talk'),
           () => {
-            if (chk('speech')) {
+            if (attempt('raiders.talk')) {
               say('You pose as a Raider Guild inspector. They pay YOU 5.');
               gain(5);
               go('hub', d);
@@ -139,9 +139,9 @@ const ENC = {
         },
       ],
       [
-        `Explain the government is gone ${tag('speech')}`,
+        '"The government is gone. Two hundred years gone."' + hint('taxman.gone'),
         () => {
-          if (chk('speech')) {
+          if (attempt('taxman.gone')) {
             karma(1);
             gainXP(30);
             say('He sits in the sand. "Then what was it all for?" He wanders off to become a raider.');
@@ -167,7 +167,7 @@ const ENC = {
       o: [
         ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
         [
-          `Run (${fleeP()}%)`,
+          'Run',
           () => {
             if (roll(fleeP())) {
               say('They stop to dig. You escape.');
@@ -222,9 +222,9 @@ const ENC = {
         },
       ],
       [
-        `Sell him his own sand ${tag('speech', -10)}`,
+        '"Pre-war sand. Rad-free. Twenty-five teeth."' + hint('salesman.sand'),
         () => {
-          if (chk('speech', -10)) {
+          if (attempt('salesman.sand')) {
             say('He buys sand from you. In a desert. +25.');
             gain(25);
           } else bad('"I invented that one, friend."');
@@ -245,9 +245,9 @@ const ENC = {
     t: 'A two-headed cow. The heads are arguing about which way is north.',
     o: [
       [
-        `Settle it ${tag('speech')}`,
+        '"North is where the grass is. Both of you, look."' + hint('cow.settle'),
         () => {
-          if (chk('speech')) {
+          if (attempt('cow.settle')) {
             karma(1);
             say('Peace in the family.');
           } else say("Now they won't speak to each other. They share a stomach.");
@@ -316,10 +316,10 @@ const ENC = {
       t: `A raider gang blocks the road. Their queen wears Krug's chains as a necklace. It's Bess. Level ${lv} now. "Remember me?"`,
       o: [
         ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
-        [
-          `Apologise ${tag('speech', -20)}`,
+        canTry('queen.sorry') && [
+          '"I was wrong to sell you, Bess."' + hint('queen.sorry'),
           () => {
-            if (chk('speech', -20)) {
+            if (attempt('queen.sorry')) {
               S.f.queenFate = 'spared';
               S.n.bess.op += 40;
               quote('Bess: "You\'re not worth the bullet. Get out of my wasteland."');
@@ -350,7 +350,7 @@ const ENC = {
     o: [
       ['Fight', () => fight(crew('sheriff'), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
       [
-        `Run (${fleeP()}%)`,
+        'Run',
         () => {
           if (roll(fleeP())) {
             say('You lose them in the dunes.');
@@ -380,7 +380,7 @@ const ENC = {
     o: [
       ['Fight', () => fight([foe('hector')], { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
       [
-        `Run (${fleeP()}%)`,
+        'Run',
         () => {
           if (roll(fleeP())) {
             say('Buckshot whistles past. You get away.');
@@ -401,7 +401,7 @@ const ENC = {
     o: [
       ['Fight', () => fight([slv(), slv(), slv()], { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
       [
-        `Run (${fleeP()}%)`,
+        'Run',
         () => {
           if (roll(fleeP())) {
             say('You slip the nets.');
@@ -430,9 +430,11 @@ SC.interrog = d =>
     text: 'One Molar is still breathing. Barely.',
     opts: [
       [
-        `Make him talk ${S.stats.brawn >= 8 ? '[Brawn]' : tag('speech')}`,
+        S.stats.brawn >= 8
+          ? 'Squeeze his throat until he talks'
+          : '"Talk, and I\'ll give you water."' + hint('molar.talk'),
         () => {
-          if (S.stats.brawn >= 8 || chk('speech')) {
+          if (S.stats.brawn >= 8 || attempt('molar.talk')) {
             learnSilo();
             if (!S.f.raid) S.f.knowRaid = 1;
             quote(
