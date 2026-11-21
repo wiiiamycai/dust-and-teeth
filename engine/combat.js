@@ -55,6 +55,10 @@ function crew(id) {
   const e = [foe(id)];
   if (id === 'sheriff') e.push(dep(), dep());
   if (id === 'krug') e.push(slv(), slv());
+  if (id === 'pips') {
+    if (alive('rook') && S.n.rook.loc === 'snakeeyes') e.push(foe('rook'));
+    e.push(spawn('houseman'));
+  }
   if (id === 'lou' && alive('junior') && S.n.junior.loc === 'diner') e.push(foe('junior'));
   if (id === 'junior' && alive('lou') && S.n.lou.loc === 'diner') e.push(foe('lou'));
   return e;
@@ -88,6 +92,7 @@ function hit(t, mod) {
 }
 // The best weapon of the other kind, for a quick switch mid-fight.
 function otherWeapon() {
+  if (S.fight && S.fight.pit) return null; // fists and blades only in the pit
   const gun = isGun(S.weapon),
     pool = S.weapons.filter(w => w !== S.weapon && isGun(w) !== gun && !dry(w));
   return pool.sort((a, b) => W[b].d[1] - W[a].d[1])[0] || null;
@@ -124,6 +129,7 @@ function fight(en, o) {
     close: !!(o.close || o.started),
     charge: false,
     loud: false,
+    pit: !!o.pit,
   };
   go('fight');
 }
@@ -334,6 +340,8 @@ function enemy() {
           F.wind = true;
           S.hp = 15;
           F.log.push('SECOND WIND. You refuse to die.');
+        } else if (F.pit) {
+          return pitYield();
         } else if (!S.f.penned && !S.f.chainfieldBurned && F.en.some(x => x.cap && x.hp > 0)) {
           return penned();
         } else {
@@ -354,6 +362,8 @@ function win() {
   S.buzzOn = false;
   F.log.forEach(l => say(l));
   survived();
+  // The pit: they yield, nobody dies, nothing is looted. The prize is the purse.
+  if (F.pit) return WIN[F.win](...F.args);
   for (const e of F.en) {
     if (e.npc) {
       kill(e.npc, F.started ? 'murder' : 'slain', F.loud);

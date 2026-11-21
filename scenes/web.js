@@ -658,32 +658,41 @@ reactions = function () {
 const waterCost = () => 10 + (S.f.waterUp || 0) + (S.f.docPump ? 5 : 0);
 
 // ---- what you see in a place ----
+// Signs of a plot coming, and the aftermath of one that happened. Every place calls these.
+function plotText(loc) {
+  let t = '';
+  for (const k in PLOTS) {
+    const P = PLOTS[k],
+      st = S.f['plot_' + k];
+    if (!st && P.sign && P.sign.where === loc && S.day >= P.day() - 4 && P.live()) {
+      know('plot.' + k);
+      t += '\n\n' + P.sign.t;
+    }
+    if (st === 'done' && P.after && P.after[loc]) {
+      const a = typeof P.after[loc] === 'function' ? P.after[loc]() : P.after[loc];
+      if (a) t += '\n\n' + a;
+    }
+  }
+  return t;
+}
+function plotHub(loc) {
+  const o = [];
+  for (const k in PLOTS) {
+    const P = PLOTS[k];
+    if (P.hub && P.hub[loc] && plotOpen(k) && P.known()) o.push(P.hub[loc]());
+  }
+  return o;
+}
 const _hubtWeb = {};
 for (const loc in HUBT) {
   _hubtWeb[loc] = HUBT[loc];
-  HUBT[loc] = () => {
-    let t = _hubtWeb[loc]();
-    for (const k in PLOTS) {
-      const P = PLOTS[k],
-        st = S.f['plot_' + k];
-      if (!st && P.sign && P.sign.where === loc && S.day >= P.day() - 4 && P.live()) {
-        know('plot.' + k);
-        t += '\n\n' + P.sign.t;
-      }
-      if (st === 'done' && P.after && P.after[loc]) t += '\n\n' + P.after[loc];
-    }
-    return t;
-  };
+  HUBT[loc] = () => _hubtWeb[loc]() + plotText(loc);
 }
 const _huboWeb = {};
 for (const loc in HUBO) {
   _huboWeb[loc] = HUBO[loc];
   HUBO[loc] = () => {
-    const o = _huboWeb[loc]();
-    for (const k in PLOTS) {
-      const P = PLOTS[k];
-      if (P.hub && P.hub[loc] && plotOpen(k) && P.known()) o.push(P.hub[loc]());
-    }
+    const o = [..._huboWeb[loc](), ...plotHub(loc)];
     if (loc === 'rustwater' && S.f.juniorFree && alive('junior') && S.n.junior.loc === 'rustwater')
       o.push([
         "Junior's Greens: cabbage soup (5 teeth, +15 HP)",

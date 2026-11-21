@@ -44,6 +44,18 @@ const CK = {
     mods: () => (S.f.louReformed ? 30 : 0) + (S.f.louFriend ? 15 : 0),
   },
   'sty.scare': { sk: 'speech', base: 0, who: 'junior', lock: 'once', mods: () => (S.n.junior.op >= 20 ? 15 : 0) },
+  // ---- Snake Eyes ----
+  'bones.swap': { sk: 'steal', base: -10, who: 'pips', lock: 'none' },
+  'cards.cheat': { sk: 'steal', base: -5, who: 'dice', lock: 'none', mods: () => (S.n.dice.op >= 30 ? 15 : 0) },
+  'rook.code': { sk: 'speech', base: -10, who: 'rook', lock: 'change', mods: () => (S.n.rook.op >= 20 ? 25 : 0) },
+  'incisor.drug': { sk: 'sneak', base: 0, lock: 'once' },
+  'vault.rob': {
+    sk: 'steal',
+    base: -20,
+    who: 'pips',
+    lock: 'once',
+    mods: () => (S.f.rookLooks ? 30 : 0) + (knew('pips.secret') ? 10 : 0),
+  },
   // ---- the Mayor's toys ----
   'mayor.plasma': {
     sk: 'steal',

@@ -138,3 +138,39 @@ Will: "not in a literal sense... certain people knowing about certain people, th
 77. **No news you couldn't have acted on.** If you didn't know about a plot and weren't there, it happens silently and you find the aftermath on arrival: the empty sty, the black bunting, the burnt wagons, Gloria on the steps, the salt.
 78. **Three or more ways to change every plot**, listed in `CAST.md`. Waiting at the sty or riding guard skips the days in between.
 79. **Ripples:** when someone dies, the people tied to them change. Some changes are in the game's rules: water goes up when Krug or Crane dies, the pump goes free when Fenwick dies (unless Doc took it), Pete leaves when Jeb dies, Junior opens Junior's Greens when Lou dies, Gloria takes the Velvet Rad when Opal dies, and the farm road gets worse when Hector dies. The rest come out in what the bonded people say when you next talk to them.
+
+## Snake Eyes, the gambling town (v3.5)
+
+Will said "just build" it before bed, so I made his three open calls myself. Overturn any of them by number.
+
+80. **Name: Snake Eyes.** It's north between the farm and Chainfield, with roads to both.
+81. **Five people, tied into the cast:**
+    - **Mister Pips** owns it and banks for the Dentist King.
+    - **Dice** is Marigold, Opal's sister.
+    - **Big Tam**, the pit champion, is Gus's brother. He isn't dead; the teeth Gus got weren't his.
+    - **Sweet Nan**, the loan shark, is Ma Thistle's sister. She has secretly sent Ma money for forty years.
+    - **Rook**, the bouncer, is the King's old doorman and knows Silo 9's back-door code.
+
+    All five have secrets and bonds, and all five have ripples when they die.
+82. **Four games, each using a skill, with the house always cheating:**
+    - **Bones:** loaded dice, where Luck helps a little. Know the secret and you can call it out (refund, then thrown out) or swap in your own dice (Steal).
+    - **Cards with Dice:** Speech reads her. Cheat with Steal for double, or get banned for three days.
+    - **Rat races:** three to one. Dope your rat with Buzz for much better odds.
+    - **The pit:** see 83.
+83. **The pit is non-lethal (Will's call b).** You fight to the yield: lose and you're dragged out on 1 HP, alive. It's fists and blades only, one fight a day, nothing is looted and it doesn't count as a kill. There's a ladder of four: Gutterpup (40), Sister Splint (80), Molar Mick (150), Big Tam (300 and the title Champion of the Pit).
+84. **The house bank limit:** once you're 400 teeth up overall, Pips closes the tables to you. The pit stays open.
+85. **Debt goes to Krug (Will's call c).** Sweet Nan lends 100 for 150 back within 7 days. Don't pay and your debt is sold to Krug, and two slavers jump you at the next place you arrive. Losing to them means the pens, or death if you've already been penned once. If Krug is gone, Pips's housemen come instead.
+86. **Fight night (day 14):** Big Tam against the Incisor, to the death. You can:
+    - bet on Tam (three to one);
+    - bring Gus to the rail (Tam wins);
+    - poison the Incisor's water (Tam wins);
+    - fight the Incisor yourself, for real.
+
+    Ignored, Tam dies.
+87. **Dice's escape (day 20).** You can:
+    - help her rob the vault (Steal, much easier if Rook agrees to look away);
+    - sell her out to Pips (100 teeth, and she's sold on);
+    - tell Opal her sister is alive, so Opal buys her out and brings her home.
+
+    Ignored, she's caught and sold.
+88. **Rook's code** opens Silo 9's back door, a way in without fighting the gate guards.

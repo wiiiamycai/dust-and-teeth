@@ -149,7 +149,10 @@ function migrate(s) {
   s.later = s.later || [];
   s.c = s.c || {};
   s.lovers = s.lovers || {};
-  if (!s.n.gloria) s.n.gloria = { loc: 'rustwater', op: 0, k: [], rx: [], lvl: 2, st: {}, ch: 0 };
+  // People added since the save was made: give them their starting state.
+  IDS.forEach(id => {
+    if (!s.n[id]) s.n[id] = { loc: NPC[id].loc, op: NPC[id].op || 0, k: [], rx: [], lvl: NPC[id].lvl, st: {}, ch: 0 };
+  });
   if (!s.f.gutLoc && !s.f.gutDead) s.f.gutLoc = 'skybus';
   s.skx = s.skx || {};
   IDS.forEach(id => {

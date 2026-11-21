@@ -8,7 +8,7 @@ for (const f of ['data/npcs.js', 'data/world.js', 'data/cast.js'])
 const { NPC, BONDS, SECRETS, LOC } = ctx;
 const name = id => NPC[id].n;
 const out = ['# Dust & Teeth: the cast', '', 'Generated from `data/cast.js` by `node tools/castdoc.js > CAST.md`. Mark it up and tell Claude what to change.', ''];
-const homes = ['scrapwell', 'rustwater', 'farm', 'diner', 'chainfield', 'silo'];
+const homes = ['scrapwell', 'rustwater', 'farm', 'diner', 'chainfield', 'snakeeyes', 'silo'];
 for (const h of homes) {
   out.push(`## ${LOC[h].n}`, '');
   for (const id of Object.keys(NPC).filter(x => NPC[x].home === h)) {
@@ -30,6 +30,8 @@ out.push('## Plots (people against people)', '',
   "- **Day 11, Krug hits Jeb's caravan.** Sign: Krug's men at Moe's bar. Clue: Moe, Teo, Pete. Change it: warn Jeb (half price forever); ride guard and fight; tell Crane; sell Krug the road (80 teeth, Jeb dies). Ignored: Jeb lives, prices up, Pete dies.",
   "- **Day 16, Opal counts the takings.** Sign: Opal and her ledger, late. Clue: Jeb, Moe, or Gloria's secret. Change it: warn Gloria (she runs east with Jeb); pay back the 150 yourself; tell Opal (Gloria is thrown out).",
   "- **Day 18, Lou finds Junior's cabbages.** Sign: the cabbages behind the diner. Clue: Crumb, Bess. Change it: talk Junior into leaving (Junior's Greens in Rustwater); hide the patch (Sneak); tell Lou yourself (Speech: cabbage Tuesdays, or she salts it).",
+  "- **Day 14, fight night at Snake Eyes.** Sign: the poster on the pit rail. Clue: Pips, Rook, Nan. Change it: bet on Tam; tell Tam about Gus and bring Gus to the rail (Tam wins); poison the Incisor's water (Sneak); fight the Incisor yourself, to the death. Ignored: the Incisor kills Tam.",
+  "- **Day 20, Dice robs the vault.** Sign: Dice sketching the vault door. Clue: Rook, Teo. Change it: help her (Steal, much easier if Rook looks away); sell her out to Pips; tell Opal her sister is alive and Opal buys her out. Ignored: she is caught and sold.",
   '', '## Ripples (a death changes the lives tied to it)', '',
   "- Krug: water goes up (no night shift at the pump), Moe's debt is gone, Lou's stew thins, Opal sleeps.",
   "- Mayor: Crane breaks the pump lock and water is free (unless Doc took the pump).",

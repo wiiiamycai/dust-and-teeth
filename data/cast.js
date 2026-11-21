@@ -7,6 +7,140 @@
 //   SECRETS: one per person. Who knows it, and will tell you once they like you.
 // CAST.md is the readable version for Will. Regenerate it: node tools/castdoc.js > CAST.md
 const BONDS = [
+  // ---- Snake Eyes ----
+  [
+    'pips',
+    'king',
+    'ally',
+    '"The King is my silent partner. Very silent. Sometimes I hear him breathing."',
+    '"Pips washes my teeth. Not like that. My money teeth."',
+  ],
+  [
+    'pips',
+    'krug',
+    'ally',
+    '"Krug buys the debts nobody can pay. Bad for the debtor. Good for the books."',
+    '"Pips sends me gamblers. Gamblers make terrible slaves. Too hopeful."',
+  ],
+  [
+    'pips',
+    'mayor',
+    'rival',
+    '"Fenwick thinks water is all people need. People need hope. Hope pays better."',
+    '"Pips? A vulgar man with a vulgar casino. I go every Thursday."',
+  ],
+  [
+    'pips',
+    'dice',
+    'enemy',
+    '"Dice is my best dealer. I own her debt. I own her, really. She knows."',
+    '"Pips bought me off the King for the price of a hand. He thinks that makes him family."',
+  ],
+  [
+    'pips',
+    'tam',
+    'debt',
+    '"Big Tam has fought for me nine years. He will fight for me until he stops."',
+    '"Pips pays me in food and fights. I don\'t ask for more. I don\'t deserve more."',
+  ],
+  [
+    'pips',
+    'nan',
+    'ally',
+    '"Nan lends, I collect, Krug buys. It\'s an ecosystem."',
+    '"Pips is a crook. He\'s MY crook."',
+  ],
+  [
+    'pips',
+    'rook',
+    'ally',
+    '"Rook throws people out of my casino. Sometimes through the door."',
+    '"Pips pays on time. Best boss I ever had. Worst person."',
+  ],
+  [
+    'dice',
+    'opal',
+    'family',
+    '"Opal? I had a sister called Opal. She sold me. I don\'t have a sister."',
+    '"Marigold had a voice like a bell. I think about her every day. I can\'t think about her at all."',
+  ],
+  [
+    'dice',
+    'krug',
+    'enemy',
+    '"Krug sold me twice. I count everything now. Cards, days, debts."',
+    '"Marigold. Good teeth. Bad attitude. Sold well, twice."',
+  ],
+  [
+    'dice',
+    'teo',
+    'friend',
+    '"Teo shared his bread with me in the pens. I send him a card every month. He can\'t read. He keeps them."',
+    '"Marigold sends me cards. I keep them under my blanket."',
+  ],
+  [
+    'dice',
+    'rook',
+    'friend',
+    '"Rook watches the door so I don\'t run. He\'d look away, if I asked. I think."',
+    '"Dice is too good for this place. I don\'t tell her that. I just watch the door."',
+  ],
+  [
+    'tam',
+    'gus',
+    'family',
+    '"Gus thinks I\'m dead. Better that way. A dead brother can\'t let you down."',
+    '"My brother Tam. The King sent me his teeth. I keep them in a tin."',
+  ],
+  [
+    'tam',
+    'king',
+    'enemy',
+    '"I dug for the King. I ran. I put another man\'s teeth in a tin and sent them home."',
+    '"Tam the digger! He owes me a tunnel."',
+  ],
+  [
+    'tam',
+    'rook',
+    'rival',
+    '"Rook wants my title. He\'d have to beat me first."',
+    '"Tam is the best fighter in the valley. I\'ve seen him lose on purpose. That makes him dangerous."',
+  ],
+  [
+    'nan',
+    'elder',
+    'family',
+    '"My big sister Ma Thistle. Forty years we haven\'t spoken. I\'m winning."',
+    '"Nan? I have no sister called Nan. If I did, she\'d owe me a chair."',
+  ],
+  [
+    'nan',
+    'moe',
+    'ally',
+    '"Moe collects for me in Rustwater. Ten percent, and he never misses."',
+    '"Nan lends, I collect. I don\'t enjoy it. I enjoy the ten percent."',
+  ],
+  [
+    'nan',
+    'pell',
+    'ex',
+    '"Pell proposed to me first. Then to my sister. Then he got a pig. I knew where I stood."',
+    '"Nan. Lovely girl. Terrifying woman. Sends me a card every Bombs Day. It says \'pig\'."',
+  ],
+  [
+    'rook',
+    'crumb',
+    'friend',
+    '"Crumb pulled teeth at the silo. I guarded the door. We ran the same night. We don\'t talk about it."',
+    '"Rook and I share a past. I pray for both of us. He doesn\'t."',
+  ],
+  [
+    'rook',
+    'king',
+    'enemy',
+    '"I held the King\'s back door for three years. I still know the code."',
+    '"Rook. My doorman. Tell him I kept his chair warm."',
+  ],
   // ---- Scrapwell ----
   [
     'elder',
@@ -450,6 +584,36 @@ const BONDS = [
 // One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
 // pay: what the secret is worth to its owner if you lean on them.
 const SECRETS = {
+  pips: {
+    tell: ['dice', 'rook'],
+    pay: 120,
+    short: 'about the dice',
+    t: "The house dice at Snake Eyes are loaded, and the house bank is the Dentist King's. Pips washes the King's teeth through the tables and keeps a slice.",
+  },
+  dice: {
+    tell: ['teo', 'pips'],
+    pay: 20,
+    short: 'who you are',
+    t: "Dice is Marigold, Opal's sister. Krug sold her to the King and the King sold her on to Pips. She knows exactly who sold her first.",
+  },
+  tam: {
+    tell: ['rook', 'nan'],
+    pay: 20,
+    short: "that you're Gus's brother",
+    t: "Big Tam is Gus's brother. He ran from the silo and sent home another man's teeth so Gus would stop looking. He's been ashamed for nine years.",
+  },
+  nan: {
+    tell: ['crumb', 'moe'],
+    pay: 60,
+    short: 'about the money for Ma',
+    t: 'Every month for forty years, Sweet Nan has sent money to Ma Thistle with no name on it. Ma thinks the Holy Toaster provides. Crumb carries the envelopes.',
+  },
+  rook: {
+    tell: ['crumb'],
+    pay: 30,
+    short: 'about the back door',
+    t: "Rook was the King's doorman at Silo 9. He still knows the code to the back door. The King never changes anything.",
+  },
   elder: {
     tell: ['krug', 'gus'],
     pay: 30,
@@ -463,7 +627,7 @@ const SECRETS = {
     t: "Gus pawned Ma Thistle's wedding ring to Moe for a week of drink. She thinks she lost it down the well. He's been paying it off for two years.",
   },
   crumb: {
-    tell: ['teo', 'king', 'nigel'],
+    tell: ['teo', 'king', 'nigel', 'rook'],
     pay: 25,
     short: 'that you were a Molar',
     t: "Brother Crumb was a Molar. The King's tooth-puller. He found the Toaster the night he ran away, and he's been praying for forgiveness ever since.",
@@ -585,7 +749,12 @@ const SECRETS = {
     const k = kind === 'family' ? 'family' : FRIENDLY.includes(kind) ? 'friend' : 'enemy';
     REL[k].push([a, b]);
   }
-  FAMW.elder = Object.assign(FAMW.elder || {}, { nigel: 'stepson' });
+  FAMW.elder = Object.assign(FAMW.elder || {}, { nigel: 'stepson', nan: 'sister' });
+  FAMW.nan = { elder: 'sister' };
+  FAMW.gus = Object.assign(FAMW.gus || {}, { tam: 'brother' });
+  FAMW.tam = { gus: 'brother' };
+  FAMW.opal = Object.assign(FAMW.opal || {}, { dice: 'sister' });
+  FAMW.dice = { opal: 'sister' };
   FAMW.nigel = Object.assign(FAMW.nigel || {}, { elder: 'stepmother' });
 })();
 const BOND = {};

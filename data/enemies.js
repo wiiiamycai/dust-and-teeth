@@ -17,6 +17,7 @@ const ENEMY = {
   tracker: { n: "Krug's tracker", i: '⛓️', lvl: 7, wep: 'rifle', arm: 'plate', cap: 1 },
   deputy: { n: 'Deputy', i: '👮', lvl: 3, wep: 'rifle', arm: 'jacket' },
   guard: { n: "Fenwick's guard", i: '💂', lvl: 4, wep: 'rifle', arm: 'vest' },
+  houseman: { n: "Pips's houseman", i: '🎲', lvl: 4, wep: 'shotgun', arm: 'jacket' },
   bounty: { n: 'Bounty hunter', i: '🎯', lvl: 5, wep: 'rifle', arm: 'jacket' },
   bountyAce: { n: 'Bounty hunter', i: '🎯', lvl: 7, wep: 'molargun', arm: 'plate' },
 };

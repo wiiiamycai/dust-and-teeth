@@ -1343,5 +1343,294 @@
    "EVAL:S.n.pete.loc = 'rustwater'; S.dead.jeb = 1; tick()",
    "EXPECT:S.n.pete.loc === 'gone' && S.f.peteLeft"
   ]
+ },
+ {
+  "name": "Snake Eyes: the town is on the map, with five people and four games",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "SAY:half-buried in the sand",
+   "EXPECT:['pips', 'dice', 'tam', 'nan', 'rook'].every(x => S.n[x].loc === 'snakeeyes')",
+   "Bones",
+   "Back",
+   "Cards with Dice",
+   "Back",
+   "The rat races",
+   "Back",
+   "The pit"
+  ]
+ },
+ {
+  "name": "Snake Eyes: win at bones",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.teeth = 100",
+   "Bones",
+   "RAND:0",
+   "Roll (50 teeth)",
+   "EXPECT:S.teeth === 150 && S.f.houseUp === 50"
+  ]
+ },
+ {
+  "name": "Snake Eyes: beat the house by 400 and the tables close to you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.f.houseUp = 400; goHere()",
+   "SAY:closed to you",
+   "EXPECT:!HUBO.snakeeyes().some(o => o[0].includes('Bones'))"
+  ]
+ },
+ {
+  "name": "Snake Eyes: know the dice are loaded and swap in your own",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:know('pips.secret'); S.teeth = 100",
+   "Bones",
+   "RAND:0",
+   "Swap the house dice",
+   "EXPECT:S.f.loadedDay === S.day"
+  ]
+ },
+ {
+  "name": "Snake Eyes: get caught cheating at cards and Rook bans you for three days",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.teeth = 100",
+   "Cards with Dice",
+   "RAND:99",
+   "Deal yourself a better hand",
+   "EXPECT:S.f.banUntil === S.day + 3 && !HUBO.snakeeyes().length",
+   "SAY:not coming in today"
+  ]
+ },
+ {
+  "name": "Snake Eyes: a doped rat wins",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.teeth = 100; give('buzz')",
+   "The rat races",
+   "Bet on Mrs Nibbles",
+   "Slip Mrs Nibbles some Buzz",
+   "RAND:0.5",
+   "Mrs Nibbles to win, three to one (20 teeth)",
+   "EXPECT:S.teeth === 160"
+  ]
+ },
+ {
+  "name": "Snake Eyes: win a pit fight for the purse; nobody dies, nothing is looted",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "The pit",
+   "Fight Gutterpup",
+   "EXPECT:S.fight && S.fight.pit && !isGun(S.weapon)",
+   "FIGHT",
+   "EXPECT:S.f.pitRung === 1 && S.kills === 0 && S.teeth >= 65"
+  ]
+ },
+ {
+  "name": "Snake Eyes: lose in the pit and you yield, alive",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "The pit",
+   "Fight Gutterpup",
+   "RAND:0",
+   "EVAL:S.maxhp = 30; S.hp = 1; enemy()",
+   "EXPECT:!S.end && !S.fight && S.here === 'snakeeyes' && S.f.pitRung === undefined"
+  ]
+ },
+ {
+  "name": "Snake Eyes: no guns in the pit",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.weapons.push('rifle'); S.inv.ammo = 10",
+   "The pit",
+   "Fight Gutterpup",
+   "EXPECT:otherWeapon() === null && !isGun(S.weapon)"
+  ]
+ },
+ {
+  "name": "Debt: don't pay Sweet Nan and Krug's slavers come for you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "I need a loan",
+   "EXPECT:S.f.debt === 150",
+   "WAIT:7",
+   "EXPECT:S.f.debtSold && S.f.collectors === 'krug'",
+   "Back",
+   "EXPECT:S.fight && S.fight.en.length === 2 && S.fight.en.every(e => e.cap) && !S.f.collectors"
+  ]
+ },
+ {
+  "name": "Debt: pay Nan back and nothing happens",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "I need a loan",
+   "EVAL:S.teeth = 200",
+   "Here's what I owe",
+   "WAIT:8",
+   "EXPECT:!S.f.debtSold && !S.f.collectors"
+  ]
+ },
+ {
+  "name": "Fight night: ignored, the Incisor kills Big Tam on day 14",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "WAIT:14",
+   "EXPECT:!alive('tam') && S.f.plot_fightnight === 'done'"
+  ]
+ },
+ {
+  "name": "Fight night: tell Tam about Gus, bring Gus, and Tam wins; your bet pays",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('tam.secret'); know('plot.fightnight'); S.teeth = 100",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Mister Pips",
+   "Fifty on Big Tam",
+   "Back",
+   "Big Tam",
+   "Your brother Gus keeps your teeth",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Scrapwell",
+   "Gus",
+   "Your brother Tam is alive",
+   "EXPECT:S.n.gus.loc === 'snakeeyes' && S.f.brothers",
+   "EVAL:S.day = 14; runPlots()",
+   "EXPECT:alive('tam') && S.f.tamWon && S.teeth >= 200"
+  ]
+ },
+ {
+  "name": "Fight night: take Tam's place and fight the Incisor yourself",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:know('plot.fightnight')",
+   "Big Tam",
+   "Let me fight the Incisor",
+   "EXPECT:S.fight && S.day === 14",
+   "FIGHT",
+   "EXPECT:S.f.incisorBeat && alive('tam') && S.titles.includes('Killer of the Incisor')"
+  ]
+ },
+ {
+  "name": "Vault: sell Dice out to Pips",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:know('plot.vault')",
+   "Mister Pips",
+   "Dice is planning to rob",
+   "EXPECT:!alive('dice') && S.f.diceSold && S.f.plot_vault === 'stopped'"
+  ]
+ },
+ {
+  "name": "Vault: help Dice rob the King's money and run",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:know('plot.vault')",
+   "Rook",
+   "When Dice runs",
+   "Back",
+   "🎴Dice",
+   "RAND:0",
+   "help you with the vault",
+   "EXPECT:S.f.vaultRobbed && S.n.dice.loc === 'east' && S.f.rookLooks"
+  ]
+ },
+ {
+  "name": "Sisters: tell Opal that Marigold is alive",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('dice.secret')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Madame Opal",
+   "Marigold is alive",
+   "EXPECT:S.f.sisters && S.n.dice.loc === 'rustwater'"
+  ]
+ },
+ {
+  "name": "Rook's code opens the silo's back door",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:know('rook.secret')",
+   "Rook",
+   "RAND:0",
+   "back door. Give me the code",
+   "EXPECT:S.f.backDoor",
+   "EVAL:S.f.knowSilo = 1",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Silo 9",
+   "Round the back",
+   "EXPECT:S.f.siloIn"
+  ]
+ },
+ {
+  "name": "Ripple: Pips dies and the dice go honest under Rook",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.dead.pips = 1; tick()",
+   "EXPECT:S.f.honestDice"
+  ]
+ },
+ {
+  "name": "Saves from before Snake Eyes get its five people",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:['pips', 'dice', 'tam', 'nan', 'rook'].forEach(x => delete S.n[x]); migrate(S)",
+   "EXPECT:S.n.pips && S.n.rook.loc === 'snakeeyes'"
+  ]
  }
 ]

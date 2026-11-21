@@ -8,6 +8,7 @@ const LOC = {
   chainfield: { n: 'Chainfield', i: '⛓️', lvl: 6, x: 70, y: 24 },
   skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 84, y: 76 },
   silo: { n: 'Silo 9', i: '☢️', lvl: 9, x: 91, y: 14, hidden: 1 },
+  snakeeyes: { n: 'Snake Eyes', i: '🎲', lvl: 4, x: 48, y: 10 },
   well: { n: 'The Well', i: '🕳️', lvl: 1, sub: 1 },
 };
 const ROADS = [
@@ -20,6 +21,8 @@ const ROADS = [
   ['skybus', 'silo'],
   ['chainfield', 'silo'],
   ['farm', 'chainfield'],
+  ['farm', 'snakeeyes'],
+  ['snakeeyes', 'chainfield'],
 ];
 const REL = {
   family: [
