@@ -1,0 +1,6 @@
+node_modules/
+tests/
+.claude/
+*.md
+package*.json
+index.html

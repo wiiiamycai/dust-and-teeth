@@ -107,7 +107,7 @@ The player is a man. Most adult women can be seduced, each in her own way. Conte
 
 ## 11. Current state (v2) for reference
 
-Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plain `<script src>` files in a fixed order: `engine/` (core, state, gossip, world clock, combat), `data/` (items, npcs, world, gossip tables), `scenes/` (map, locations, talk, silo, character, intro) and `main.js` (boot). They are classic scripts sharing one global scope, so load order matters and the game still opens straight from the file. A new file must be added to the script list in `index.html`. Key systems already working:
+Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plain `<script src>` files in a fixed order: `engine/` (core, state, gossip, world clock, combat), `data/` (items, npcs, world, gossip tables), `scenes/` (map, locations, talk, silo, character, intro) and `main.js` (boot). They are classic scripts sharing one global scope, so load order matters and the game still opens straight from the file. A new file must be added to the script list in `index.html`. Code is formatted with Prettier (pinned in `package.json`, settings in `.prettierrc.json`): run `npm run format` before committing. Call it through npm or `node node_modules/prettier/bin/prettier.cjs`, because `npx` breaks on the `&` in the folder path. Key systems already working:
 
 - `S` is the whole game state, saved to localStorage key `dust_teeth_v2`.
 - `NPC` table with per-NPC runtime state in `S.n[id]` (loc, op = opinion, k = known event ids, rx = pending reaction lines, lvl, st).

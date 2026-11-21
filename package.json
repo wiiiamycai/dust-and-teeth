@@ -1,0 +1,13 @@
+{
+  "name": "dust-and-teeth",
+  "version": "1.0.0",
+  "description": "Text RPG in the style of Fallout 2",
+  "scripts": {
+    "format": "node node_modules/prettier/bin/prettier.cjs --write css engine data scenes main.js"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "prettier": "3.3.3"
+  },
+  "private": true
+}
