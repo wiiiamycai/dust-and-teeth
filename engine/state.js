@@ -53,6 +53,7 @@ function newGame(k) {
     tried: {},
     know: {},
     talks: 0,
+    later: [],
   };
 }
 function P(sk, mod) {

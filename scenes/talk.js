@@ -9,7 +9,7 @@ SC.talk = id => {
     bad(`${d.n} attacks!`);
     return fight(crew(id), { win: 'back', back: ['map'] });
   }
-  const refuses = n.op <= -35 && !['hector', 'bess', 'bert', 'pete'].includes(id);
+  const refuses = n.op <= -35 && !['hector', 'bess', 'bert', 'pete', 'moe'].includes(id); // Moe lies to people he hates instead
   if (!d.animal && !refuses) chatted(id); // before any labels, so a newly earned Read People shows at once
   const back = ['Back', () => goHere()];
   const atk = NPC[id].animal
@@ -320,6 +320,7 @@ SC.wedding = x => {
             go('map');
           } else {
             bad('"Nice speech. Wedding\'s still on."');
+            event('lied', 'hector', { wit: [] });
             go('wedding', x);
           }
         },
@@ -348,6 +349,22 @@ const TALK = {
   elder: () => {
     const o = [],
       f = S.f;
+    if (goodHeard('elder') >= 2 && !f.elderGift2)
+      o.push([
+        '"You look pleased with me."',
+        () => {
+          f.elderGift2 = 1;
+          const had = S.weapons.includes('knife');
+          if (had) give('gutglue', 2);
+          else S.weapons.push('knife');
+          quote(
+            had
+              ? "Ma Thistle: \"Word gets around. You're turning out decent. Here. Glue. Don't ask what's in it.\" (+2 Gut Glue)"
+              : 'Ma Thistle: "Word gets around. You\'re turning out decent. Take this knife. My second husband\'s. He used it on my first."',
+          );
+          go('talk', 'elder');
+        },
+      ]);
     if (!f.elderGift)
       o.push([
         D('"I\'m going past the fence."', '"Me go past fence."'),
@@ -430,6 +447,7 @@ const TALK = {
               karma(-1);
             } else {
               bad('Gus: "Then why can I hear it humming?" No pay.');
+              event('lied', 'gus', { wit: [] });
               f.gusPaid = 1;
               f.nigel = 'dentist';
             }
@@ -917,13 +935,26 @@ const TALK = {
         go('talk', 'doc');
       },
     ]);
-    o.push([
-      `Buzz (${c(20)})`,
-      () => {
-        if (pay(c(20))) give('buzz');
-        go('talk', 'doc');
-      },
-    ]);
+    if (heard('doc', 'cannibal') || S.n.doc.op <= -25)
+      o.push([
+        '"And some Buzz."',
+        () => {
+          quote(
+            heard('doc', 'cannibal')
+              ? 'Doc: "Not to you. I\'ve heard what you put in your mouth. Buzz makes people hungry."'
+              : 'Doc: "Buzz is for customers I like."',
+          );
+          go('talk', 'doc');
+        },
+      ]);
+    else
+      o.push([
+        `Buzz (${c(20)})`,
+        () => {
+          if (pay(c(20))) give('buzz');
+          go('talk', 'doc');
+        },
+      ]);
     if (S.addicted)
       o.push([
         `Cure your Buzz habit (${c(50)})`,
@@ -1040,10 +1071,26 @@ const TALK = {
   opal: () => {
     const o = [],
       f = S.f;
+    const free = heard('opal', 'freed'),
+      price = free ? 0 : cost(30, 'opal');
+    if (free && !f.opalSecret)
+      o.push([
+        '"You heard about Chainfield?"',
+        () => {
+          f.opalSecret = 1;
+          learnSilo();
+          know('silo.back');
+          gain(50);
+          quote(
+            'Opal: "Everyone heard. So here\'s something nobody hears. Silo 9 has a drainage door on the north side. The Molars forget it\'s there."',
+          );
+          go('talk', 'opal');
+        },
+      ]);
     o.push([
-      `Pay for company (${cost(30, 'opal')})`,
+      free ? 'Company, on the house' : `Pay for company (${price})`,
       () => {
-        if (!pay(cost(30, 'opal'))) return go('talk', 'opal');
+        if (!pay(price)) return go('talk', 'opal');
         say(
           dumb()
             ? "You tell Gloria about your favourite rocks for an hour. She says it's her best night in years. You feel wonderful."
@@ -1094,6 +1141,11 @@ const TALK = {
     const o = [],
       f = S.f,
       c = Math.round(cost(300, 'jeb') * (1 + 0.1 * (S.f.jebUp || 0)));
+    if (heard('jeb', 'rescued', 'pete') && !f.jebThanks) {
+      f.jebThanks = 1;
+      f.jebCheap = 1;
+      quote('Jeb: "Pete told me what you did. You ride half price. You ride WITH me, not with the lizards."');
+    }
     if (!f.jebQ)
       o.push([
         '"Need anything?"',
@@ -1467,7 +1519,14 @@ const TALK = {
   },
 };
 function moeWord() {
-  const f = S.f;
+  const f = S.f,
+    op = S.n.moe.op;
+  // Moe deals in rumours. He stops giving them to people he doesn't like, and lies to people he hates.
+  if (op <= -40 && alive('krug') && !f.freed && !knew('moe.lie')) {
+    know('moe.lie');
+    return '"Krug went east with a buyer. Half his guards with him. Tonight\'s the night for those pens, if you\'re brave."';
+  }
+  if (op <= -20) return '"Nothing for you." He keeps wiping the glass.';
   if (S.day >= 6 && !f.knowSilo && roll(60)) {
     learnSilo();
     return '"Molars. Raiders in tooth necklaces. They come from an old silo out east, past the plane."';

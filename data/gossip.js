@@ -34,6 +34,7 @@ const EV = {
   tfixed: { other: 4, spec: { crumb: 60, elder: 20, gus: 20, pell: 20 } },
   tstolen: { spec: { crumb: -60, elder: -20, gus: -15, pell: -15 } },
   nuked: { other: -100, spec: { king: 60 } },
+  lied: { self: -15, family: -10, friend: -10, other: -3 },
   raidkill: {},
 };
 const LAW = { sheriff: 'rustwater', gus: 'scrapwell' };
@@ -75,6 +76,11 @@ const RXG = {
   tfixed: { other: () => `"The Toaster spoke! Because of you!"` },
   married: { family: () => `"Welcome to the family. Don't make me regret it."` },
   nuked: { other: () => `"You... you did that? All those people?"` },
+  lied: {
+    self: () => `"You lied to my face. I don't forget a liar."`,
+    friend: v => `"${v} says you lie. I'll count my teeth after you go."`,
+    family: v => `"You lied to ${v}. We talk, out here."`,
+  },
 };
 const RXS = {
   'tstolen::crumb': `"The Toaster is gone. The crumbs told me it was you."`,

@@ -40,7 +40,7 @@ function mkE(n, i, lv, o) {
 }
 const foe = id => {
   const d = NPC[id];
-  return mkE(d.n, d.i, lvl(id), { hpm: d.hpm, npc: id, teeth: 0 });
+  return mkE(d.n, d.i, lvl(id), { hpm: d.hpm, npc: id, teeth: 0, wep: S.n[id].st.wep || null });
 };
 const dep = () => mkE('Deputy', '👮', 3);
 const slv = () => mkE('Slaver', '⛓️', 5);

@@ -5,6 +5,7 @@ function tick() {
   S.f.corpse = null;
   spread();
   world();
+  if (!S.end) reactions();
   return !!S.end;
 }
 function world() {

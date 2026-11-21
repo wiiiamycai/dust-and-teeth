@@ -50,7 +50,11 @@ function travel(k) {
 function pickEnc(dest) {
   const f = S.f;
   if (hostile('sheriff') && S.n.sheriff.loc === 'rustwater' && roll(30)) return 'posse';
-  if (hostile('hector') && roll(30)) return 'hunter';
+  const av = avengers();
+  if (av.length && roll(30)) {
+    f.hunter = pick(av);
+    return 'hunter';
+  }
   if (hostile('krug') && roll(25)) return 'slavers';
   if (alive('bess') && S.n.bess.loc === 'wastes' && !f.queenMet && roll(55)) return 'queen';
   if (!roll(clamp(36 - S.stats.luck * 2, 12, 40))) return null;
@@ -404,27 +408,37 @@ const ENC = {
       ],
     ],
   }),
-  hunter: d => ({
-    title: 'Hector',
-    icon: '🔫',
-    t: "Hector steps out from behind a rock with his shotgun. He doesn't say anything. He doesn't need to.",
-    o: [
-      ['Fight', () => fight([foe('hector')], { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
-      [
-        'Run',
-        () => {
-          if (roll(fleeP())) {
-            say('Buckshot whistles past. You get away.');
-            go('hub', d);
-          } else {
-            bad('Buckshot. -8 HP.');
-            if (hurt(8, 'Hector found you.')) return;
-            fight([foe('hector')], { win: 'enc', args: [d] });
-          }
-        },
+  hunter: d => {
+    const h = S.f.hunter && alive(S.f.hunter) ? S.f.hunter : 'hector',
+      nm = NPC[h].n;
+    const line = {
+      hector: "Hector steps out from behind a rock with his shotgun. He doesn't say anything. He doesn't need to.",
+      bert: 'Bert, on the road, with his father\'s rifle. His hands are shaking. "Pa said you\'d come this way."',
+      junior: 'Junior is standing in the road. He has a cleaver in each hand. He says one word: "Mama."',
+      lou: 'Mama Lou, apron on, cleaver out. "You took my boy, sweetie. I\'m taking you. Slowly. Low heat."',
+    }[h];
+    return {
+      title: nm,
+      icon: NPC[h].i,
+      t: line,
+      o: [
+        ['Fight', () => fight([foe(h)], { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
+        [
+          'Run',
+          () => {
+            if (roll(fleeP())) {
+              say(`You get away. ${nm} will be back.`);
+              go('hub', d);
+            } else {
+              bad(`${nm} catches you. -8 HP.`);
+              if (hurt(8, `${nm} found you.`)) return;
+              fight([foe(h)], { win: 'enc', args: [d] });
+            }
+          },
+        ],
       ],
-    ],
-  }),
+    };
+  },
   slavers: d => ({
     title: "Krug's hunters",
     icon: '⛓️',

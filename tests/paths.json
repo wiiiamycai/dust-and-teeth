@@ -1,102 +1,314 @@
 [
   {
     "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
-    "steps": ["Weasel", "Go", "Climb down the well", "Nigel", "REAL", "RAND:0.99",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Climb down the well",
+      "Nigel",
+      "REAL",
+      "RAND:0.99",
       "crashed plane",
       "EXPECT:!canTry('nigel.move')",
       "EXPECT:!cur.some(o => o[0].includes('crashed plane'))",
       "SAY:looks at you like you're the weather",
       "\"What ARE you?\"",
       "EXPECT:canTry('nigel.move')",
-      "SAY:crashed plane"]
+      "SAY:crashed plane"
+    ]
   },
   {
     "name": "Bess: hearing her dream makes the leaving line land, and the cheesy line is worse",
-    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Hector's Farm", "Bess", "REAL",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Hector's Farm",
+      "Bess",
+      "REAL",
       "EVAL:globalThis.before = chanceOf('bess.leave')",
       "What do you do for fun",
       "EXPECT:knew('bess.dreams')",
       "EXPECT:chanceOf('bess.leave') >= before + 20",
-      "EXPECT:chanceOf('bess.pretty') < chanceOf('bess.leave')"]
+      "EXPECT:chanceOf('bess.pretty') < chanceOf('bess.leave')"
+    ]
   },
   {
     "name": "Bess: three failed lines and she shuts you out for good",
-    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Hector's Farm", "Bess", "REAL", "RAND:0.99",
-      "leaving this farm", "prettiest girl", "leaving this farm",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Hector's Farm",
+      "Bess",
+      "REAL",
+      "RAND:0.99",
+      "leaving this farm",
+      "prettiest girl",
+      "leaving this farm",
       "SAY:Stop. Just stop.",
       "EXPECT:!canTry('bess.leave')",
       "EXPECT:!cur.some(o => /leaving this farm|prettiest/.test(o[0]))",
       "EVAL:S.day += 30; know('bess.other'); S.n.bess.op += 50",
-      "EXPECT:!canTry('bess.leave')"]
+      "EXPECT:!canTry('bess.leave')"
+    ]
   },
   {
     "name": "Hector in earshot makes flirting with Bess harder",
-    "steps": ["Weasel", "Go", "REAL",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
       "EVAL:globalThis.away = chanceOf('bess.leave')",
-      "Leave (map)", "TRAVEL:Hector's Farm",
-      "EXPECT:S.here === 'farm' && chanceOf('bess.leave') <= away - 10"]
+      "Leave (map)",
+      "TRAVEL:Hector's Farm",
+      "EXPECT:S.here === 'farm' && chanceOf('bess.leave') <= away - 10"
+    ]
   },
   {
     "name": "Once-locked checks never reopen, whatever changes",
-    "steps": ["Weasel", "Go", "REAL", "RAND:0.99",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
+      "RAND:0.99",
       "EVAL:attempt('king.talk')",
       "EXPECT:!canTry('king.talk')",
       "EVAL:know('king.mother'); S.n.king.op += 50; S.day += 30",
-      "EXPECT:!canTry('king.talk') && !canTry('king.mother')"]
+      "EXPECT:!canTry('king.talk') && !canTry('king.mother')"
+    ]
   },
   {
     "name": "Haggling: each failure raises Jeb's price, three and he stops listening",
-    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Rustwater", "Caravan Jeb", "REAL", "RAND:0.99",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Caravan Jeb",
+      "REAL",
+      "RAND:0.99",
       "EVAL:globalThis.p0 = chanceOf('jeb.haggle')",
       "Half price",
       "EXPECT:S.f.jebUp === 1 && chanceOf('jeb.haggle') < p0",
-      "Half price", "Half price",
+      "Half price",
+      "Half price",
       "EXPECT:S.f.jebUp === 3 && !canTry('jeb.haggle')",
-      "EXPECT:!cur.some(o => o[0].includes('Half price'))"]
+      "EXPECT:!cur.some(o => o[0].includes('Half price'))"
+    ]
   },
   {
     "name": "Lou: the fingernail in the stew opens a better line",
-    "steps": ["Weasel", "Go", "Leave (map)", "TRAVEL:Mama Lou's", "Order the stew", "Order the stew",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Mama Lou's",
+      "Order the stew",
+      "Order the stew",
       "EXPECT:knew('lou.polish')",
-      "Spit it out", "Mama Lou",
+      "Spit it out",
+      "Mama Lou",
       "SAY:Sal's Sunday Best",
       "REAL",
-      "EXPECT:chanceOf('lou.polish') > chanceOf('lou.guards') + 20"]
+      "EXPECT:chanceOf('lou.polish') > chanceOf('lou.guards') + 20"
+    ]
   },
   {
     "name": "Hearing that Jeb drinks makes lying to Hector easier",
-    "steps": ["Weasel", "Go", "REAL",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
       "EXPECT:chanceOf('hector.drunk') <= chanceOf('hector.lying')",
       "EVAL:know('jeb.drinks')",
-      "EXPECT:chanceOf('hector.drunk') > chanceOf('hector.lying') + 20"]
+      "EXPECT:chanceOf('hector.drunk') > chanceOf('hector.lying') + 20"
+    ]
   },
   {
     "name": "The taxman believes a man in a Sheriff's vest",
-    "steps": ["Weasel", "Go", "REAL",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
       "EVAL:globalThis.b = chanceOf('taxman.fired')",
       "EVAL:S.armors.push('vest'); S.armor = 'vest'",
-      "EXPECT:chanceOf('taxman.fired') >= b + 25"]
+      "EXPECT:chanceOf('taxman.fired') >= b + 25"
+    ]
   },
   {
     "name": "Read People: earned by talking to people, gives a hint, never a number",
-    "steps": ["Weasel", "Go",
+    "steps": [
+      "Weasel",
+      "Go",
       "EVAL:S.talks = 14",
       "Gus",
       "EXPECT:perk('reader')",
       "SAY:Read People",
       "EXPECT:cur.some(o => /\\((he|she)'s|might go for it|laugh at you|looks doable|either way|long shot|near hopeless\\)/.test(o[0]))",
-      "EXPECT:!cur.some(o => /\\d+%/.test(o[0]))"]
+      "EXPECT:!cur.some(o => /\\d+%/.test(o[0]))"
+    ]
   },
   {
     "name": "Rapport: one chat a day counts, re-opening the same chat does not",
-    "steps": ["Weasel", "Go", "Gus",
+    "steps": [
+      "Weasel",
+      "Go",
+      "Gus",
       "EXPECT:S.n.gus.ch === 1",
       "Any news?",
-      "EXPECT:S.n.gus.ch === 1"]
+      "EXPECT:S.n.gus.ch === 1"
+    ]
   },
   {
     "name": "A v2 save without the new fields still loads",
-    "steps": ["Weasel", "Go",
-      "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"]
+    "steps": [
+      "Weasel",
+      "Go",
+      "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"
+    ]
+  },
+  {
+    "name": "Gossip: Moe stops sharing rumours with people he dislikes",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:S.n.moe.op = -30",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Moe",
+      "What's the word?",
+      "SAY:Nothing for you"
+    ]
+  },
+  {
+    "name": "Gossip: Moe lies to people he hates, and the lie makes the pens a trap",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
+      "EVAL:globalThis.p = chanceOf('pens.open')",
+      "EVAL:S.n.moe.op = -50",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Moe",
+      "What's the word?",
+      "SAY:Krug went east",
+      "EXPECT:knew('moe.lie') && chanceOf('pens.open') <= p - 25"
+    ]
+  },
+  {
+    "name": "Gossip: Doc won't sell Buzz once he hears you eat people",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:learn('doc', event('cannibal', null, { loc: 'diner', wit: [] }))",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Doc Ratchet",
+      "EXPECT:!cur.some(o => o[0].startsWith('Buzz ('))",
+      "And some Buzz",
+      "SAY:Not to you"
+    ]
+  },
+  {
+    "name": "Gossip: Opal hears you freed Chainfield and tells you the Silo's back door",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] }))",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Madame Opal",
+      "SAY:on the house",
+      "You heard about Chainfield?",
+      "EXPECT:knew('silo.back') && S.f.knowSilo",
+      "REAL",
+      "EXPECT:chanceOf('silo.sneak') >= 40"
+    ]
+  },
+  {
+    "name": "Gossip: Jeb hears you saved Pete and gives you half price",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:learn('jeb', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Caravan Jeb",
+      "SAY:Pete told me",
+      "EXPECT:S.f.jebCheap"
+    ]
+  },
+  {
+    "name": "Gossip: Ma Thistle hears two good deeds and gives you a gift",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:learn('elder', event('tfixed', null, { wit: [] })); learn('elder', event('pump', null, { loc: 'rustwater', wit: [] }))",
+      "EVAL:globalThis.g = S.inv.gutglue || 0",
+      "Ma Thistle",
+      "You look pleased with me",
+      "EXPECT:(S.inv.gutglue || 0) === g + 2"
+    ]
+  },
+  {
+    "name": "Gossip: Hector warns Bert, who turns hostile and armed",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:S.n.hector.op = -80",
+      "WAIT:1",
+      "EXPECT:S.f.bertWarned && hostile('bert') && S.n.bert.st.wep === 'rifle'"
+    ]
+  },
+  {
+    "name": "Gossip: someone who hates you tips off Krug, and two days later slavers come for you in your sleep",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:S.n.gus.op = -60",
+      "WAIT:1",
+      "EXPECT:S.f.tipped === 'gus' && !S.f.netNight",
+      "WAIT:2",
+      "EXPECT:S.f.netNight === 'gus'",
+      "Your shack",
+      "Sleep until tomorrow",
+      "SAY:Gus told Krug where you sleep",
+      "EXPECT:S.fight && S.fight.en.length === 2"
+    ]
+  },
+  {
+    "name": "Gossip: the Sheriff vouches for you around Rustwater, two days after she hears",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:globalThis.m = S.n.moe.op",
+      "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
+      "EXPECT:S.later.length === 1 && S.n.moe.op === m",
+      "WAIT:2",
+      "EXPECT:S.n.moe.op >= m + 15 && S.later.length === 0"
+    ]
+  },
+  {
+    "name": "Gossip: kill Junior's mother and he hunts you on the road",
+    "steps": [
+      "Weasel",
+      "Go",
+      "EVAL:S.n.junior.op = -80; learn('junior', event('murder', 'lou', { loc: 'diner', wit: [] }))",
+      "EXPECT:avengers().includes('junior')",
+      "EXPECT:!avengers().includes('bert')"
+    ]
+  },
+  {
+    "name": "Gossip: a caught lie spreads, and liars find talking harder",
+    "steps": [
+      "Weasel",
+      "Go",
+      "REAL",
+      "EVAL:globalThis.c = chanceOf('nigel.move')",
+      "EVAL:learn('nigel', event('lied', 'gus', { wit: [] }))",
+      "EXPECT:liarTo('nigel') && chanceOf('nigel.move') <= c - 10"
+    ]
   }
 ]

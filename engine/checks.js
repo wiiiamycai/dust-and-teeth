@@ -52,6 +52,7 @@ function chance(s, rec) {
   if (w && s.sk === 'speech') {
     m += Math.min(12, (S.n[w].ch || 0) * 3);
     m += clamp(Math.round(S.n[w].op / 4), -15, 15);
+    if (liarTo(w)) m -= 10; // they've heard you lie
   }
   for (const f in s.likes || {}) if (knew(f)) m += s.likes[f];
   for (const x in s.ear || {}) if (alive(x) && S.n[x].loc === S.here) m += s.ear[x];
@@ -143,6 +144,7 @@ function migrate(s) {
   s.tried = s.tried || {};
   s.know = s.know || {};
   s.talks = s.talks || 0;
+  s.later = s.later || [];
   IDS.forEach(id => {
     if (s.n[id]) s.n[id].ch = s.n[id].ch || 0;
   });

@@ -17,9 +17,15 @@ const BESS_FLIRT = {
 const CK = {
   // ---- places ----
   'kitchen.sneak': { sk: 'sneak', base: -10, who: 'junior', lock: 'week' },
-  'pens.open': { sk: 'steal', base: -15, lock: 'week', mods: () => (S.f.slaver ? 15 : 0) },
+  // Moe's lie (step 4) sends you in on the night Krug is waiting.
+  'pens.open': {
+    sk: 'steal',
+    base: -15,
+    lock: 'week',
+    mods: () => (S.f.slaver ? 15 : 0) - (knew('moe.lie') && !S.f.moeLieSprung ? 30 : 0),
+  },
   'plane.coil': { sk: 'science', base: 0, lock: 'none' },
-  'silo.sneak': { sk: 'sneak', base: -25, lock: 'none' },
+  'silo.sneak': { sk: 'sneak', base: -25, lock: 'none', likes: { 'silo.back': 35 } },
   'silo.armoury': { sk: 'steal', base: -15, lock: 'none' },
   'silo.pit': { sk: 'steal', base: -10, lock: 'none' },
   'silo.shaft': { sk: 'science', base: -20, lock: 'none' },

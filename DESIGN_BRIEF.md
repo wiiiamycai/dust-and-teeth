@@ -123,7 +123,7 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 1. (Done) Split `index.html` into modules (for example `data/npcs.js`, `data/dialogue.js`, `engine/gossip.js`, `engine/combat.js`, `engine/checks.js`, `scenes/*.js`) with a simple bundling step, or keep one file but cleanly sectioned. Keep it playable by opening a file in a browser.
 2. (Done) Set up git. Commit v2 as the baseline before any change.
 3. (Done) Hidden checks with context modifiers, real dialogue lines, soft cues, one-shot checks. Engine in `engine/checks.js`, every check's spec in `data/checks.js`, facts the player has learned in `S.know`, failed checks in `S.tried`. New checks go through `attempt(key)`, `canTry(key)` and `hint(key)`, never a raw roll.
-4. Gossip that makes people act (section 5).
+4. (Done) Gossip that makes people act (section 5). Hooks in `engine/react.js`: `heard()`, `onLearn()`, `later()`, `reactions()`. Decisions in `DECISIONS.md`.
 5. Fixed character and learn-by-doing growth, earned perks, Keen Eye.
 6. Melee vs guns trade-offs, ammo, noise.
 7. Fixed-strength enemies, the Gutmaw, readable danger descriptions.

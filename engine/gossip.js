@@ -69,6 +69,7 @@ function learn(id, ev) {
     n.op = Math.max(n.op, -55);
     if (id === 'hector' && ev.v === 'bess') S.f.hectorKnew = S.day;
   }
+  onLearn(id, ev);
 }
 const knows = (id, type, v) =>
   S.n[id].k.some(i => {
@@ -118,6 +119,7 @@ function sumEv(ev) {
       tfixed: 'you made the Holy Toaster speak',
       helped: `you helped ${v}`,
       nuked: `you nuked ${ev.tgt && LOC[ev.tgt] ? LOC[ev.tgt].n : 'somewhere'}`,
+      lied: `you lied to ${v}`,
     }[ev.type] || null
   );
 }

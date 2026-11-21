@@ -130,7 +130,11 @@ const HUBO = {
             () => {
               if (attempt('pens.open')) freePens();
               else {
-                bad('A lock squeals. Floodlights. "Thief!"');
+                if (knew('moe.lie') && !S.f.moeLieSprung) {
+                  S.f.moeLieSprung = 1;
+                  know('moe.betrayed');
+                  bad('Krug is sitting on the pen gate, waiting. "Moe says hello."');
+                } else bad('A lock squeals. Floodlights. "Thief!"');
                 fight([...(alive('krug') ? [foe('krug')] : []), slv(), slv()], {
                   started: true,
                   win: 'pens',
@@ -419,6 +423,13 @@ SC.shack = () =>
         'Sleep until tomorrow (heal)',
         () => {
           if (tick()) return go('ending');
+          if (S.f.netNight && !S.f.netDone && alive('krug')) {
+            S.f.netDone = 1;
+            const w = S.f.netNight;
+            know('net.' + w);
+            bad(`You wake up inside a net. Slavers. ${NPC[w].n} told Krug where you sleep.`);
+            return fight([slv(), slv()], { win: 'go', args: ['shack'], back: ['hub', 'scrapwell'] });
+          }
           if (S.addicted && !has('buzz')) {
             heal(Math.floor(S.maxhp / 3));
             bad('You sweat all night, dreaming of Buzz.');
