@@ -7,14 +7,16 @@
 const ENEMY = {
   raider: { n: 'Raider', i: '💀', lvl: 2, wep: 'pipe' },
   raiderBoss: { n: 'Raider boss', i: '☠️', lvl: 5, wep: 'sledge', arm: 'spikes' },
-  moledog: { n: 'Mole-dog', i: '🐕', lvl: 1, teeth: 0 },
+  moledog: { n: 'Mole-dog', i: '🐕', lvl: 1, teeth: 0, d: [3, 7], hpm: 0.6 },
   molar: { n: 'Molar raider', i: '🦷', lvl: 4, wep: 'molargun' },
   molarVet: { n: 'Molar veteran', i: '🦷', lvl: 5, wep: 'molargun', arm: 'spikes' },
   molarGuard: { n: 'Molar guard', i: '🦷', lvl: 6, wep: 'molargun', arm: 'spikes' },
   molarElite: { n: 'Molar elite', i: '🦷', lvl: 7, wep: 'molargun', arm: 'plate' },
-  slaver: { n: 'Slaver', i: '⛓️', lvl: 5, wep: 'shotgun', arm: 'jacket' },
-  tracker: { n: "Krug's tracker", i: '⛓️', lvl: 7, wep: 'rifle', arm: 'plate' },
+  // cap: slavers want you alive. Lose to them once and you wake up in the pens, not dead.
+  slaver: { n: 'Slaver', i: '⛓️', lvl: 5, wep: 'shotgun', arm: 'jacket', cap: 1 },
+  tracker: { n: "Krug's tracker", i: '⛓️', lvl: 7, wep: 'rifle', arm: 'plate', cap: 1 },
   deputy: { n: 'Deputy', i: '👮', lvl: 3, wep: 'rifle', arm: 'jacket' },
+  guard: { n: "Fenwick's guard", i: '💂', lvl: 4, wep: 'rifle', arm: 'vest' },
   bounty: { n: 'Bounty hunter', i: '🎯', lvl: 5, wep: 'rifle', arm: 'jacket' },
   bountyAce: { n: 'Bounty hunter', i: '🎯', lvl: 7, wep: 'molargun', arm: 'plate' },
 };

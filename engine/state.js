@@ -104,6 +104,8 @@ function heal(n) {
   S.hp = clamp(S.hp + n, 0, S.maxhp);
   return S.hp - b;
 }
+// Gut Glue puts you all the way back together, in one go.
+const GLUE = () => S.maxhp;
 function hurt(n, cause) {
   S.hp -= n;
   if (S.hp <= 0) {

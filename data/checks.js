@@ -26,6 +26,15 @@ const CK = {
     likes: { 'krug.rota': 15 },
   },
   'plane.coil': { sk: 'science', base: 0, lock: 'none' },
+  // ---- the Mayor's toys ----
+  'mayor.plasma': {
+    sk: 'steal',
+    base: -20,
+    who: 'mayor',
+    lock: 'week',
+    mods: () => (S.n.mayor.op >= 30 ? 20 : 0) + (S.f.pumpOpen ? -10 : 0),
+  },
+  'mayor.suit': { sk: 'sneak', base: -10, who: 'mayor', lock: 'once', mods: () => (S.f.plasmaStolen ? -15 : 0) },
   'silo.sneak': { sk: 'sneak', base: -25, lock: 'none', likes: { 'silo.back': 35 } },
   'silo.armoury': { sk: 'steal', base: -15, lock: 'none' },
   'silo.pit': { sk: 'steal', base: -10, lock: 'none' },

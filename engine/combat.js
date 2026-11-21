@@ -18,29 +18,36 @@ const QUIET = [
   n => `You wait until ${n} is alone. Then ${n} stays alone, forever.`,
   n => `${n} goes very quietly. You see to it.`,
 ];
+// Everyone is the same flesh: every human has BODY HP, you included, and it never grows.
+// Strength is what they carry: their weapon sets their damage, their armour sets their DR.
+// Level only means training: a little more accuracy, and more teeth and XP when they die.
+const BODY = 30;
 function mkE(n, i, lv, o) {
   o = o || {};
-  const hp = Math.round((8 + lv * 5) * (o.hpm || 1));
+  const hp = Math.round(BODY * (o.hpm || 1)),
+    w = W[o.wep] || W.fists,
+    a = A[o.arm];
   return {
     n,
     i,
     lvl: lv,
     hp,
     max: hp,
-    skill: 30 + lv * 5,
-    d: [lv, 2 + lv * 2],
-    dr: Math.floor(lv / 3),
+    skill: 30 + lv * 2,
+    d: o.d || w.d.slice(),
+    dr: (a ? a.dr : 0) + (o.dr || 0),
     xp: lv * 20,
     teeth: o.teeth != null ? o.teeth : lv * 4 + R(0, lv * 2),
     loot: o.loot || null,
     arm: o.arm || null,
     wep: o.wep || null,
     npc: o.npc || null,
+    cap: o.cap || (o.npc === 'krug' ? 1 : null),
   };
 }
 const foe = id => {
   const d = NPC[id];
-  return mkE(d.n, d.i, lvl(id), { hpm: d.hpm, npc: id, teeth: 0, wep: S.n[id].st.wep || null });
+  return mkE(d.n, d.i, lvl(id), { hpm: d.hpm, npc: id, teeth: 0, wep: S.n[id].st.wep || d.wep || null, arm: d.arm });
 };
 const dep = () => spawn('deputy');
 const slv = () => spawn('slaver');
@@ -61,6 +68,9 @@ const fleeP = () => clamp(ptw() * 7 + S.stats.luck * 2, 5, 90);
 // down. But a fight on the road starts at range, and closing in costs you a round of free hits.
 const isGun = w => W[w].t === 'guns';
 const ammo = () => S.inv.ammo || 0;
+// Out of shots? Self-charging guns (the plasma rifle) never are.
+const dry = w => isGun(w) && !W[w].free && ammo() <= 0;
+const ammoTxt = w => (W[w].free ? 'self-charging' : `${ammo()} bullets`);
 function hit(t, mod) {
   const w = W[S.weapon],
     F = S.fight;
@@ -79,7 +89,7 @@ function hit(t, mod) {
 // The best weapon of the other kind, for a quick switch mid-fight.
 function otherWeapon() {
   const gun = isGun(S.weapon),
-    pool = S.weapons.filter(w => w !== S.weapon && isGun(w) !== gun && (!isGun(w) || ammo() > 0));
+    pool = S.weapons.filter(w => w !== S.weapon && isGun(w) !== gun && !dry(w));
   return pool.sort((a, b) => W[b].d[1] - W[a].d[1])[0] || null;
 }
 function fight(en, o) {
@@ -149,7 +159,7 @@ SC.fight = () => {
     if (alive(a)) cards.push({ icon: NPC[a].i, name: NPC[a].n, sub: 'on your side' });
   });
   const o = [];
-  if (gun && ammo() <= 0) o.push(null);
+  if (dry(S.weapon)) o.push(null);
   else if (!gun && !F.close) o.push([`Close in with your ${w.n}`, () => closeIn(), 'danger']);
   else {
     const v = gun ? 'Shoot' : 'Hit';
@@ -162,13 +172,13 @@ SC.fight = () => {
   const ow = otherWeapon();
   if (ow)
     o.push([
-      `Switch to ${W[ow].n}${isGun(ow) ? ` (${ammo()} bullets)` : ''}`,
+      `Switch to ${W[ow].n}${isGun(ow) ? ` (${ammoTxt(ow)})` : ''}`,
       () => {
         S.weapon = ow;
         go('fight');
       },
     ]);
-  if (gun && ammo() <= 0 && !ow)
+  if (dry(S.weapon) && !ow)
     o.push([
       'Click. No bullets. Use your fists',
       () => {
@@ -179,17 +189,17 @@ SC.fight = () => {
   show({
     title: `Fight · round ${F.round}`,
     icon: '⚔️',
-    sub: `${w.n}${gun ? ` · ${ammo()} bullets` : ''} · ${F.close ? 'up close' : 'at range'}${F.en.filter(e => e.hp > 0).length > 1 ? ' · click an enemy to target it' : ''}`,
+    sub: `${w.n}${gun ? ` · ${ammoTxt(S.weapon)}` : ''} · ${F.close ? 'up close' : 'at range'}${F.en.filter(e => e.hp > 0).length > 1 ? ' · click an enemy to target it' : ''}`,
     text: F.log.join('\n'),
     cards,
     opts: [
       ...o,
       has('gutglue')
         ? [
-            `Gut Glue +20 HP (${S.inv.gutglue} left)`,
+            `Gut Glue, back to full (${S.inv.gutglue} left)`,
             () => {
               take('gutglue');
-              F.log = [`You glue yourself back together. +${heal(20)} HP.`];
+              F.log = [`You glue yourself back together. +${heal(GLUE())} HP.`];
               enemy();
             },
           ]
@@ -224,6 +234,22 @@ SC.fight = () => {
     ],
   });
 };
+// Beaten by slavers: they want you alive, once. They take your teeth and you wake up in a pen.
+function penned() {
+  S.f.penned = 1;
+  S.fight = null;
+  S.buzzOn = false;
+  S.hp = 8;
+  const t = S.teeth;
+  S.teeth = 0;
+  bad(`You wake up in a shopping-trolley pen at Chainfield. They took all ${t} of your teeth.`);
+  say(
+    alive('teo') && S.n.teo.loc === 'chainfield'
+      ? 'That night Old Teo picks the lock with a fishbone. "Run. Next time he sells you east, and east is a hole."'
+      : 'That night you pick the lock with a fishbone. Next time Krug will sell you east, and east is a hole.',
+  );
+  go('hub', 'rustwater');
+}
 function closeIn() {
   const F = S.fight;
   F.log = [pick(['You charge.', 'You run at them, yelling.', 'You close the gap, head down.'])];
@@ -237,7 +263,7 @@ function atk(mod, part) {
     w = W[S.weapon];
   F.log = [];
   if (w.t === 'guns') {
-    take('ammo');
+    if (!w.free) take('ammo');
     if (!F.loud) F.log.push('BANG. That will be heard for miles.');
     F.loud = true;
   }
@@ -308,6 +334,8 @@ function enemy() {
           F.wind = true;
           S.hp = 15;
           F.log.push('SECOND WIND. You refuse to die.');
+        } else if (!S.f.penned && !S.f.chainfieldBurned && F.en.some(x => x.cap && x.hp > 0)) {
+          return penned();
         } else {
           S.hp = 0;
           return die(`Killed by ${e.n}.`);

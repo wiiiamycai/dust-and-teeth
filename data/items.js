@@ -5,11 +5,11 @@ const PLAYER = {
   name: 'Nobody',
   stats: { brawn: 5, eyes: 5, guts: 5, charm: 5, brains: 5, twitch: 5, luck: 5 },
   skills: { melee: 35, guns: 30, sneak: 30, steal: 30, speech: 35, science: 30 },
-  hp: 35,
+  hp: 30, // the same as everyone else; see BODY in engine/combat.js
   teeth: 25,
   weapons: ['fists', 'knife'],
   weapon: 'knife',
-  inv: { gutglue: 2 },
+  inv: { gutglue: 3 },
 };
 const W = {
   // melee: no ammo, quiet, +10 to hit up close, can knock down (kd adds to the chance)
@@ -25,6 +25,8 @@ const W = {
   rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10, v: 50 },
   shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0, v: 60 },
   molargun: { n: 'Molar Repeater', t: 'guns', d: [9, 18], a: 5, v: 55 },
+  // free: self-charging, never needs bullets
+  plasma: { n: 'Plasma Rifle', t: 'guns', d: [24, 38], a: 15, v: 300, free: 1 },
 };
 const A = {
   rags: { n: 'Rags', dr: 0, v: 0 },
@@ -33,6 +35,7 @@ const A = {
   vest: { n: "Sheriff's Vest", dr: 5, v: 60 },
   plate: { n: 'Car-Door Plate', dr: 7, tw: -2, v: 50 },
   riot: { n: 'Pre-War Riot Suit', dr: 10, v: 100 },
+  power: { n: 'Power Armour', dr: 16, v: 400 },
 };
 const ITEMS = {
   gutglue: 'Gut Glue',
@@ -50,6 +53,7 @@ const ITEMS = {
   key: 'Launch key',
   ammo: 'Bullets',
   krugbook: "Krug's notebook",
+  core: 'Fusion core',
 };
 const PERKS = {
   eater: { n: 'Messy Eater', d: 'Corpses heal double, no karma hit.' },

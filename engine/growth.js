@@ -95,13 +95,9 @@ const condWord = (hp, max) =>
             ? 'badly hurt'
             : 'barely standing';
 const sizeUp = l => (keen() ? `Lv ${l}` : dangerWord(l));
-// --- after a fight: toughness grows a little each time you live ---
+// --- after a fight. Your body never gets tougher: only better armour does that. ---
 function survived() {
   count('fights');
-  if ((S.c.fights || 0) <= 20) {
-    S.maxhp++;
-    S.hp++;
-  }
   if (S.hp <= Math.ceil(S.maxhp * 0.2)) count('close');
   if (S.hp <= 3 && !S.f.injured) {
     S.f.injured = 1;

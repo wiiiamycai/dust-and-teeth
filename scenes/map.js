@@ -352,7 +352,7 @@ const ENC = {
       [
         'Kill it for meat',
         () =>
-          fight([mkE('Two-headed cow', '🐄', 1, { loot: { meat: 3 }, teeth: 0 })], {
+          fight([mkE('Two-headed cow', '🐄', 1, { loot: { meat: 3 }, teeth: 0, d: [2, 6] })], {
             win: 'enc',
             args: [d],
             back: ['hub', d],
@@ -392,11 +392,18 @@ const ENC = {
       [
         'Attack them',
         () =>
-          fight([mkE('Smiler', '😃', 1), mkE('Smiler', '😃', 1), mkE('Smiler', '😃', 1)], {
-            win: 'enc',
-            args: [d],
-            back: ['hub', d],
-          }),
+          fight(
+            [
+              mkE('Smiler', '😃', 1, { wep: 'knife' }),
+              mkE('Smiler', '😃', 1, { wep: 'knife' }),
+              mkE('Smiler', '😃', 1, { wep: 'knife' }),
+            ],
+            {
+              win: 'enc',
+              args: [d],
+              back: ['hub', d],
+            },
+          ),
         'danger',
       ],
     ],

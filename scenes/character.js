@@ -29,28 +29,28 @@ SC.char = () => {
     );
   if (has('gutglue') && S.hp < S.maxhp)
     o.push([
-      'Use Gut Glue (+20)',
+      'Use Gut Glue (back to full)',
       () => {
         take('gutglue');
-        say(`+${heal(20)} HP.`);
+        say(`+${heal(GLUE())} HP.`);
         go('char');
       },
     ]);
   if (has('meat') && S.hp < S.maxhp)
     o.push([
-      'Eat questionable meat (+8)',
+      'Eat questionable meat (+15)',
       () => {
         take('meat');
-        say(`+${heal(8)} HP. Don't wonder.`);
+        say(`+${heal(15)} HP. Don't wonder.`);
         go('char');
       },
     ]);
   if (has('beer') && S.hp < S.maxhp)
     o.push([
-      'Drink warm beer (+3)',
+      'Drink warm beer (+8)',
       () => {
         take('beer');
-        say(`+${heal(3)} HP.`);
+        say(`+${heal(8)} HP.`);
         go('char');
       },
     ]);

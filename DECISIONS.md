@@ -92,3 +92,19 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 56. **Gunmen always drop 3 to 6 bullets.**
 57. **Better armour goes straight on** when you take it. Gear you already own is stripped and sold for half its scrap value on the spot.
 58. Enemies still hit by type, not by weapon, so a slaver with a shotgun hurts the same as before. Making their weapons matter in their hands would make fights harder again: your call.
+
+## Combat rework: gear is strength (v3.2)
+
+Will: "health should more or less be static and armor is what dictates strength."
+
+59. **Everyone is the same flesh.** Every human has 30 HP, you included, and it never grows. Animals have less. The Gutmaw is still a monster. This replaces #58: an enemy's weapon is now its damage, and its armour is its DR.
+60. **Level only means training:** +2% to hit per level, plus more teeth and XP. A level 7 man with a pipe is a pipe.
+61. **Named fighters carry their gear:** Gus a pipe, Pell a knife, Jeb a rifle and jacket, Hector a shotgun and jacket, Bess a zip gun, Bert a pipe, Junior a sledge and jacket, Krug a sledge and plate, the King his drill and a riot suit.
+62. **Healing is strong:** Gut Glue puts you back to full (you start with three), food heals about double, and sleep still heals fully.
+63. **Slavers want you alive.** The first time slavers (or Krug) beat you, you wake in the Chainfield pens with no teeth instead of dying. The second time is death.
+64. **Jeb's wagons** (talk to Caravan Jeb) sell guns, armour and bullets. Best on sale: the riot suit at 300 teeth.
+65. **The godlike gear is not for sale.** Mayor Fenwick keeps a Plasma Rifle (24 to 38 damage, self-charging, never needs bullets) and a suit of Power Armour (stops 16 a hit) in his parlour. Ask him about it, then lift the rifle (Steal), or bring a fusion core from the Sky-Bus cargo hold and walk out in the suit (Sneak). Get caught and two of his guards attack, and the town hears you robbed the Mayor. Kill Fenwick and both are just lying there.
+66. **Rough odds now** (1,500 simulated fights each, with three Gut Glues and starting skills):
+    - two slavers: 3% with the starting knife, 26% with a shotgun and jacket, 56% with a repeater and vest, 99% for a seasoned fighter in a riot suit;
+    - two Molars: 23% with the knife, 55% with a shotgun and jacket, 82% with a repeater and vest;
+    - with the plasma rifle and power armour you win everything.

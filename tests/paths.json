@@ -1,957 +1,1063 @@
 [
-  {
-    "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Climb down the well",
-      "Nigel",
-      "REAL",
-      "RAND:0.99",
-      "crashed plane",
-      "EXPECT:!canTry('nigel.move')",
-      "EXPECT:!cur.some(o => o[0].includes('crashed plane'))",
-      "SAY:looks at you like you're the weather",
-      "\"What ARE you?\"",
-      "EXPECT:canTry('nigel.move')",
-      "SAY:crashed plane"
-    ]
-  },
-  {
-    "name": "Bess: hearing her dream makes the leaving line land, and the cheesy line is worse",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Hector's Farm",
-      "Bess",
-      "REAL",
-      "EVAL:globalThis.before = chanceOf('bess.leave')",
-      "What do you do for fun",
-      "EXPECT:knew('bess.dreams')",
-      "EXPECT:chanceOf('bess.leave') >= before + 20",
-      "EXPECT:chanceOf('bess.pretty') < chanceOf('bess.leave')"
-    ]
-  },
-  {
-    "name": "Bess: three failed lines and she shuts you out for good",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Hector's Farm",
-      "Bess",
-      "REAL",
-      "RAND:0.99",
-      "leaving this farm",
-      "prettiest girl",
-      "leaving this farm",
-      "SAY:Stop. Just stop.",
-      "EXPECT:!canTry('bess.leave')",
-      "EXPECT:!cur.some(o => /leaving this farm|prettiest/.test(o[0]))",
-      "EVAL:S.day += 30; know('bess.other'); S.n.bess.op += 50",
-      "EXPECT:!canTry('bess.leave')"
-    ]
-  },
-  {
-    "name": "Hector in earshot makes flirting with Bess harder",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EXPECT:(() => { S.here = 'scrapwell'; const away = chanceOf('bess.leave'); S.here = 'farm'; return chanceOf('bess.leave') <= away - 10 })()"
-    ]
-  },
-  {
-    "name": "Once-locked checks never reopen, whatever changes",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "RAND:0.99",
-      "EVAL:attempt('king.talk')",
-      "EXPECT:!canTry('king.talk')",
-      "EVAL:know('king.mother'); S.n.king.op += 50; S.day += 30",
-      "EXPECT:!canTry('king.talk') && !canTry('king.mother')"
-    ]
-  },
-  {
-    "name": "Haggling: each failure raises Jeb's price, three and he stops listening",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Caravan Jeb",
-      "REAL",
-      "RAND:0.99",
-      "EVAL:globalThis.p0 = chanceOf('jeb.haggle')",
-      "Half price",
-      "EXPECT:S.f.jebUp === 1 && chanceOf('jeb.haggle') < p0",
-      "Half price",
-      "Half price",
-      "EXPECT:S.f.jebUp === 3 && !canTry('jeb.haggle')",
-      "EXPECT:!cur.some(o => o[0].includes('Half price'))"
-    ]
-  },
-  {
-    "name": "Lou: the fingernail in the stew opens a better line",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Mama Lou's",
-      "EVAL:S.teeth = 50",
-      "Order the stew",
-      "Order the stew",
-      "EXPECT:knew('lou.polish')",
-      "Spit it out",
-      "Mama Lou",
-      "SAY:Sal's Sunday Best",
-      "REAL",
-      "EXPECT:chanceOf('lou.polish') > chanceOf('lou.guards') + 20"
-    ]
-  },
-  {
-    "name": "Hearing that Jeb drinks makes lying to Hector easier",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EXPECT:chanceOf('hector.drunk') <= chanceOf('hector.lying')",
-      "EVAL:know('jeb.drinks')",
-      "EXPECT:chanceOf('hector.drunk') > chanceOf('hector.lying') + 20"
-    ]
-  },
-  {
-    "name": "The taxman believes a man in a Sheriff's vest",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.b = chanceOf('taxman.fired')",
-      "EVAL:S.armors.push('vest'); S.armor = 'vest'",
-      "EXPECT:chanceOf('taxman.fired') >= b + 25"
-    ]
-  },
-  {
-    "name": "Read People: earned by talking to people, gives a hint, never a number",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.talks = 14",
-      "Gus",
-      "EXPECT:perk('reader')",
-      "SAY:Read People",
-      "EXPECT:cur.some(o => /\\((he|she)'s|might go for it|laugh at you|looks doable|either way|long shot|near hopeless\\)/.test(o[0]))",
-      "EXPECT:!cur.some(o => /\\d+%/.test(o[0]))"
-    ]
-  },
-  {
-    "name": "Rapport: one chat a day counts, re-opening the same chat does not",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Gus",
-      "EXPECT:S.n.gus.ch === 1",
-      "Any news?",
-      "EXPECT:S.n.gus.ch === 1"
-    ]
-  },
-  {
-    "name": "A v2 save without the new fields still loads",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"
-    ]
-  },
-  {
-    "name": "Gossip: Moe stops sharing rumours with people he dislikes",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "EVAL:S.n.moe.op = -30",
-      "Moe",
-      "What's the word?",
-      "SAY:Nothing for you"
-    ]
-  },
-  {
-    "name": "Gossip: Moe lies to people he hates, and the lie makes the pens a trap",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.p = chanceOf('pens.open')",
-      "EVAL:S.n.moe.op = -50",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Moe",
-      "What's the word?",
-      "SAY:Krug went east",
-      "EXPECT:knew('moe.lie') && spec('pens.open').mods() <= -30 && chanceOf('pens.open') < p"
-    ]
-  },
-  {
-    "name": "Gossip: Doc won't sell Buzz once he hears you eat people",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:learn('doc', event('cannibal', null, { loc: 'diner', wit: [] }))",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Doc Ratchet",
-      "EXPECT:!cur.some(o => o[0].startsWith('Buzz ('))",
-      "And some Buzz",
-      "SAY:Not to you"
-    ]
-  },
-  {
-    "name": "Gossip: Opal hears you freed Chainfield and tells you the Silo's back door",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] }))",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Madame Opal",
-      "SAY:on the house",
-      "You heard about Chainfield?",
-      "EXPECT:knew('silo.back') && S.f.knowSilo",
-      "REAL",
-      "EXPECT:chanceOf('silo.sneak') >= 40"
-    ]
-  },
-  {
-    "name": "Gossip: Jeb hears you saved Pete and gives you half price",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:learn('jeb', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Caravan Jeb",
-      "SAY:Pete told me",
-      "EXPECT:S.f.jebCheap"
-    ]
-  },
-  {
-    "name": "Gossip: Ma Thistle hears two good deeds and gives you a gift",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:learn('elder', event('tfixed', null, { wit: [] })); learn('elder', event('pump', null, { loc: 'rustwater', wit: [] }))",
-      "EVAL:globalThis.g = S.inv.gutglue || 0",
-      "Ma Thistle",
-      "You look pleased with me",
-      "EXPECT:(S.inv.gutglue || 0) === g + 2"
-    ]
-  },
-  {
-    "name": "Gossip: Hector warns Bert, who turns hostile and armed",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.n.hector.op = -80",
-      "WAIT:1",
-      "EXPECT:S.f.bertWarned && hostile('bert') && S.n.bert.st.wep === 'rifle'"
-    ]
-  },
-  {
-    "name": "Gossip: someone who hates you tips off Krug, and two days later slavers come for you in your sleep",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.n.gus.op = -60",
-      "WAIT:1",
-      "EXPECT:S.f.tipped === 'gus' && !S.f.netNight",
-      "WAIT:2",
-      "EXPECT:S.f.netNight === 'gus'",
-      "Your shack",
-      "Sleep until tomorrow",
-      "SAY:Gus told Krug where you sleep",
-      "EXPECT:S.fight && S.fight.en.length === 2"
-    ]
-  },
-  {
-    "name": "Gossip: the Sheriff vouches for you around Rustwater, two days after she hears",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:globalThis.m = S.n.moe.op",
-      "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
-      "EXPECT:S.later.length === 1 && S.n.moe.op === m",
-      "WAIT:2",
-      "EXPECT:S.n.moe.op >= m + 15 && S.later.length === 0"
-    ]
-  },
-  {
-    "name": "Gossip: kill Junior's mother and he hunts you on the road",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.n.junior.op = -80; learn('junior', event('murder', 'lou', { loc: 'diner', wit: [] }))",
-      "EXPECT:avengers().includes('junior')",
-      "EXPECT:!avengers().includes('bert')"
-    ]
-  },
-  {
-    "name": "Gossip: a caught lie spreads, and liars find talking harder",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.c = chanceOf('nigel.move')",
-      "EVAL:learn('nigel', event('lied', 'gus', { wit: [] }))",
-      "EXPECT:liarTo('nigel') && chanceOf('nigel.move') <= c - 10"
-    ]
-  },
-  {
-    "name": "Growth: one fixed, average man, no presets",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EXPECT:S.name === 'Nobody' && Object.values(S.stats).every(v => v === 5)",
-      "EXPECT:Object.values(S.skills).every(v => v >= 30 && v <= 35)"
-    ]
-  },
-  {
-    "name": "Growth: no levels, no XP bar, no skill points",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:!/Lv |XP|Level up/.test(document.getElementById('hud').innerHTML)",
-      "Character",
-      "EXPECT:!/skill points|PERK:|Level/.test(document.getElementById('text').innerHTML + document.getElementById('head').innerHTML + cur.map(o => o[0]).join())"
-    ]
-  },
-  {
-    "name": "Growth: skills grow by use, and slower when high",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.a = S.skills.steal; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.lo = S.skills.steal - a",
-      "EVAL:S.skills.steal = 85; S.skx.steal = 0; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.hi = S.skills.steal - 85",
-      "EXPECT:lo >= 12 && hi >= 1 && hi <= lo / 3"
-    ]
-  },
-  {
-    "name": "Growth: you learn from failed conversations too",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Climb down the well",
-      "Nigel",
-      "REAL",
-      "RAND:0.99",
-      "EVAL:globalThis.s = S.skills.speech + S.skx.speech || S.skills.speech",
-      "crashed plane",
-      "EXPECT:S.skills.speech + (S.skx.speech || 0) > s"
-    ]
-  },
-  {
-    "name": "Growth: skills and stats show as words without Keen Eye, numbers with it",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "Character",
-      "SAY:Speech: Clumsy",
-      "SAY:Brawn: average",
-      "EXPECT:!document.getElementById('text').innerHTML.includes('Speech: Clumsy (')",
-      "Close",
-      "EVAL:S.perks.push('keen')",
-      "Character",
-      "SAY:Speech: Clumsy (35)"
-    ]
-  },
-  {
-    "name": "Growth: Silver Tongue is earned by talking people round",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.c.talkWin = 7",
-      "Climb down the well",
-      "Nigel",
-      "RAND:0",
-      "crashed plane",
-      "EXPECT:perk('tongue')",
-      "SAY:Perk: Silver Tongue"
-    ]
-  },
-  {
-    "name": "Growth: without Keen Eye, enemies are words and no health bar; with it you see everything",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([mkE('Raider', 'R', 4, { arm: 'spikes' })], {})",
-      "EXPECT:!document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
-      "SAY:can handle themselves",
-      "SAY:unhurt",
-      "EVAL:S.perks.push('keen'); go('fight')",
-      "EXPECT:document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
-      "SAY:Lv 4",
-      "SAY:Raider Spikes"
-    ]
-  },
-  {
-    "name": "Growth: stats change only through story. Doc's Meat Tonic can make you strong",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Doc Ratchet",
-      "RAND:0",
-      "Meat Tonic",
-      "EXPECT:S.stats.brawn === 8"
-    ]
-  },
-  {
-    "name": "Growth: a bad Brain Juice makes you dumb, and the world talks down to you",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Doc Ratchet",
-      "RAND:0.99",
-      "Brain Juice",
-      "EXPECT:S.stats.brains === 3 && dumb()"
-    ]
-  },
-  {
-    "name": "Growth: surviving fights makes you a little tougher",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:(() => { const m = S.maxhp; survived(); return S.maxhp === m + 1 && S.c.fights === 1 })()",
-      "EVAL:fight([mkE('Rat', 'R', 1)], {})",
-      "FIGHT",
-      "EXPECT:S.c.fights === 2"
-    ]
-  },
-  {
-    "name": "Combat: guns cost a bullet a shot, and with none you can't shoot",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.weapons.push('zipgun'); S.weapon = 'zipgun'; S.inv.ammo = 2",
-      "EVAL:fight([mkE('Rat', 'R', 9)], {})",
-      "Shoot Rat",
-      "EXPECT:S.inv.ammo === 1",
-      "Shoot Rat",
-      "EXPECT:!S.inv.ammo",
-      "EXPECT:!cur.some(o => o[0].startsWith('Shoot'))",
-      "SAY:Switch to Rusty Knife"
-    ]
-  },
-  {
-    "name": "Combat: no percentages on fight options",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([mkE('Rat', 'R', 3)], { close: true })",
-      "EXPECT:!cur.some(o => /d+%/.test(o[0]))",
-      "SAY:Hit Rat"
-    ]
-  },
-  {
-    "name": "Combat: on the road melee has to close in first, and you take a free round",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([mkE('Rat', 'R', 3)], {})",
-      "SAY:at range",
-      "EXPECT:!cur.some(o => o[0].startsWith('Hit '))",
-      "RAND:0",
-      "Close in",
-      "EXPECT:S.fight.close && S.fight.round === 2",
-      "SAY:Rat hits you",
-      "SAY:Hit Rat"
-    ]
-  },
-  {
-    "name": "Combat: a melee hit can knock a man down",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([mkE('Ox', 'O', 9)], { close: true })",
-      "RAND:0.3",
-      "EVAL:S.weapon = 'knife'; S.stats.brawn = 10; atk(0, null)",
-      "SAY:Ox goes down",
-      "SAY:Ox is on the ground"
-    ]
-  },
-  {
-    "name": "Combat: a knife kill with nobody around stays secret",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Climb down the well",
-      "EVAL:fight([foe('nigel')], { started: true })",
-      "FIGHT",
-      "EXPECT:S.ev.some(e => e.v === 'nigel' && e.type === 'murder' && e.secret)"
-    ]
-  },
-  {
-    "name": "Combat: a gunshot kill is heard next door",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Climb down the well",
-      "EVAL:S.weapons.push('rifle'); S.weapon = 'rifle'; S.inv.ammo = 50",
-      "EVAL:fight([foe('nigel')], { started: true })",
-      "FIGHT",
-      "EXPECT:S.ev.some(e => e.v === 'nigel' && e.loud && !e.secret && e.wit.includes('gus'))"
-    ]
-  },
-  {
-    "name": "Combat: Moe sells bullets and a zip gun",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.teeth = 200",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Moe",
-      "Bullets",
-      "EXPECT:S.inv.ammo === 6",
-      "Zip gun",
-      "EXPECT:S.weapons.includes('zipgun') && S.inv.ammo === 9"
-    ]
-  },
-  {
-    "name": "Enemies: a raider is the same raider near home, far away, and however good you get",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:(() => { ENC.raiders('farm').o[0][1](); const a = S.fight.en.map(e => e.lvl + ':' + e.max).join(); S.fight = null; for (const k in S.skills) S.skills[k] = 95; S.c.fights = 60; S.perks.push('keen'); ENC.raiders('chainfield').o[0][1](); const b = S.fight.en.map(e => e.lvl + ':' + e.max).join(); return a === b })()"
-    ]
-  },
-  {
-    "name": "Enemies: the King's army grows with the story, not with you",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:molarCrew().length === 2 && molarCrew().every(e => e.lvl === 4)",
-      "EVAL:S.day = 12",
-      "EXPECT:molarCrew().some(e => e.lvl === 5)",
-      "EVAL:S.day = 17",
-      "EXPECT:molarCrew().length === 3"
-    ]
-  },
-  {
-    "name": "Enemies: bounty hunters come only for the notorious, and the worse you are the better they are",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:notoriety() < 12",
-      "EVAL:S.kills = 13",
-      "EXPECT:bountyCrew().length === 2",
-      "EVAL:S.kills = 30",
-      "EXPECT:bountyCrew().length === 3 && bountyCrew().some(e => e.lvl === 7)",
-      "EVAL:go('enc', 'bounty', 'farm')",
-      "SAY:expensive ones"
-    ]
-  },
-  {
-    "name": "Gutmaw: its danger is plain, and early on you can feed it and walk away",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:give('meat'); go('enc', 'gutmaw', 'farm')",
-      "SAY:the size of a car",
-      "SAY:Lie flat in a ditch",
-      "Throw it your meat",
-      "EXPECT:S.scene === 'hub' && S.here === 'farm' && !S.inv.meat"
-    ]
-  },
-  {
-    "name": "Gutmaw: it roams the roads, and the place it's in shows the signs",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:(() => { const seen = new Set(); for (let i = 0; i < 30; i++) { roamGutmaw(); seen.add(S.f.gutLoc) } return seen.size > 2 && !seen.has('well') && [...seen].every(k => LOC[k]) })()",
-      "EVAL:S.f.gutLoc = 'farm'",
-      "Leave (map)",
-      "EXPECT:document.getElementById('map').children.some(c => c.innerHTML.includes('tremors'))",
-      "EVAL:go('hub', 'farm')",
-      "SAY:Something the size of a car came through"
-    ]
-  },
-  {
-    "name": "Gutmaw: it can be killed, and everyone hears",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([gutmawE()], { win: 'gutmaw', args: ['farm'] })",
-      "FIGHT",
-      "EXPECT:S.f.gutDead && S.titles.includes('Gutmaw Slayer')",
-      "EXPECT:heard('moe', 'gutmaw')"
-    ]
-  },
-  {
-    "name": "Places show danger as words, not numbers",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EXPECT:!/[Dd]anger d/.test(document.getElementById('head').innerHTML)",
-      "Leave (map)",
-      "EXPECT:!document.getElementById('map').children.some(c => /[Dd]anger d/.test(c.innerHTML))"
-    ]
-  },
-  {
-    "name": "Romance: Opal wants honesty and money, and takes the money",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "EVAL:S.teeth = 300",
-      "Madame Opal",
-      "REAL",
-      "EVAL:globalThis.c = chanceOf('opal.honest')",
-      "EXPECT:c < 50",
-      "RAND:0",
-      "no lies left",
-      "EXPECT:lover('opal') && S.teeth === 200",
-      "SAY:yours"
-    ]
-  },
-  {
-    "name": "Romance: a caught liar has a much harder time with Opal",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.c = chanceOf('opal.honest')",
-      "EVAL:learn('opal', event('lied', 'gus', { wit: [] }))",
-      "EXPECT:chanceOf('opal.honest') < c && spec('opal.honest').mods() <= -25"
-    ]
-  },
-  {
-    "name": "Romance: Crane won't look at you until you've done good in Rustwater",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Sheriff Crane",
-      "EXPECT:!cur.some(o => o[0].includes('buy you a drink'))",
-      "EVAL:learn('sheriff', event('pump', null, { loc: 'rustwater', wit: [] })); learn('sheriff', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
-      "Back",
-      "Sheriff Crane",
-      "SAY:buy you a drink"
-    ]
-  },
-  {
-    "name": "Romance: Lou loves a man who loves her cooking, all of it",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:S.f.stew = 1; globalThis.c = chanceOf('lou.cook')",
-      "EVAL:S.f.cannibal = 1",
-      "EXPECT:chanceOf('lou.cook') >= c + 25"
-    ]
-  },
-  {
-    "name": "Romance: Gloria is easy to bed and nearly impossible to win",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EXPECT:chanceOf('gloria.bed') >= 60 && chanceOf('gloria.win') <= 10"
-    ]
-  },
-  {
-    "name": "Jealousy: Crane hears about another woman, dumps you, then digs up your quiet killings",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.lovers.sheriff = { day: 1 }; event('murder', 'pell', { secret: true }); S.dead.pell = 1",
-      "EVAL:becomeLover('gloria'); learn('sheriff', S.ev[S.ev.length - 1])",
-      "EXPECT:!lover('sheriff') && S.f.craneSuspect && S.n.sheriff.op <= -20",
-      "EXPECT:!heard('sheriff', 'murder', 'pell')",
-      "WAIT:3",
-      "EXPECT:S.ev.some(e => e.type === 'murder' && e.v === 'pell' && !e.secret && e.wit.includes('sheriff'))"
-    ]
-  },
-  {
-    "name": "Jealousy: Lou smiles, says nothing, and a week later the other woman is the Thursday special",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.lovers.lou = { day: 1 }",
-      "EVAL:becomeLover('gloria'); learn('lou', S.ev[S.ev.length - 1])",
-      "EXPECT:S.f.thursday === 'gloria' && alive('gloria')",
-      "WAIT:6",
-      "EXPECT:alive('gloria')",
-      "WAIT:1",
-      "EXPECT:!alive('gloria') && S.f.thursdayDone === 'gloria'",
-      "EVAL:go('hub', 'diner')",
-      "SAY:THURSDAY SPECIAL: GLORIA"
-    ]
-  },
-  {
-    "name": "Jealousy: Bess goes after the other woman herself, and you have to pick a side",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.lovers.bess = { day: 1 }",
-      "EVAL:becomeLover('opal'); learn('bess', S.ev[S.ev.length - 1])",
-      "EXPECT:S.f.catfight === 'opal' && S.n.bess.loc === 'rustwater'",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "SAY:Tell her what we are",
-      "Stand with Bess",
-      "EXPECT:!lover('opal') && lover('bess') && S.f.catfightHow === 'bess' && S.n.bess.loc === 'farm'"
-    ]
-  },
-  {
-    "name": "Jealousy: Opal and Gloria don't care",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1 }",
-      "EVAL:becomeLover('sheriff'); learn('opal', S.ev[S.ev.length - 1]); learn('gloria', S.ev[S.ev.length - 1])",
-      "EXPECT:lover('opal') && lover('gloria') && !S.f.catfight && !S.f.thursday"
-    ]
-  },
-  {
-    "name": "Ending: Fallout-style slides, including every relationship",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1, how: 'won' }; S.end = { type: 'retired' }; go('ending')",
-      "SAY:You sit down in your shack",
-      "EXPECT:(() => { let seen = ''; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('Madame Opal kept a room') && seen.includes('Gloria came east with you') })()",
-      "SAY:This life is over"
-    ]
-  },
-  {
-    "name": "Krug plots: Old Teo knows the guard rota (it helps every way into Chainfield) and will testify",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "REAL",
-      "EVAL:globalThis.p = chanceOf('pens.open')",
-      "Leave (map)",
-      "TRAVEL:Chainfield",
-      "Old Teo",
-      "When do Krug's guards change",
-      "EXPECT:knew('krug.rota') && chanceOf('pens.open') >= p + 10",
-      "Would you tell the Sheriff",
-      "EXPECT:knew('krug.witness')"
-    ]
-  },
-  {
-    "name": "Krug plots: you can lift Krug's notebook",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "Leave (map)",
-      "TRAVEL:Chainfield",
-      "Krug",
-      "RAND:0",
-      "Lift the notebook",
-      "EXPECT:has('krugbook')"
-    ]
-  },
-  {
-    "name": "Krug plots: bring Crane proof and she hangs Krug herself, three days later",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:know('krug.witness')",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Sheriff Crane",
-      "RAND:0",
-      "Krug sells people",
-      "SAY:You riding with me?",
-      "It's your fight",
-      "EXPECT:alive('krug')",
-      "WAIT:3",
-      "EXPECT:!alive('krug') && S.f.krugHow === 'crane' && alive('sheriff') && S.f.freed"
-    ]
-  },
-  {
-    "name": "Krug plots: Crane's raid can fail, and then Rustwater has no sheriff",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:know('krug.witness')",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Sheriff Crane",
-      "RAND:0",
-      "Krug sells people",
-      "SAY:You riding with me?",
-      "It's your fight",
-      "RAND:0.99",
-      "WAIT:3",
-      "EXPECT:!alive('sheriff') && S.f.craneHow === 'died' && alive('krug')"
-    ]
-  },
-  {
-    "name": "Krug plots: sell Crane out to Krug and she dies in his ambush",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:know('krug.witness')",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Sheriff Crane",
-      "RAND:0",
-      "Krug sells people",
-      "SAY:You riding with me?",
-      "It's your fight",
-      "RAND:off",
-      "Back",
-      "Leave (map)",
-      "TRAVEL:Chainfield",
-      "Krug",
-      "Crane is coming for you",
-      "EXPECT:S.f.raidBetrayed && S.titles.includes('Sold Out the Law')",
-      "WAIT:3",
-      "EXPECT:!alive('sheriff') && S.f.craneHow === 'ambushed' && alive('krug')"
-    ]
-  },
-  {
-    "name": "Krug plots: ride with Crane and take Chainfield together",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:know('krug.witness')",
-      "Leave (map)",
-      "TRAVEL:Rustwater",
-      "Sheriff Crane",
-      "RAND:0",
-      "Krug sells people",
-      "SAY:You riding with me?",
-      "I'll be at the gate",
-      "RAND:off",
-      "Back",
-      "Leave (map)",
-      "TRAVEL:Chainfield",
-      "WAIT:2",
-      "EVAL:go('hub', 'chainfield')",
-      "SAY:Ready?",
-      "Go in with them",
-      "FIGHT",
-      "EXPECT:!alive('krug') && S.f.raidDone && S.f.freed"
-    ]
-  },
-  {
-    "name": "Krug plots: show the King Krug's book and the Molars burn Chainfield, taking everyone in the pens east",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:give('krugbook'); S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; go('throne')",
-      "Krug has been selling you dying men",
-      "EXPECT:S.f.molarsSent && !has('krugbook')",
-      "WAIT:2",
-      "EXPECT:!alive('krug') && S.f.chainfieldBurned && S.n.bess.loc === 'gone' && molarCrew().length >= 3",
-      "EVAL:go('hub', 'chainfield')",
-      "SAY:Krug's head watches the road"
-    ]
-  },
-  {
-    "name": "Krug plots: or send word with a Molar tax gang",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:go('enc', 'molars', 'rustwater')",
-      "RAND:0",
-      "Tell your King",
-      "EXPECT:S.f.molarsSent",
-      "WAIT:2",
-      "EXPECT:!alive('krug') && S.f.krugHow === 'molars'"
-    ]
-  },
-  {
-    "name": "Krug plots: talk Hector into going himself, and with the rota he brings Bess home",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); know('krug.rota'); S.here = 'farm'; go('talk', 'hector')",
-      "SAY:Krug changes guards at midnight",
-      "RAND:0",
-      "changes guards at midnight",
-      "EXPECT:S.f.hectorWent === 'bess'",
-      "WAIT:1",
-      "EXPECT:!alive('krug') && S.f.krugHow === 'hector' && alive('hector') && S.n.bess.loc === 'farm'"
-    ]
-  },
-  {
-    "name": "Krug plots: or Hector dies at the gate, and his family knows whose idea it was",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); S.here = 'farm'; go('talk', 'hector')",
-      "RAND:0",
-      "Go and get her yourself",
-      "RAND:0.99",
-      "WAIT:1",
-      "EXPECT:!alive('hector') && alive('krug') && S.ev.some(e => e.type === 'sentdeath' && e.v === 'hector')"
-    ]
-  },
-  {
-    "name": "Krug plots: the ending tells you what you set in motion",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.f.krugHow = 'molars'; S.dead.krug = 1; S.f.craneHow = 'ambushed'; S.dead.sheriff = 1; S.end = { type: 'retired' }; go('ending')",
-      "EXPECT:(() => { let seen = document.getElementById('text').innerHTML; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('The Molars burned Chainfield') && seen.includes('somebody sold her into') && !seen.includes('Without Krug') })()"
-    ]
-  },
-  {
-    "name": "Loot: kill a raider and his pipe is yours, plus a pile of teeth",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
-      "FIGHT",
-      "EXPECT:S.weapons.includes('pipe') && S.teeth >= t + 16"
-    ]
-  },
-  {
-    "name": "Loot: a slaver's shotgun, shells and jacket, and better armour goes straight on",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:fight([spawn('slaver')], { close: true })",
-      "FIGHT",
-      "EXPECT:S.weapons.includes('shotgun') && S.inv.ammo >= 3 && S.armor === 'jacket'",
-      "SAY:you put it on"
-    ]
-  },
-  {
-    "name": "Loot: gear you already have is stripped and sold for scrap",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.weapons.push('pipe'); globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
-      "FIGHT",
-      "SAY:a spare Lead Pipe (scrap, +5 teeth)",
-      "EXPECT:S.teeth >= t + 21"
-    ]
-  },
-  {
-    "name": "Loot: named people drop what they carry too",
-    "steps": [
-      "Crawl out of bed",
-      "Go",
-      "EVAL:S.here = 'farm'; fight([foe('hector')], { started: true })",
-      "FIGHT",
-      "EXPECT:S.weapons.includes('shotgun')"
-    ]
-  }
+ {
+  "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Climb down the well",
+   "Nigel",
+   "REAL",
+   "RAND:0.99",
+   "crashed plane",
+   "EXPECT:!canTry('nigel.move')",
+   "EXPECT:!cur.some(o => o[0].includes('crashed plane'))",
+   "SAY:looks at you like you're the weather",
+   "\"What ARE you?\"",
+   "EXPECT:canTry('nigel.move')",
+   "SAY:crashed plane"
+  ]
+ },
+ {
+  "name": "Bess: hearing her dream makes the leaving line land, and the cheesy line is worse",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bess",
+   "REAL",
+   "EVAL:globalThis.before = chanceOf('bess.leave')",
+   "What do you do for fun",
+   "EXPECT:knew('bess.dreams')",
+   "EXPECT:chanceOf('bess.leave') >= before + 20",
+   "EXPECT:chanceOf('bess.pretty') < chanceOf('bess.leave')"
+  ]
+ },
+ {
+  "name": "Bess: three failed lines and she shuts you out for good",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bess",
+   "REAL",
+   "RAND:0.99",
+   "leaving this farm",
+   "prettiest girl",
+   "leaving this farm",
+   "SAY:Stop. Just stop.",
+   "EXPECT:!canTry('bess.leave')",
+   "EXPECT:!cur.some(o => /leaving this farm|prettiest/.test(o[0]))",
+   "EVAL:S.day += 30; know('bess.other'); S.n.bess.op += 50",
+   "EXPECT:!canTry('bess.leave')"
+  ]
+ },
+ {
+  "name": "Hector in earshot makes flirting with Bess harder",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EXPECT:(() => { S.here = 'scrapwell'; const away = chanceOf('bess.leave'); S.here = 'farm'; return chanceOf('bess.leave') <= away - 10 })()"
+  ]
+ },
+ {
+  "name": "Once-locked checks never reopen, whatever changes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "RAND:0.99",
+   "EVAL:attempt('king.talk')",
+   "EXPECT:!canTry('king.talk')",
+   "EVAL:know('king.mother'); S.n.king.op += 50; S.day += 30",
+   "EXPECT:!canTry('king.talk') && !canTry('king.mother')"
+  ]
+ },
+ {
+  "name": "Haggling: each failure raises Jeb's price, three and he stops listening",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "REAL",
+   "RAND:0.99",
+   "EVAL:globalThis.p0 = chanceOf('jeb.haggle')",
+   "Half price",
+   "EXPECT:S.f.jebUp === 1 && chanceOf('jeb.haggle') < p0",
+   "Half price",
+   "Half price",
+   "EXPECT:S.f.jebUp === 3 && !canTry('jeb.haggle')",
+   "EXPECT:!cur.some(o => o[0].includes('Half price'))"
+  ]
+ },
+ {
+  "name": "Lou: the fingernail in the stew opens a better line",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "EVAL:S.teeth = 50",
+   "Order the stew",
+   "Order the stew",
+   "EXPECT:knew('lou.polish')",
+   "Spit it out",
+   "Mama Lou",
+   "SAY:Sal's Sunday Best",
+   "REAL",
+   "EXPECT:chanceOf('lou.polish') > chanceOf('lou.guards') + 20"
+  ]
+ },
+ {
+  "name": "Hearing that Jeb drinks makes lying to Hector easier",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EXPECT:chanceOf('hector.drunk') <= chanceOf('hector.lying')",
+   "EVAL:know('jeb.drinks')",
+   "EXPECT:chanceOf('hector.drunk') > chanceOf('hector.lying') + 20"
+  ]
+ },
+ {
+  "name": "The taxman believes a man in a Sheriff's vest",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.b = chanceOf('taxman.fired')",
+   "EVAL:S.armors.push('vest'); S.armor = 'vest'",
+   "EXPECT:chanceOf('taxman.fired') >= b + 25"
+  ]
+ },
+ {
+  "name": "Read People: earned by talking to people, gives a hint, never a number",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.talks = 14",
+   "Gus",
+   "EXPECT:perk('reader')",
+   "SAY:Read People",
+   "EXPECT:cur.some(o => /\\((he|she)'s|might go for it|laugh at you|looks doable|either way|long shot|near hopeless\\)/.test(o[0]))",
+   "EXPECT:!cur.some(o => /\\d+%/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Rapport: one chat a day counts, re-opening the same chat does not",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Gus",
+   "EXPECT:S.n.gus.ch === 1",
+   "Any news?",
+   "EXPECT:S.n.gus.ch === 1"
+  ]
+ },
+ {
+  "name": "A v2 save without the new fields still loads",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:(() => { const s = JSON.parse(JSON.stringify(S)); delete s.tried; delete s.know; delete s.talks; IDS.forEach(i => delete s.n[i].ch); migrate(s); return s.tried && s.know && s.talks === 0 && s.n.gus.ch === 0 })()"
+  ]
+ },
+ {
+  "name": "Gossip: Moe stops sharing rumours with people he dislikes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:S.n.moe.op = -30",
+   "Moe",
+   "What's the word?",
+   "SAY:Nothing for you"
+  ]
+ },
+ {
+  "name": "Gossip: Moe lies to people he hates, and the lie makes the pens a trap",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.p = chanceOf('pens.open')",
+   "EVAL:S.n.moe.op = -50",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "What's the word?",
+   "SAY:Krug went east",
+   "EXPECT:knew('moe.lie') && spec('pens.open').mods() <= -30 && chanceOf('pens.open') < p"
+  ]
+ },
+ {
+  "name": "Gossip: Doc won't sell Buzz once he hears you eat people",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learn('doc', event('cannibal', null, { loc: 'diner', wit: [] }))",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "EXPECT:!cur.some(o => o[0].startsWith('Buzz ('))",
+   "And some Buzz",
+   "SAY:Not to you"
+  ]
+ },
+ {
+  "name": "Gossip: Opal hears you freed Chainfield and tells you the Silo's back door",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] }))",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Madame Opal",
+   "SAY:on the house",
+   "You heard about Chainfield?",
+   "EXPECT:knew('silo.back') && S.f.knowSilo",
+   "REAL",
+   "EXPECT:chanceOf('silo.sneak') >= 40"
+  ]
+ },
+ {
+  "name": "Gossip: Jeb hears you saved Pete and gives you half price",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learn('jeb', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "SAY:Pete told me",
+   "EXPECT:S.f.jebCheap"
+  ]
+ },
+ {
+  "name": "Gossip: Ma Thistle hears two good deeds and gives you a gift",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learn('elder', event('tfixed', null, { wit: [] })); learn('elder', event('pump', null, { loc: 'rustwater', wit: [] }))",
+   "EVAL:globalThis.g = S.inv.gutglue || 0",
+   "Ma Thistle",
+   "You look pleased with me",
+   "EXPECT:(S.inv.gutglue || 0) === g + 2"
+  ]
+ },
+ {
+  "name": "Gossip: Hector warns Bert, who turns hostile and armed",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.hector.op = -80",
+   "WAIT:1",
+   "EXPECT:S.f.bertWarned && hostile('bert') && S.n.bert.st.wep === 'rifle'"
+  ]
+ },
+ {
+  "name": "Gossip: someone who hates you tips off Krug, and two days later slavers come for you in your sleep",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.gus.op = -60",
+   "WAIT:1",
+   "EXPECT:S.f.tipped === 'gus' && !S.f.netNight",
+   "WAIT:2",
+   "EXPECT:S.f.netNight === 'gus'",
+   "Your shack",
+   "Sleep until tomorrow",
+   "SAY:Gus told Krug where you sleep",
+   "EXPECT:S.fight && S.fight.en.length === 2"
+  ]
+ },
+ {
+  "name": "Gossip: the Sheriff vouches for you around Rustwater, two days after she hears",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:globalThis.m = S.n.moe.op",
+   "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
+   "EXPECT:S.later.length === 1 && S.n.moe.op === m",
+   "WAIT:2",
+   "EXPECT:S.n.moe.op >= m + 15 && S.later.length === 0"
+  ]
+ },
+ {
+  "name": "Gossip: kill Junior's mother and he hunts you on the road",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.junior.op = -80; learn('junior', event('murder', 'lou', { loc: 'diner', wit: [] }))",
+   "EXPECT:avengers().includes('junior')",
+   "EXPECT:!avengers().includes('bert')"
+  ]
+ },
+ {
+  "name": "Gossip: a caught lie spreads, and liars find talking harder",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.c = chanceOf('nigel.move')",
+   "EVAL:learn('nigel', event('lied', 'gus', { wit: [] }))",
+   "EXPECT:liarTo('nigel') && chanceOf('nigel.move') <= c - 10"
+  ]
+ },
+ {
+  "name": "Growth: one fixed, average man, no presets",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EXPECT:S.name === 'Nobody' && Object.values(S.stats).every(v => v === 5)",
+   "EXPECT:Object.values(S.skills).every(v => v >= 30 && v <= 35)"
+  ]
+ },
+ {
+  "name": "Growth: no levels, no XP bar, no skill points",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:!/Lv |XP|Level up/.test(document.getElementById('hud').innerHTML)",
+   "Character",
+   "EXPECT:!/skill points|PERK:|Level/.test(document.getElementById('text').innerHTML + document.getElementById('head').innerHTML + cur.map(o => o[0]).join())"
+  ]
+ },
+ {
+  "name": "Growth: skills grow by use, and slower when high",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.a = S.skills.steal; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.lo = S.skills.steal - a",
+   "EVAL:S.skills.steal = 85; S.skx.steal = 0; for (let i = 0; i < 10; i++) practice('steal', 1.5); globalThis.hi = S.skills.steal - 85",
+   "EXPECT:lo >= 12 && hi >= 1 && hi <= lo / 3"
+  ]
+ },
+ {
+  "name": "Growth: you learn from failed conversations too",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Climb down the well",
+   "Nigel",
+   "REAL",
+   "RAND:0.99",
+   "EVAL:globalThis.s = S.skills.speech + S.skx.speech || S.skills.speech",
+   "crashed plane",
+   "EXPECT:S.skills.speech + (S.skx.speech || 0) > s"
+  ]
+ },
+ {
+  "name": "Growth: skills and stats show as words without Keen Eye, numbers with it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "Character",
+   "SAY:Speech: Clumsy",
+   "SAY:Brawn: average",
+   "EXPECT:!document.getElementById('text').innerHTML.includes('Speech: Clumsy (')",
+   "Close",
+   "EVAL:S.perks.push('keen')",
+   "Character",
+   "SAY:Speech: Clumsy (35)"
+  ]
+ },
+ {
+  "name": "Growth: Silver Tongue is earned by talking people round",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.c.talkWin = 7",
+   "Climb down the well",
+   "Nigel",
+   "RAND:0",
+   "crashed plane",
+   "EXPECT:perk('tongue')",
+   "SAY:Perk: Silver Tongue"
+  ]
+ },
+ {
+  "name": "Growth: without Keen Eye, enemies are words and no health bar; with it you see everything",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([mkE('Raider', 'R', 4, { arm: 'spikes' })], {})",
+   "EXPECT:!document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
+   "SAY:can handle themselves",
+   "SAY:unhurt",
+   "EVAL:S.perks.push('keen'); go('fight')",
+   "EXPECT:document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
+   "SAY:Lv 4",
+   "SAY:Raider Spikes"
+  ]
+ },
+ {
+  "name": "Growth: stats change only through story. Doc's Meat Tonic can make you strong",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "RAND:0",
+   "Meat Tonic",
+   "EXPECT:S.stats.brawn === 8"
+  ]
+ },
+ {
+  "name": "Growth: a bad Brain Juice makes you dumb, and the world talks down to you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "RAND:0.99",
+   "Brain Juice",
+   "EXPECT:S.stats.brains === 3 && dumb()"
+  ]
+ },
+ {
+  "name": "Combat: your body never gets tougher, only your armour does",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:PLAYER.hp === 30 && (() => { const m = S.maxhp; survived(); return S.maxhp === m && S.c.fights === 1 })()",
+   "EVAL:fight([mkE('Rat', 'R', 1)], {})",
+   "FIGHT",
+   "EXPECT:S.c.fights === 2"
+  ]
+ },
+ {
+  "name": "Combat: guns cost a bullet a shot, and with none you can't shoot",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.weapons.push('zipgun'); S.weapon = 'zipgun'; S.inv.ammo = 2",
+   "EVAL:fight([mkE('Rat', 'R', 9)], {})",
+   "Shoot Rat",
+   "EXPECT:S.inv.ammo === 1",
+   "Shoot Rat",
+   "EXPECT:!S.inv.ammo",
+   "EXPECT:!cur.some(o => o[0].startsWith('Shoot'))",
+   "SAY:Switch to Rusty Knife"
+  ]
+ },
+ {
+  "name": "Combat: no percentages on fight options",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([mkE('Rat', 'R', 3)], { close: true })",
+   "EXPECT:!cur.some(o => /d+%/.test(o[0]))",
+   "SAY:Hit Rat"
+  ]
+ },
+ {
+  "name": "Combat: on the road melee has to close in first, and you take a free round",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([mkE('Rat', 'R', 3)], {})",
+   "SAY:at range",
+   "EXPECT:!cur.some(o => o[0].startsWith('Hit '))",
+   "RAND:0",
+   "Close in",
+   "EXPECT:S.fight.close && S.fight.round === 2",
+   "SAY:Rat hits you",
+   "SAY:Hit Rat"
+  ]
+ },
+ {
+  "name": "Combat: a melee hit can knock a man down",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([mkE('Ox', 'O', 9)], { close: true })",
+   "RAND:0.3",
+   "EVAL:S.weapon = 'knife'; S.stats.brawn = 10; atk(0, null)",
+   "SAY:Ox goes down",
+   "SAY:Ox is on the ground"
+  ]
+ },
+ {
+  "name": "Combat: a knife kill with nobody around stays secret",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Climb down the well",
+   "EVAL:fight([foe('nigel')], { started: true })",
+   "FIGHT",
+   "EXPECT:S.ev.some(e => e.v === 'nigel' && e.type === 'murder' && e.secret)"
+  ]
+ },
+ {
+  "name": "Combat: a gunshot kill is heard next door",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Climb down the well",
+   "EVAL:S.weapons.push('rifle'); S.weapon = 'rifle'; S.inv.ammo = 50",
+   "EVAL:fight([foe('nigel')], { started: true })",
+   "FIGHT",
+   "EXPECT:S.ev.some(e => e.v === 'nigel' && e.loud && !e.secret && e.wit.includes('gus'))"
+  ]
+ },
+ {
+  "name": "Combat: Moe sells bullets and a zip gun",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.teeth = 200",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "Bullets",
+   "EXPECT:S.inv.ammo === 6",
+   "Zip gun",
+   "EXPECT:S.weapons.includes('zipgun') && S.inv.ammo === 9"
+  ]
+ },
+ {
+  "name": "Enemies: a raider is the same raider near home, far away, and however good you get",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:(() => { ENC.raiders('farm').o[0][1](); const a = S.fight.en.map(e => e.lvl + ':' + e.max).join(); S.fight = null; for (const k in S.skills) S.skills[k] = 95; S.c.fights = 60; S.perks.push('keen'); ENC.raiders('chainfield').o[0][1](); const b = S.fight.en.map(e => e.lvl + ':' + e.max).join(); return a === b })()"
+  ]
+ },
+ {
+  "name": "Enemies: the King's army grows with the story, not with you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:molarCrew().length === 2 && molarCrew().every(e => e.lvl === 4)",
+   "EVAL:S.day = 12",
+   "EXPECT:molarCrew().some(e => e.lvl === 5)",
+   "EVAL:S.day = 17",
+   "EXPECT:molarCrew().length === 3"
+  ]
+ },
+ {
+  "name": "Enemies: bounty hunters come only for the notorious, and the worse you are the better they are",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:notoriety() < 12",
+   "EVAL:S.kills = 13",
+   "EXPECT:bountyCrew().length === 2",
+   "EVAL:S.kills = 30",
+   "EXPECT:bountyCrew().length === 3 && bountyCrew().some(e => e.lvl === 7)",
+   "EVAL:go('enc', 'bounty', 'farm')",
+   "SAY:expensive ones"
+  ]
+ },
+ {
+  "name": "Gutmaw: its danger is plain, and early on you can feed it and walk away",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('meat'); go('enc', 'gutmaw', 'farm')",
+   "SAY:the size of a car",
+   "SAY:Lie flat in a ditch",
+   "Throw it your meat",
+   "EXPECT:S.scene === 'hub' && S.here === 'farm' && !S.inv.meat"
+  ]
+ },
+ {
+  "name": "Gutmaw: it roams the roads, and the place it's in shows the signs",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:(() => { const seen = new Set(); for (let i = 0; i < 30; i++) { roamGutmaw(); seen.add(S.f.gutLoc) } return seen.size > 2 && !seen.has('well') && [...seen].every(k => LOC[k]) })()",
+   "EVAL:S.f.gutLoc = 'farm'",
+   "Leave (map)",
+   "EXPECT:document.getElementById('map').children.some(c => c.innerHTML.includes('tremors'))",
+   "EVAL:go('hub', 'farm')",
+   "SAY:Something the size of a car came through"
+  ]
+ },
+ {
+  "name": "Gutmaw: it can be killed, and everyone hears",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([gutmawE()], { win: 'gutmaw', args: ['farm'] })",
+   "FIGHT",
+   "EXPECT:S.f.gutDead && S.titles.includes('Gutmaw Slayer')",
+   "EXPECT:heard('moe', 'gutmaw')"
+  ]
+ },
+ {
+  "name": "Places show danger as words, not numbers",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:!/[Dd]anger d/.test(document.getElementById('head').innerHTML)",
+   "Leave (map)",
+   "EXPECT:!document.getElementById('map').children.some(c => /[Dd]anger d/.test(c.innerHTML))"
+  ]
+ },
+ {
+  "name": "Romance: Opal wants honesty and money, and takes the money",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:S.teeth = 300",
+   "Madame Opal",
+   "REAL",
+   "EVAL:globalThis.c = chanceOf('opal.honest')",
+   "EXPECT:c < 50",
+   "RAND:0",
+   "no lies left",
+   "EXPECT:lover('opal') && S.teeth === 200",
+   "SAY:yours"
+  ]
+ },
+ {
+  "name": "Romance: a caught liar has a much harder time with Opal",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.c = chanceOf('opal.honest')",
+   "EVAL:learn('opal', event('lied', 'gus', { wit: [] }))",
+   "EXPECT:chanceOf('opal.honest') < c && spec('opal.honest').mods() <= -25"
+  ]
+ },
+ {
+  "name": "Romance: Crane won't look at you until you've done good in Rustwater",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "EXPECT:!cur.some(o => o[0].includes('buy you a drink'))",
+   "EVAL:learn('sheriff', event('pump', null, { loc: 'rustwater', wit: [] })); learn('sheriff', event('rescued', 'pete', { loc: 'diner', wit: [] }))",
+   "Back",
+   "Sheriff Crane",
+   "SAY:buy you a drink"
+  ]
+ },
+ {
+  "name": "Romance: Lou loves a man who loves her cooking, all of it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:S.f.stew = 1; globalThis.c = chanceOf('lou.cook')",
+   "EVAL:S.f.cannibal = 1",
+   "EXPECT:chanceOf('lou.cook') >= c + 25"
+  ]
+ },
+ {
+  "name": "Romance: Gloria is easy to bed and nearly impossible to win",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EXPECT:chanceOf('gloria.bed') >= 60 && chanceOf('gloria.win') <= 10"
+  ]
+ },
+ {
+  "name": "Jealousy: Crane hears about another woman, dumps you, then digs up your quiet killings",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.lovers.sheriff = { day: 1 }; event('murder', 'pell', { secret: true }); S.dead.pell = 1",
+   "EVAL:becomeLover('gloria'); learn('sheriff', S.ev[S.ev.length - 1])",
+   "EXPECT:!lover('sheriff') && S.f.craneSuspect && S.n.sheriff.op <= -20",
+   "EXPECT:!heard('sheriff', 'murder', 'pell')",
+   "WAIT:3",
+   "EXPECT:S.ev.some(e => e.type === 'murder' && e.v === 'pell' && !e.secret && e.wit.includes('sheriff'))"
+  ]
+ },
+ {
+  "name": "Jealousy: Lou smiles, says nothing, and a week later the other woman is the Thursday special",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.lovers.lou = { day: 1 }",
+   "EVAL:becomeLover('gloria'); learn('lou', S.ev[S.ev.length - 1])",
+   "EXPECT:S.f.thursday === 'gloria' && alive('gloria')",
+   "WAIT:6",
+   "EXPECT:alive('gloria')",
+   "WAIT:1",
+   "EXPECT:!alive('gloria') && S.f.thursdayDone === 'gloria'",
+   "EVAL:go('hub', 'diner')",
+   "SAY:THURSDAY SPECIAL: GLORIA"
+  ]
+ },
+ {
+  "name": "Jealousy: Bess goes after the other woman herself, and you have to pick a side",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.lovers.bess = { day: 1 }",
+   "EVAL:becomeLover('opal'); learn('bess', S.ev[S.ev.length - 1])",
+   "EXPECT:S.f.catfight === 'opal' && S.n.bess.loc === 'rustwater'",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:Tell her what we are",
+   "Stand with Bess",
+   "EXPECT:!lover('opal') && lover('bess') && S.f.catfightHow === 'bess' && S.n.bess.loc === 'farm'"
+  ]
+ },
+ {
+  "name": "Jealousy: Opal and Gloria don't care",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1 }",
+   "EVAL:becomeLover('sheriff'); learn('opal', S.ev[S.ev.length - 1]); learn('gloria', S.ev[S.ev.length - 1])",
+   "EXPECT:lover('opal') && lover('gloria') && !S.f.catfight && !S.f.thursday"
+  ]
+ },
+ {
+  "name": "Ending: Fallout-style slides, including every relationship",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1, how: 'won' }; S.end = { type: 'retired' }; go('ending')",
+   "SAY:You sit down in your shack",
+   "EXPECT:(() => { let seen = ''; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('Madame Opal kept a room') && seen.includes('Gloria came east with you') })()",
+   "SAY:This life is over"
+  ]
+ },
+ {
+  "name": "Krug plots: Old Teo knows the guard rota (it helps every way into Chainfield) and will testify",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:globalThis.p = chanceOf('pens.open')",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Old Teo",
+   "When do Krug's guards change",
+   "EXPECT:knew('krug.rota') && chanceOf('pens.open') >= p + 10",
+   "Would you tell the Sheriff",
+   "EXPECT:knew('krug.witness')"
+  ]
+ },
+ {
+  "name": "Krug plots: you can lift Krug's notebook",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "RAND:0",
+   "Lift the notebook",
+   "EXPECT:has('krugbook')"
+  ]
+ },
+ {
+  "name": "Krug plots: bring Crane proof and she hangs Krug herself, three days later",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('krug.witness')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "RAND:0",
+   "Krug sells people",
+   "SAY:You riding with me?",
+   "It's your fight",
+   "EXPECT:alive('krug')",
+   "WAIT:3",
+   "EXPECT:!alive('krug') && S.f.krugHow === 'crane' && alive('sheriff') && S.f.freed"
+  ]
+ },
+ {
+  "name": "Krug plots: Crane's raid can fail, and then Rustwater has no sheriff",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('krug.witness')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "RAND:0",
+   "Krug sells people",
+   "SAY:You riding with me?",
+   "It's your fight",
+   "RAND:0.99",
+   "WAIT:3",
+   "EXPECT:!alive('sheriff') && S.f.craneHow === 'died' && alive('krug')"
+  ]
+ },
+ {
+  "name": "Krug plots: sell Crane out to Krug and she dies in his ambush",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('krug.witness')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "RAND:0",
+   "Krug sells people",
+   "SAY:You riding with me?",
+   "It's your fight",
+   "RAND:off",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "Crane is coming for you",
+   "EXPECT:S.f.raidBetrayed && S.titles.includes('Sold Out the Law')",
+   "WAIT:3",
+   "EXPECT:!alive('sheriff') && S.f.craneHow === 'ambushed' && alive('krug')"
+  ]
+ },
+ {
+  "name": "Krug plots: ride with Crane and take Chainfield together",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('krug.witness')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "RAND:0",
+   "Krug sells people",
+   "SAY:You riding with me?",
+   "I'll be at the gate",
+   "RAND:off",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "WAIT:2",
+   "EVAL:go('hub', 'chainfield')",
+   "SAY:Ready?",
+   "Go in with them",
+   "FIGHT",
+   "EXPECT:!alive('krug') && S.f.raidDone && S.f.freed"
+  ]
+ },
+ {
+  "name": "Krug plots: show the King Krug's book and the Molars burn Chainfield, taking everyone in the pens east",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('krugbook'); S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; go('throne')",
+   "Krug has been selling you dying men",
+   "EXPECT:S.f.molarsSent && !has('krugbook')",
+   "WAIT:2",
+   "EXPECT:!alive('krug') && S.f.chainfieldBurned && S.n.bess.loc === 'gone' && molarCrew().length >= 3",
+   "EVAL:go('hub', 'chainfield')",
+   "SAY:Krug's head watches the road"
+  ]
+ },
+ {
+  "name": "Krug plots: or send word with a Molar tax gang",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:go('enc', 'molars', 'rustwater')",
+   "RAND:0",
+   "Tell your King",
+   "EXPECT:S.f.molarsSent",
+   "WAIT:2",
+   "EXPECT:!alive('krug') && S.f.krugHow === 'molars'"
+  ]
+ },
+ {
+  "name": "Krug plots: talk Hector into going himself, and with the rota he brings Bess home",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); know('krug.rota'); S.here = 'farm'; go('talk', 'hector')",
+   "SAY:Krug changes guards at midnight",
+   "RAND:0",
+   "changes guards at midnight",
+   "EXPECT:S.f.hectorWent === 'bess'",
+   "WAIT:1",
+   "EXPECT:!alive('krug') && S.f.krugHow === 'hector' && alive('hector') && S.n.bess.loc === 'farm'"
+  ]
+ },
+ {
+  "name": "Krug plots: or Hector dies at the gate, and his family knows whose idea it was",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); S.here = 'farm'; go('talk', 'hector')",
+   "RAND:0",
+   "Go and get her yourself",
+   "RAND:0.99",
+   "WAIT:1",
+   "EXPECT:!alive('hector') && alive('krug') && S.ev.some(e => e.type === 'sentdeath' && e.v === 'hector')"
+  ]
+ },
+ {
+  "name": "Krug plots: the ending tells you what you set in motion",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.krugHow = 'molars'; S.dead.krug = 1; S.f.craneHow = 'ambushed'; S.dead.sheriff = 1; S.end = { type: 'retired' }; go('ending')",
+   "EXPECT:(() => { let seen = document.getElementById('text').innerHTML; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('The Molars burned Chainfield') && seen.includes('somebody sold her into') && !seen.includes('Without Krug') })()"
+  ]
+ },
+ {
+  "name": "Loot: kill a raider and his pipe is yours, plus a pile of teeth",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
+   "FIGHT",
+   "EXPECT:S.weapons.includes('pipe') && S.teeth >= t + 16"
+  ]
+ },
+ {
+  "name": "Loot: a slaver's shotgun, shells and jacket, and better armour goes straight on",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([spawn('slaver')], { close: true })",
+   "FIGHT",
+   "EXPECT:S.weapons.includes('shotgun') && S.inv.ammo >= 3 && S.armor === 'jacket'",
+   "SAY:you put it on"
+  ]
+ },
+ {
+  "name": "Loot: gear you already have is stripped and sold for scrap",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.weapons.push('pipe'); globalThis.t = S.teeth; fight([spawn('raider')], { close: true })",
+   "FIGHT",
+   "SAY:a spare Lead Pipe (scrap, +5 teeth)",
+   "EXPECT:S.teeth >= t + 21"
+  ]
+ },
+ {
+  "name": "Loot: named people drop what they carry too",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.here = 'farm'; fight([foe('hector')], { started: true })",
+   "FIGHT",
+   "EXPECT:S.weapons.includes('shotgun')"
+  ]
+ },
+ {
+  "name": "Combat: everyone is the same flesh; their gear is their strength",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:(() => { const s = spawn('slaver'), r = spawn('raider'), k = foe('krug'); return s.max === 30 && r.max === 30 && k.max === 30 && s.d.join() === W.shotgun.d.join() && s.dr === A.jacket.dr && r.d.join() === W.pipe.d.join() && k.dr === A.plate.dr && foe('king').dr === A.riot.dr })()"
+  ]
+ },
+ {
+  "name": "Healing: Gut Glue puts you back to full, and you start with three",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:S.inv.gutglue === 3 && (() => { S.maxhp = 30; S.hp = 2; take('gutglue'); heal(GLUE()); return S.hp === 30 })()"
+  ]
+ },
+ {
+  "name": "Slavers want you alive: lose to them once and you wake in the pens",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "RAND:0",
+   "EVAL:S.teeth = 77; fight([spawn('slaver')], {}); S.maxhp = 30; S.hp = 1; enemy()",
+   "EXPECT:S.f.penned && !S.end && S.teeth === 0 && S.here === 'rustwater'",
+   "EVAL:fight([spawn('slaver')], {}); S.maxhp = 30; S.hp = 1; enemy()",
+   "EXPECT:S === null"
+  ]
+ },
+ {
+  "name": "Heist: lift the Mayor's Plasma Rifle, and it never needs bullets",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "What's in the parlour",
+   "RAND:0",
+   "Lift the Plasma Rifle",
+   "EXPECT:S.weapons.includes('plasma') && S.weapon === 'plasma'",
+   "EVAL:S.inv.ammo = 5; fight([spawn('raider')], {}); atk(0, null)",
+   "EXPECT:S.inv.ammo >= 5 && !dry('plasma')"
+  ]
+ },
+ {
+  "name": "Heist: a fusion core from the Sky-Bus brings the Power Armour to life",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.molesDead = 1",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "Pry open the cargo hold",
+   "EXPECT:has('core')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "What's in the parlour",
+   "RAND:0",
+   "Slot the fusion core",
+   "EXPECT:S.armor === 'power' && !has('core') && S.titles.includes('The Walking Tank')"
+  ]
+ },
+ {
+  "name": "Heist: get caught and Fenwick's guards come for you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "What's in the parlour",
+   "RAND:99",
+   "Lift the Plasma Rifle",
+   "EXPECT:S.fight && S.fight.en.every(e => e.n === \"Fenwick's guard\") && S.n.mayor.op === -100"
+  ]
+ },
+ {
+  "name": "Heist: kill Fenwick and his toys are just lying there",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.dead.mayor = 1; give('core')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Search Fenwick's empty house",
+   "EXPECT:S.weapons.includes('plasma') && S.armor === 'power'"
+  ]
+ },
+ {
+  "name": "Shop: buy a riot suit off Jeb's wagons and it goes straight on",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.teeth = 500",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "What's on the wagons",
+   "Pre-War Riot Suit",
+   "EXPECT:S.armor === 'riot' && S.teeth < 500",
+   "Hunting Rifle",
+   "EXPECT:S.weapon === 'rifle'",
+   "EXPECT:!S.armors.includes('power') && !SC.shop.toString().includes('plasma:')"
+  ]
+ }
 ]

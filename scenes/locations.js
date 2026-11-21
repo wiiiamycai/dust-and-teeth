@@ -74,14 +74,14 @@ const HUBO = {
       ? [
           'Drink from the free pump',
           () => {
-            say(`+${heal(6)} HP.`);
+            say(`+${heal(15)} HP.`);
             goHere();
           },
         ]
       : [
-          `Cup of water (10 teeth, +6 HP)`,
+          `Cup of water (10 teeth, +15 HP)`,
           () => {
-            if (pay(10)) say(`+${heal(6)} HP. Tastes faintly of the Mayor.`);
+            if (pay(10)) say(`+${heal(15)} HP. Tastes faintly of the Mayor.`);
             goHere();
           },
         ],
@@ -151,7 +151,10 @@ const HUBO = {
             'Fight the rad-moles',
             () =>
               fight(
-                [mkE('Rad-mole', '🐀', 2, { loot: { meat: 1 }, teeth: 0 }), mkE('Rad-mole', '🐀', 2, { teeth: 0 })],
+                [
+                  mkE('Rad-mole', '🐀', 2, { loot: { meat: 1 }, teeth: 0, d: [3, 7], hpm: 0.6 }),
+                  mkE('Rad-mole', '🐀', 2, { teeth: 0, d: [3, 7], hpm: 0.6 }),
+                ],
                 { win: 'moles', back: ['map'] },
               ),
             'danger',
