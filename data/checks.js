@@ -23,6 +23,7 @@ const CK = {
     base: -15,
     lock: 'week',
     mods: () => (S.f.slaver ? 15 : 0) - (knew('moe.lie') && !S.f.moeLieSprung ? 30 : 0),
+    likes: { 'krug.rota': 15 },
   },
   'plane.coil': { sk: 'science', base: 0, lock: 'none' },
   'silo.sneak': { sk: 'sneak', base: -25, lock: 'none', likes: { 'silo.back': 35 } },
@@ -43,7 +44,24 @@ const CK = {
   'molar.talk': { sk: 'speech', base: 0, lock: 'none' },
 
   // ---- people ----
-  murder: id => ({ sk: 'sneak', base: NPC[id].fighter ? -25 : -10, lock: 'none' }),
+  murder: id => ({
+    sk: 'sneak',
+    base: NPC[id].fighter ? -25 : -10,
+    lock: 'none',
+    likes: id === 'krug' ? { 'krug.rota': 20 } : {},
+  }),
+  // ---- getting Krug killed by someone else ----
+  'krug.book': { sk: 'steal', base: -25, who: 'krug', lock: 'week', likes: { 'krug.rota': 20 } },
+  'crane.krug': {
+    sk: 'speech',
+    base: -10,
+    who: 'sheriff',
+    lock: 'change',
+    mods: () => (has('krugbook') ? 25 : 0) + (knew('krug.witness') ? 15 : 0),
+  },
+  'king.krug': { sk: 'speech', base: -30, who: 'king', lock: 'once' },
+  'molars.krug': { sk: 'speech', base: -15, lock: 'once' },
+  'hector.go': { sk: 'speech', base: 0, who: 'hector', lock: 'once', likes: { 'krug.rota': 25 } },
   'pen.lock': x => ({ sk: 'steal', base: -10, lock: 'none' }),
   'spouse.back': x => ({ sk: 'speech', base: -25, who: x, lock: 'once' }),
   'kitchen.cage': { sk: 'steal', base: -10, lock: 'none' },

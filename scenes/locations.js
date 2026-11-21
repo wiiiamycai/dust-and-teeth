@@ -318,6 +318,7 @@ SC.hub = loc => {
   const hs = IDS.filter(x => hostile(x) && S.n[x].loc === loc);
   if (hs.length && S.f.sneakIn !== loc) return go('ambush', loc);
   if (catfightHere(loc)) return go('catfight', loc);
+  if (raidHere(loc)) return go('krugraid');
   if (S.f.sneakIn && S.f.sneakIn !== loc) S.f.sneakIn = null;
   spouseTalk();
   if (loc === 'rustwater' && S.f.raidNews && !S.f.raidSeen) {

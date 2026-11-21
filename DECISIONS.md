@@ -66,3 +66,12 @@ Will said "just do all the steps", so these are the design calls I made on my ow
 45. **Gloria:** very easy to bed (three tries). Winning her heart is a single, nearly hopeless line. Doesn't care.
 46. **Fade to black** always, with one short line.
 47. **Ending slides:** the headline, then the fates three at a time, then a summary slide. Every lover, ex, jealous murder and catfight gets a line.
+
+## After step 8: getting Krug killed by someone else
+
+48. **Old Teo** tells you the guard rota (+15 to opening the pens, +20 to stealing Krug's notebook or killing him quietly, +25 to Hector's chances) and agrees to testify if he doesn't dislike you.
+49. **Krug's notebook** can be lifted (a hard steal, easier with the rota). It's proof for Crane and the King.
+50. **Crane's raid:** with Teo's word or the notebook, talk her into it. Ride with her (be at the Chainfield gate from day 3, within 5 days, and you fight Krug with her at your side), or let her go alone (55% base, better with the rota, or if Rustwater beat the Molar raid). If she fails she dies, and so does Teo if he testified. You can also sell her plan to Krug for 100 teeth: she dies in his ambush, and if it gets out Rustwater never forgives you.
+51. **The Dentist King:** show him the notebook (sure) or lie that Krug mocks him (hard, one try), at his throne or via a Molar tax gang on the road. Two days later the Molars burn Chainfield. Krug dies, everyone in the pens is marched east (Bess then becomes the Raider Queen, as in v2), and the King's gangs gain an extra raider for the rest of the game.
+52. **Hector:** if Krug has his child and he knows you sold them, talk him into going in himself (better with the rota). Next day he either shoots Krug and brings everyone home (35%, 60% with the rota) or dies, and his family blames you.
+53. Each outcome gets its own ending slide.

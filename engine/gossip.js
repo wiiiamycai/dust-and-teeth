@@ -130,6 +130,10 @@ function sumEv(ev) {
       lied: `you lied to ${v}`,
       gutmaw: 'you killed the Gutmaw',
       lover: `you've been with ${v}`,
+      betrayed: `you sold ${v} out to Krug`,
+      fell: `${v} died going after Krug, because of you`,
+      burned: 'you set the Molars on Chainfield',
+      sentdeath: `${v} died at Chainfield, on your advice`,
       eaten: `${v} ended up in Lou's pot, over you`,
     }[ev.type] || null
   );

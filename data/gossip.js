@@ -37,6 +37,10 @@ const EV = {
   lied: { self: -15, family: -10, friend: -10, other: -3 },
   gutmaw: { other: 15 },
   lover: { self: 10 },
+  betrayed: { family: -80, friend: -60, other: -30, spec: { krug: 20 } },
+  fell: { friend: -15, other: -5 },
+  burned: { other: -5, spec: { opal: 10, teo: -40 } },
+  sentdeath: { family: -60, friend: -30, other: -5 },
   eaten: { family: -40, friend: -20, other: -5, spec: { lou: 0, junior: 0 } },
   raidkill: {},
 };
@@ -80,6 +84,16 @@ const RXG = {
   married: { family: () => `"Welcome to the family. Don't make me regret it."` },
   nuked: { other: () => `"You... you did that? All those people?"` },
   gutmaw: { other: () => `"You killed the GUTMAW? You? Drinks on me. Everything on me."` },
+  betrayed: {
+    friend: v => `"They say you sold ${v} to Krug. Told him she was coming. You KNEW."`,
+    other: v => `"Someone sold ${v} out to Krug. Word is it was you."`,
+  },
+  fell: { friend: v => `"${v} went after Krug. You sent her. She's not coming back."` },
+  burned: { other: () => `"They say you set the Molars on Chainfield. The people in the pens went east."` },
+  sentdeath: {
+    family: (v, f) => `"My ${f} went to Chainfield because you told him to. He didn't come back."`,
+    friend: v => `"${v} went after Krug alone. Your idea, I hear."`,
+  },
   eaten: {
     family: (v, f) => `"My ${f} went to Lou's and never came back. They say it was over you."`,
     friend: v => `"${v} ended up in Lou's pot. Over YOU."`,

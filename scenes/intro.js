@@ -89,13 +89,15 @@ SC.ending = () => {
       L.push('Pete never ate meat again. Every Tuesday he lit a candle for Sal.');
     else if (f.peteEaten) L.push('Pete was served on Tuesday, as planned.');
     L.push(
-      f.freed
-        ? "The freed people of Chainfield built a town from shopping trolleys. There's a statue of you. It's bad, but sincere."
-        : !al('krug')
-          ? 'Without Krug, his slavers fought over the notebook until none were left.'
-          : f.slaver
-            ? "You stayed in Krug's notebook as a valued colleague."
-            : 'Krug kept perfect records for many more years.',
+      f.krugHow === 'molars'
+        ? null
+        : f.freed
+          ? "The freed people of Chainfield built a town from shopping trolleys. There's a statue of you. It's bad, but sincere."
+          : !al('krug')
+            ? 'Without Krug, his slavers fought over the notebook until none were left.'
+            : f.slaver
+              ? "You stayed in Krug's notebook as a valued colleague."
+              : 'Krug kept perfect records for many more years.',
     );
     const b = S.n.bess;
     if (!al('bess'))
@@ -132,7 +134,7 @@ SC.ending = () => {
             : 'Out east, the Big Tooth was still waking up.',
     );
   }
-  if (E.type !== 'nuke' && E.type !== 'destroyer') L.push(...loveLines());
+  if (E.type !== 'nuke' && E.type !== 'destroyer') L.push(...krugLines(), ...loveLines());
   const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
   // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
   const lines = L.filter(Boolean),

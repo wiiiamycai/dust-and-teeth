@@ -48,6 +48,7 @@ const ITEMS = {
   badge: 'Guard badge',
   key: 'Launch key',
   ammo: 'Bullets',
+  krugbook: "Krug's notebook",
 };
 const PERKS = {
   eater: { n: 'Messy Eater', d: 'Corpses heal double, no karma hit.' },

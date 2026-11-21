@@ -49,7 +49,7 @@ function avengers() {
     if (x === 'hector') return true;
     return S.n[x].k.some(i => {
       const e = S.ev[i];
-      return e && ['murder', 'slain', 'sold', 'stew'].includes(e.type) && relOf(x, e.v) === 'family';
+      return e && ['murder', 'slain', 'sold', 'stew', 'sentdeath'].includes(e.type) && relOf(x, e.v) === 'family';
     });
   });
 }

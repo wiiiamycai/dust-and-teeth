@@ -26,6 +26,7 @@ const molarCrew = () => [
   spawn('molar', { wep: roll(25) ? 'molargun' : null }),
   S.day >= 12 ? spawn('molarVet') : spawn('molar', { arm: roll(30) ? 'spikes' : null }),
   ...(S.day >= 17 ? [spawn('molar')] : []),
+  ...(S.f.kingFed ? [spawn('molar')] : []), // you fed him Chainfield's people
 ];
 const bountyCrew = () =>
   notoriety() >= 25 ? [spawn('bountyAce'), spawn('bounty'), spawn('bounty')] : [spawn('bounty'), spawn('bounty')];

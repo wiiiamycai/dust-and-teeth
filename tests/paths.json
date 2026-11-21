@@ -737,5 +737,182 @@
       "EXPECT:(() => { let seen = ''; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('Madame Opal kept a room') && seen.includes('Gloria came east with you') })()",
       "SAY:This life is over"
     ]
+  },
+  {
+    "name": "Krug plots: Old Teo knows the guard rota (it helps every way into Chainfield) and will testify",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "REAL",
+      "EVAL:globalThis.p = chanceOf('pens.open')",
+      "Leave (map)",
+      "TRAVEL:Chainfield",
+      "Old Teo",
+      "When do Krug's guards change",
+      "EXPECT:knew('krug.rota') && chanceOf('pens.open') >= p + 10",
+      "Would you tell the Sheriff",
+      "EXPECT:knew('krug.witness')"
+    ]
+  },
+  {
+    "name": "Krug plots: you can lift Krug's notebook",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "Leave (map)",
+      "TRAVEL:Chainfield",
+      "Krug",
+      "RAND:0",
+      "Lift the notebook",
+      "EXPECT:has('krugbook')"
+    ]
+  },
+  {
+    "name": "Krug plots: bring Crane proof and she hangs Krug herself, three days later",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:know('krug.witness')",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Sheriff Crane",
+      "RAND:0",
+      "Krug sells people",
+      "SAY:You riding with me?",
+      "It's your fight",
+      "EXPECT:alive('krug')",
+      "WAIT:3",
+      "EXPECT:!alive('krug') && S.f.krugHow === 'crane' && alive('sheriff') && S.f.freed"
+    ]
+  },
+  {
+    "name": "Krug plots: Crane's raid can fail, and then Rustwater has no sheriff",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:know('krug.witness')",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Sheriff Crane",
+      "RAND:0",
+      "Krug sells people",
+      "SAY:You riding with me?",
+      "It's your fight",
+      "RAND:0.99",
+      "WAIT:3",
+      "EXPECT:!alive('sheriff') && S.f.craneHow === 'died' && alive('krug')"
+    ]
+  },
+  {
+    "name": "Krug plots: sell Crane out to Krug and she dies in his ambush",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:know('krug.witness')",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Sheriff Crane",
+      "RAND:0",
+      "Krug sells people",
+      "SAY:You riding with me?",
+      "It's your fight",
+      "RAND:off",
+      "Back",
+      "Leave (map)",
+      "TRAVEL:Chainfield",
+      "Krug",
+      "Crane is coming for you",
+      "EXPECT:S.f.raidBetrayed && S.titles.includes('Sold Out the Law')",
+      "WAIT:3",
+      "EXPECT:!alive('sheriff') && S.f.craneHow === 'ambushed' && alive('krug')"
+    ]
+  },
+  {
+    "name": "Krug plots: ride with Crane and take Chainfield together",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:know('krug.witness')",
+      "Leave (map)",
+      "TRAVEL:Rustwater",
+      "Sheriff Crane",
+      "RAND:0",
+      "Krug sells people",
+      "SAY:You riding with me?",
+      "I'll be at the gate",
+      "RAND:off",
+      "Back",
+      "Leave (map)",
+      "TRAVEL:Chainfield",
+      "WAIT:2",
+      "EVAL:go('hub', 'chainfield')",
+      "SAY:Ready?",
+      "Go in with them",
+      "FIGHT",
+      "EXPECT:!alive('krug') && S.f.raidDone && S.f.freed"
+    ]
+  },
+  {
+    "name": "Krug plots: show the King Krug's book and the Molars burn Chainfield, taking everyone in the pens east",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:give('krugbook'); S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; go('throne')",
+      "Krug has been selling you dying men",
+      "EXPECT:S.f.molarsSent && !has('krugbook')",
+      "WAIT:2",
+      "EXPECT:!alive('krug') && S.f.chainfieldBurned && S.n.bess.loc === 'gone' && molarCrew().length >= 3",
+      "EVAL:go('hub', 'chainfield')",
+      "SAY:Krug's head watches the road"
+    ]
+  },
+  {
+    "name": "Krug plots: or send word with a Molar tax gang",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:go('enc', 'molars', 'rustwater')",
+      "RAND:0",
+      "Tell your King",
+      "EXPECT:S.f.molarsSent",
+      "WAIT:2",
+      "EXPECT:!alive('krug') && S.f.krugHow === 'molars'"
+    ]
+  },
+  {
+    "name": "Krug plots: talk Hector into going himself, and with the rota he brings Bess home",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); know('krug.rota'); S.here = 'farm'; go('talk', 'hector')",
+      "SAY:Krug changes guards at midnight",
+      "RAND:0",
+      "changes guards at midnight",
+      "EXPECT:S.f.hectorWent === 'bess'",
+      "WAIT:1",
+      "EXPECT:!alive('krug') && S.f.krugHow === 'hector' && alive('hector') && S.n.bess.loc === 'farm'"
+    ]
+  },
+  {
+    "name": "Krug plots: or Hector dies at the gate, and his family knows whose idea it was",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; learn('hector', event('sold', 'bess', { wit: [] })); S.here = 'farm'; go('talk', 'hector')",
+      "RAND:0",
+      "Go and get her yourself",
+      "RAND:0.99",
+      "WAIT:1",
+      "EXPECT:!alive('hector') && alive('krug') && S.ev.some(e => e.type === 'sentdeath' && e.v === 'hector')"
+    ]
+  },
+  {
+    "name": "Krug plots: the ending tells you what you set in motion",
+    "steps": [
+      "Crawl out of bed",
+      "Go",
+      "EVAL:S.f.krugHow = 'molars'; S.dead.krug = 1; S.f.craneHow = 'ambushed'; S.dead.sheriff = 1; S.end = { type: 'retired' }; go('ending')",
+      "EXPECT:(() => { let seen = document.getElementById('text').innerHTML; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('The Molars burned Chainfield') && seen.includes('somebody sold her into') && !seen.includes('Without Krug') })()"
+    ]
   }
 ]

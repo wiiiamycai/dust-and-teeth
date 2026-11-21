@@ -106,6 +106,7 @@ SC.throne = () => {
           ]
         : null,
       !f.kingStopped ? ['"Let me push the button."', () => go('launch', 'king'), 'danger'] : null,
+      ...kingKrugOpts(),
       ['Fight him', () => kingFight(), 'danger'],
       ['Back', () => go('hub', 'silo')],
     ],
