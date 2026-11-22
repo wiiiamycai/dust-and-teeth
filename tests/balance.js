@@ -18,8 +18,8 @@ const ctx = { console, Math, JSON, String, Object, Array,
 vm.createContext(ctx);
 vm.runInContext(code, ctx);
 vm.runInContext(`
-  function duel(wep, foeLv, close) {
-    newGame(); S.weapons.push(wep); S.weapon = wep; S.inv.ammo = 999;
+  function duel(wep, foeLv, close, mods) {
+    newGame(); S.weapons.push(wep); S.weapon = wep; S.inv.ammo = 999; if (mods) S.mods[wep] = mods;
     S.c.fights = 99; // no toughness growth, no perks from this
     fight([mkE('Raider', 'R', foeLv)], { close });
     let rounds = 0;
@@ -31,16 +31,19 @@ vm.runInContext(`
   }
   globalThis.duel = duel;
 `, ctx);
-const cases = [['knife', 'zipgun'], ['pipe', 'zipgun'], ['sledge', 'rifle'], ['cleaver', 'shotgun']];
+// Sprocket's mods: with both sides fully upgraded (melee: edge and grip; guns: scope and barrel), the same rule must hold.
+const MM = "['edge','wrap']", GM = "['scope','barrel']";
+const cases = [['knife', 'zipgun'], ['pipe', 'zipgun'], ['sledge', 'rifle'], ['cleaver', 'shotgun'], ['knife', 'zipgun', 1], ['sledge', 'rifle', 1], ['cleaver', 'shotgun', 1]];
 let fail = 0;
 for (const lv of [2, 4]) {
-  for (const [m, g] of cases) {
+  for (const [m, g, modded] of cases) {
     const res = {};
     for (const w of [m, g]) {
+      const mods = modded ? (w === m ? MM : GM) : 'null';
       let won = 0, hp = 0;
       for (let i = 0; i < N; i++) {
         vm.runInContext('S = null', ctx);
-        const r = vm.runInContext(`duel('${w}', ${lv}, false)`, ctx);
+        const r = vm.runInContext(`duel('${w}', ${lv}, false, ${mods})`, ctx);
         if (r.won) { won++; hp += r.hp; }
       }
       res[w] = { win: Math.round((won * 100) / N), hpLeft: won ? Math.round(hp / won) : 0 };
@@ -48,7 +51,7 @@ for (const lv of [2, 4]) {
     // melee must not be strictly worse: either it wins about as often, or it leaves you healthier
     const ok = res[m].win >= res[g].win - 10 || res[m].hpLeft > res[g].hpLeft;
     if (!ok) fail++;
-    console.log(`${ok ? 'ok  ' : 'BAD '} Lv ${lv} raider, at range:  ${m.padEnd(8)} win ${String(res[m].win).padStart(3)}% hp left ${String(res[m].hpLeft).padStart(2)}   |   ${g.padEnd(8)} win ${String(res[g].win).padStart(3)}% hp left ${String(res[g].hpLeft).padStart(2)}`);
+    console.log(`${ok ? 'ok  ' : 'BAD '} Lv ${lv} raider, at range${modded ? ', all modded' : ''}:  ${m.padEnd(8)} win ${String(res[m].win).padStart(3)}% hp left ${String(res[m].hpLeft).padStart(2)}   |   ${g.padEnd(8)} win ${String(res[g].win).padStart(3)}% hp left ${String(res[g].hpLeft).padStart(2)}`);
   }
 }
 process.exit(fail ? 1 : 0);

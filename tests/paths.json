@@ -2132,19 +2132,19 @@
   ]
  },
  {
-  "name": "Green gate: from day 15 the pass is open, takes two days, and the Warden is at the gate",
+  "name": "Green gate: from day 15 the pass is open, a day each way like any road, and the Warden is at the gate",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Leave (map)",
    "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('map')",
    "TRAVEL:The Green",
-   "EXPECT:S.here === 'green' && S.day === 17 && !S.f.greenIn",
+   "EXPECT:S.here === 'green' && S.day === 16 && !S.f.greenIn",
    "SAY:The Warden",
    "EXPECT:!$('cards').children.some(c => /Gardener|Fern/.test(c.innerHTML))",
    "Leave (map)",
    "TRAVEL:Rustwater",
-   "EXPECT:S.here === 'rustwater' && S.day === 19"
+   "EXPECT:S.here === 'rustwater' && S.day === 17"
   ]
  },
  {
@@ -2188,7 +2188,7 @@
    "Caravan Jeb",
    "RAND:0",
    "All the way, this time",
-   "EXPECT:S.here === 'green' && S.f.greenIn && S.f.jebEast && S.day === 17",
+   "EXPECT:S.here === 'green' && S.f.greenIn && S.f.jebEast && S.day === 16",
    "SAY:The Gardener",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -2950,6 +2950,42 @@
    "Crawl out of bed",
    "Go",
    "EXPECT:SECRETS.warden.tell.includes('rook') && bondOf('rook', 'warden') && bondOf('warden', 'rook').kind === 'friend'"
+  ]
+ },
+ {
+  "name": "Green: the pass can drop a rockslide on you; quick feet get you clear",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:learnGreen(); S.day = 15; S.f.raid = 1; go('map')",
+   "REAL",
+   "EVAL:S.stats.twitch = 1; S.stats.luck = 1",
+   "RAND:0.1",
+   "TRAVEL:The Green",
+   "SAY:rockslide on the pass",
+   "EXPECT:S.here === 'green'"
+  ]
+ },
+ {
+  "name": "Green: under the glass on day 25, you live through the launch",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learnGreen(); S.f.raid = 1; S.day = 24; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:tick(); go('ending')",
+   "SAY:the mountains take it",
+   "SAY:The Green lives"
+  ]
+ },
+ {
+  "name": "Green: anywhere else on day 25, the launch ends you as before",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:learnGreen(); S.f.raid = 1; S.day = 24; S.f.greenIn = 1",
+   "EVAL:tick(); go('ending')",
+   "SAY:The sky turns white"
   ]
  }
 ]

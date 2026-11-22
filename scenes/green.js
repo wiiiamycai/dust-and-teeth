@@ -2,7 +2,8 @@
 // ================= THE GREEN: the rumour is true, sort of =================
 // Far east, over the mountain pass: a walled greenhouse dome with real food and clean water. Forty people,
 // and the Warden lets almost nobody in. Late game only: you need the pass (Jeb's cave, the Sky-Bus charts,
-// or a ride with Jeb himself), and the dust storms over it don't drop until day 15. The pass takes two days.
+// or a ride with Jeb himself), and the dust storms over it don't drop until day 15. The pass has rockslides.
+// The mountains shelter it: be inside the Green when the Big Tooth launches on day 25 and you live.
 // Underneath, Moss keeps the lights on, chained to the algae vats. The Gardener keeps it small, and kind, and
 // counted. The big choice: smuggle seeds to the valley, which ends the Green being the only green, or keep
 // the secret and have a bed behind the wall.
@@ -18,7 +19,7 @@ function learnGreen(how) {
       (S.day < GREEN_DAY ? ' The dust storms over it are a wall until the middle of the month.' : ''),
   );
 }
-// Travel: the pass is shut by storms until day 15, and takes two days each way.
+// Travel: the pass is shut by storms until day 15. It's a day like any road, but the slopes come down on people.
 const _travelGreen = travel;
 travel = k => {
   if (k === 'green' && !greenOpen()) {
@@ -27,8 +28,16 @@ travel = k => {
     return go('hub', 'skybus');
   }
   if ((k === 'green' || inGreen()) && k !== S.here) {
-    say(k === 'green' ? 'Two days up the pass, through rock and old snow-fences.' : 'Two days down the pass.');
-    if (tick()) return go('ending');
+    say(
+      k === 'green' ? 'Up the pass, through rock and old snow-fences.' : 'Down the pass, with the glass at your back.',
+    );
+    if (roll(30)) {
+      if (roll(fleeP())) say('Rocks come down the slope behind you. You were already running.');
+      else {
+        bad('A rockslide on the pass catches your legs.');
+        if (hurt(R(4, 9), 'Buried by a rockslide on the pass to the Green.')) return;
+      }
+    }
   }
   _travelGreen(k);
 };
@@ -84,8 +93,8 @@ TALK.jeb = () => {
           S.f.jebRide = 1;
           learnGreen('jeb');
           quote('Jeb drinks the whole flask. "...Alright. All the way. If I turn back, shoot me."');
-          say('Two days on lizard-back, up the path behind his cave. Jeb talks the whole way. Then he stops talking.');
-          if (tick() || tick()) return go('ending');
+          say('A day on lizard-back, up the path behind his cave. Jeb talks the whole way. Then he stops talking.');
+          if (tick()) return go('ending');
           S.here = 'green';
           return go('hub', 'green');
         }
@@ -111,6 +120,13 @@ HUBO.skybus = () => {
       }),
     );
   return o;
+};
+// Day 25: the mountains take the blast. If you're under the glass when the Big Tooth goes up, you live.
+const _worldGreen = world;
+world = () => {
+  _worldGreen();
+  if (S.end && S.end.type === 'nuke' && (S.here === 'green' || S.here === 'vats') && S.f.greenIn)
+    S.end = { type: 'greensafe' };
 };
 // Day 15: the storms drop.
 const _reactGreen = reactions;

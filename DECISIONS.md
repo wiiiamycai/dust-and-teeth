@@ -389,3 +389,14 @@ Will: "make it all linked together as well", and then "dont ask me questions jus
     - Sprocket: who taught her guns. It was Hector's father, and that opens a line with Hector at the farm.
 172. **Rook and the Warden:** both walked out on the King, a night apart. Rook now knows her secret too, so someone at Snake Eyes can tell you she was Corporal Grit.
 173. 4 new scripted tests.
+
+## Acting on my own pushback (v4.7)
+
+Will: "change to how u see fits".
+
+174. **The pass is a day each way, like any road.** Two days each way cost four of the Green's ten days before the launch. The danger is now on the pass itself: a 30% chance of a rockslide each crossing. Quick feet (Twitch and Luck) get you clear; if not, it costs 4 to 9 HP. This takes back the two-day rule in #144. Riding with Jeb is one day too.
+175. **The Green is a refuge.** Be inside the Green when the Big Tooth launches on day 25 and you live: the mountains take the blast. It's a new ending, with the Green's slides. This gives the late game a second answer to the King besides stopping him, at the price of leaving the whole valley to burn. Anywhere else, day 25 ends you as before.
+176. **The balance test covers upgraded gear.** Three new cases fight with everything fully upgraded (melee with an edge and a grip, guns with a scope and a barrel). Melee still isn't worse. The mods help the zip gun most (91% to 99% against a level 4 raider), which is fine at its price.
+177. **Kept as they are:**
+    - Hector's farm failing on day 22 in every game: it's what makes keeping the Green secret cost the valley something;
+    - one-click map travel: changing how travel works is a bigger call than this.

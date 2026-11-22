@@ -50,6 +50,8 @@ SC.ending = () => {
       destroyer:
         "You push the button for EVERYTHING. The Dentist King weeps with joy. The world goes white. You were a nobody. Now you're the last thing anyone saw.",
       nukehome: 'You nuked Scrapwell. Your own home. Your own well. Even the King looks at you funny.',
+      greensafe:
+        'Day 25. The Big Tooth launches. You see the white light from under the glass, over the pass, and the mountains take it. The Green lives. So, somehow, do you.',
       green:
         'You stay in the Green. Real food, clean water, and forty people who count everything. Forty-one now.' +
         (f.kingStopped ? '' : ' On day 25 the western sky turns white. Under the glass, nobody looks up.'),
@@ -57,7 +59,7 @@ SC.ending = () => {
     (E.type === 'nuke' && f.knowGreen && alive('gardener') && S.n.gardener.loc === 'green'
       ? ' Over the pass, under the glass, forty people watch the white sky and go back to weeding.'
       : '');
-  if (E.type !== 'nuke' && E.type !== 'destroyer') {
+  if (E.type !== 'nuke' && E.type !== 'destroyer' && E.type !== 'greensafe') {
     L.push(
       !al('elder')
         ? 'Without Ma Thistle, Scrapwell fought over her chair until there was no village left.'
@@ -141,7 +143,7 @@ SC.ending = () => {
             : 'Out east, the Big Tooth was still waking up.',
     );
   }
-  if (E.type !== 'nuke' && E.type !== 'destroyer')
+  if (E.type !== 'nuke' && E.type !== 'destroyer' && E.type !== 'greensafe')
     L.push(
       ...krugLines(),
       ...webLines(),
@@ -151,6 +153,7 @@ SC.ending = () => {
       ...linkLines(),
       ...loveLines(),
     );
+  if (E.type === 'greensafe') L.push(...greenLines());
   const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
   // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
   const lines = L.filter(Boolean),
