@@ -20,7 +20,7 @@ function boot(store) {
   const els = {};
   const c = { console, Math, JSON, String, Object, Array, Map, Set,
     document: {
-      getElementById: id => els[id] || (els[id] = id === 'isoc' && canvasOn ? canvas() : mk()),
+      getElementById: id => els[id] || (els[id] = (id === 'isoc' || id === 'portc') && canvasOn ? canvas() : mk()),
       createElement: t => (t === 'canvas' && canvasOn ? canvas() : { style: {}, innerHTML: '', onclick: null }),
       addEventListener() {},
     },
@@ -156,6 +156,11 @@ run("newGame(); S.view = 'iso'; S.pos = null; go('hub', 'scrapwell'); S.f.corpse
 check(run("isoCorpse && isoCorpse.loc === 'scrapwell'"), 'iso: a death here should leave a body here');
 run("S.f.corpse = 'a mutant'; go('hub', 'rustwater')");
 check(run('isoCorpse && isoCorpse.loc === null'), 'iso: a death on the road should not leave a body in the next town');
+// Portraits: talking to someone shows theirs; a place's screen doesn't.
+run("newGame(); go('talk', 'bess')");
+check(run("$('head').innerHTML.includes('portc') && !$('head').innerHTML.includes('👩‍🌾')"), 'with a canvas, talking to Bess should show her portrait');
+run("S.view = 'text'; go('hub', 'farm')");
+check(run("!$('head').innerHTML.includes('portc')"), 'a place should not get a portrait');
 // A random walker in the isometric view, clicking anywhere on the canvas.
 const errs2 = {};
 for (let g = 0; g < Math.ceil(N / 3); g++) {

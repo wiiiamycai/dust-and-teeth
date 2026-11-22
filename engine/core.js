@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v3.8 (23 Nov 2026)';
+const VERSION = 'v3.9 (23 Nov 2026)';
 let S = null,
   pend = [],
   cur = [];
@@ -50,9 +50,20 @@ function quote(t) {
   pend.push(['q', t]);
 }
 function show(v) {
-  $('head').innerHTML = v.title
-    ? `<span class="ic">${v.icon || ''}</span><div><h1>${esc(v.title)}</h1>${v.sub ? `<div class="sub">${esc(v.sub)}</div>` : ''}</div>`
-    : '';
+  // Talking to someone shows their pixel portrait (scenes/sprite.js), if the browser can draw it.
+  // If drawing it fails for any reason, the emoji goes back in its place.
+  const head = pid =>
+    v.title
+      ? `${pid ? '<canvas class="ic portrait" id="portc"></canvas>' : `<span class="ic">${v.icon || ''}</span>`}<div><h1>${esc(v.title)}</h1>${v.sub ? `<div class="sub">${esc(v.sub)}</div>` : ''}</div>`
+      : '';
+  let pid = null;
+  try {
+    pid = typeof canIso === 'function' && canIso() && typeof sprPortraitId === 'function' ? sprPortraitId(v) : null;
+    $('head').innerHTML = head(pid);
+    if (pid) sprPortrait($('portc'), pid);
+  } catch (e) {
+    $('head').innerHTML = head(null);
+  }
   if (cueQ.length) {
     cueQ.forEach(t => pend.push(['m', t]));
     cueQ = [];

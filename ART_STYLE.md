@@ -72,6 +72,11 @@ Fine motes, 1 to 2 px, sand coloured, 15% to 40% opacity, drifting left to right
 
 Stronger scanlines than now (a dark line every 3 px at about 25%), a soft dark vignette at the screen edges, and a faint amber glow on text and on the map. A very slight flicker, which also switches off for reduced motion. No screen curve: it blurs text.
 
+## 9b. The frame and portraits (part 3, built in v3.9)
+
+- The whole screen sits in a riveted, scratched steel bezel: one plain frame round the outside, with a stamped plate on the top edge. Everything stays where it was: the HUD at the top, the map and the options underneath. There's no bottom panel and no wrist computer.
+- Talking to someone shows their portrait in the header: head and shoulders from their sprite, five screen pixels per sprite pixel, on a dark panel with a faint amber glow and scanlines. They blink now and then. If the browser can't draw it, the emoji is used.
+
 ## 10. Views
 
 Three views, cycled by one option: isometric, flat map (today's emoji grid), list. If the isometric view ever breaks, the flat map and the list still play the whole game.

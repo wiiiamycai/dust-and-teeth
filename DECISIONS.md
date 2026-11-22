@@ -216,3 +216,12 @@ Will agreed my picks (two facings by mirroring, a breathing idle and a walk step
 113. **Nigel glows.** His scalp is lit green and he throws a green light that shows at night.
 114. **Anything without a sprite falls back to its emoji,** so new content can't break the view. The flat map stays emoji.
 115. **Tests:** `tests/sprites.js` (run by `all.js`) checks every grid uses palette letters and fits its box. It also checks that every person, armour, weapon and map object has a sprite of the right kind (a sign if it's in a wall, a prop if it's in the open), and that every sprite builds in every frame and facing.
+
+## The frame and portraits, part 3 (v3.9)
+
+Will said to do everything and keep going while he was away, so I built part 3 on my own picks too. Every pick is listed below so he can overrule any of them.
+
+116. **A steel frame round the screen:** scratched metal with rivets in the corners and a stamped DUST & TEETH plate on the top edge. It's pure CSS. The layout doesn't change: the HUD stays at the top. There's no bottom panel and no wrist computer, so it doesn't borrow Fallout's interface.
+117. **Portraits when you talk to someone:** their head and shoulders, cut from their sprite and drawn big in the header where the emoji was, with scanlines and a faint glow. They blink every few seconds (off for reduced motion).
+118. **Portraits find themselves:** `show()` spots a person from the screen's title and icon, so no scene had to change. Without a canvas (the tests, an old browser), or if drawing fails, the emoji is shown as before.
+119. **What I left out of part 3:** portraits on the fight cards and the list view's cards. They're still emoji, which keeps the list view as the plain, safe one. The fight cards are an easy next step if he wants them.

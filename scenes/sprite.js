@@ -160,3 +160,77 @@ function sprDraw(g, key, cx, by, cell, dpr, alpha, frame, flip) {
   const [x0, y0, x1, y1] = s.box;
   return { l: l + x0 * cell, t: t + y0 * cell, r: l + x1 * cell, b: t + y1 * cell, glow: s.glow };
 }
+
+// ---- portraits: head and shoulders of the person you're talking to, in the header ----
+// Found from the screen's title and icon, so no scene needs to ask for one. Blinks now and then.
+function sprPortraitId(v) {
+  if (!v || !v.title || typeof NPC === 'undefined') return null;
+  for (const id in NPC) if (NPC[id].n === v.title && NPC[id].i === v.icon && SNPC[id]) return id;
+  return null;
+}
+const SPORT = { rows: 17, cell: 5 }; // head and shoulders, from the top of the tallest hat
+function sprPortraitDraw(cv, id, shut) {
+  const spec = SNPC[id],
+    h = 32,
+    L = sprLetters(spec),
+    rows = SPORT.rows,
+    p = SPORT.cell,
+    dpr = Math.min(2, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
+  let top = 1;
+  if (!spec.body) {
+    // an animal: frame whatever there is
+    top = 0;
+    while (top < h && !L.slice(top * SW, top * SW + SW).some(Boolean)) top++;
+    top = Math.max(0, Math.min(top - 3, h - rows));
+  }
+  const px = sprPixels(
+      L.map(ch => (shut && ch === 'e' ? 's' : ch)),
+      h,
+      spec.pal,
+    ),
+    W = SW * p,
+    H = rows * p;
+  cv.width = W * dpr;
+  cv.height = H * dpr;
+  if (cv.style) {
+    cv.style.width = W + 'px';
+    cv.style.height = H + 'px';
+  }
+  const g = cv.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = '#140e07';
+  g.fillRect(0, 0, W, H);
+  const lg = g.createRadialGradient(W / 2, H * 0.4, 2, W / 2, H * 0.4, W * 0.75);
+  lg.addColorStop(0, 'rgba(255,176,0,0.16)');
+  lg.addColorStop(1, 'rgba(255,176,0,0)');
+  g.fillStyle = lg;
+  g.fillRect(0, 0, W, H);
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x < SW; x++) {
+      const v = px[(top + y) * SW + x];
+      if (!v) continue;
+      g.fillStyle = v;
+      g.fillRect(x * p, y * p, p, p);
+    }
+  g.fillStyle = 'rgba(0,0,0,0.22)';
+  for (let y = 0; y < H; y += 2) g.fillRect(0, y, W, 1);
+}
+function sprPortrait(cv, id) {
+  sprPortraitDraw(cv, id, false);
+  const motion = !(
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  if (!motion || typeof setTimeout !== 'function') return;
+  const blink = () => {
+    if (!cv.isConnected) return;
+    sprPortraitDraw(cv, id, true);
+    setTimeout(() => {
+      if (!cv.isConnected) return;
+      sprPortraitDraw(cv, id, false);
+      setTimeout(blink, 2500 + Math.random() * 3500);
+    }, 140);
+  };
+  setTimeout(blink, 1500 + Math.random() * 2500);
+}
