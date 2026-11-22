@@ -416,6 +416,41 @@ function isoDraw() {
     g.ellipse(c.x, c.y, h * 0.4, q * 0.42, 0, 0, Math.PI * 2);
     g.fill();
   };
+  // Pixel sprites (scenes/sprite.js), standing on the tile; anything without one falls back to its emoji.
+  const cell = (L.tw * 0.95) / 32,
+    youX = isoXY(P.x, P.y).x,
+    glows = [];
+  const spr = (x, y, key, lift, alpha, o) => {
+    const c = isoXY(x, y),
+      sign = key.startsWith('sign:'),
+      r = sprDraw(
+        g,
+        key,
+        c.x,
+        c.y - lift + (sign ? 0 : q * 0.25),
+        sign ? (L.tw * 0.62) / 16 : cell,
+        L.dpr,
+        alpha,
+        o.frame,
+        o.flip,
+      );
+    if (!r) return false;
+    hits.push({
+      x,
+      y,
+      pri: o.pri,
+      pts: [
+        [r.l, r.t],
+        [r.r, r.t],
+        [r.r, r.b],
+        [r.l, r.b],
+      ],
+    });
+    if (r.glow) glows.push({ x: c.x, y: (r.t + r.b) / 2, col: r.glow });
+    return true;
+  };
+  const breath = (x, y) => ((L.tick || 0) + (hash(x, y, 5) < 0.5 ? 1 : 0)) % 2;
+  const okey = o => TOWN.loc + '.' + o.k;
   for (let y = 0; y < T.h; y++)
     for (let x = 0; x < T.w; x++) {
       const i = idx(x, y),
@@ -434,7 +469,8 @@ function isoDraw() {
               open = (a, b) => !['wall', 'kerb', 'facade'].includes(kindAt(a, b)),
               door = o ? (open(x, y + 1) ? 'l' : open(x + 1, y) ? 'r' : '') : '';
             hits.push({ x, y, pts: block(x, y, H, k, gr, kd !== 'kerb' && inFront(x, y) ? 0.3 : 1, door) });
-            if (o) glyph(x, y, o.i, H + q * 0.9, L.vis[i] > 0 ? 1 : 0.45, true);
+            const a = L.vis[i] > 0 ? 1 : 0.45;
+            if (o && !spr(x, y, 'sign:' + okey(o), H + q * 0.55, a, {})) glyph(x, y, o.i, H + q * 0.9, a, true);
           },
         ]);
       } else if (kd === 'fence') {
@@ -463,8 +499,9 @@ function isoDraw() {
           d,
           2,
           () => {
+            const a = L.vis[i] > 0 ? 1 : 0.45;
             shadow(x, y);
-            glyph(x, y, o.i, 0, L.vis[i] > 0 ? 1 : 0.45, true);
+            if (!spr(x, y, 'prop:' + okey(o), 0, a, {})) glyph(x, y, o.i, 0, a, true);
           },
         ]);
       }
@@ -475,7 +512,8 @@ function isoDraw() {
           2,
           () => {
             shadow(x, y);
-            glyph(x, y, NPC[who].i, 0, 1, true, true);
+            const o = { pri: true, frame: breath(x, y), flip: youX < isoXY(x, y).x };
+            if (!spr(x, y, 'npc:' + who, 0, 1, o)) glyph(x, y, NPC[who].i, 0, 1, true, true);
           },
         ]);
     }
@@ -490,9 +528,32 @@ function isoDraw() {
       g.beginPath();
       g.ellipse(c.x, c.y, h * 0.55, q * 0.58, 0, 0, Math.PI * 2);
       g.stroke();
-      glyph(P.x, P.y, '🧍', 0, 1, false);
+      const o = { frame: L.stride ? 2 : (L.tick || 0) % 2, flip: L.face < 0 };
+      if (!spr(P.x, P.y, 'you', 0, 1, o)) glyph(P.x, P.y, '🧍', 0, 1, false);
     },
   ]);
+  // Someone just died here: the body lies on a free tile near the middle (looks only).
+  // Only for a death in this place: a kill on the road shouldn't leave a body in the next town.
+  if (S.f && S.f.corpse && (!isoCorpse || isoCorpse.name !== S.f.corpse))
+    isoCorpse = { name: S.f.corpse, loc: isoPrevLoc === TOWN.loc ? TOWN.loc : null };
+  if (S.f && S.f.corpse && isoCorpse.loc === TOWN.loc) {
+    const free = [];
+    for (let y = 1; y < T.h - 1; y++)
+      for (let x = 1; x < T.w - 1; x++)
+        if (
+          L.kind[idx(x, y)] === 'ground' &&
+          walkable(T, x, y) &&
+          !people[x + ',' + y] &&
+          !(x === P.x && y === P.y) &&
+          chAt(T, x, y) !== 'E'
+        )
+          free.push({ x, y });
+    let hh = 0;
+    for (const ch of String(S.f.corpse)) hh = (hh * 31 + ch.charCodeAt(0)) % 9973;
+    const at = free.length && free[hh % free.length];
+    if (at && L.seen[idx(at.x, at.y)])
+      items.push([at.x + at.y, 1, () => spr(at.x, at.y, 'corpse', 0, L.vis[idx(at.x, at.y)] > 0 ? 1 : 0.45, {})]);
+  }
   items.sort((a, b) => a[0] - b[0] || a[1] - b[1]).forEach(it => it[2]());
 
   // The light of the day, then a dark edge like an old screen.
@@ -521,6 +582,18 @@ function isoDraw() {
     g.fillRect(-rx, -rx, rx * 2, rx * 2);
     g.restore();
   }
+  // Things that glow (Nigel) shine through the dark.
+  for (const gl of glows) {
+    const rr = L.tw * 1.3,
+      lg = g.createRadialGradient(gl.x, gl.y, 0, gl.x, gl.y, rr),
+      n = parseInt(gl.col.slice(1), 16),
+      rgb = (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
+    g.globalCompositeOperation = 'screen';
+    lg.addColorStop(0, 'rgba(' + rgb + ',0.35)');
+    lg.addColorStop(1, 'rgba(' + rgb + ',0)');
+    g.fillStyle = lg;
+    g.fillRect(gl.x - rr, gl.y - rr, rr * 2, rr * 2);
+  }
   g.globalCompositeOperation = 'source-over';
   const vg = g.createRadialGradient(
     L.W / 2,
@@ -543,6 +616,8 @@ function isoDraw() {
 }
 
 // ---- every frame: the scene, the highlights, the dust ----
+let isoPrevLoc = null, // the place drawn last time, and the body lying here, if any (looks only, not saved)
+  isoCorpse = null;
 let isoRaf = 0,
   isoSeed = 12345;
 const isoRand = () => (isoSeed = (Math.imul(isoSeed, 1103515245) + 12345) & 0x7fffffff) / 0x7fffffff;
@@ -578,6 +653,14 @@ function isoOutline(g, x, y, lift, col, w) {
   g.stroke();
 }
 function isoFrame(t) {
+  if (isoMotion()) {
+    const tick = Math.floor(t / 650);
+    if (tick !== ISO.tick) {
+      ISO.tick = tick;
+      if (ISO.stride && t - ISO.stepAt > 220) ISO.stride = 0;
+      isoDraw();
+    }
+  }
   const L = ISO,
     g = L.cv.getContext('2d'),
     dt = L.last ? Math.min(0.1, (t - L.last) / 1000) : 0;
@@ -667,6 +750,17 @@ function isoMount() {
     gust: old ? old.gust : { until: 0, next: isoNow() + 5000, f: 0 },
     last: 0,
   };
+  // You face the way you last walked (on screen), and step on alternate feet as you go.
+  const now = isoNow(),
+    was = old && old.pos,
+    moved = was && (was.x !== S.pos.x || was.y !== S.pos.y),
+    sx = moved ? S.pos.x - was.x - (S.pos.y - was.y) : 0;
+  ISO.pos = { x: S.pos.x, y: S.pos.y };
+  ISO.face = sx ? Math.sign(sx) : old ? old.face : 1;
+  ISO.stepN = moved ? (old.stepN || 0) + 1 : old ? old.stepN || 0 : 0;
+  ISO.stride = moved ? ISO.stepN % 2 : 0;
+  ISO.stepAt = moved ? now : old ? old.stepAt : 0;
+  ISO.tick = isoMotion() ? Math.floor(now / 650) : 0;
   ISO.kind = isoKinds(T);
   if (!T.gch) T.gch = T.rows.flatMap((r, y) => [...r].map((_, x) => isoGroundCh(T, x, y)));
   ISO.gch = T.gch;
@@ -675,6 +769,7 @@ function isoMount() {
   ISO.vis.forEach((v, i) => v > 0 && (ISO.seen[i] = 1));
   isoSeenPut(T.loc, ISO.seen);
   isoDraw();
+  isoPrevLoc = T.loc;
   if (!ISO.dust) ISO.dust = isoDust(ISO);
   isoFrame(isoNow());
   if (!isoRaf && isoMotion() && typeof requestAnimationFrame === 'function') isoRaf = requestAnimationFrame(isoLoop);

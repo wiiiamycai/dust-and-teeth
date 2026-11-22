@@ -200,3 +200,19 @@ Will approved `ART_STYLE.md` as written, with the day number driving the light (
 102. **A wall in front of you, or of anyone in sight, turns see-through,** so nobody is hidden behind a building.
 103. **Atmosphere:** light dust drifts across the map with the odd gust, and the CRT is stronger (heavier scanlines, a dark edge, an amber glow on text, a faint flicker). The dust and flicker switch off if the browser asks for reduced motion.
 104. **Tests:** `tests/walk.js` now also runs the isometric view with a fake canvas. It checks every place draws, every tile centre maps back to its tile, a click never lands on something behind, people and exits in sight can be clicked, the views cycle, night is night, and the fog survives a reload. The other tests have no canvas, so they play exactly as before and the golden fingerprint didn't change.
+
+## Pixel sprites, part 2 (v3.8)
+
+Will agreed my picks (two facings by mirroring, a breathing idle and a walk step for you, your sprite following your armour, props and signs, corpses) and then said to build all of it in one go, without the sample.
+
+105. **Every person and thing in the towns is a pixel sprite now:** 27 people, you, 16 things standing in the open and 20 shop signs. They're 16 x 32 letter grids in `data/sprites.js`, drawn in code by `scenes/sprite.js`. Nothing is copied from anywhere.
+106. **People are built from parts:** three bodies (man, woman, big), then layers and what they hold. For example: Bess wears a straw hat and carries a hoe, Krug has chains and a beard, and Lou has a bloody apron and a ladle. This keeps them consistent and makes new people cheap. Bacon Prime is the one drawn whole.
+107. **Outline and light are added in code,** so the grids are flat colour: a dark 1 px outline, lit top and left edges, a darker right edge. Pixels are snapped to the screen, so sprites stay crisp at any tile size.
+108. **Two facings by mirroring.** People turn to face you, and you face the way you last walked on screen.
+109. **People breathe** with a slow two-frame bob, out of step with each other. You step on alternate feet as you walk. Both switch off for reduced motion.
+110. **You wear what you wear.** Rags, jacket, spikes, the sheriff's vest, the car-door plate and the riot suit each look different. Power armour makes you big and grey. Your weapon is in your hand (knife, pipe, sledge, drill, pistol, rifle, shotgun, the plasma rifle).
+111. **Things in a wall get a sign on the roof:** a small board with a picture, like a mug for Moe's, a heart for the Velvet Rad, a star for the Sheriff and a toaster for the chapel. Things in the open stand on their tile: the well, the pump, the scarecrow (in a good hat), the tables, the pit, the throne.
+112. **A body lies where someone has just died,** on a free tile, until the day turns. It's looks only.
+113. **Nigel glows.** His scalp is lit green and he throws a green light that shows at night.
+114. **Anything without a sprite falls back to its emoji,** so new content can't break the view. The flat map stays emoji.
+115. **Tests:** `tests/sprites.js` (run by `all.js`) checks every grid uses palette letters and fits its box. It also checks that every person, armour, weapon and map object has a sprite of the right kind (a sign if it's in a wall, a prop if it's in the open), and that every sprite builds in every frame and facing.

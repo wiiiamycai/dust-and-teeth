@@ -151,6 +151,11 @@ run('save()');
 ctx = boot(store);
 check(run("!!S && S.scene === 'hub' && S.seen && S.seen.scrapwell") === fog, 'iso: the fog should be saved and loaded');
 check(run("!!ISO && ISO.loc === 'scrapwell'") && seenAt() === s1, `iso: after a reload the same tiles should be seen (${s1} then ${seenAt()})`);
+// A body lies where someone died here, but a kill on the road leaves nothing in the next town.
+run("newGame(); S.view = 'iso'; S.pos = null; go('hub', 'scrapwell'); S.f.corpse = 'a raider'; goHere()");
+check(run("isoCorpse && isoCorpse.loc === 'scrapwell'"), 'iso: a death here should leave a body here');
+run("S.f.corpse = 'a mutant'; go('hub', 'rustwater')");
+check(run('isoCorpse && isoCorpse.loc === null'), 'iso: a death on the road should not leave a body in the next town');
 // A random walker in the isometric view, clicking anywhere on the canvas.
 const errs2 = {};
 for (let g = 0; g < Math.ceil(N / 3); g++) {

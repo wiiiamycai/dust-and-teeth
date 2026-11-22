@@ -42,9 +42,16 @@ Rules: no pure white, no pure black in the world. Saturation stays under about 3
 - Blocks get a 1 px dark outline (`#120c06` at 60%). Ground tiles get none, only a faint darker seam, so the ground reads as one surface.
 - Things you can use glow: a pulsing amber diamond on their tile. You stand on a green ring. Hover shows an amber diamond outline.
 
-## 5. Sprites (part 2, not now)
+## 5. Sprites (part 2, built in v3.8)
 
-32 px tall, drawn in code on a small pixel grid, 1 px dark outline, this palette plus amber for highlights. Until then, people and objects stay emoji, toned down with a light sepia filter so they sit in the palette.
+- Every sprite is a 16 x 32 grid of letters in `data/sprites.js`, one letter per palette colour, drawn in code by `scenes/sprite.js`. Shop signs are 16 x 12 boards with an 8 x 6 picture.
+- People are built from parts: a body (man, woman, big), then layers (hats, beards, aprons, coats, chains) and what they hold. Only Bacon Prime is drawn whole.
+- Shown about as tall as a tile is wide, with every pixel snapped to the screen so it stays crisp.
+- The 1 px dark outline and the light from the upper left (lit top and left edges, darker right edge) are added in code, so the grids hold flat colour only.
+- People face right; facing left is the same sprite mirrored. People turn to face you, and you face the way you last walked.
+- People breathe (a slow two-frame bob, out of step with each other). You step on alternate feet as you walk.
+- Your sprite shows your armour and your weapon.
+- Anything without a sprite falls back to its emoji. The flat map stays emoji.
 
 ## 6. Fog of war
 

@@ -31,6 +31,12 @@ try {
 } catch (e) {
   ok('walk: every map is reachable, and walking works', false, String(e.stdout || e.message).trim().slice(0, 600));
 }
+try {
+  run('sprites.js', []);
+  ok('sprites: every grid is well formed, and everyone and everything has one', true);
+} catch (e) {
+  ok('sprites: every grid is well formed, and everyone and everything has one', false, String(e.stdout || e.message).trim().slice(0, 600));
+}
 const r = run('reload.js', []);
 ok('reload', /errs: \{\}, bad: \{\}/.test(r), r.trim().slice(0, 600));
 if (fs.existsSync(T('paths.json')))
