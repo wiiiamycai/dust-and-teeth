@@ -9,6 +9,8 @@ for(let g=0;g<N;g++){const store={};const els={};
   vm.createContext(ctx);
   try{vm.runInContext(code,ctx)}catch(e){st.errors['boot:'+e.message]=(st.errors['boot:'+e.message]||0)+1;continue}
   st.games++;let ended=false,s=0,lastLvl=1;
+  // late: start mid-game at the Drowned Mall or the Green, with the pass open and teeth to spend, so the new cities get played
+  if(MODE==='late')vm.runInContext("newGame();S.f.raid=1;S.day=15;S.f.knowGreen=1;S.f.knowSilo=1;S.teeth=400;['lens','tube','file','grip','sheet'].forEach(p=>give(p));if(Math.random()<0.5)S.f.greenIn=1;go('hub',Math.random()<0.5?'mall':'green')",ctx);
   for(;s<1500;s++){
     const all=[...(els.opts?els.opts.children:[]),...(els.cards?els.cards.children:[]).filter(c=>c.onclick),...(els.map&&!els.map.hidden?els.map.children:[])];
     const txt=(els.text?els.text.innerHTML:'')+(els.log?els.log.innerHTML:'')+(els.head?els.head.innerHTML:'')+(els.hud?els.hud.innerHTML:'')+(els.opts?els.opts.children.map(c=>c.innerHTML).join(''):'');
@@ -20,7 +22,7 @@ for(let g=0;g<N;g++){const store={};const els={};
     if(/This life is over/.test(els.text?els.text.innerHTML:'')){const k=(els.text.innerHTML.split(/[.!]/)[0]).slice(0,30);st.ends[k]=(st.ends[k]||0)+1;ended=true;break}
     if(!all.length){st.dead[info?info.sc:'?']=(st.dead[info?info.sc:'?']||0)+1;break}
     let pool=all;
-    if(MODE==='survive'){ // avoid suicide-ish options
+    if(MODE==='survive'||MODE==='late'){ // avoid suicide-ish options
       const safe=all.filter(b=>!/Retire|Sell yourself|Ride the caravan|EVERYTHING|Ma Thistle quietly|Attack Ma Thistle|Nuke Scrapwell/.test(b.innerHTML||''));if(safe.length)pool=safe;
       vm.runInContext('if(S&&S.hp<8){S.hp=S.maxhp}',ctx);
     }

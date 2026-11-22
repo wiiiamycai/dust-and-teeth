@@ -162,33 +162,6 @@ const SADD = {
   necklace: [{ y: 13, r: ['....txtxtxtx....'] }],
   gloves: [{ y: 19, r: srep(3, '.rr..........rr.') }],
   lips: [{ y: 11, r: ['........r.......'] }],
-  helmet: [
-    {
-      y: 5,
-      r: [
-        '.....nnnnnn.....',
-        '....nnnnnnnn....',
-        '....nnnnnnnn....',
-        '....nnuuuuuu....',
-        '....nnuuuuuu....',
-        '....nnnnnnnn....',
-      ],
-    },
-  ],
-  powerhelm: [
-    {
-      y: 5,
-      r: [
-        '....mmmmmmmm....',
-        '...mmmmmmmmmm...',
-        '...mMMMMMMMMm...',
-        '...mmggggggmm...',
-        '...mmmmmmmmmm...',
-        '....mMmmmmMm....',
-        '.....mmmmmm.....',
-      ],
-    },
-  ],
   plate: [{ y: 14, r: ['....mmmmmmmm....', ...srep(5, '....muuuuuum....'), '....mmmmmmmm....'] }],
   rags: [
     { y: 16, r: ['.....n...C......'] },
@@ -207,13 +180,9 @@ const SITEM = {
   pick: { dx: -2, dy: -12, r: ['.mmmm.', 'm..w.m', ...srep(12, '...w')] },
   shotgun: { dx: -4, dy: -1, r: ['WWWwnnnn', 'WW......'] },
   longgun: { dx: -4, dy: -1, r: ['WWwwMnnn', 'Ww......'] },
-  plasmagun: { dx: -4, dy: -1, r: ['MMmmmggg', 'Mm......'] },
   pistol: { dx: 0, dy: -1, r: ['nnnn', 'n...'] },
   ladle: { dx: 0, dy: -7, r: ['mMm', ...srep(6, '.m')] },
   knife: { dx: 0, dy: -4, r: ['.x', '.x', '.X', 'nn'] },
-  cleaver: { dx: 0, dy: -4, r: ['mmm', 'mmm', 'mmM', '.n'] },
-  pipe: { dx: 0, dy: -6, r: srep(9, '.M') },
-  sledge: { dx: -1, dy: -9, r: ['MMMM', 'MMMM', 'MMMM', ...srep(9, '.W')] },
   drill: { dx: 0, dy: -2, r: ['mmm', 'mmmxx', 'mmm', '.n'] },
   syringe: { dx: 0, dy: -1, r: ['xggxM'] },
   rose: { dx: 0, dy: -4, r: ['rr', 'rR', '.f', '.f'] },

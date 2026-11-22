@@ -289,7 +289,7 @@ HUBO.green = () => {
           bump('moss', 30);
           bump('gardener', -50);
           quote(
-            'Forty people go down the ladder and come back up very quiet. By evening the Gardener is just an old man with a spade, and Fern has the key on a string. Moss comes upstairs for the first time in nineteen years. He squints.',
+            'Forty people go down the ladder and come back up very quiet. By evening Fern has the key. Moss comes upstairs for the first time in nineteen years, and squints.',
           );
         } else
           banGreen('Nobody believes you. The Gardener asks the Warden, gently, to see you out. She is not gentle.');

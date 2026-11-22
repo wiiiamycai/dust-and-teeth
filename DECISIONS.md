@@ -400,3 +400,11 @@ Will: "change to how u see fits".
 177. **Kept as they are:**
     - Hector's farm failing on day 22 in every game: it's what makes keeping the Green secret cost the valley something;
     - one-click map travel: changing how travel works is a bigger call than this.
+
+## Refinements (v4.8)
+
+Will: "any refines you wish to make".
+
+178. **A late-game fuzz.** The random games almost never reached the Green, and rarely got deep into the Mall, so the new content was only covered by scripted tests. `tests/fuzz.js` now has a `late` mode: 1,500 games that start on day 15 at the Mall or the Green, with the pass known, 400 teeth and a full set of parts. `all.js` runs it alongside `rand` and `survive`. Its first run found no errors, dead ends or broken text.
+179. **Two overlong lines trimmed** (telling the Green about Moss, and reading the handbook's last page), to keep scenes to a line or two.
+180. **Sprite leftovers removed:** two helmet layers and four held weapons that only the 3D views used. No portrait changed.

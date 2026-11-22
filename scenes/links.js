@@ -173,7 +173,7 @@ HUBO.mall = () => {
           '"Two of the Mall boys walked home to Scrapwell. They brought paper hats. Nobody knows why they salute me."',
         );
         quote(
-          '"In the event of nuclear war, all associates are released from their duties." The associates take off their hats, one by one. Margie keeps hers on. She is still wearing it at closing time, alone.',
+          '"In the event of nuclear war, all associates are released from their duties." The hats come off, one by one. Margie keeps hers on, alone, until closing.',
         );
         goHere();
       },

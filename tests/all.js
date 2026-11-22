@@ -13,7 +13,7 @@ const ok = (name, good, detail) => {
   if (!good) fail++;
 };
 const N = quick ? '300' : '1500';
-for (const mode of ['rand', 'survive']) {
+for (const mode of ['rand', 'survive', 'late']) {
   const j = JSON.parse(run('fuzz.js', [N, mode]));
   const probs = { errors: j.errors, dead: j.dead, bad: j.bad };
   ok(`fuzz ${mode} x${N}`, !Object.values(probs).some(o => Object.keys(o).length), JSON.stringify(probs).slice(0, 600));
