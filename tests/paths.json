@@ -2732,7 +2732,9 @@
    "Hector",
    "Seeds. Real ones",
    "EXPECT:S.ev.some(e => e.type === 'helped' && e.v === 'hector')",
+   "RAND:0",
    "WAIT:4",
+   "RAND:off",
    "EXPECT:S.n.bess.k.some(i => S.ev[i].type === 'helped' && S.ev[i].v === 'hector')"
   ]
  },
