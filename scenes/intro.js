@@ -171,6 +171,42 @@ SC.ending = () => {
     });
   slide(0);
 };
+// ---- restart: the button in the footer. It asks first, because a life can't be got back. ----
+function restartAsk() {
+  if (!S || S.end || S.scene === 'restart') return;
+  S.ret = { scene: S.scene, args: S.args };
+  go('restart');
+}
+SC.restart = () => {
+  if (!S) return go('title');
+  const back = S.ret || { scene: 'hub', args: [S.here || 'scrapwell'] };
+  show({
+    title: 'Start over?',
+    icon: '💀',
+    text: 'This life ends here. No ending slides, no second chances. The save is gone for good.',
+    opts: [
+      [
+        'Yes. Start a new life',
+        () => {
+          wipe();
+          S = null;
+          go('title');
+        },
+        'danger',
+      ],
+      ['No, keep going', () => go(back.scene, ...back.args)],
+    ],
+  });
+};
+(() => {
+  if (typeof document === 'undefined' || !document.addEventListener) return;
+  const f = document.getElementById('foot');
+  if (f && f.insertAdjacentHTML)
+    f.insertAdjacentHTML('beforeend', ' <button id="rstb" class="snd" type="button">↺ New life</button>');
+  document.addEventListener('click', e => {
+    if (e.target && e.target.closest && e.target.closest('#rstb')) restartAsk();
+  });
+})();
 function hud() {
   const h = $('hud');
   if (!S) {

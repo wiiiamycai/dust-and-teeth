@@ -447,3 +447,7 @@ Will: "balance the weapons as well and leveling, balance everything". Measured w
     - the plasma rifle and power armour stay godlike on purpose (#65).
 189. **Checks teach more.** A speech, sneak, steal or science check taught 1.5 points on a win and 0.75 on a miss, while a fight teaches about 4 (one per landed hit, 0.4 per miss). So talking your way out of a fight taught a third of what fighting did, against "avoiding fights must be a real choice". Checks now teach 2.5 on a win and 1.25 on a miss, about one fight's worth for a few good talks. Diminishing returns are unchanged. This takes back the numbers in #18.
 190. **Combat growth is unchanged.** About ten fights take melee from 35 to the low 60s, which fits a game where fights are rare and deadly. Toughness still never grows (#59).
+
+## Restart button (v5.1)
+
+191. **"↺ New life" in the footer,** next to the sound switch. It asks first, because the game has no reloads: "Yes. Start a new life" deletes the save and goes to the title, and "No, keep going" puts you back exactly where you were, mid-fight included. There are no ending slides for a life you quit. It does nothing on the title screen or during the ending slides, where there's no life to quit.

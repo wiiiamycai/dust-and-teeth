@@ -2987,5 +2987,34 @@
    "EVAL:tick(); go('ending')",
    "SAY:The sky turns white"
   ]
+ },
+ {
+  "name": "Restart: the button asks first; 'No' goes back to where you were, even mid-fight",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:restartAsk()",
+   "SAY:Start over?",
+   "EXPECT:S.scene === 'hub' && S.args[0] === 'rustwater'",
+   "No, keep going",
+   "EXPECT:S.here === 'rustwater' && S.scene === 'hub'",
+   "EVAL:fight([spawn('raider')], { back: ['map'] }); restartAsk()",
+   "No, keep going",
+   "EXPECT:S.scene === 'fight' && !!S.fight"
+  ]
+ },
+ {
+  "name": "Restart: 'Yes' wipes the save and goes back to the title",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.teeth = 999; restartAsk()",
+   "Yes. Start a new life",
+   "EXPECT:S === null && !localStorage.getItem(SAVE)",
+   "Crawl out of bed",
+   "EXPECT:S.teeth === PLAYER.teeth && S.day === 1"
+  ]
  }
 ]
