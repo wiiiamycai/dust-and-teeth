@@ -469,3 +469,132 @@ body::before {
     background: var(--panel);
   }
 }
+
+/* ---- the character panel (scenes/sheet.js): the journal's mirror, on the left ---- */
+#sheet {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--dim);
+}
+#sheet summary {
+  cursor: pointer;
+  color: var(--a);
+}
+#sheet canvas {
+  image-rendering: pixelated;
+}
+#sheet .doll {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin: 6px 0;
+}
+#sheet .dollside {
+  flex: 1;
+}
+#sheet .hpw,
+#sheet .kar {
+  color: var(--a);
+  margin: 2px 0;
+}
+#sheet .sh {
+  margin: 10px 0 4px;
+  color: var(--a);
+  border-bottom: 1px solid var(--dim);
+}
+#sheet .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+#sheet .nm {
+  width: 78px;
+}
+#sheet .wd {
+  color: var(--a);
+}
+#sheet .pips {
+  display: inline-flex;
+  gap: 2px;
+}
+#sheet .pips i {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--dim);
+  display: inline-block;
+}
+#sheet .pips i.on {
+  background: var(--a);
+  border-color: var(--a);
+}
+#sheet .gear {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 4px 0;
+}
+#sheet .gear b,
+#sheet .gear span {
+  display: block;
+}
+#sheet .gear b {
+  color: var(--a);
+  font-weight: normal;
+}
+#sheet .perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+#sheet .perk {
+  border: 1px solid var(--a);
+  color: var(--a);
+  padding: 1px 5px 1px 1px;
+  cursor: help;
+}
+#sheet .perk b {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  background: var(--a);
+  color: var(--bg);
+  margin-right: 4px;
+}
+#sheet .inv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+#sheet .it {
+  position: relative;
+  border: 1px solid var(--dim);
+  padding: 2px;
+  cursor: help;
+}
+#sheet .it i {
+  position: absolute;
+  right: 1px;
+  bottom: 0;
+  font-style: normal;
+  font-size: 10px;
+  color: var(--a);
+}
+#sheet .none,
+#sheet .ttl {
+  margin: 2px 0;
+}
+@media (min-width: 1400px) {
+  #sheet {
+    position: fixed;
+    top: 28px;
+    right: calc(50% + 458px);
+    width: min(280px, calc(50vw - 474px));
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--dim);
+    background: var(--panel);
+  }
+}

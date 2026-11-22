@@ -219,7 +219,8 @@ function eWedding(g, r) {
   eR(g, 80, 88, 3, 10, '#0a0604');
   eStar(g, 113, 79, '#ffb000');
 }
-function eCradle(g, r) {
+function eCradle(g, r, t) {
+  t = t || '';
   eSky(g, ['#140e08', '#1e160c', '#281e12'], EH);
   eR(g, 120, 16, 34, 30, '#3a2a1c');
   eDither(g, 122, 18, 30, 26, '#a8441c', '#d8782a', 0.4);
@@ -239,7 +240,41 @@ function eCradle(g, r) {
   eR(g, 86, 52, 20, 1, '#8c8a80');
   for (const tx of [86, 93, 100, 105]) eR(g, tx, 53, 2, 3, '#e0d4b4');
   eR(g, 0, 87, EW, EH - 87, '#2a1e12');
+  // whose it is: a keepsake of the father's hangs on the cradle, and if it's yours, you stand by it
+  const who = (CRADLE_DAD.find(([re]) => re.test(t)) || [])[1];
+  if (who) who(g);
+  if (/Yours\b|\byours\b/.test(t)) {
+    eR(g, 132, 66, 6, 6, '#0a0604');
+    eR(g, 130, 72, 10, 16, '#0a0604');
+    eR(g, 131, 88, 3, 9, '#0a0604');
+    eR(g, 136, 88, 3, 9, '#0a0604');
+  }
 }
+// Each father leaves something on the cradle. Found from the slide's words, like everything here.
+const CRADLE_DAD = [
+  [/Yours\b/, g => (eR(g, 80, 62, 14, 2, '#3a2a1c'), eR(g, 83, 58, 8, 4, '#4a3424'))], // your hat
+  [
+    /\bKrug\b/,
+    g => {
+      for (let i = 0; i < 10; i++) eR(g, 76 + i * 4, 70 + (i % 2), 3, 2, '#8c8a80');
+    },
+  ], // a chain
+  [/\bJeb\b/, g => (eR(g, 100, 62, 10, 3, '#5e7e3a'), eR(g, 109, 61, 3, 2, '#5e7e3a'), eR(g, 98, 64, 3, 1, '#5e7e3a'))], // a lizard
+  [/\bMoe\b/, g => (eR(g, 102, 58, 5, 8, '#c8a040'), eR(g, 102, 58, 5, 2, '#ece2c8'))], // a beer glass
+  [
+    /Fenwick|Mayor/,
+    g => (eR(g, 98, 54, 8, 9, '#2a221c'), eR(g, 96, 63, 12, 2, '#2a221c'), eR(g, 98, 60, 8, 1, '#9a3a26')),
+  ], // a top hat
+  [/\bDoc\b/, g => (eR(g, 100, 62, 8, 2, '#c8c4b8'), eR(g, 107, 60, 2, 4, '#a8e07c'))], // a syringe of something green
+  [/\bPips\b/, g => (eR(g, 100, 58, 6, 8, '#d8ccb0'), eR(g, 102, 60, 2, 2, '#9a3a26'))], // a playing card
+  [/\bGus\b/, g => (eR(g, 100, 54, 1, 12, '#8a6440'), eR(g, 96, 54, 9, 2, '#8c8a80'))], // a pick
+  [/Big Tam/, g => (eR(g, 100, 60, 7, 6, '#9a3a26'), eR(g, 100, 60, 7, 2, '#b04a30'))], // a boxing glove
+  [/\bRook\b/, g => (eR(g, 100, 60, 2, 6, '#8c8a80'), eR(g, 99, 59, 4, 2, '#c8a040'))], // a door key
+  [/Hector/, g => (eR(g, 96, 62, 14, 2, '#c8a040'), eR(g, 99, 58, 8, 4, '#c8a040'))], // a straw hat
+  [/\bVane\b/, g => (eR(g, 101, 58, 4, 7, '#c8c4b8'), eR(g, 102, 56, 2, 2, '#8c8a80'))], // a flask
+  [/\bGums\b/, g => (eR(g, 99, 60, 8, 5, '#d09088'), eR(g, 100, 61, 6, 1, '#ece2c8'))], // a set of dentures
+  [/\bPete\b/, g => (eR(g, 102, 60, 4, 4, '#8c8a80'), eR(g, 103, 56, 1, 4, '#8c8a80'))], // a guard's whistle
+];
 function eChainfield(g, r, who) {
   eDesert(g, r, { sky: ['#0e0a10', '#2a1214', '#4a1c16', '#7a3018', '#a04a20'] });
   for (let i = 0; i < 7; i++) {
@@ -378,7 +413,7 @@ const NUKED = t => /\bnuked?\b|crater|mushroom/i.test(t) || (/launched/i.test(t)
 const ESCENES = [
   [/\bGutmaw\b|\bworm\b/i, (g, r, t) => eGutmaw(g, r, /Crane|Sheriff/.test(t)), { noPeople: true }],
   [/\bmarried\b|\bwedding\b|\bvows\b/i, (g, r) => eWedding(g, r), { noPeople: true }],
-  [/\bbaby\b|\bcarrying\b|\bchild\b/i, (g, r) => eCradle(g, r)],
+  [/\bbaby\b|\bcarrying\b|\bchild\b/i, (g, r, t) => eCradle(g, r, t)],
   [/\bKrug\b|Chainfield|\bpens\b|\bslavers?\b/i, (g, r, t, who) => eChainfield(g, r, who)],
   [/Snake Eyes|\bthe pit\b|\bPips\b|\bDice\b|Big Tam|Sweet Nan|\bRook\b/, (g, r) => eCasino(g, r)],
   [/\bplane\b|Sky-Bus|\bCoil\b|Mother Ohm/, (g, r) => ePlane(g, r)],
