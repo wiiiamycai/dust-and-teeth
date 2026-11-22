@@ -4123,5 +4123,46 @@
    "Go",
    "EXPECT:IDS.filter(id => id !== 'king' && !recruitNo(id)).length === 0"
   ]
+ },
+ {
+  "name": "Crane's leash: the day after her secret she asks; clip it on and she's yours, with an ending slide",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.f.raid = 1",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "What keeps you up at night",
+   "EXPECT:knew('sheriff.secret') && !S.f.craneLeash",
+   "Back",
+   "EVAL:S.day++; goHere()",
+   "Sheriff Crane",
+   "SAY:At night I want to be the one wearing it",
+   "Clip the leash on",
+   "EXPECT:S.f.craneLeash === 'yes' && lover('sheriff') && linkLines().some(l => /held hers/.test(l))"
+  ]
+ },
+ {
+  "name": "Crane's leash: say no kindly and nothing breaks",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.day++; S.here = 'rustwater'; go('talk', 'sheriff')",
+   "I'm not going anywhere",
+   "EXPECT:S.f.craneLeash === 'no' && lover('sheriff')",
+   "Sheriff Crane",
+   "EXPECT:!/leash/.test(cur.map(o => o[0]).join('|'))"
+  ]
+ },
+ {
+  "name": "Crane's leash: laugh at her and it's over, with a file on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.day++; S.here = 'rustwater'; go('talk', 'sheriff')",
+   "Laugh",
+   "EXPECT:S.f.craneLeash === 'laughed' && !lover('sheriff') && S.f.craneSuspect"
+  ]
  }
 ]

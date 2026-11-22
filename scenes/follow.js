@@ -656,3 +656,88 @@ linkLines = () => {
   if (w && w !== S.spouse) L.push(`${npcName(w)} walked beside you to the very end.`);
   return L;
 };
+
+// ---- Crane's leash: what she asks for once she's in love with you ----
+// The day after she tells you her secret, she trusts you with something else. All day she holds this town on a
+// short leash. At night she wants to wear one. She asks; you choose. Fade to black, always.
+const craneReady = () =>
+  lover('sheriff') &&
+  knew('sheriff.secret') &&
+  !S.f.craneLeash &&
+  S.day > S.know['sheriff.secret'] &&
+  !S.f.craneSuspect;
+const _sheriffLeash = TALK.sheriff;
+TALK.sheriff = () => {
+  if (craneReady()) {
+    go('craneLeash');
+    return null;
+  }
+  return _sheriffLeash();
+};
+SC.craneLeash = () =>
+  show({
+    title: 'Sheriff Crane',
+    icon: '⭐',
+    text:
+      "Crane locks the office door, hangs up her hat, and gets down on her knees on the floorboards. She nudges your hand with her head, like a dog would, and won't look at you.\n\n" +
+      '"You know my worst thing now, so you might as well know this. All day I\'m the one holding this town on a leash." She holds one up. A real one. Her hand is shaking. "At night I want to be the one wearing it. Say no if it\'s no. I\'ll still be the Sheriff in the morning."',
+    opts: [
+      [
+        'Clip the leash on. "Good girl."',
+        () => {
+          S.f.craneLeash = 'yes';
+          bump('sheriff', 20);
+          say(
+            'She closes her eyes when the clip clicks, and lets out a breath she has been holding for about ten years. ' +
+              pick(FADE),
+          );
+          goHere();
+        },
+      ],
+      [
+        '"No. But I\'m not going anywhere."',
+        () => {
+          S.f.craneLeash = 'no';
+          bump('sheriff', 10);
+          quote('Crane gets up and puts the leash away. "...Thank you for not laughing." She means it.');
+          goHere();
+        },
+      ],
+      [
+        'Laugh',
+        () => {
+          S.f.craneLeash = 'laughed';
+          delete S.lovers.sheriff;
+          S.f.craneSuspect = 1;
+          S.n.sheriff.op = Math.min(S.n.sheriff.op - 40, -20);
+          if (following('sheriff')) sendHome('sheriff');
+          if (S.spouse === 'sheriff') {
+            S.spouse = null;
+            S.f.spouseFate = 'left';
+          }
+          bad(
+            'Crane stands up, puts her hat back on, and is the Sheriff again. She opens a file with your name on it.',
+          );
+          goHere();
+        },
+        'danger',
+      ],
+    ],
+  });
+// On the road, when nobody's looking.
+const _barkLeash = BARK.sheriff;
+Object.defineProperty(BARK, 'sheriff', {
+  get: () =>
+    S && S.f.craneLeash === 'yes' && roll(50)
+      ? 'When nobody is looking, Crane nudges your hand with her head. Then she checks the ridges again, all business.'
+      : _barkLeash,
+});
+const _linkLinesLeash = linkLines;
+linkLines = () => {
+  const L = _linkLinesLeash();
+  if (S.f.craneLeash === 'yes' && alive('sheriff') && !S.f.craneSuspect)
+    L.push(
+      'By day, Sheriff Crane held the whole valley on a short leash. By night, you held hers. Nobody in Rustwater ever knew.',
+    );
+  return L;
+};
