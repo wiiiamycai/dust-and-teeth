@@ -3462,5 +3462,100 @@
    "Bacon Prime is safe",
    "EXPECT:S.f.pellJob === 'done' && knew('pell.secret')"
   ]
+ },
+ {
+  "name": "Jobs, Moe: buy Ma's ring off Gus's tab and give it back to Gus; he pays, and Ma hears",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:S.teeth = 100",
+   "Moe",
+   "owed",
+   "EXPECT:knew('gus.secret')",
+   "Buy Ma Thistle's ring",
+   "EXPECT:has('ring') && knew('moe.secret')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Scrapwell",
+   "Gus",
+   "bought Ma's ring back",
+   "EXPECT:S.f.ringWent === 'gus' && !has('ring') && S.n.elder.rx.some(l => /spoon/.test(l))"
+  ]
+ },
+ {
+  "name": "Jobs, Moe: hand Ma the ring yourself and Gus is in your debt",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('ring'); globalThis.g0 = S.n.gus.op",
+   "Ma Thistle",
+   "found your wedding ring",
+   "EXPECT:S.f.ringWent === 'ma' && S.n.gus.op >= g0 + 20"
+  ]
+ },
+ {
+  "name": "Jobs, Gloria: talk Jeb into taking her east, and she trusts you with the skim",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Gloria",
+   "get you out of here",
+   "Back",
+   "Caravan Jeb",
+   "RAND:0",
+   "Take Gloria east",
+   "EXPECT:S.f.gloriaJob === 'ride'",
+   "RAND:off",
+   "Back",
+   "Gloria",
+   "Jeb will take you east",
+   "EXPECT:knew('gloria.secret') && PLOTS.skim.known()"
+  ]
+ },
+ {
+  "name": "Jobs, Gloria: tell Opal she wants to leave, and Opal counts the takings now",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Gloria",
+   "get you out of here",
+   "Back",
+   "Madame Opal",
+   "planning to leave you",
+   "EXPECT:S.f.gloriaOut && S.f.plot_skim === 'done'"
+  ]
+ },
+ {
+  "name": "Jobs, Pete: get him made a deputy, and he stands between Crane and the Mayor's cheap Molar",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.pete.loc = 'rustwater'",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Pete",
+   "What do you want now",
+   "Back",
+   "Sheriff Crane",
+   "RAND:0",
+   "Make Pete a deputy",
+   "RAND:off",
+   "Back",
+   "Pete",
+   "You're a deputy",
+   "EXPECT:S.f.peteDeputy && knew('pete.secret')",
+   "Back",
+   "Mayor Fenwick",
+   "Any work",
+   "EVAL:S.f.raid = 1",
+   "WAIT:7",
+   "EXPECT:alive('sheriff') && !alive('pete') && S.f.peteSaved"
+  ]
  }
 ]

@@ -1094,3 +1094,251 @@ jobs('pell', () => {
       ],
   ];
 });
+// ---- Rustwater: Moe's surety, Gloria's ride, Pete's badge ----
+ITEMS.ring = "Ma Thistle's wedding ring";
+// Moe: Gus's tab is two years deep, and Moe holds Ma's wedding ring for it.
+jobs('moe', () => {
+  const f = S.f;
+  if (S.n.moe.loc !== 'rustwater') return [];
+  return [
+    !f.moeJob &&
+      alive('gus') && [
+        '"You look like a man who\'s owed."',
+        () => {
+          f.moeJob = 1;
+          know('gus.secret');
+          says(
+            'moe',
+            '"Gus. Two years of tab. He gave me Ma Thistle\'s wedding ring to hold. She thinks she lost it down the well. Sixty teeth and it\'s yours."',
+          );
+          go('talk', 'moe');
+        },
+      ],
+    f.moeJob === 1 && [
+      `Buy Ma Thistle's ring (${cost(60, 'moe')} teeth)`,
+      () => {
+        if (pay(cost(60, 'moe'))) {
+          f.moeJob = 'sold';
+          give('ring');
+          says('moe', "\"Tab's clear. Don't tell Gus it was you. Or do. He'll cry either way.\"");
+          confide('moe');
+        }
+        go('talk', 'moe');
+      },
+    ],
+  ];
+});
+jobs('elder', () =>
+  has('ring')
+    ? [
+        [
+          '"I found your wedding ring, Ma."',
+          () => {
+            take('ring');
+            S.f.ringWent = 'ma';
+            bump('elder', 30);
+            give('gutglue', 2);
+            rx('gus', '"Ma has her ring back. She thinks it was the well. I owe you more than I owe Moe."');
+            bump('gus', 20);
+            says(
+              'elder',
+              '"Down the well, was it? Third husband\'s ring. Best thing he ever gave me, besides the goat." (+2 Gut Glue)',
+            );
+            go('talk', 'elder');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('gus', () =>
+  has('ring')
+    ? [
+        [
+          '"I bought Ma\'s ring back from Moe."',
+          () => {
+            take('ring');
+            S.f.ringWent = 'gus';
+            gain(40);
+            rx(
+              'elder',
+              '"Gus told me about the ring. Cried like a baby. I hit him with my spoon. Then I made him soup."',
+            );
+            bump('elder', 10);
+            says(
+              'gus',
+              '"...You did what?" He goes to give it back to her himself. He pays you 40 teeth first. It is everything he has.',
+            );
+            confide('gus', 40);
+            go('talk', 'gus');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('gums', () =>
+  has('ring')
+    ? [
+        [
+          `"An old wedding ring. Real gold." (${cost(45, 'gums')} teeth)`,
+          () => {
+            take('ring');
+            S.f.ringWent = 'gums';
+            gain(cost(45, 'gums'));
+            bump('gus', -30);
+            rx('gus', '"Moe says somebody bought Ma\'s ring and sold it at the Mall. I\'m going to find out who."');
+            says('gums', '"Gold. The King\'ll want it for his crown."');
+            go('talk', 'gums');
+          },
+          'danger',
+        ],
+      ]
+    : [],
+);
+// Gloria: wants a ride east, and Jeb won't take her.
+Object.assign(CK, {
+  'jeb.gloria': { sk: 'speech', base: -5, who: 'jeb', lock: 'change', likes: { 'jeb.secret': 20 } },
+  'sheriff.pete': {
+    sk: 'speech',
+    base: -10,
+    who: 'sheriff',
+    lock: 'change',
+    mods: () => Math.min(20, goodHeard('sheriff') * 5),
+  },
+});
+jobs('gloria', () => {
+  const f = S.f;
+  if (S.n.gloria.loc !== 'rustwater') return [];
+  return [
+    !f.gloriaJob &&
+      alive('jeb') && [
+        '"What would it take to get you out of here?"',
+        () => {
+          f.gloriaJob = 1;
+          says(
+            'gloria',
+            '"A ride east, honey. Jeb won\'t take me. Says I talk. Talk to him for me, and I\'ll owe you."',
+          );
+          go('talk', 'gloria');
+        },
+      ],
+    f.gloriaJob === 'ride' && [
+      '"Jeb will take you east."',
+      () => {
+        f.gloriaJob = 'done';
+        gain(20);
+        says('gloria', '"He WILL? Oh, honey." 20 teeth, and a kiss that leaves lipstick on your ear.');
+        confide('gloria');
+        go('talk', 'gloria');
+      },
+    ],
+  ];
+});
+jobs('jeb', () =>
+  S.f.gloriaJob === 1 && alive('gloria')
+    ? [
+        chkOpt('jeb.gloria', null, '"Take Gloria east on your next run."', () => {
+          if (attempt('jeb.gloria')) {
+            S.f.gloriaJob = 'ride';
+            says('jeb', '"...Fine. She sits at the back. She doesn\'t sing. She can count the water."');
+          } else says('jeb', '"Gloria? Over three hundred miles? I\'d walk into the Gutmaw first."');
+          go('talk', 'jeb');
+        }),
+      ]
+    : [],
+);
+jobs('opal', () =>
+  S.f.gloriaJob === 1 && alive('gloria') && S.n.gloria.loc === 'rustwater' && plotOpen('skim')
+    ? [
+        [
+          '"Gloria\'s planning to leave you."',
+          () => {
+            S.f.gloriaJob = 'told';
+            S.f.plot_skim = 'done';
+            PLOTS.skim.hit(true);
+            bump('opal', 15);
+            bump('gloria', -40);
+            says(
+              'opal',
+              '"Leave? Then let\'s see what she owes me first." She opens the ledger. By sundown Gloria is on the street.',
+            );
+            go('talk', 'opal');
+          },
+          'danger',
+        ],
+      ]
+    : [],
+);
+// Pete: wants to be Crane's deputy. A deputy stands between the Sheriff and the Mayor's hired help.
+jobs('pete', () => {
+  const f = S.f;
+  if (!alive('pete') || S.n.pete.loc !== 'rustwater') return [];
+  return [
+    !f.peteJob &&
+      alive('sheriff') && [
+        '"What do you want now, Pete?"',
+        () => {
+          f.peteJob = 1;
+          says('pete', '"To be a deputy. Crane said one day. She listens to people who do things. Put a word in?"');
+          go('talk', 'pete');
+        },
+      ],
+    f.peteJob === 'yes' && [
+      '"Crane says yes. You\'re a deputy."',
+      () => {
+        f.peteJob = 'done';
+        f.peteDeputy = 1;
+        gain(20);
+        says(
+          'pete',
+          "Pete pins on the badge and doesn't breathe for a while. He gives you 20 teeth. \"My savings. I won't need them. I've got a job.\"",
+        );
+        confide('pete');
+        go('talk', 'pete');
+      },
+    ],
+  ];
+});
+jobs('sheriff', () =>
+  S.f.peteJob === 1 && alive('pete') && S.n.pete.loc === 'rustwater'
+    ? [
+        chkOpt('sheriff.pete', null, '"Make Pete a deputy. He\'s earned it."', () => {
+          if (attempt('sheriff.pete')) {
+            S.f.peteJob = 'yes';
+            bump('sheriff', 5);
+            says(
+              'sheriff',
+              '"Pete. Hid from a cook in a trolley." She sighs, and finds a badge in the drawer. "Fine. Tell him."',
+            );
+          } else says('sheriff', '"He hid from a cook in a shopping trolley. No."');
+          go('talk', 'sheriff');
+        }),
+      ]
+    : [],
+);
+// The Mayor's cheap Molar comes for Crane. Her deputy is in the way.
+const _worldJob = world;
+world = function () {
+  const f = S.f;
+  if (
+    f.peteDeputy &&
+    alive('pete') &&
+    S.n.pete.loc === 'rustwater' &&
+    f.mayorJob &&
+    !f.mayorPaid &&
+    !f.hitDone &&
+    alive('sheriff') &&
+    alive('mayor') &&
+    S.day >= f.mayorJobDay + 6
+  ) {
+    f.hitDone = 1;
+    f.peteSaved = 1;
+    offstage(
+      'pete',
+      "A Molar came for Crane in the night. Her new deputy stood in the door. Pete is dead. Crane isn't.",
+      true,
+    );
+    rx('sheriff', '"Pete took a bullet meant for me. Fenwick paid for it. I can\'t prove it. Yet."');
+    bump('mayor', -10);
+  }
+  return _worldJob.apply(this, arguments);
+};
