@@ -21,7 +21,7 @@ const ENEMY = {
   bounty: { n: 'Bounty hunter', i: '🎯', lvl: 5, wep: 'rifle', arm: 'jacket' },
   bountyAce: { n: 'Bounty hunter', i: '🎯', lvl: 7, wep: 'molargun', arm: 'plate' },
   associate: { n: 'Mall associate', i: '🏷️', lvl: 3, wep: 'pipe', arm: 'jacket' },
-  mallEel: { n: 'Something in the water', i: '🐍', lvl: 3, teeth: 0, d: [5, 11], hpm: 0.8 },
+  mallEel: { n: 'Something in the water', i: '🐍', lvl: 6, teeth: 0, d: [8, 16], dr: 2 },
   watchman: { n: 'Green watchman', i: '🌾', lvl: 4, wep: 'rifle', arm: 'jacket' },
 };
 const spawn = (k, o) => {

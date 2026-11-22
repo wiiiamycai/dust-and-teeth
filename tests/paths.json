@@ -1645,11 +1645,11 @@
    "Sprocket",
    "Can you fit something",
    "Hunting Rifle: a scope",
-   "EXPECT:modsOf('rifle').includes('scope') && hit({ lvl: 2 }, 0) === h0 + 10 && !has('lens')",
+   "EXPECT:modsOf('rifle').includes('scope') && hit({ lvl: 2 }, 0) === h0 + 5 && !has('lens')",
    "Hunting Rifle: a longer barrel",
-   "EXPECT:modSum('rifle', 'dmg') === 3",
+   "EXPECT:modSum('rifle', 'dmg') === 2",
    "Leather Jacket: steel plates",
-   "EXPECT:pdr() === d0 + 2 && modName('jacket').includes('plated')",
+   "EXPECT:pdr() === d0 + 1 && modName('jacket').includes('plated')",
    "EXPECT:JSON.parse(localStorage.getItem(SAVE)).mods.rifle.length === 2",
    "EXPECT:!cur.some(o => /Hunting Rifle: a scope/.test(o[0]))"
   ]
@@ -1721,7 +1721,7 @@
    "SAY:more teeth than you",
    "RAND:off",
    "FIGHT",
-   "EXPECT:S.scene === 'dive' && PARTS.some(p => has(p))"
+   "EXPECT:S.scene === 'dive'"
   ]
  },
  {
@@ -1798,7 +1798,7 @@
    "TRAVEL:The Drowned Mall",
    "Sprocket",
    "built the Dentist King",
-   "EXPECT:knew('king.drill') && foe('king').d[1] === W.pipe.d[1]"
+   "EXPECT:knew('king.drill') && foe('king').d[1] === W.sledge.d[1]"
   ]
  },
  {

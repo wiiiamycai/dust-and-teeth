@@ -120,7 +120,11 @@ function dive(where) {
   go('dive');
 }
 WIN.dived = () => {
-  say(`It sinks. On the way up you find ${partFind()} in its gut.`);
+  say(
+    roll(50)
+      ? `It sinks. On the way up you find ${partFind()} in its gut.`
+      : 'It sinks, and takes whatever was in its gut with it.',
+  );
   go('dive');
 };
 
@@ -337,10 +341,10 @@ TALK.sprocket = () => {
       '"You built the Dentist King\'s drill."',
       () => {
         know('king.drill');
-        S.n.king.st.wep = 'pipe';
+        S.n.king.st.wep = 'sledge'; // half jammed: still heavy, no longer a drill
         bump('sprocket', -5);
         quote(
-          'Sprocket goes white under the soot. "...It jams if sand gets in the intake. One handful in his face and it\'s a very heavy stick." She doesn\'t look up again.',
+          'Sprocket goes white under the soot. "...It jams if sand gets in the intake. One handful in his face and it\'s just a very heavy hammer." She doesn\'t look up again.',
         );
         go('talk', 'sprocket');
       },

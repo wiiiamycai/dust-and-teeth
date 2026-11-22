@@ -67,18 +67,18 @@ const ITEMS = {
 // Mods Sprocket fits at the Drowned Mall: teeth plus one part each. One of each per weapon or armour, kept in S.mods.
 //   on: what it fits ('gun', 'melee', 'armour')   hit: to hit   dmg: damage   dr: damage stopped   untw: no twitch penalty
 const MODS = {
-  scope: { n: 'scope', on: 'gun', part: 'lens', cost: 40, hit: 10, t: 'a scope (easier to hit)' },
-  barrel: { n: 'long barrel', on: 'gun', part: 'tube', cost: 50, dmg: 3, t: 'a longer barrel (hits harder)' },
+  scope: { n: 'scope', on: 'gun', part: 'lens', cost: 40, hit: 5, t: 'a scope (easier to hit)' },
+  barrel: { n: 'long barrel', on: 'gun', part: 'tube', cost: 50, dmg: 2, t: 'a longer barrel (hits harder)' },
   edge: {
     n: 'honed',
     on: 'melee',
     part: 'file',
     cost: 35,
-    dmg: 3,
+    dmg: 2,
     t: 'a honed edge, or studs on the blunt ones (hits harder)',
   },
-  wrap: { n: 'grip', on: 'melee', part: 'grip', cost: 25, hit: 8, t: 'a proper grip (easier to land)' },
-  plates: { n: 'plated', on: 'armour', part: 'sheet', cost: 60, dr: 2, t: 'steel plates sewn in (stops more)' },
+  wrap: { n: 'grip', on: 'melee', part: 'grip', cost: 25, hit: 4, t: 'a proper grip (easier to land)' },
+  plates: { n: 'plated', on: 'armour', part: 'sheet', cost: 60, dr: 1, t: 'steel plates sewn in (stops more)' },
   straps: {
     n: 'restrapped',
     on: 'armour',

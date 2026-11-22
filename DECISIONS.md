@@ -408,3 +408,30 @@ Will: "any refines you wish to make".
 178. **A late-game fuzz.** The random games almost never reached the Green, and rarely got deep into the Mall, so the new content was only covered by scripted tests. `tests/fuzz.js` now has a `late` mode: 1,500 games that start on day 15 at the Mall or the Green, with the pass known, 400 teeth and a full set of parts. `all.js` runs it alongside `rand` and `survive`. Its first run found no errors, dead ends or broken text.
 179. **Two overlong lines trimmed** (telling the Green about Moss, and reading the handbook's last page), to keep scenes to a line or two.
 180. **Sprite leftovers removed:** two helmet layers and four held weapons that only the 3D views used. No portrait changed.
+
+## Balance pass (v4.9)
+
+Will: "balance the game as you see fit". I measured before changing anything. `tools/fightodds.js` plays each real encounter with six loadouts, using Gut Glue the way a player would:
+- start: knife and rags;
+- early: pipe, zip gun and jacket;
+- mid: shotgun, sledge and jacket;
+- mid with upgrades;
+- late: repeater, sledge, riot suit and seasoned skills;
+- late with upgrades.
+
+181. **Upgrades were far too strong, so they're halved.** Fully upgraded mid gear went from 43% to 92% against a raider gang and from 26% to 72% against two slavers, and fully upgraded late gear beat the King and two elites 97% of the time instead of 33%. That broke "combat is hard". Every type pulled its weight and they compounded, so all of them come down:
+    - scope +5 to hit (was +10);
+    - long barrel +2 damage (was +3);
+    - edge +2 damage (was +3);
+    - grip +4 to hit (was +8);
+    - plates +1 damage stopped (was +2);
+    - straps and the prices are unchanged.
+
+    Now a full set is worth about one gear tier: mid gear goes from 44% to 75% against a raider gang and from 31% to 53% against two slavers, and late gear from 33% to 77% against the King's full guard. A full set costs 210 teeth plus five parts, about what a riot suit costs. This takes back the numbers in #137.
+182. **Something in the water is a real danger now.** It was level 3 and even the starting knife beat it every time, and it always dropped a part, so a failed deep dive was a reward. Now it's level 6, hits for 8 to 16 and has 2 armour. A starting character survives it 84% of the time and usually burns Gut Glue. The part in its gut is a 50% chance.
+183. **Sprocket's drill secret jams the drill halfway.** In the King's fight he hits like a sledgehammer, not a lead pipe. With a pipe, mid gear beat the King alone 71% of the time (from 7%); with the sledge it's 30%. A real reward for the secret, and he's still a boss. This takes back part of #143.
+184. **Looked at and left alone:**
+    - late gear without upgrades wins most fights 99% to 100%. That's the riot suit and seasoned skills doing their job (#66);
+    - the zip gun is a trap at range: the early kit does a little worse than charging in with the knife. It's the cheapest gun, and the balance test's rule still holds;
+    - the Warden (25% for mid gear, 51% upgraded) and the Gutmaw (0% mid, 97% late) are where they should be for late-game threats.
+185. **Tests** updated for the new numbers. The balance test fights fully upgraded gear too (#176), and the melee rule still holds.
