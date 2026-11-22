@@ -234,3 +234,10 @@ Will said to keep going until the game is fully polished. Grid combat was next, 
 121. **Every enemy has a sprite.** A named person uses their own. A kind of enemy has a look (raiders have red mohawks and war paint, Molars a necklace of teeth, slavers chains, deputies a blue cap and star, bounty hunters a long coat), with their real armour and weapon on top, so what they carry is what you see and what you'll loot. Mole-dogs, rad-moles and the two-headed cow are drawn as animals. The Gutmaw is drawn twice the size of anything else, all mouth.
 122. **Click an enemy to target them,** the same as clicking their card. The dead lie down and can't be clicked. When you get hurt, the arena flashes red and shakes (off for reduced motion).
 123. **No canvas, no arena:** the fight screen is exactly as before, so the tests and the list view are unchanged. A bug in the arena is caught and can't block a fight.
+
+## The painted map, title and ending (v4.1)
+
+124. **The world map is painted:** sand that darkens to the edges, dunes, three patches of cracked mud, a dry riverbed, flat-topped mesas, scraps of ruins, a faint survey grid and a compass. The land is the same every game. The roads are bolder so they read on it. A nuked town leaves a scorched crater on the map, and the ground cracks round wherever the Gutmaw is. The place buttons and travel are untouched.
+125. **The title screen has a picture:** a wasteland at sundown, mesas against a hazy sun, a lone figure on the road, and DUST & TEETH in fat amber pixels.
+126. **The ending slides have pictures too:** the same land in a darker light, a mushroom cloud if the slide is about a nuke, and a row of portraits of the people the slide names. If Lou is mentioned, you see Lou.
+127. **All of it is looks only and found from the screen itself,** so no scene changed. Without a canvas the screens are text, as before. Any drawing error is caught.

@@ -21,6 +21,9 @@ function drawMap(mp) {
       b.onclick = () => travel(k);
       mp.appendChild(b);
     });
+  try {
+    if (typeof mapPaint === 'function') mapPaint(mp); // the painted land under it all (scenes/mapart.js), looks only
+  } catch (e) {}
 }
 SC.map = () => {
   spouseTalk();
