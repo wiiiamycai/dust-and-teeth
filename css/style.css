@@ -513,3 +513,18 @@ body::before {
   stroke-width: 2px;
   stroke-opacity: 0.75;
 }
+
+/* ---- the sound switch in the footer (scenes/sound.js) ---- */
+#foot .snd {
+  background: none;
+  border: 1px solid var(--dim);
+  color: var(--a);
+  font: inherit;
+  font-size: 11px;
+  padding: 1px 6px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+#foot .snd:hover {
+  border-color: var(--a);
+}

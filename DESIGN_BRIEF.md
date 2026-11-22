@@ -118,6 +118,16 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 - Endgame: Silo 9 (find it via Old Teo, Krug, Moe, Ma Thistle or a Molar survivor). Ways in: fight, sneak, slaver tattoo, bribe. Ways to stop the King: fight, talk down, steal the launch key, sabotage via the maintenance shaft. Or join him and nuke a town.
 - Scenes are functions in `SC`, called through `go(scene, ...args)`. `show({title, icon, sub, text, cards, map, opts})` renders everything.
 
+### Graphics (v3.7 to v4.2)
+
+The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and skipped when there's no canvas (the headless tests), so it can never change how the game plays:
+- `scenes/iso.js`: the isometric towns, fog of war (saved in `S.seen`), light by day number, dust. The views cycle: isometric, flat (`scenes/walk.js`), list.
+- `data/sprites.js` and `scenes/sprite.js`: pixel sprites for people, you, enemies, props, signs and corpses, built from parts, plus the talk portraits.
+- `scenes/arena.js`: fights drawn on an isometric strip; click an enemy to target it.
+- `scenes/mapart.js`: the painted world map. `scenes/art.js`: title and ending art.
+- `scenes/sound.js`: optional sound made in code, off by default, toggled in the footer.
+- `engine/core.js` `show()` calls the portrait, arena and art hooks, each inside a try/catch.
+
 ## 12. Suggested build order for v3
 
 1. (Done) Split `index.html` into modules (for example `data/npcs.js`, `data/dialogue.js`, `engine/gossip.js`, `engine/combat.js`, `engine/checks.js`, `scenes/*.js`) with a simple bundling step, or keep one file but cleanly sectioned. Keep it playable by opening a file in a browser.

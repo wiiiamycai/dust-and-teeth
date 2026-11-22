@@ -266,7 +266,7 @@ function stopWalk() {
   walkTimer = null;
 }
 function walkTo(x, y) {
-  if (!TOWN || S.scene !== 'hub') return;
+  if (!TOWN || !S || S.scene !== 'hub' || !is2D() || !S.pos || TOWN.loc !== S.pos.loc) return; // only on a map that's on screen
   stopWalk();
   const r = pathTo(x, y);
   if (!r) return;

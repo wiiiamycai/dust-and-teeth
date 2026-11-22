@@ -241,3 +241,12 @@ Will said to keep going until the game is fully polished. Grid combat was next, 
 125. **The title screen has a picture:** a wasteland at sundown, mesas against a hazy sun, a lone figure on the road, and DUST & TEETH in fat amber pixels.
 126. **The ending slides have pictures too:** the same land in a darker light, a mushroom cloud if the slide is about a nuke, and a row of portraits of the people the slide names. If Lou is mentioned, you see Lou.
 127. **All of it is looks only and found from the screen itself,** so no scene changed. Without a canvas the screens are text, as before. Any drawing error is caught.
+
+## Sound (v4.2)
+
+128. **Sound is quiet, optional and made in code,** with no audio files. It's off until you click the speaker in the footer, and the choice is remembered in your browser, not in the save.
+129. **It only reacts to what's on screen:** a soft step when you walk, a thud when you hit someone, a bang when you shoot, a sting when you're hurt, a low note at The End, and wind under everything. The game never waits for a sound, and a browser without sound just doesn't show the speaker.
+
+## The final browser pass (v4.2)
+
+130. **Drawing code is fuzzed in a real browser,** because the headless tests have no canvas. The pass ran 40 random games and about 4,000 steps across all three views, with travel, encounters, fights and the gambling games. It also covered all 27 portraits, all 9 places at all five times of day, and every armour with every weapon. It found one thing: walking could be asked for on a map that was no longer on screen (a stale map left over from an earlier game, in the list view). A real click couldn't get there, but walking now only happens on a map that's actually showing.

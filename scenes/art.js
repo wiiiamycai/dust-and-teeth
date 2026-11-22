@@ -156,6 +156,7 @@ function artMount(v) {
     artLogo(g, w, h * 0.12);
     artScan(g, w, h);
   } else if (!S && (v.title === 'The End' || v.title === 'What became of them')) {
+    if (v.title === 'The End' && typeof sfx === 'function') sfx('end');
     const text = v.text || '',
       named = [];
     for (const id in NPC) {

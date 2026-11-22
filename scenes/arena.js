@@ -27,7 +27,13 @@ function arenaMount() {
     W = 2 * ARENA_N * half,
     H = Math.ceil(head + 5 * q + half + 6),
     dpr = Math.min(2, (typeof window !== 'undefined' && window.devicePixelRatio) || 1),
-    old = ARENA && ARENA.fight === F ? ARENA : null;
+    old = ARENA && ARENA.fight === F ? ARENA : null,
+    foeHp = F.en.reduce((a, e) => a + Math.max(0, e.hp), 0);
+  // sound (scenes/sound.js): a thud or a bang when they're hit, a sting when you are
+  if (old && typeof sfx === 'function') {
+    if (foeHp < old.foeHp) sfx(isGun(S.weapon) ? 'shot' : 'hit');
+    if (S.hp < old.hp && typeof setTimeout === 'function') setTimeout(() => sfx('hurt'), 160);
+  }
   cv.width = Math.round(W * dpr);
   cv.height = Math.round(H * dpr);
   if (cv.style) cv.style.width = W + 'px';
@@ -44,6 +50,7 @@ function arenaMount() {
     oy: head - (ARENA_N - 3) * q,
     hits: [],
     hp: S.hp,
+    foeHp,
     hurt: old && S.hp < old.hp,
     tick: 0,
   };

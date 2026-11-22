@@ -761,6 +761,7 @@ function isoMount() {
   ISO.stride = moved ? ISO.stepN % 2 : 0;
   ISO.stepAt = moved ? now : old ? old.stepAt : 0;
   ISO.tick = isoMotion() ? Math.floor(now / 650) : 0;
+  if (moved && typeof sfx === 'function') sfx('step');
   ISO.kind = isoKinds(T);
   if (!T.gch) T.gch = T.rows.flatMap((r, y) => [...r].map((_, x) => isoGroundCh(T, x, y)));
   ISO.gch = T.gch;
