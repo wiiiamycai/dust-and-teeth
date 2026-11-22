@@ -112,7 +112,10 @@ function fight(en, o) {
   o = o || {};
   let E = en;
   const al = [];
-  if (S.spouse && alive(S.spouse) && !E.some(e => e.npc === S.spouse)) al.push(S.spouse);
+  // Whoever walks with you (a spouse or a follower, scenes/follow.js) fights beside you.
+  IDS.forEach(x => {
+    if (alive(x) && S.n[x].loc === 'party' && !E.some(e => e.npc === x)) al.push(x);
+  });
   (o.allies || []).forEach(a => {
     if (alive(a) && !al.includes(a) && !E.some(e => e.npc === a)) al.push(a);
   });

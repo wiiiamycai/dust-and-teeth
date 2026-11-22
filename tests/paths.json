@@ -3905,5 +3905,194 @@
    "Tell your flock the Voice is a recording",
    "EXPECT:S.f.coilBroken && !coilOn() && alive('ohm')"
   ]
+ },
+ {
+  "name": "Followers: anyone who doesn't dislike you comes along, one at a time, and the last one goes home",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Gus",
+   "Come with me",
+   "EXPECT:following('gus')",
+   "SAY:Where are we digging",
+   "Leave (map)",
+   "SAY:Talk to Gus (with you)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "Come with me",
+   "EXPECT:following('moe') && S.n.gus.loc === 'scrapwell' && !following('gus')"
+  ]
+ },
+ {
+  "name": "Followers: a follower fights beside you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Gus",
+   "Come with me",
+   "EVAL:fight([spawn('raider')], { started: true })",
+   "EXPECT:S.fight.al.includes('gus')"
+  ]
+ },
+ {
+  "name": "Followers: someone who dislikes you says no, and some have their own reasons",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.gus.op = -10",
+   "Gus",
+   "Come with me",
+   "EXPECT:!following('gus')",
+   "SAY:Not with you",
+   "EVAL:S.here = 'chainfield'; go('talk', 'krug')",
+   "Come with me",
+   "EXPECT:!following('krug')",
+   "SAY:Krug follows nobody"
+  ]
+ },
+ {
+  "name": "Followers: they judge what you do, and a follower pushed too far walks home",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.pell.op = 0",
+   "Old Pell",
+   "Come with me",
+   "EXPECT:following('pell')",
+   "EVAL:event('sold', 'gus', { wit: [] }); event('sold', 'gus', { wit: [] }); goHere()",
+   "EXPECT:!following('pell') && S.n.pell.loc === 'scrapwell'",
+   "SAY:has seen enough"
+  ]
+ },
+ {
+  "name": "Followers: take Big Tam away before fight night and the Incisor never gets him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Big Tam",
+   "Come with me",
+   "EXPECT:following('tam')",
+   "EVAL:S.f.raid = 1",
+   "WAIT:14",
+   "EXPECT:alive('tam') && S.f.plot_fightnight === 'void'"
+  ]
+ },
+ {
+  "name": "Followers: Sprocket fits mods on the road",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Come with me",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Talk to Sprocket (with you)",
+   "Can you fit something",
+   "SAY:Sprocket's bench"
+  ]
+ },
+ {
+  "name": "Crane: the whole romance; her secret, bringing Krug in together, and a wedding in Crumb's chapel",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.f.raid = 1",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "What keeps you up at night",
+   "EXPECT:knew('sheriff.secret')",
+   "bring Krug in. Together",
+   "EXPECT:following('sheriff') && S.f.lawless",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "You're under arrest",
+   "EXPECT:S.fight && S.fight.al.includes('sheriff')",
+   "FIGHT",
+   "EXPECT:S.f.craneRedeemed && S.titles.includes('Deputy of Rustwater')",
+   "Leave (map)",
+   "TRAVEL:Scrapwell",
+   "Brother Crumb",
+   "RAND:0",
+   "Marry me and Crane",
+   "EXPECT:S.spouse === 'sheriff' && following('sheriff') && S.titles.includes('Married')",
+   "EXPECT:linkLines().some(l => /married Sheriff Crane/.test(l))"
+  ]
+ },
+ {
+  "name": "Crane: she won't ride with you until she's your lover, and with Pete as deputy the town keeps its law",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Ride with me, Crane",
+   "EXPECT:!following('sheriff')",
+   "SAY:earned more than a drink",
+   "EVAL:becomeLover('sheriff'); S.f.peteDeputy = 1; S.n.pete.loc = 'rustwater'; globalThis.w0 = waterCost(); go('talk', 'sheriff')",
+   "Ride with me, Crane",
+   "EXPECT:following('sheriff') && !S.f.lawless && waterCost() === w0",
+   "SAY:Pete wears Crane's badge"
+  ]
+ },
+ {
+  "name": "Crane: a spouse waits at home while someone else walks with you, and comes back when asked",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.spouse = 'bess'; S.n.bess.loc = 'party'",
+   "Gus",
+   "Come with me",
+   "EXPECT:following('gus') && S.n.bess.loc === 'farm' && S.spouse === 'bess'",
+   "SAY:home to wait for you",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bess",
+   "Come with me",
+   "EXPECT:following('bess') && !following('gus')"
+  ]
+ },
+ {
+  "name": "Journal: taking a job adds it with a notice and the next step; finishing it moves it to Done",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Gus",
+   "I'll look into it",
+   "SAY:New in your journal: Something's eating the chickens",
+   "EXPECT:journalList().some(q => q.k === 'well' && !q.done && /well/.test(q.hint))",
+   "EVAL:S.f.gusPaid = 1",
+   "EXPECT:journalList().find(q => q.k === 'well').done === 'Gus paid you.'"
+  ]
+ },
+ {
+  "name": "Journal: a plot you know about shows its day, and how it ended once it's over",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Deacon Rind",
+   "What does the Crust want",
+   "SAY:New in your journal: The Coil's plane",
+   "EXPECT:journalList().find(q => q.k === 'plot_plane').hint === 'Coming on day 9.'",
+   "EVAL:S.f.raid = 1",
+   "WAIT:9",
+   "EXPECT:journalList().find(q => q.k === 'plot_plane').done === 'It happened.'"
+  ]
+ },
+ {
+  "name": "Journal: plots you never heard of stay off it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1",
+   "WAIT:15",
+   "EXPECT:!journalList().some(q => q.k === 'plot_fightnight')"
+  ]
  }
 ]

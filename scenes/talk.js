@@ -60,7 +60,9 @@ function sellSpouse(to) {
     quote(
       x === 'bert'
         ? `Krug checks Bert's teeth. "Good stock." Bert: "At least it's a good price. Thank you for that."`
-        : `Krug inspects Bess. Bess inspects Krug. "Still more exciting than the farm," she says. Her eyes say something else.`,
+        : x === 'bess'
+          ? `Krug inspects Bess. Bess inspects Krug. "Still more exciting than the farm," she says. Her eyes say something else.`
+          : `Krug checks ${nm}'s teeth. ${nm} looks at you the whole time, and says nothing at all.`,
     );
     gain(perk('butcher') ? 600 : 300);
     count('flesh');

@@ -408,3 +408,64 @@ body::before {
 #foot .snd:hover {
   border-color: var(--a);
 }
+
+/* ---- the journal (scenes/journal.js): under the options, or beside the screen when there's room ---- */
+#journal {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--dim);
+}
+#journal summary {
+  cursor: pointer;
+  color: var(--a);
+}
+#journal ul {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+#journal li {
+  margin: 0 0 8px;
+  padding-left: 8px;
+  border-left: 2px solid var(--dim);
+}
+#journal li.qa {
+  border-color: var(--a);
+}
+#journal b {
+  display: block;
+  color: var(--a);
+  font-weight: normal;
+}
+#journal li.qd b {
+  color: var(--dim);
+  text-decoration: line-through;
+}
+#journal .qw,
+#journal .qh {
+  display: block;
+}
+#journal .qw {
+  font-size: 11px;
+  opacity: 0.8;
+}
+#journal li.qa .qh {
+  color: var(--a);
+}
+#journal .qt {
+  margin: 10px 0 4px;
+}
+@media (min-width: 1260px) {
+  #journal {
+    position: fixed;
+    top: 28px;
+    left: calc(50% + 460px);
+    width: 280px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--dim);
+    background: var(--panel);
+  }
+}

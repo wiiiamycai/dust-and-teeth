@@ -10,9 +10,10 @@ function card(x) {
     on: () => (x === 'king' ? go('throne') : go('talk', x)),
   };
 }
+// Whoever walks with you talks on the road: a spouse or a follower (scenes/follow.js).
 function spouseTalk() {
-  const s = S.spouse;
-  if (!s || !alive(s)) return;
+  const s = IDS.find(x => alive(x) && S.n[x].loc === 'party');
+  if (!s) return;
   const n = S.n[s];
   if (n.rx.length) {
     quote(`${NPC[s].n}: ${n.rx.shift()}`);
@@ -21,17 +22,19 @@ function spouseTalk() {
   if (roll(25))
     quote(
       pick(
-        s === 'bess'
-          ? [
-              `Bess: "Is this what outside is? Mostly sand."`,
-              `Bess: "Can we kill something today? Just a little something?"`,
-              `Bess: "I love you. I think. I've only met eleven people."`,
-            ]
-          : [
-              `Bert: "Pre-war tractors had seats with springs. Springs!"`,
-              `Bert: "If you ever sell me, get a good price. For my self-esteem."`,
-              `Bert: "Married life is great. I have nothing to compare it to."`,
-            ],
+        s !== 'bess' && s !== 'bert'
+          ? [(b => (b[0] === '"' ? `${NPC[s].n}: ${b}` : b))(BARK[s] || '"Where to now?"')]
+          : s === 'bess'
+            ? [
+                `Bess: "Is this what outside is? Mostly sand."`,
+                `Bess: "Can we kill something today? Just a little something?"`,
+                `Bess: "I love you. I think. I've only met eleven people."`,
+              ]
+            : [
+                `Bert: "Pre-war tractors had seats with springs. Springs!"`,
+                `Bert: "If you ever sell me, get a good price. For my self-esteem."`,
+                `Bert: "Married life is great. I have nothing to compare it to."`,
+              ],
       ),
     );
 }
@@ -338,7 +341,6 @@ SC.hub = loc => {
       : IDS.filter(
           x =>
             alive(x) &&
-            x !== S.spouse &&
             (S.n[x].loc === loc || (loc === 'chainfield' && S.n[x].loc === 'pen')) &&
             (loc !== 'green' || S.f.greenIn || NPC[x].gate || S.n[x].st.gate), // outside the Green's wall you only meet who's outside it
         );
