@@ -31,6 +31,12 @@ try {
 } catch (e) {
   ok('portraits: every grid is well formed, and everyone has one', false, String(e.stdout || e.message).trim().slice(0, 600));
 }
+try {
+  run('care.js', []);
+  ok('care: every character offers something on a first meeting', true);
+} catch (e) {
+  ok('care: every character offers something on a first meeting', false, String(e.stdout || e.message).trim().slice(0, 600));
+}
 const r = run('reload.js', []);
 ok('reload', /errs: \{\}, bad: \{\}/.test(r), r.trim().slice(0, 600));
 if (fs.existsSync(T('paths.json')))

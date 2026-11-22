@@ -1,7 +1,8 @@
 // Guard for Will's rule: every character gives you a reason to care, on a FIRST meeting.
 // Starts a fresh game, then for each person in IDS opens their talk screen at their own place
 // and counts the real options: everything except "Any news?", attack, murder and back.
-// Fails if any non-animal character offers none. Usage: node tests/care.js index.html [--list]
+// Fails if any non-animal character offers none. Two special cases: the Dentist King, whose talk is the
+// whole Silo, and Pete, met first in Lou's cage (a rescue choice), so he is counted once he is free in Rustwater. Usage: node tests/care.js index.html [--list]
 const vm = require('vm');
 const code = require('./load')(process.argv[2] || 'index.html');
 const list = process.argv.includes('--list');
@@ -22,8 +23,9 @@ vm.runInContext(code, ctx);
 const out = vm.runInContext(
   `(() => {
     const skip = /Any news|^Attack |^Murder |^Back$/;
-    return IDS.map(id => {
+    return IDS.filter(id => id !== 'king').map(id => {
       newGame();
+      if (id === 'pete') S.n.pete.loc = 'rustwater';
       S.scene = 'hub';
       S.here = NPC[id].loc === 'cage' ? 'rustwater' : NPC[id].loc === 'vats' ? 'green' : NPC[id].loc === 'well' ? 'well' : NPC[id].loc;
       S.f.inGreen = 1;

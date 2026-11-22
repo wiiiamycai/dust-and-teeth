@@ -1492,3 +1492,80 @@ jobs('lou', () =>
       ]
     : [],
 );
+// ---- the Green: the Warden's scout ----
+ITEMS.tags = "A Molar scout's tooth tags";
+jobs('warden', () => {
+  const f = S.f;
+  if (S.n.warden.loc !== 'green') return [];
+  return [
+    !f.wardenJob &&
+      alive('king') &&
+      !f.kingStopped && [
+        '"Anything on the pass you want dealt with?"',
+        () => {
+          f.wardenJob = 1;
+          says(
+            'warden',
+            '"A Molar scout on the ridge. Three days, watching us. Bring me his tags. Then we\'ll talk about the gate."',
+          );
+          go('talk', 'warden');
+        },
+      ],
+    f.wardenJob === 1 &&
+      has('tags') && [
+        '"Your scout\'s tags."',
+        () => {
+          take('tags');
+          f.wardenJob = 'done';
+          f.greenIn = 1;
+          says(
+            'warden',
+            'She weighs the tags in her hand. "...He was a good shot. I trained him." She opens the gate.',
+          );
+          confide('warden');
+          go('talk', 'warden');
+        },
+      ],
+  ];
+});
+const _huboGreenJob = HUBO.green;
+HUBO.green = () => {
+  const o = _huboGreenJob();
+  if (S.f.wardenJob === 1 && !has('tags') && !S.f.scoutGone)
+    o.push(['Climb the ridge after the Molar scout', () => go('scout'), 'danger']);
+  return o;
+};
+SC.scout = () =>
+  show({
+    title: 'The ridge',
+    icon: '🦷',
+    text: "A Molar, belly down in the rocks, a spyglass on the Green. He hears you. He has a repeater. He also has a face like he hasn't eaten in three days.",
+    opts: [
+      ['Fight him', () => fight([spawn('molar')], { started: true, win: 'scout', back: ['hub', 'green'] }), 'danger'],
+      [
+        '"Run home. Tell them the Green is empty." (he pays)',
+        () => {
+          S.f.scoutGone = 1;
+          gain(30);
+          later(2, 'scoutHome');
+          say(
+            'He gives you 30 teeth to forget his face. He runs east, the wrong way for a man reporting an empty Green.',
+          );
+          goHere();
+        },
+      ],
+      ['Leave him', () => goHere()],
+    ],
+  });
+WIN.scout = () => {
+  S.f.scoutGone = 1;
+  give('tags');
+  say("He doesn't get up. His tooth tags are warm.");
+  goHere();
+};
+LATER.scoutHome = () => {
+  bump('warden', -30);
+  bump('gardener', -15);
+  rx('warden', '"The scout went home. Now the King knows exactly what is behind this wall."');
+  rx('king', '"A green dome behind the pass. Forty fat people. I may send a dentist."');
+};

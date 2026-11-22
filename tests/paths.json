@@ -3649,5 +3649,39 @@
    "cooking greens behind your back",
    "EXPECT:S.f.cabbageSalted && S.n.junior.op <= -50"
   ]
+ },
+ {
+  "name": "Jobs, Warden: kill the Molar scout on the ridge, bring his tags, and she opens the gate",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "The Warden",
+   "on the pass you want dealt with",
+   "Back",
+   "Climb the ridge after the Molar scout",
+   "Fight him",
+   "FIGHT",
+   "EXPECT:has('tags')",
+   "The Warden",
+   "Your scout's tags",
+   "EXPECT:S.f.greenIn && knew('warden.secret')"
+  ]
+ },
+ {
+  "name": "Jobs, Warden: let the scout go for his teeth, and the Green and the King both hear",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "The Warden",
+   "on the pass you want dealt with",
+   "Back",
+   "Climb the ridge after the Molar scout",
+   "Run home",
+   "EVAL:globalThis.w0 = S.n.warden.op",
+   "WAIT:2",
+   "EXPECT:S.n.warden.op <= w0 - 30 && S.n.king.rx.some(l => /dome/.test(l))"
+  ]
  }
 ]
