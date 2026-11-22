@@ -20,7 +20,7 @@ function boot(store) {
   const els = {};
   const c = { console, Math, JSON, String, Object, Array, Map, Set,
     document: {
-      getElementById: id => els[id] || (els[id] = (id === 'isoc' || id === 'portc') && canvasOn ? canvas() : mk()),
+      getElementById: id => els[id] || (els[id] = (id === 'isoc' || id === 'portc' || id === 'arenac') && canvasOn ? canvas() : mk()),
       createElement: t => (t === 'canvas' && canvasOn ? canvas() : { style: {}, innerHTML: '', onclick: null }),
       addEventListener() {},
     },
@@ -161,6 +161,13 @@ run("newGame(); go('talk', 'bess')");
 check(run("$('head').innerHTML.includes('portc') && !$('head').innerHTML.includes('👩‍🌾')"), 'with a canvas, talking to Bess should show her portrait');
 run("S.view = 'text'; go('hub', 'farm')");
 check(run("!$('head').innerHTML.includes('portc')"), 'a place should not get a portrait');
+// The fight arena: everyone is drawn, clicking an enemy targets them, and the dead can't be clicked.
+run("newGame(); S.view = 'iso'; fight([spawn('raider'), spawn('slaver'), spawn('moledog')], { win: 'back', back: ['map'] })");
+check(run("S.scene === 'fight' && !!ARENA && $('view').innerHTML.includes('arenac') && ARENA.hits.length === 3"), 'arena: a fight with three enemies should draw all three');
+run("{ const h = ARENA.hits.find(h => h.i === 2), r = h.r; arenaClick((r.l + r.r) / 2, (r.t + r.b) / 2) }");
+check(run('S.fight.t === 2'), 'arena: clicking the mole-dog should target it');
+run("S.fight.en[0].hp = 0; go('fight')");
+check(run('ARENA.hits.every(h => h.i !== 0)'), 'arena: the dead should not be clickable');
 // A random walker in the isometric view, clicking anywhere on the canvas.
 const errs2 = {};
 for (let g = 0; g < Math.ceil(N / 3); g++) {

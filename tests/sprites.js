@@ -67,6 +67,11 @@ const fails = run(`(() => {
     const s = sprBuild(k, f, fl, 1.5);
     if (!s || s.box[2] <= s.box[0] || s.box[3] <= s.box[1]) out.push(k + ' frame ' + f + ' drew nothing');
   }
+  // Every kind of enemy has a fight sprite: the table, and the one-offs made in scenes.
+  const foes = [...Object.keys(ENEMY).map(k => spawn(k)), gutmawE(), ...['💼', '🧳', '🐄', '😃', '🐀', '🐶', '🩹'].map(i => mkE('x', i, 2, {}))];
+  for (const e of foes) { const key = sprFoeKey(e), s = key && sprBuild(key, 1, true, 1.5); if (!s || s.box[2] <= s.box[0]) out.push('no fight sprite for ' + e.n + ' ' + e.i); }
+  for (const id of IDS) if (!sprFoeKey(foe(id))) out.push('no fight sprite for ' + id);
+  for (const i in SFOE) { const L = SFOE[i]; if (L.body) parts('foe ' + i, L); else (L.parts || []).forEach((p, j) => grid('foe ' + i + ' part ' + j, p, p.x || 0, p.y || 0, 32)); }
   return out;
 })()`);
 if (fails.length) { console.log([...new Set(fails)].join('\n')); process.exit(1); }

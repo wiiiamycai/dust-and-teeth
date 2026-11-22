@@ -225,3 +225,12 @@ Will said to do everything and keep going while he was away, so I built part 3 o
 117. **Portraits when you talk to someone:** their head and shoulders, cut from their sprite and drawn big in the header where the emoji was, with scanlines and a faint glow. They blink every few seconds (off for reduced motion).
 118. **Portraits find themselves:** `show()` spots a person from the screen's title and icon, so no scene had to change. Without a canvas (the tests, an old browser), or if drawing fails, the emoji is shown as before.
 119. **What I left out of part 3:** portraits on the fight cards and the list view's cards. They're still emoji, which keeps the list view as the plain, safe one. The fight cards are an easy next step if he wants them.
+
+## The fight arena (v4.0)
+
+Will said to keep going until the game is fully polished. Grid combat was next, but I pushed back on one point: real tactical grid combat changes the rules. Movement, cover and range in tiles would mean rebalancing every fight, against pillar 7 ("combat is hard") and the balance test. That's a design call for Will, not polish. So I built the visual half, and the rules are untouched.
+
+120. **Fights are drawn now:** a strip of isometric ground above the options. You're on the left with your spouse or allies; they're on the right. At range they stand well off, and up close they're right in front of you, so the "at range / up close" rule is something you can see. Your target has an amber ring, you have the green one.
+121. **Every enemy has a sprite.** A named person uses their own. A kind of enemy has a look (raiders have red mohawks and war paint, Molars a necklace of teeth, slavers chains, deputies a blue cap and star, bounty hunters a long coat), with their real armour and weapon on top, so what they carry is what you see and what you'll loot. Mole-dogs, rad-moles and the two-headed cow are drawn as animals. The Gutmaw is drawn twice the size of anything else, all mouth.
+122. **Click an enemy to target them,** the same as clicking their card. The dead lie down and can't be clicked. When you get hurt, the arena flashes red and shakes (off for reduced motion).
+123. **No canvas, no arena:** the fight screen is exactly as before, so the tests and the list view are unchanged. A bug in the arena is caught and can't block a fight.

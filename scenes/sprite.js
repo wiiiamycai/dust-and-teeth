@@ -25,8 +25,11 @@ function sprSpec(key) {
     };
   }
   if (key === 'corpse') return SCORPSE;
-  const [kind, id] = key.split(':');
+  const at = key.indexOf(':'),
+    kind = key.slice(0, at),
+    id = key.slice(at + 1);
   if (kind === 'npc') return SNPC[id] || null;
+  if (kind === 'foe') return SFOEC[key] || null;
   if (kind === 'prop') return SPROP[id] ? { parts: SPROP[id] } : null;
   if (kind === 'sign') return SSIGN[id] ? { parts: [...SBOARD, { x: 4, y: 2, r: SICON[SSIGN[id]] }], h: 12 } : null;
   return null;
@@ -118,7 +121,7 @@ function sprBuild(key, frame, flip, p) {
   const spec = sprSpec(key);
   if (!spec) return null;
   const h = spec.h || 32,
-    fr = spec.body ? frame : key.startsWith('npc:') ? frame & 1 : 0, // animals breathe, things don't
+    fr = spec.body ? frame : /^(npc|foe):/.test(key) ? frame & 1 : 0, // animals breathe, things don't
     px = sprPixels(sprFrame(sprLetters(spec), h, fr), h, spec.pal),
     c = document.createElement('canvas'),
     W = Math.ceil(SW * p),
@@ -159,6 +162,30 @@ function sprDraw(g, key, cx, by, cell, dpr, alpha, frame, flip) {
   g.globalAlpha = 1;
   const [x0, y0, x1, y1] = s.box;
   return { l: l + x0 * cell, t: t + y0 * cell, r: l + x1 * cell, b: t + y1 * cell, glow: s.glow };
+}
+
+// ---- enemies in a fight: their look (data/sprites.js SFOE), then their real armour and weapon ----
+const SFOEC = {};
+function sprFoeKey(e) {
+  if (e.npc && SNPC[e.npc]) return 'npc:' + e.npc;
+  const look = SFOE[e.i] || (e.wep || e.arm ? { body: 'man', pal: { c: '#5a4a3a' } } : null);
+  if (!look) return null;
+  const key = 'foe:' + e.i + '/' + (e.wep || '') + '/' + (e.arm || '');
+  if (!SFOEC[key]) {
+    const big = look.body === 'big',
+      worn = ((SARMOR[e.arm] && SARMOR[e.arm].add) || [])
+        .filter(a => a !== 'star' && (a !== 'powerhelm' || big))
+        .map(a => (big && a === 'spikes' ? 'spikesBig' : a));
+    SFOEC[key] = look.parts
+      ? look
+      : {
+          body: look.body,
+          pal: look.pal,
+          add: [...(look.add || []), ...worn],
+          item: SWEAPON[e.wep] || look.item || null,
+        };
+  }
+  return key;
 }
 
 // ---- portraits: head and shoulders of the person you're talking to, in the header ----

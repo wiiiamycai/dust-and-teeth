@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v3.9 (23 Nov 2026)';
+const VERSION = 'v4.0 (23 Nov 2026)';
 let S = null,
   pend = [],
   cur = [];
@@ -99,6 +99,9 @@ function show(v) {
     vw.hidden = true;
     vw.innerHTML = '';
   }
+  try {
+    if (typeof arenaMount === 'function') arenaMount(); // the fight arena (scenes/arena.js), looks only
+  } catch (e) {}
   drawOpts(v.opts);
   hud();
   save();

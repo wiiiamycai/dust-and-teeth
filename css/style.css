@@ -470,3 +470,29 @@ body::before {
   pointer-events: none;
   z-index: 4;
 }
+
+/* ---- the fight arena (scenes/arena.js): a red flash when you get hurt ---- */
+#view canvas.arena {
+  cursor: crosshair;
+}
+#view canvas.arena.hurt {
+  animation: hurt 0.45s ease-out;
+}
+@keyframes hurt {
+  0% {
+    filter: brightness(1.6) sepia(1) hue-rotate(-40deg) saturate(4);
+    transform: translateX(-3px);
+  }
+  30% {
+    transform: translateX(3px);
+  }
+  100% {
+    filter: none;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #view canvas.arena.hurt {
+    animation: none;
+  }
+}

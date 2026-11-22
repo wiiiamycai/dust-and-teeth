@@ -564,3 +564,90 @@ const SCORPSE = {
   pal: { c: '#6a6050', d: '#4a4438' },
   parts: [sbottom(['...rrrRrrrr.....', '.sscccccdddddbb.', '.sSccccCdddDdbb.', '..rrRrrrr.rr....'])],
 };
+
+// ---- enemies in a fight: a look per kind (by icon), then their real armour and weapon on top ----
+// A named person fighting you uses their own sprite. A human with no look here still gets a plain one.
+Object.assign(SADD, {
+  mohawk: [{ y: 2, r: ['.......hh.......', '.......hh.......', '......hhhh......', '......hhhh......'] }],
+  warpaint: [{ y: 9, r: ['.....r.r.r......'] }],
+  grin: [{ y: 11, r: ['......tttt......'] }],
+  bandage: [
+    { y: 7, r: ['.....xxxxxx.....'] },
+    { y: 15, r: ['...x........x...', '...x........x...'] },
+  ],
+});
+const SFOE = {
+  '💀': { body: 'man', pal: { h: '#8a2a1e', c: '#5a4a3a', s: '#b48a6a' }, add: ['mohawk', 'warpaint'] },
+  '☠️': { body: 'big', pal: { h: '#8a2a1e', c: '#4a3a2a', s: '#b48a6a' }, add: ['mohawk', 'warpaint'] },
+  '🦷': { body: 'man', pal: { h: '#2a1e14', c: '#5a2a24' }, add: ['warpaint', 'necklace'] },
+  '⛓️': { body: 'big', pal: { h: '#3a2a1c', z: '#3a2a1c', c: '#4a3a2a' }, add: ['beard', 'chains'] },
+  '👮': { body: 'man', pal: { c: '#4a5e74', v: '#34445a' }, add: ['cap', 'star'] },
+  '💂': { body: 'man', pal: { c: '#6a2a2a' }, add: ['helmet'] },
+  '🎲': { body: 'big', pal: { h: '#1e1612', c: '#2a2430', d: '#2a2430', v: '#4a2a3a' }, add: ['vest', 'bowtie'] },
+  '🎯': { body: 'man', pal: { c: '#5a4a34', v: '#3a2e22' }, add: ['coat', 'hat'] },
+  '💼': { body: 'man', pal: { h: '#6a6a60', c: '#3a3040', d: '#2a2430' }, add: ['bowtie'] },
+  '🧳': { body: 'man', pal: { c: '#6a5a44', v: '#5a4a30' }, add: ['backpack', 'cap'] },
+  '😃': { body: 'man', pal: { h: '#d8ccb0', c: '#d8ccb0' }, add: ['robe', 'grin'] },
+  '🐶': { body: 'man', pal: { h: '#8a6a3a', c: '#6a5a44', s: '#c8a07a' }, add: ['rags'] },
+  '🩹': { body: 'woman', pal: { h: '#3a2a1c', c: '#7a6a5a' }, add: ['bandage'] },
+  '🐕': {
+    parts: [
+      sbottom([
+        '...........ll...',
+        '..........lllll.',
+        'l.lllllllllllelt',
+        '.lllllllllllllll',
+        '.Lllllllllllll..',
+        '..LLLLLLLLLLL...',
+        '..ll.ll...ll.ll.',
+        '..LL.LL...LL.LL.',
+      ]),
+    ],
+    pal: { l: '#9a7058' },
+  },
+  '🐀': {
+    parts: [
+      sbottom(['...........ll...', '....llllllllllel', 'p..lllllllllllll', '.pplllllllllll..', '....l.l....l.l..']),
+    ],
+    pal: { l: '#6e6458' },
+  },
+  '🐄': {
+    parts: [
+      sbottom([
+        '..........xn.xn.',
+        '..........xxexxe',
+        '.nxxxnnxxxxxxxxx',
+        '.xxnnxxxxnnxxx..',
+        '.xxxxxxnnxxxxx..',
+        '.nnxxxxxxxxxnn..',
+        '..xx.xx...xx.xx.',
+        '..nn.nn...nn.nn.',
+      ]),
+    ],
+  },
+  // The Gutmaw: drawn twice the size of anything else.
+  '🪱': {
+    scale: 2,
+    parts: [
+      sbottom([
+        '....rrrrrrrr....',
+        '...rtntntntnr...',
+        '..rtnnnnnnnntr..',
+        '..rnnnnnnnnnnr..',
+        '..rtnnnnnnnntr..',
+        '...rtntntntnr...',
+        '....pPpPpPpP....',
+        '....pppppppp....',
+        '...ppppppppppp..',
+        '...pPPPPPPPPPp..',
+        '...ppppppppppp..',
+        '..pppppppppppp..',
+        '..pPPPPPPPPPPPp.',
+        '..ppppppppppppp.',
+        '.lllpppppppppll.',
+        'llllllllllllllll',
+      ]),
+    ],
+    pal: { p: '#a07a70' },
+  },
+};
