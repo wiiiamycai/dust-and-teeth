@@ -455,12 +455,12 @@ body::before {
 #journal .qt {
   margin: 10px 0 4px;
 }
-@media (min-width: 1260px) {
+@media (min-width: 1400px) {
   #journal {
     position: fixed;
     top: 28px;
-    left: calc(50% + 460px);
-    width: 280px;
+    left: calc(50% + 458px);
+    width: min(300px, calc(50vw - 474px));
     max-height: calc(100vh - 56px);
     overflow-y: auto;
     margin: 0;
