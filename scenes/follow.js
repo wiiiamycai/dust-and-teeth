@@ -741,3 +741,91 @@ linkLines = () => {
     );
   return L;
 };
+
+// ---- after the leash: Crane, insatiable, at the worst possible times ----
+// Once you've clipped it on and she walks with you, she wants you. Now. Wherever you are, whoever is watching.
+// At most once a day, on arriving somewhere. You choose each time. It always fades to black.
+const CRANE_WHEN = {
+  rustwater:
+    'Outside the Mayor\'s office, in front of half the town, Crane leans in. "Deputy. My office. I need you to frisk me. Thoroughly."',
+  scrapwell:
+    'In the chapel doorway, while Crumb is mid-blessing, Crane tugs your sleeve. "There\'s a confession booth. I have a lot to confess. Out loud."',
+  diner:
+    'Mama Lou is pouring your coffee when Crane\'s hand lands on your knee under the table. "The walk-in freezer. I hear it\'s private." Lou smiles. Lou is listening.',
+  snakeeyes:
+    'At the dice table, with the whole casino watching the roll, Crane whispers: "Win or lose, you\'re taking me upstairs." Pips raises an eyebrow.',
+  mall: 'In the middle of the food court, Crane looks at the changing rooms of a drowned shop. "Those still have curtains."',
+  chainfield:
+    'Surrounded by Krug\'s slavers, rifle up, Crane says out of the side of her mouth: "This is so dangerous. I want you so badly right now."',
+  farm: 'Hector is three feet away, loading his shotgun, when Crane nods at the barn. "Hay. Lots of hay."',
+  skybus:
+    'The Coil are deep in prayer when Crane eyes the plane\'s toilet. "Mile high club. Technically. It flew once."',
+  green:
+    'In the bean rows, with forty people counting everything, Crane pulls you down. "Nobody counts the bean rows. Do they?"',
+  silo: 'At the gate of the Dentist King\'s fortress, Crane grabs your collar. "We might die in there. Behind that rock. Now."',
+};
+const craneHungry = () => S.f.craneLeash === 'yes' && following('sheriff') && !S.f.craneSuspect;
+const _hubCraneAsks = SC.hub;
+SC.hub = loc => {
+  if (craneHungry() && S.f.craneAskDay !== S.day && (S.f.craneCool || 0) <= S.day && !S.fight && roll(30)) {
+    S.f.craneAskDay = S.day;
+    S.here = loc;
+    return go('craneAsks', loc);
+  }
+  return _hubCraneAsks(loc);
+};
+SC.craneAsks = loc => {
+  const who = IDS.filter(x => alive(x) && !NPC[x].animal && x !== 'sheriff' && S.n[x].loc === loc),
+    seen = who.length ? pick(who) : null;
+  show({
+    title: 'Sheriff Crane',
+    icon: '⭐',
+    text:
+      CRANE_WHEN[loc] ||
+      'Crane stops dead in the middle of the road and looks at you like you are the last canteen in the desert. "Now. Right now. Behind that rock."',
+    opts: [
+      [
+        'Give in',
+        () => {
+          S.f.craneGiven = (S.f.craneGiven || 0) + 1;
+          S.f.craneNo = 0;
+          bump('sheriff', 3);
+          say(`${pick(FADE)} +${heal(5)} HP. Your dignity does not heal.`);
+          if (seen && roll(50))
+            rx(
+              seen,
+              pick([
+                '"Everybody heard the Sheriff. EVERYBODY. I can\'t look at her badge the same way."',
+                '"You two. In broad daylight. I have to live here."',
+                '"I saw nothing. I heard everything. I would like to un-hear it."',
+              ]),
+            );
+          goHere();
+        },
+      ],
+      [
+        '"Not now, Crane."',
+        () => {
+          S.f.craneNo = (S.f.craneNo || 0) + 1;
+          bump('sheriff', -3);
+          if (S.f.craneNo >= 3) {
+            S.f.craneNo = 0;
+            S.f.craneCool = S.day + 2;
+            quote(
+              "Crane: \"Fine. FINE. I'll wait. I'm very good at waiting. I'll be thinking about it the whole time.\"",
+            );
+          } else quote('Crane straightens her hat, pink to the ears. "...Later, then. I\'m holding you to later."');
+          goHere();
+        },
+      ],
+      [
+        '"Heel."',
+        () => {
+          bump('sheriff', 2);
+          say('One word. Crane falls in at your side, eyes front, all business. She is very, very pleased about it.');
+          goHere();
+        },
+      ],
+    ],
+  });
+};

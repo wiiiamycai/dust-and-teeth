@@ -4164,5 +4164,47 @@
    "Laugh",
    "EXPECT:S.f.craneLeash === 'laughed' && !lover('sheriff') && S.f.craneSuspect"
   ]
+ },
+ {
+  "name": "Crane after the leash: she propositions you at the worst moment; give in and the town hears about it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'",
+   "RAND:0",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:frisk me",
+   "Give in",
+   "EXPECT:S.f.craneGiven === 1 && S.here === 'rustwater'",
+   "SAY:Your dignity does not heal",
+   "EXPECT:S.f.craneAskDay === S.day"
+  ]
+ },
+ {
+  "name": "Crane after the leash: turn her down three times and she cools off for two days; or tell her to heel",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneNo = 2; S.here = 'farm'; go('craneAsks', 'farm')",
+   "SAY:Lots of hay",
+   "Not now, Crane",
+   "EXPECT:S.f.craneCool === S.day + 2 && S.f.craneNo === 0",
+   "EVAL:go('craneAsks', 'diner')",
+   "Heel",
+   "SAY:all business"
+  ]
+ },
+ {
+  "name": "Crane after the leash: none of it unless she's with you and you said yes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'no'; S.n.sheriff.loc = 'party'",
+   "RAND:0",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EXPECT:!S.f.craneAskDay && S.scene === 'hub'"
+  ]
  }
 ]
