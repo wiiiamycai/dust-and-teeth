@@ -4457,5 +4457,236 @@
    "Next",
    "EXPECT:!document.getElementById('text').innerHTML.includes(String.fromCharCode(10, 10))"
   ]
+ },
+ {
+  "name": "Secrets: tell Crane that Moe sells strangers to Krug, and Moe turns on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('moe.secret')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Moe sells Krug",
+   "EXPECT:S.f.moeShut && S.n.moe.op <= -40 && S.n.sheriff.op >= 10",
+   "Back",
+   "Moe",
+   "What's the word",
+   "SAY:Krug went east"
+  ]
+ },
+ {
+  "name": "Secrets: pay Moe to describe somebody else, and Krug's slavers mostly lose you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('moe.secret'); S.teeth = 100; S.n.krug.op = -100",
+   "ENCOUNTERS",
+   "EVAL:globalThis.n0 = 0; for (let i = 0; i < 600; i++) if (pickEnc('rustwater') === 'slavers') n0++",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "EVAL:globalThis.t0 = S.teeth",
+   "describe somebody else",
+   "EXPECT:S.f.moeCover && S.teeth === t0 - 30",
+   "EVAL:globalThis.n1 = 0; for (let i = 0; i < 600; i++) if (pickEnc('rustwater') === 'slavers') n1++",
+   "EXPECT:n0 > 60 && n1 < n0 * 0.5"
+  ]
+ },
+ {
+  "name": "Secrets: tell Nan what Ma did to her husband, and the envelopes stop",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('elder.secret'); globalThis.t0 = S.teeth",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "Your sister sold her third husband",
+   "EXPECT:S.f.nanStops && S.teeth === t0 + 30",
+   "WAIT:5",
+   "EXPECT:S.n.elder.rx.some(l => /stopped providing/.test(l))",
+   "EXPECT:webLines().some(l => /rocking chair/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Nigel what Ma did to his father, and he stands outside her window",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('elder.secret')",
+   "Climb down the well",
+   "Nigel",
+   "didn't lose your father",
+   "EXPECT:S.f.nigelMa",
+   "WAIT:1",
+   "EXPECT:S.n.elder.rx.some(l => /Glowing/.test(l))",
+   "EXPECT:webLines().some(l => /window/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: buy Ma's ring back from Moe, cover for Gus, and he owes you his life",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('gus.secret'); S.teeth = 100",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "Ma Thistle's ring",
+   "EXPECT:has('ring') && S.f.ringBought",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Scrapwell",
+   "Ma Thistle",
+   "Found your ring",
+   "EXPECT:S.f.ringBack === 'well' && !has('ring') && S.n.gus.op >= 30 && S.n.elder.op >= 30",
+   "EXPECT:!cur.some(o => /Gus pawned your ring/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Ma that Gus pawned her ring, and he walks off to be a Molar",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('gus.secret')",
+   "Ma Thistle",
+   "Gus pawned your ring",
+   "EXPECT:S.f.gusOut",
+   "WAIT:1",
+   "EXPECT:S.n.gus.loc === 'gone' && S.f.gusGone",
+   "EXPECT:webLines().some(l => /became a Molar/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Lou that Pell ate his pigs, and she leaves Bacon Prime alone",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('pell.secret')",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "Old Pell ate",
+   "EXPECT:S.f.pellLou && S.f.plot_pork === 'stopped'",
+   "WAIT:10",
+   "EXPECT:alive('pig') && S.n.pell.rx.some(l => /seasoning/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Jeb that Bess leads the raiders, and his new guns are waiting for her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('bess.secret'); globalThis.t0 = S.teeth",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "It's Bess",
+   "EXPECT:S.f.bessTold === 'jeb' && S.teeth === t0 + 40",
+   "WAIT:3",
+   "EXPECT:S.f.bessShot && S.n.bess.op <= -40 && S.n.bess.rx.some(l => /Jeb's new guns/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Crane that Bess leads the raiders, and she runs, and comes back the Raider Queen",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('bess.secret')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "The raiders hitting",
+   "WAIT:1",
+   "EXPECT:S.f.bessBounty && S.n.bess.loc === 'gone' && S.n.hector.op <= -40",
+   "WAIT:3",
+   "EXPECT:S.n.bess.loc === 'wastes'",
+   "EXPECT:!cur.some(o => /The raiders hitting/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Secrets: teach Bert to read, and he puts the tractor back together himself",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('bert.secret')",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bert",
+   "What's wrong with the tractor",
+   "EVAL:globalThis.d0 = S.day",
+   "Bring the book",
+   "EXPECT:S.f.tractorRuns && S.f.bertReads && S.f.bertJob === 'done' && !has('carb') && S.day === d0 + 2",
+   "EXPECT:webLines().some(l => /goats/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell Hector that Old Teo owned his farm, and Hector buys him home",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('teo.secret')",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Old Teo, in Krug's pens",
+   "EXPECT:S.f.teoBought",
+   "WAIT:2",
+   "EXPECT:S.n.teo.loc === 'farm' && S.f.teoHome",
+   "EVAL:goHere()",
+   "SAY:Old Teo"
+  ]
+ },
+ {
+  "name": "Secrets: tell Doc that Vane is dealing, and Doc sells cheap out of spite",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('vane.secret')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:globalThis.c0 = cost(30, 'doc')",
+   "Doc Ratchet",
+   "Your old apprentice",
+   "EXPECT:S.f.docUndercut && S.f.plot_drugwar === 'stopped' && cost(30, 'doc') < c0"
+  ]
+ },
+ {
+  "name": "Secrets: tell Junior where his seeds came from, and he walks over the pass to the Green",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('fern.secret')",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "Your cabbage seeds",
+   "EXPECT:S.f.juniorEast",
+   "WAIT:2",
+   "EXPECT:S.n.junior.loc === 'green' && S.n.lou.rx.some(l => /CABBAGE/.test(l))"
+  ]
+ },
+ {
+  "name": "Secrets: tell the Gardener about Fern's seed packets, and her gate never opens",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('fern.secret'); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "The Gardener",
+   "Fern leaves seed packets",
+   "EXPECT:S.f.fernLocked && S.f.plot_gate === 'stopped' && !PLOTS.gate.live() && S.n.fern.op <= -60"
+  ]
+ },
+ {
+  "name": "Secrets: a telling line only shows once you know the secret",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Ma Thistle",
+   "EXPECT:!cur.some(o => /Gus pawned your ring/.test(o[0]))",
+   "EVAL:know('gus.secret'); go('talk', 'elder')",
+   "SAY:Gus pawned your ring"
+  ]
  }
 ]

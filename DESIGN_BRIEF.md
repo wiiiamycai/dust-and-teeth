@@ -60,6 +60,11 @@ The v2 gossip engine already works (events, witnesses, spread over days through 
 - Revenge: family members of victims hunt you (already partly in v2 via hunter encounters).
 - Delayed effects: news can take days to arrive, so consequences land when the player least expects them.
 
+### Secrets (v6.3)
+
+- A secret's main use is telling it to the person it matters to (`scenes/secrets.js`). Each telling is a line on the hearer's talk screen, shown once you know the secret, and it changes what somebody does, 2 to 3 layers deep. Telling is gossip: the owner hears, days later, who talked. Blackmailing the owner is still possible, but it's the side option.
+- Every new secret needs at least one person to tell, and what that changes.
+
 ## 6. Character growth (v3)
 
 - Fixed male character, average stats (all 5 on a 1 to 10 scale), average skills (around 30 to 35).

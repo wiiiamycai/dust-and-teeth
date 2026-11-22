@@ -129,7 +129,7 @@ SC.ending = () => {
           ? 'Raider Queen Bess rules the eastern roads. Travellers who say your name get robbed twice.'
           : 'Somewhere out there, Raider Queen Bess is still looking for you.',
       );
-    else if (b.loc === 'gone' || b.loc === 'pen') L.push('Bess was sold on. Nobody knows where.');
+    else if ((b.loc === 'gone' && !f.bessBounty) || b.loc === 'pen') L.push('Bess was sold on. Nobody knows where.');
     else if (f.bessHome) L.push('Bess came home from Chainfield. She sleeps with the hoe now.');
     if (al('bert') && (S.n.bert.loc === 'gone' || S.n.bert.loc === 'pen'))
       L.push('Bert was sold to a farm out west. He finally drives a real tractor. He calls it a happy ending.');
