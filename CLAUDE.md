@@ -2,6 +2,8 @@
 
 Will's text RPG in the style of Fallout 2. `index.html` is the current playable version (v2).
 
+Live build: https://beautiful-valkyrie-9f63d9.netlify.app (Netlify deploys from `main`).
+
 Before doing anything, read `DESIGN_BRIEF.md` in full. It holds the design pillars, the agreed v3 plan, content limits and how to test.
 
 Rules:
