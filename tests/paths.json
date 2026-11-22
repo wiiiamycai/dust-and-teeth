@@ -3557,5 +3557,97 @@
    "WAIT:7",
    "EXPECT:alive('sheriff') && !alive('pete') && S.f.peteSaved"
   ]
+ },
+ {
+  "name": "Jobs, Bert: carry his carburettor to Sprocket and back, the tractor runs, and the farm doesn't fail on day 22",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "EVAL:S.teeth = 100",
+   "Bert",
+   "wrong with the tractor",
+   "EXPECT:has('carb')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "fix a tractor carburettor",
+   "EXPECT:has('carbfixed')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bert",
+   "Your carburettor. Fixed",
+   "EXPECT:S.f.tractorRuns && knew('bert.secret')",
+   "EVAL:S.f.raid = 1; S.f.kingStopped = 1",
+   "WAIT:22",
+   "EXPECT:!S.f.farmFailed"
+  ]
+ },
+ {
+  "name": "Jobs, Bert: sell his carburettor to Gums and Bert and Hector turn on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.bertJob = 1; give('carb'); globalThis.b0 = S.n.bert.op",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "A tractor carburettor",
+   "EXPECT:S.f.bertJob === 'sold' && S.n.bert.op <= b0 - 40"
+  ]
+ },
+ {
+  "name": "Jobs, Hector points you at Bert's tractor",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Anything I can do for the farm",
+   "EXPECT:knew('hector.tractor')"
+  ]
+ },
+ {
+  "name": "Jobs, Lou: asking about the special opens the pork plot from her side",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "the special this week",
+   "EXPECT:plotKnown('pork')",
+   "SAY:Pell's pig"
+  ]
+ },
+ {
+  "name": "Jobs, Junior: eat his greens and he trusts you with the cabbages",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "Eat what Junior slides",
+   "EXPECT:knew('junior.secret') && PLOTS.cabbage.known()",
+   "EXPECT:cur.some(o => o[0].includes('cook your cabbages'))"
+  ]
+ },
+ {
+  "name": "Jobs, Junior: tell Lou about his greens and she salts the earth",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.juniorBowl = 'ate'",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "cooking greens behind your back",
+   "EXPECT:S.f.cabbageSalted && S.n.junior.op <= -50"
+  ]
  }
 ]

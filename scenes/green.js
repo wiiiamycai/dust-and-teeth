@@ -138,8 +138,8 @@ reactions = function () {
     f.stormSaid = 1;
     say('Out east, the dust over the pass has dropped. You can see the mountains for the first time.');
   }
-  // Without seeds, Hector's farm gives up.
-  if (S.day >= 22 && !(f.seeded && f.seeded.hector) && alive('hector') && !f.farmFailed) {
+  // Without seeds, or Bert's tractor running (scenes/jobs.js), Hector's farm gives up.
+  if (S.day >= 22 && !(f.seeded && f.seeded.hector) && alive('hector') && !f.farmFailed && !f.tractorRuns) {
     f.farmFailed = 1;
     rx('hector', '"Last crop failed. I sold the tractor for seed money. There\'s no seed to buy."');
     rx('bert', '"Pa sold the tractor. I keep sitting where it was."');

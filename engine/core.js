@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v5.5 (23 Nov 2026)';
+const VERSION = 'v5.6 (23 Nov 2026)';
 let S = null,
   pend = [],
   cur = [];

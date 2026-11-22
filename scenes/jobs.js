@@ -1342,3 +1342,153 @@ world = function () {
   }
   return _worldJob.apply(this, arguments);
 };
+// ---- Hector's farm: Bert's carburettor ----
+ITEMS.carb = "Bert's carburettor (broken)";
+ITEMS.carbfixed = "Bert's carburettor (fixed)";
+jobs('bert', () => {
+  const f = S.f;
+  if (S.n.bert.loc !== 'farm' || f.farmFailed) return [];
+  return [
+    !f.bertJob && [
+      '"What\'s wrong with the tractor?"',
+      () => {
+        f.bertJob = 1;
+        give('carb');
+        says(
+          'bert',
+          '"The carburettor. I took it out to look. The book has no pictures of putting it back. Sprocket at the Mall fixes things. Would you?"',
+        );
+        go('talk', 'bert');
+      },
+    ],
+    has('carbfixed') && [
+      '"Your carburettor. Fixed."',
+      () => {
+        take('carbfixed');
+        f.bertJob = 'done';
+        f.tractorRuns = 1;
+        bump('hector', 20);
+        gain(alive('hector') ? 60 : 0);
+        says(
+          'bert',
+          'Bert has it back in by sundown. The tractor coughs, then runs. He drives it in a circle, crying. Hector pays you 60 teeth and says nothing at all.',
+        );
+        confide('bert', 40);
+        go('talk', 'bert');
+      },
+    ],
+  ];
+});
+jobs('hector', () =>
+  !S.f.bertJob && !S.f.farmFailed && alive('bert') && S.n.bert.loc === 'farm' && !knew('hector.tractor')
+    ? [
+        [
+          '"Anything I can do for the farm?"',
+          () => {
+            know('hector.tractor');
+            says('hector', '"Get the tractor running. Bert took it apart and can\'t read the book. Ask him. Slowly."');
+            go('talk', 'hector');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('sprocket', () =>
+  has('carb') && S.n.sprocket.loc === 'mall'
+    ? [
+        [
+          `"Can you fix a tractor carburettor?" (${cost(30, 'sprocket')} teeth)`,
+          () => {
+            if (pay(cost(30, 'sprocket'))) {
+              take('carb');
+              give('carbfixed');
+              bump('sprocket', 5);
+              says(
+                'sprocket',
+                "\"Hector's tractor? His da's tractor. Took the float out backwards, didn't he. There.\"",
+              );
+            }
+            go('talk', 'sprocket');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('gums', () =>
+  has('carb') || has('carbfixed')
+    ? [
+        [
+          `"A tractor carburettor. Want it?" (${cost(25, 'gums')} teeth)`,
+          () => {
+            take(has('carbfixed') ? 'carbfixed' : 'carb');
+            S.f.bertJob = 'sold';
+            gain(cost(25, 'gums'));
+            bump('bert', -40);
+            bump('hector', -20);
+            rx('bert', '"Somebody sold my carburettor at the Mall. Gums has it in a box. I go and visit it."');
+            says('gums', '"Shcrap. Scrap. I\'ll take it."');
+            go('talk', 'gums');
+          },
+          'danger',
+        ],
+      ]
+    : [],
+);
+
+// ---- Mama Lou's: the special, and Junior's bowl ----
+jobs('lou', () =>
+  plotOpen('pork') && !plotKnown('pork')
+    ? [
+        [
+          '"What\'s the special this week?"',
+          () => {
+            know('plot.pork');
+            says(
+              'lou',
+              '"Thursday I want pork, sweetie. Pedigree pork. Pell\'s pig. Bring him in a sack, alive. Forty teeth."',
+            );
+            go('talk', 'lou');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('junior', () => {
+  const f = S.f;
+  if (!alive('junior') || S.n.junior.loc !== 'diner' || f.juniorBowl) return [];
+  return [
+    [
+      'Eat what Junior slides across the counter',
+      () => {
+        f.juniorBowl = 'ate';
+        say(`Something green. Cabbage. Real cabbage, cooked properly. Junior watches every spoonful. +${heal(10)} HP.`);
+        quote('Junior: "...Good?" You tell him it is. He goes red to the ears.');
+        confide('junior', 25);
+        go('talk', 'junior');
+      },
+    ],
+  ];
+});
+jobs('lou', () =>
+  S.f.juniorBowl === 'ate' && plotOpen('cabbage') && alive('junior') && S.n.junior.loc === 'diner'
+    ? [
+        [
+          '"Your boy is cooking greens behind your back."',
+          () => {
+            S.f.juniorBowl = 'told';
+            S.f.plot_cabbage = 'done';
+            PLOTS.cabbage.hit(true);
+            gain(20);
+            bump('lou', 15);
+            bump('junior', -60);
+            says(
+              'lou',
+              '"Greens. In MY kitchen." She takes the salt out back. She gives you 20 teeth and a smile you will dream about.',
+            );
+            go('talk', 'lou');
+          },
+          'danger',
+        ],
+      ]
+    : [],
+);
