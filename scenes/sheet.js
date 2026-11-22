@@ -3,7 +3,7 @@
 // Will: "character always open on the left if the journal is on the right. Stats, gear, perks, even guns graphic
 // instead of text." The mirror of the journal: beside the screen on wide displays, under the journal on narrow ones,
 // and it folds away. You as a pixel figure in your real armour with your real weapon, a picture of the weapon,
-// pips for stats and skills, icons for what you carry, badges for perks. Looks only: the Character screen still
+// badges for perks, and a plain list of what you carry (Will: stats and skills are gone from it). Looks only: the Character screen still
 // does the wielding and the healing. No numbers unless you've earned Keen Eye (pillar 4).
 
 // ---- pixel pictures: rows of palette letters (SPAL in data/sprites.js), '.' is see-through ----
@@ -87,6 +87,38 @@ const IPIX = {
   carbfixed: ['mmmm', 'mMMm', 'mmmm'],
   matchbarrel: ['mmmmmmmm', 'MMMMMMMM'],
 };
+// Armour, as worn: one torso, in the material of the thing.
+const TORSO = [
+  '...XXXXXX...',
+  '.XXXXXXXXXX.',
+  'XXXXXXXXXXXX',
+  'XXX.XXXX.XXX',
+  'XXX.XXXX.XXX',
+  'XX..XXXX..XX',
+  'XX..XXXX..XX',
+  '....XXXX....',
+  '....XXXX....',
+  '....XXXX....',
+];
+const APIX = {
+  rags: {
+    f: 'c',
+    fix: r => r.map((row, y) => (y === 4 ? row.replace('XXXX', 'X..X') : y === 8 ? row.replace('XXXX', '.XX.') : row)),
+  },
+  jacket: {
+    f: 'l',
+    fix: r => r.map(row => row.slice(0, 5) + (row[5] === 'X' ? 'mm' : row.slice(5, 7)) + row.slice(7)),
+  },
+  spikes: { f: 'd', fix: r => ['.m......m...', ...r.slice(1)].map((row, y) => (y === 0 ? '.m.XXXXXXm..' : row)) },
+  vest: { f: 'v', fix: r => r.map((row, y) => (y === 3 ? 'XXX.XaXX.XXX' : row)) },
+  plate: { f: 'm', fix: r => r.map((row, y) => (y >= 2 && y <= 6 ? row.replace(/XXXX(?=\.?XXX$)/, 'XuuX') : row)) },
+  riot: { f: 'u', fix: r => r.map((row, y) => (y === 2 ? 'XXXmmmmmmXXX' : row)) },
+  power: { f: 'f', fix: r => r.map((row, y) => (y === 2 ? 'XXXggggggXXX' : y === 0 ? '..mXXXXXXm..' : row)) },
+};
+const armourRows = k => {
+  const a = APIX[k] || APIX.rags;
+  return a.fix(TORSO).map(row => row.replace(/X/g, a.f));
+};
 const PARTPIX = ['.mm.', 'mMMm', 'mMMm', '.mm.'];
 function pixDraw(cv, rows, k, pal) {
   if (!cv || !cv.getContext) return;
@@ -154,8 +186,6 @@ function dollDraw(cv, k) {
     }
 }
 // ---- the panel ----
-const pips = (n, of) => `<span class="pips">${'<i class="on"></i>'.repeat(n)}${'<i></i>'.repeat(of - n)}</span>`;
-const SKICON = { melee: '👊', guns: '🔫', sneak: '👣', steal: '✋', speech: '💬', science: '⚙️' };
 let sheetOpen = true;
 function sheetDraw() {
   const el = $('sheet');
@@ -165,22 +195,9 @@ function sheetDraw() {
     return;
   }
   const kn = keen(),
-    st = S.stats,
     w = W[S.weapon],
     ar = A[S.armor],
     gun = isGun(S.weapon) && !w.free;
-  const stats = Object.keys(st)
-    .map(k => {
-      const v = k === 'twitch' ? ptw() : st[k];
-      return `<div class="row"><span class="nm">${cap(k)}</span>${pips(clamp(Math.ceil(v / 2), 0, 5), 5)}<span class="wd">${kn ? v : esc(statWord(v))}</span></div>`;
-    })
-    .join('');
-  const skills = Object.keys(S.skills)
-    .map(
-      k =>
-        `<div class="row"><span class="nm">${SKICON[k] || ''} ${cap(k)}</span>${pips(band(S.skills[k]) + 1, 5)}<span class="wd">${esc(skillWord(k))}${kn ? ' ' + S.skills[k] : ''}</span></div>`,
-    )
-    .join('');
   const inv = Object.keys(S.inv).filter(k => S.inv[k] > 0);
   const perks = S.perks.length
     ? S.perks
@@ -191,18 +208,9 @@ function sheetDraw() {
 <div class="doll"><canvas id="sh-doll"></canvas><div class="dollside"><div class="hpw">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div><div class="kar">${esc(karmaTitle())}</div><div class="kar">🦷 ${S.teeth} · Day ${S.day} · ${S.kills} kills</div></div></div>
 <p class="sh">Gear</p>
 <div class="gear"><canvas id="sh-wep"></canvas><div><b>${esc(modName(S.weapon))}</b><span>${w.t === 'guns' ? 'Gun' : 'Melee'}${kn ? `, ${w.d[0]} to ${w.d[1]}` : ''}${gun ? ` · ${S.inv.ammo || 0} bullets` : ''}</span></div></div>
-<div class="gear"><div><b>${esc(modName(S.armor))}</b><span>${kn ? `Stops ${ar.dr + modSum(S.armor, 'dr')} a hit` : ar.dr >= 7 ? 'Heavy' : ar.dr >= 3 ? 'Decent' : ar.dr ? 'Thin' : 'Nothing at all'}</span></div></div>
-<p class="sh">Stats</p>${stats}
-<p class="sh">Skills</p>${skills}
+<div class="gear"><canvas id="sh-arm"></canvas><div><b>${esc(modName(S.armor))}</b><span>${kn ? `Stops ${ar.dr + modSum(S.armor, 'dr')} a hit` : ar.dr >= 7 ? 'Heavy' : ar.dr >= 3 ? 'Decent' : ar.dr ? 'Thin' : 'Nothing at all'}</span></div></div>
 <p class="sh">Perks</p><div class="perks">${perks}</div>
-<p class="sh">Carrying</p><div class="inv">${
-    inv
-      .map(
-        k =>
-          `<span class="it" title="${esc(ITEMS[k] || k)}"><canvas data-it="${k}"></canvas>${S.inv[k] > 1 ? `<i>${S.inv[k]}</i>` : ''}</span>`,
-      )
-      .join('') || '<p class="none">Regret.</p>'
-  }</div>
+<p class="sh">Carrying</p><p class="invt">${inv.map(k => esc(ITEMS[k] || k) + (S.inv[k] > 1 ? ' x' + S.inv[k] : '')).join(', ') || 'Regret.'}</p>
 ${S.titles.length ? `<p class="sh">Known as</p><p class="ttl">${S.titles.map(esc).join(' · ')}</p>` : ''}
 </details>`;
   try {
@@ -212,7 +220,7 @@ ${S.titles.length ? `<p class="sh">Known as</p><p class="ttl">${S.titles.map(esc
   try {
     dollDraw($('sh-doll'), 4);
     pixDraw($('sh-wep'), WPIX[S.weapon] || WPIX.fists, 4);
-    el.querySelectorAll('canvas[data-it]').forEach(cv => pixDraw(cv, IPIX[cv.dataset.it] || PARTPIX, 4));
+    pixDraw($('sh-arm'), armourRows(S.armor), 4);
   } catch (e) {}
 }
 const _showSheet = show;
