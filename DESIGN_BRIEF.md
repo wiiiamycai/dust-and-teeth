@@ -162,6 +162,8 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 - The live build is at https://beautiful-valkyrie-9f63d9.netlify.app. Netlify deploys it from `main`, so a push to `main` updates it.
 - For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`). The browser caches the scripts: force fresh copies before checking a change.
 
+- `npm run audit` (`tools/audit.js`) is the depth audit, not a test: it writes `tools/AUDIT.md`, listing facts a check needs that nothing teaches, flags set but never read, secrets with no one to tell, events nobody reacts to, plots with under three ways to change, and a depth score per person, thinnest first. Run it to find where to add depth next.
+
 `node tests/all.js` must pass after every change.
 
 ## 14. Working with Will

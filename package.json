@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Text RPG in the style of Fallout 2",
   "scripts": {
-    "format": "node node_modules/prettier/bin/prettier.cjs --write css engine data scenes main.js"
+    "format": "node node_modules/prettier/bin/prettier.cjs --write css engine data scenes main.js",
+    "audit": "node tools/audit.js"
   },
   "type": "commonjs",
   "devDependencies": {
