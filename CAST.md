@@ -144,7 +144,7 @@ Told by: Krug, Old Teo. Worth 80 teeth to keep quiet.
 
 ### ⭐ Sheriff Crane
 
-**Secret:** Years ago, Crane took Krug's money to look the other way. Once. She has been trying to shoot her way back from it ever since.
+**Secret:** Crane was married to Krug once, before the badge. When she left him he paid her to look the other way, and she took it. She has been trying to shoot her way back from it ever since.
 
 Told by: Krug, Moe. Worth 30 teeth to keep quiet.
 
