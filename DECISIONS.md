@@ -186,3 +186,17 @@ Will picked option 2 (turn-based 2D, Fallout 2 style) and asked for all 8 places
 93. **Combat is still the fight screen, not a tactical grid.** Grid combat means rebuilding range, movement and enemy behaviour, and rebalancing everything. I'd do it as its own step once you've walked the towns. It's your call.
 94. **Objects can come and go:** Junior's Greens appears only once it exists, and the cabbage patch only once you could know about it. The silo gate opens into the inside once you're in.
 95. **The art is emoji on an amber grid,** in the same style as the rest of the game. Real tiles or sprites can replace them later without touching the logic.
+
+## The isometric look, part 1 (v3.7)
+
+Will approved `ART_STYLE.md` as written, with the day number driving the light (option 1). Part 2 (pixel sprites) and part 3 (frame and portraits) come later, after he plays this.
+
+96. **The look is set by `ART_STYLE.md`:** sun-bleached and desaturated, with amber only for things you can use and green for you. Everything is original and drawn in code. Nothing comes from Fallout: no Pip-Boy, no bottom panel, no logo.
+97. **The towns are drawn isometrically on a canvas** (`scenes/iso.js`): 2:1 diamond tiles scaled to fit, buildings as 28 px blocks, the outer wall as a low 8 px kerb, fences as posts and rails. Light comes from the upper left, so buildings cast a short shadow down and to the right. People, objects and you are still emoji, depth sorted. Objects set into a wall (doors, shop signs) are drawn as part of the building, with a doorway and the sign on the roof.
+98. **It's looks only.** Walking, paths, claiming options and every rule are the same code as the flat map. Clicking the canvas picks the front-most thing under the mouse (people first, even behind a wall) and walks there. The arrow keys and WASD walk along the grid as before, so "up" goes up and to the right on screen.
+99. **Three views, cycled by one option:** isometric, flat map, list. Isometric is the default in the browser. If the browser has no canvas, the map option opens the flat map, as before.
+100. **Fog of war:** you see 7 tiles round you (5 at night), and walls block sight. A wall shows when you can see the ground beside it. Tiles you've seen stay greyed, and people aren't drawn there, but the list under the map still names everyone. What you've seen is saved per place in `S.seen`, and only the isometric view adds to it.
+101. **Day and night follow the day number, in a five-step cycle:** dawn, noon, afternoon, dusk, night (day 1 is noon). The game has no hours, so this is looks only. At dusk and night there's a soft warm light round you.
+102. **A wall in front of you, or of anyone in sight, turns see-through,** so nobody is hidden behind a building.
+103. **Atmosphere:** light dust drifts across the map with the odd gust, and the CRT is stronger (heavier scanlines, a dark edge, an amber glow on text, a faint flicker). The dust and flicker switch off if the browser asks for reduced motion.
+104. **Tests:** `tests/walk.js` now also runs the isometric view with a fake canvas. It checks every place draws, every tile centre maps back to its tile, a click never lands on something behind, people and exits in sight can be clicked, the views cycle, night is night, and the fog survives a reload. The other tests have no canvas, so they play exactly as before and the golden fingerprint didn't change.

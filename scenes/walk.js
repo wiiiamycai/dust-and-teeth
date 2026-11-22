@@ -5,11 +5,16 @@
 // Nothing about the game itself changes: talking, checks, plots and fights are the same screens as before.
 // The places' options are still all there: the ones an object claims show up when you stand next to it,
 // the rest are always listed under the map. One option switches between this and the list view.
-const is2D = () => (S && S.view ? S.view === '2d' : typeof window !== 'undefined' && !!window.innerWidth);
+// Three views, cycled by one option: isometric (scenes/iso.js), the flat emoji map, and the list.
+// With no canvas, the isometric view isn't offered and the map option opens the flat map.
+const is2D = () =>
+  S && S.view ? S.view === '2d' || S.view === 'iso' : typeof window !== 'undefined' && !!window.innerWidth;
 const viewOpt = () =>
-  is2D()
-    ? ['📜 List view', () => ((S.view = 'text'), goHere())]
-    : ['🗺️ Walk around (map view)', () => ((S.view = '2d'), goHere())];
+  isIso()
+    ? ['🔲 Flat map view', () => ((S.view = '2d'), goHere())]
+    : is2D()
+      ? ['📜 List view', () => ((S.view = 'text'), goHere())]
+      : ['🗺️ Walk around (map view)', () => ((S.view = canIso() ? 'iso' : '2d'), goHere())];
 
 // ---- parsing ----
 const MAPC = {};
@@ -102,6 +107,10 @@ function townShow(loc, v) {
     if (n) Object.assign(S.pos, n);
   }
   show({ ...v, cards: [], view: townHTML(), opts: townOpts() });
+  if (isIso()) {
+    isoMount();
+    save();
+  }
 }
 const neighbours4 = p => [
   { x: p.x + 1, y: p.y },
@@ -133,6 +142,7 @@ function townOpts() {
   return [...nearby, ...rest, viewOpt()];
 }
 function townHTML() {
+  if (isIso()) return isoHTML();
   const { T, people } = TOWN,
     claimed = claim(TOWN.v.opts).by;
   let h = `<div class="town" style="grid-template-columns:repeat(${T.w},1fr);max-width:${T.w * 30}px">`;
@@ -153,22 +163,25 @@ function townHTML() {
       }
       h += `<i class="${cls}" data-x="${x}" data-y="${y}"${tip ? ` title="${esc(tip)}"` : ''}>${g}</i>`;
     }
-  h += '</div>';
-  // Who's here, and what's next to you. Click a name to walk to them.
+  return h + '</div>' + townLegend('');
+}
+// Who's here, and what's next to you. Click a name to walk to them.
+function townLegend(lead) {
+  const { T, people } = TOWN;
   const who = Object.entries(people).map(
     ([k, id]) => `<span data-x="${k.split(',')[0]}" data-y="${k.split(',')[1]}">${NPC[id].i} ${esc(NPC[id].n)}</span>`,
   );
   const by = T.objs.filter(o => objHere(o) && near(S.pos, o) && !(o.open && o.open())).map(o => esc(o.n));
   return (
-    h +
     `<div class="legend">${who.length ? who.join(' ') : 'Nobody here.'}</div>` +
-    `<div class="legend dim">${by.length ? 'Next to you: ' + by.join(', ') + '.' : 'Click a tile or use the arrow keys to walk. Walk into people to talk, and into things to use them.'}</div>`
+    `<div class="legend dim">${lead}${by.length ? 'Next to you: ' + by.join(', ') + '.' : 'Click a tile or use the arrow keys to walk. Walk into people to talk, and into things to use them.'}</div>`
   );
 }
 // Redraw just the map and the options, so messages in the log stay put while you walk.
 function townRedraw() {
   const vw = $('view');
   vw.innerHTML = townHTML();
+  if (isIso()) isoMount();
   drawOpts(townOpts());
   save();
 }
@@ -299,6 +312,7 @@ if (typeof document !== 'undefined' && document.addEventListener)
   const vw = typeof document !== 'undefined' && document.getElementById('view');
   if (vw && vw.addEventListener)
     vw.addEventListener('click', e => {
+      if (e.target && e.target.id === 'isoc' && ISO) return void isoClick(...isoPoint(e));
       const c = e.target && e.target.closest && e.target.closest('[data-x]');
       if (c) walkTo(+c.dataset.x, +c.dataset.y);
     });

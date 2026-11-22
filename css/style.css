@@ -18,12 +18,49 @@ body {
   font-family: 'Courier New', ui-monospace, Menlo, monospace;
   font-size: 16px;
 }
-body::after {
+body {
+  text-shadow:
+    0 0 2px rgba(255, 176, 0, 0.35),
+    0 0 9px rgba(255, 140, 0, 0.12);
+}
+/* CRT: scanlines with a faint flicker, and a dark edge like an old tube. See ART_STYLE.md. */
+body::after,
+body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0 1px, transparent 1px 3px);
+  z-index: 20;
+}
+body::after {
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.26) 0 1px, transparent 1px 3px);
+  animation: flicker 6s infinite steps(1);
+}
+body::before {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.5) 100%);
+}
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  41% {
+    opacity: 0.9;
+  }
+  42% {
+    opacity: 1;
+  }
+  77% {
+    opacity: 0.94;
+  }
+  78% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+  }
 }
 #wrap {
   max-width: 860px;
@@ -349,4 +386,19 @@ body::after {
 }
 #view .legend.dim {
   color: var(--dim);
+}
+
+/* ---- isometric view (scenes/iso.js) ---- */
+#view canvas.iso {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.1));
+}
+#view:has(canvas.iso) {
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(255, 150, 0, 0.08);
+  background: #050302;
 }
