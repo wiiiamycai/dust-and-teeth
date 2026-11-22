@@ -155,6 +155,10 @@ function migrate(s) {
   });
   if (!s.f.gutLoc && !s.f.gutDead) s.f.gutLoc = 'skybus';
   s.skx = s.skx || {};
+  s.mods = s.mods || {}; // Sprocket's mods, added in v4.3
+  delete s.view; // the walking and isometric views are gone (v4.3)
+  delete s.pos;
+  delete s.seen;
   IDS.forEach(id => {
     if (s.n[id]) s.n[id].ch = s.n[id].ch || 0;
   });

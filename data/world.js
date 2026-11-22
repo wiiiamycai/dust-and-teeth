@@ -9,8 +9,14 @@ const LOC = {
   skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 84, y: 76 },
   silo: { n: 'Silo 9', i: '☢️', lvl: 9, x: 91, y: 14, hidden: 1 },
   snakeeyes: { n: 'Snake Eyes', i: '🎲', lvl: 4, x: 48, y: 10 },
-  well: { n: 'The Well', i: '🕳️', lvl: 1, sub: 1 },
+  mall: { n: 'The Drowned Mall', i: '🏬', lvl: 4, x: 61, y: 90 },
+  // hidden: the flag that puts it on your map (1 means the old knowSilo flag). sub: a place inside another (up).
+  green: { n: 'The Green', i: '🌳', lvl: 6, x: 96, y: 46, hidden: 'knowGreen' },
+  well: { n: 'The Well', i: '🕳️', lvl: 1, sub: 1, up: 'scrapwell' },
+  vats: { n: 'The vat room', i: '🧪', lvl: 2, sub: 1, up: 'green' },
 };
+// Is this place on your map yet?
+const onMap = k => !LOC[k].hidden || !!(S && S.f[LOC[k].hidden === 1 ? 'knowSilo' : LOC[k].hidden]);
 const ROADS = [
   ['scrapwell', 'farm'],
   ['scrapwell', 'diner'],
@@ -23,6 +29,9 @@ const ROADS = [
   ['farm', 'chainfield'],
   ['farm', 'snakeeyes'],
   ['snakeeyes', 'chainfield'],
+  ['diner', 'mall'],
+  ['mall', 'skybus'],
+  ['skybus', 'green'],
 ];
 const REL = {
   family: [
@@ -57,8 +66,8 @@ const REL = {
 };
 const neighbours = loc => {
   const out = ROADS.filter(r => r.includes(loc)).map(r => (r[0] === loc ? r[1] : r[0]));
-  if (loc === 'scrapwell') out.push('well');
-  if (loc === 'well') out.push('scrapwell');
+  for (const k in LOC) if (LOC[k].up === loc) out.push(k);
+  if (LOC[loc] && LOC[loc].up) out.push(LOC[loc].up);
   return out;
 };
 function relOf(a, b) {

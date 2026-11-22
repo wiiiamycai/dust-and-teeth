@@ -127,7 +127,7 @@ function artLogo(g, w, y) {
 function artCanvas(h) {
   const vw = $('view');
   vw.hidden = false;
-  vw.innerHTML = '<canvas id="artc" class="iso art"></canvas>';
+  vw.innerHTML = '<canvas id="artc" class="art"></canvas>';
   const cv = $('artc'),
     w = Math.max(240, ((vw && vw.clientWidth) || 832) - 10),
     dpr = Math.min(2, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
@@ -149,7 +149,7 @@ function artScan(g, w, h) {
 }
 // Called by show() for every screen: draws art only for the title and the ending.
 function artMount(v) {
-  if (!v || typeof canIso !== 'function' || !canIso()) return;
+  if (!v || !canDraw()) return;
   if (v.title === 'DUST & TEETH' && !v.view && !v.map) {
     const { g, w, h } = artCanvas(240);
     artVista(g, w, h, { seed: 31 });

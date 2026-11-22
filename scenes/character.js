@@ -86,6 +86,7 @@ SC.char = () => {
     sub: `Day ${S.day} · ${S.kills} kills`,
     text: `${stl}
 ${skl}
+Gear: ${modName(S.weapon)}, ${modName(S.armor)}
 Perks: ${S.perks.length ? S.perks.map(p => `${PERKS[p].n} (${PERKS[p].d})`).join(', ') : 'none yet. You earn them by what you do.'}
 Carrying: ${items.join(', ') || 'regret'}
 Reputation: ${karmaTitle()}${S.titles.length ? ' · ' + S.titles.join(' · ') : ''}${S.addicted ? ' · ADDICTED' : ''}${S.f.rash ? ' · RASH' : ''}`,

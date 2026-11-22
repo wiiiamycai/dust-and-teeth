@@ -580,6 +580,218 @@ const BONDS = [
     '"I dug for the King, before Krug. He\'s digging up the end of the world. Didn\'t care for the pension plan."',
     '"Teo! Lazy digger. Kept asking what we were digging FOR."',
   ],
+  // ---- the Drowned Mall ----
+  [
+    'margie',
+    'lou',
+    'ally',
+    '"Mama Lou is our preferred meat supplier. The handbook says never ask a supplier where. So I never ask."',
+    '"Margie buys my leftovers for her food court, sweetie. She calls it product. I call it Tuesday."',
+  ],
+  [
+    'margie',
+    'crumb',
+    'rival',
+    '"Brother Crumb worships a toaster. I worship Customer Service. Only one of us has a handbook."',
+    '"Margie keeps the rules of a shop that died two hundred years ago. My toaster still works. Sometimes."',
+  ],
+  [
+    'margie',
+    'mayor',
+    'rival',
+    '"Fenwick calls himself Mayor. I am a Store Manager. There is a chain of command, and he is not on it."',
+    '"A woman in a paper hat runs a flooded shop and calls herself a queen. Absurd. I have a top hat."',
+  ],
+  [
+    'margie',
+    'sprocket',
+    'ally',
+    '"Sprocket is our Repairs Associate. Twelve years without a sick day. I don\'t allow them."',
+    '"Margie rents me the bench for one gun a month. She doesn\'t know which end the bullet comes out."',
+  ],
+  [
+    'margie',
+    'gums',
+    'enemy',
+    '"Gums trades on my floor without a till. That is theft from the store. The store is me."',
+    '"Margie wants a cut of every deal under her roof. Her roof leaks. I pay her in drips."',
+  ],
+  [
+    'sprocket',
+    'king',
+    'ally',
+    '"The King sends me his broken repeaters. Pays in teeth. I don\'t ask whose."',
+    '"Sprocket built my drill. Tell her it squeaks. I like it when it squeaks."',
+  ],
+  [
+    'sprocket',
+    'jeb',
+    'ally',
+    '"Half the guns on Jeb\'s wagons came off my bench. The other half I wouldn\'t put my name on."',
+    '"Sprocket at the Mall makes my guns. Good guns. She charges like she knows it."',
+  ],
+  [
+    'sprocket',
+    'bert',
+    'friend',
+    '"The farm boy walks two days to tell me about carburettors. I let him. He\'s right, mostly."',
+    '"Sprocket knows engines. She let me hold a real spark plug. I didn\'t sleep."',
+  ],
+  [
+    'sprocket',
+    'eel',
+    'friend',
+    '"Eel brings up whatever the water spits out. Half of it is junk. The other half is my living."',
+    '"Sprocket pays fair for what I find. Then she charges you double. Also fair."',
+  ],
+  [
+    'eel',
+    'pete',
+    'friend',
+    "\"Pete came back from Lou's. Sal didn't. Pete brings me fish and won't look at me.\"",
+    "\"Eel. Sal's wife. I bring her fish. I can't look at her. Don't ask me why.\"",
+  ],
+  [
+    'eel',
+    'lou',
+    'rival',
+    "\"Lou sends me a bowl every month. 'From Sal's friends,' she says. I never eat it.\"",
+    '"The diver girl. Sal\'s widow. Lovely strong bones, that family. Lovely."',
+  ],
+  [
+    'eel',
+    'jeb',
+    'debt',
+    '"Jeb paid me Sal\'s wages for a year after. Then he stopped. I don\'t blame him. I do."',
+    '"Sal\'s widow. I paid her a year. Should have been longer. Should have been never."',
+  ],
+  [
+    'vane',
+    'doc',
+    'enemy',
+    '"Ratchet taught me everything. Then he called me cruel. Me. HIM."',
+    '"Vane was my apprentice. He liked the screaming. Even I don\'t like the screaming."',
+  ],
+  [
+    'vane',
+    'moe',
+    'ally',
+    '"Moe sells my grey under the bar. Ten percent. Everyone in this valley is ten percent."',
+    '"Vane\'s stuff? Under the counter. It sells. People stop blinking, but it sells."',
+  ],
+  [
+    'vane',
+    'margie',
+    'ally',
+    '"Margie rents me the old pharmacy. She thinks I\'m a Pharmacy Associate. I am, in a way."',
+    '"Dr. Vane is our Pharmacy Associate. Very polite. Customers who complain stop complaining."',
+  ],
+  [
+    'gums',
+    'bess',
+    'ally',
+    '"Bess brings me what her girls take off Jeb. Polite girl. Counts better than me."',
+    '"Gums buys what we take. Fair price, bad breath. No teeth, see."',
+  ],
+  [
+    'gums',
+    'king',
+    'ally',
+    '"The King pulled every tooth I had, then gave me a job selling his spares. Funny old world."',
+    '"Gums! My best Molar. Nothing left to bite with. Very loyal, a mouth like that."',
+  ],
+  [
+    'gums',
+    'jeb',
+    'rival',
+    '"Jeb buys from me. Good customer. Better than he knows."',
+    '"Gums at the Mall always has gin. My gin. Same brand, anyway."',
+  ],
+  [
+    'gums',
+    'hector',
+    'ally',
+    '"Hector gets a slice of whatever comes off the farm road. I keep his slice warm."',
+    '"Gums? I don\'t know any Gums. Who told you about Gums?"',
+  ],
+  // ---- the Green ----
+  [
+    'gardener',
+    'doc',
+    'family',
+    '"I had a son once. He took a tomato that wasn\'t his. Rules are the wall. I put him outside it."',
+    '"The Gardener? My father. He put me out at sixteen for one tomato. I\'ve stolen everything since, to make it worth it."',
+  ],
+  [
+    'gardener',
+    'fern',
+    'family',
+    '"Fern is my daughter. She has her mother\'s heart. Her mother is in the outer beds."',
+    '"Father loves everything that grows. He just counts it first."',
+  ],
+  [
+    'gardener',
+    'warden',
+    'ally',
+    '"The Warden keeps the wall. I keep the rest. Neither of us sleeps."',
+    '"The Gardener says who. I say how. Forty is the number."',
+  ],
+  [
+    'gardener',
+    'moss',
+    'ally',
+    '"Moss is the Green\'s heart. Hearts stay inside the body."',
+    '"The Gardener brings me a tomato on Sundays. He never brings the key."',
+  ],
+  [
+    'warden',
+    'gums',
+    'ally',
+    '"Gums? Never heard of him. Tell him I said that."',
+    '"I knew a girl who walked east with a repeater, years back. Best shot I ever saw. Never wrote."',
+  ],
+  [
+    'warden',
+    'king',
+    'enemy',
+    '"Anything that comes up the pass wearing teeth gets shot first and asked second."',
+    '"Somebody up the pass shoots my scouts. Very good shot. Familiar, almost."',
+  ],
+  [
+    'warden',
+    'jeb',
+    'rival',
+    '"The lizard man sits in the cave under the pass for a month, then goes home. Smartest man in the valley."',
+    '"Somebody watches that cave. I can feel it on my neck."',
+  ],
+  [
+    'moss',
+    'nigel',
+    'friend',
+    '"Nigel? Little Nigel from the dentist\'s? He still glows? Good. Somebody should, outside."',
+    '"Moss glow too. Moss go east, long ago. Moss say he be useful. Nigel miss Moss."',
+  ],
+  [
+    'moss',
+    'fern',
+    'friend',
+    '"Fern reads to me at night. Books about the sea. I\'ve never seen the sea. Neither has she."',
+    '"Moss is the kindest person in the Green, and they keep him in the basement."',
+  ],
+  [
+    'fern',
+    'junior',
+    'friend',
+    '"Somebody in the valley found my seeds. Cabbages, I think. I hope he\'s happy."',
+    '"...Seed lady." Junior taps a paper packet in his apron. It says GROW.',
+  ],
+  [
+    'fern',
+    'warden',
+    'enemy',
+    '"The Warden would shoot her own shadow if it came in without asking."',
+    '"Fern wants the gate open. Fern has never seen what comes through an open gate."',
+  ],
 ];
 // One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
 // pay: what the secret is worth to its owner if you lean on them.
@@ -740,6 +952,62 @@ const SECRETS = {
     short: '',
     t: "The Dentist King is terrified of dentists. Nobody has ever been allowed near his mouth. Every tooth in his crown is someone else's.",
   },
+  // ---- the Drowned Mall ----
+  margie: {
+    tell: ['gums', 'lou'],
+    pay: 50,
+    short: 'about the last page',
+    t: "The staff handbook's last page says IN THE EVENT OF NUCLEAR WAR, ALL ASSOCIATES ARE RELEASED FROM THEIR DUTIES. Margie tore it out the day she found it. Without the handbook she's a woman in a paper hat.",
+  },
+  sprocket: {
+    tell: ['king', 'rook'],
+    pay: 40,
+    short: "about the King's drill",
+    t: "Sprocket built the Dentist King's drill, and she fixes the Molars' repeaters. Every gun they point at the valley, she oiled. She also knows how the drill jams.",
+  },
+  eel: {
+    tell: ['sprocket', 'jeb'],
+    pay: 15,
+    short: 'about the vault',
+    t: "Eel found the old bank vault on the drowned floor, door open. She won't go in. Sal always said they'd retire on whatever was down there.",
+  },
+  vane: {
+    tell: ['doc', 'opal'],
+    pay: 60,
+    short: 'that Doc threw you out',
+    t: "Dr. Vane was Doc Ratchet's apprentice. Doc threw him out for being too cruel to the patients. Vane has never forgiven him for being right.",
+  },
+  gums: {
+    tell: ['bess', 'hector'],
+    pay: 40,
+    short: "about Jeb's gin",
+    t: "Gums buys what Bess's raiders take off Jeb's caravan, then sells it back to Jeb at a mark-up. Jeb has bought his own gin back eleven times.",
+  },
+  // ---- the Green: nobody there has teeth to pay with, so these are used, not sold ----
+  gardener: {
+    tell: ['moss', 'doc'],
+    pay: 0,
+    short: '',
+    t: 'The Green stays at forty because the Gardener walks the old and the sick to the outer beds. The outer beds are compost. The tomatoes are very good.',
+  },
+  warden: {
+    tell: ['gums', 'king'],
+    pay: 0,
+    short: '',
+    t: "The Warden was a Molar: Corporal Grit, the King's best shot. She walked east with a repeater, and the Gardener let her in because she could hit a man at half a mile. She still has the tooth tattoo.",
+  },
+  moss: {
+    tell: ['nigel', 'gardener'],
+    pay: 0,
+    short: '',
+    t: 'Moss is chained to the algae vats under the Green. The light, the clean water, the heat: all of it comes from a mutant they keep in the basement and never let upstairs.',
+  },
+  fern: {
+    tell: ['junior', 'warden'],
+    pay: 0,
+    short: '',
+    t: "Fern has been leaving seed packets in the pass for strangers to find. Three reached the valley. One is growing behind Mama Lou's diner.",
+  },
 };
 // Bonds feed the gossip web: news travels along them and hits harder.
 (() => {
@@ -756,6 +1024,9 @@ const SECRETS = {
   FAMW.opal = Object.assign(FAMW.opal || {}, { dice: 'sister' });
   FAMW.dice = { opal: 'sister' };
   FAMW.nigel = Object.assign(FAMW.nigel || {}, { elder: 'stepmother' });
+  FAMW.gardener = { doc: 'son', fern: 'daughter' };
+  FAMW.doc = Object.assign(FAMW.doc || {}, { gardener: 'father', fern: 'sister' });
+  FAMW.fern = { gardener: 'father', doc: 'brother' };
 })();
 const BOND = {};
 for (const [a, b, kind, ab, ba] of BONDS) {

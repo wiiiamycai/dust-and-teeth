@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v4.2 (23 Nov 2026)';
+const VERSION = 'v4.3 (23 Nov 2026)';
 let S = null,
   pend = [],
   cur = [];
@@ -21,6 +21,15 @@ const shuffle = a => {
   }
   return a;
 };
+// Can this browser draw pictures? Portraits, the painted map and the title art need it. The headless tests can't.
+function canDraw() {
+  try {
+    const c = typeof document !== 'undefined' && document.createElement && document.createElement('canvas');
+    return !!(c && c.getContext && c.getContext('2d'));
+  } catch (e) {
+    return false;
+  }
+}
 function save() {
   if (!S) return;
   try {
@@ -58,7 +67,7 @@ function show(v) {
       : '';
   let pid = null;
   try {
-    pid = typeof canIso === 'function' && canIso() && typeof sprPortraitId === 'function' ? sprPortraitId(v) : null;
+    pid = canDraw() && typeof sprPortraitId === 'function' ? sprPortraitId(v) : null;
     $('head').innerHTML = head(pid);
     if (pid) sprPortrait($('portc'), pid);
   } catch (e) {
@@ -91,16 +100,11 @@ function show(v) {
     mp.hidden = true;
     mp.innerHTML = '';
   }
-  const vw = $('view');
-  if (v.view) {
-    vw.hidden = false;
-    vw.innerHTML = v.view;
-  } else {
-    vw.hidden = true;
-    vw.innerHTML = '';
-  }
+  const vw = $('view'); // only the title and ending art use this now
+  vw.hidden = true;
+  vw.innerHTML = '';
   try {
-    if (typeof arenaMount === 'function') arenaMount(); // the fight arena (scenes/arena.js), looks only
+    if (typeof fightSfx === 'function') fightSfx(); // fight sounds (scenes/sound.js), only if switched on
     if (typeof artMount === 'function') artMount(v); // title and ending art (scenes/art.js), looks only
   } catch (e) {}
   drawOpts(v.opts);

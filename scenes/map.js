@@ -1,7 +1,7 @@
 'use strict';
 // ================= MAP & TRAVEL =================
 function drawMap(mp) {
-  const vis = k => !LOC[k].sub && (!LOC[k].hidden || S.f.knowSilo);
+  const vis = k => !LOC[k].sub && onMap(k);
   let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">';
   ROADS.forEach(([a, b]) => {
     if (vis(a) && vis(b))
@@ -17,7 +17,7 @@ function drawMap(mp) {
       b.className = 'node' + (S.here === k ? ' here' : '');
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
-      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${c ? 'crater' : placeWord(L.lvl)}${!S.f.gutDead && S.f.gutLoc === k ? ' · tremors' : ''}${S.here === k ? ' · you' : ''}</span>`;
+      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${c ? 'crater' : k === 'green' && S.day < GREEN_DAY ? 'dust storms' : placeWord(L.lvl)}${!S.f.gutDead && S.f.gutLoc === k ? ' · tremors' : ''}${S.here === k ? ' · you' : ''}</span>`;
       b.onclick = () => travel(k);
       mp.appendChild(b);
     });

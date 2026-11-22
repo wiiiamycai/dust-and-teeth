@@ -61,10 +61,20 @@ function crew(id) {
   }
   if (id === 'lou' && alive('junior') && S.n.junior.loc === 'diner') e.push(foe('junior'));
   if (id === 'junior' && alive('lou') && S.n.lou.loc === 'diner') e.push(foe('lou'));
+  if (id === 'margie') e.push(spawn('associate'), spawn('associate'));
+  if (id === 'warden') e.push(spawn('watchman'));
   return e;
 }
-const pdr = () => A[S.armor].dr + (perk('skin') ? 3 : 0);
-const ptw = () => S.stats.twitch + (A[S.armor].tw || 0);
+// ---- Sprocket's mods (MODS in data/items.js), kept per weapon and per armour in S.mods ----
+const modsOf = k => (S && S.mods && S.mods[k]) || [];
+const modSum = (k, f) => modsOf(k).reduce((a, m) => a + (MODS[m][f] || 0), 0);
+const modName = k => {
+  const base = W[k] ? W[k].n : A[k].n,
+    m = modsOf(k);
+  return m.length ? `${base} (${m.map(x => MODS[x].n).join(', ')})` : base;
+};
+const pdr = () => A[S.armor].dr + modSum(S.armor, 'dr') + (perk('skin') ? 3 : 0);
+const ptw = () => S.stats.twitch + (modSum(S.armor, 'untw') ? 0 : A[S.armor].tw || 0);
 const fleeP = () => clamp(ptw() * 7 + S.stats.luck * 2, 5, 90);
 // ---- melee vs guns ----
 // Guns: strong at range, cost bullets, and LOUD. Gunfire is heard next door and gossip about it moves faster.
@@ -81,6 +91,7 @@ function hit(t, mod) {
   return clamp(
     S.skills[w.t] +
       w.a +
+      modSum(S.weapon, 'hit') +
       (S.buzzOn ? 15 : 0) -
       (S.addicted && !S.buzzOn ? 10 : 0) -
       t.lvl * 2 +
@@ -277,7 +288,7 @@ function atk(mod, part) {
   practice(w.t, landed ? 1 : 0.4);
   if (landed) {
     if (part) count('aimHit');
-    let d = R(w.d[0], w.d[1]) + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
+    let d = R(w.d[0], w.d[1]) + modSum(S.weapon, 'dmg') + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
     if (w.t === 'melee' && perk('hands')) d = Math.round(d * 1.3);
     let crit = false;
     if (roll(S.stats.luck * 2 + (perk('lucky') ? 10 : 0) + (part === 'eyes' ? 30 : part === 'groin' ? 12 : 0))) {

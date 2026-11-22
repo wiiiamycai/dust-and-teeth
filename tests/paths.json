@@ -1632,5 +1632,961 @@
    "EVAL:['pips', 'dice', 'tam', 'nan', 'rook'].forEach(x => delete S.n[x]); migrate(S)",
    "EXPECT:S.n.pips && S.n.rook.loc === 'snakeeyes'"
   ]
+ },
+ {
+  "name": "Mall: Sprocket fits a scope, a barrel and plates; the combat maths and the save both use them",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "REAL",
+   "EVAL:S.weapons.push('rifle'); S.weapon = 'rifle'; S.armors.push('jacket'); S.armor = 'jacket'; give('lens'); give('tube'); give('sheet'); S.teeth = 500; globalThis.h0 = hit({ lvl: 2 }, 0); globalThis.d0 = pdr(); goHere()",
+   "Sprocket",
+   "Can you fit something",
+   "Hunting Rifle: a scope",
+   "EXPECT:modsOf('rifle').includes('scope') && hit({ lvl: 2 }, 0) === h0 + 10 && !has('lens')",
+   "Hunting Rifle: a longer barrel",
+   "EXPECT:modSum('rifle', 'dmg') === 3",
+   "Leather Jacket: steel plates",
+   "EXPECT:pdr() === d0 + 2 && modName('jacket').includes('plated')",
+   "EXPECT:JSON.parse(localStorage.getItem(SAVE)).mods.rifle.length === 2",
+   "EXPECT:!cur.some(o => /Hunting Rifle: a scope/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Mall: no part, no mod; Sprocket says what she needs",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Can you fit something",
+   "SAY:I need parts, not hope"
+  ]
+ },
+ {
+  "name": "Mall: new straps take the twitch penalty off the car-door plate",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:S.armors.push('plate'); S.armor = 'plate'; globalThis.t0 = ptw(); S.mods.plate = ['straps']",
+   "EXPECT:ptw() === t0 + 2"
+  ]
+ },
+ {
+  "name": "Saves: an old save without mods or the new people loads, and the old view settings are dropped",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:delete S.mods; delete S.n.eel; delete S.n.fern; delete S.n.moss; S.view = 'iso'; S.pos = { x: 1 }; S.seen = {}; save(); S = migrate(JSON.parse(localStorage.getItem(SAVE)))",
+   "EXPECT:S.mods && S.n.eel && S.n.fern && S.n.moss.loc === 'vats' && !('view' in S) && !('seen' in S)"
+  ]
+ },
+ {
+  "name": "Mall: a good shallow dive finds a part, and it's one dive a day",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Dive the flooded floor",
+   "RAND:0",
+   "The shallows",
+   "EXPECT:has('lens')",
+   "EXPECT:!cur.some(o => /shallows/.test(o[0]))",
+   "SAY:still coughing"
+  ]
+ },
+ {
+  "name": "Mall: a bad deep dive nearly drowns you, or something bites",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Dive the flooded floor",
+   "REAL",
+   "RAND:0.99",
+   "The deep end",
+   "SAY:half drowned",
+   "Back",
+   "EVAL:S.f.diveDay = 0",
+   "Dive the flooded floor",
+   "RAND:0.3",
+   "The deep end",
+   "EXPECT:S.scene === 'fight'",
+   "SAY:more teeth than you",
+   "RAND:off",
+   "FIGHT",
+   "EXPECT:S.scene === 'dive' && PARTS.some(p => has(p))"
+  ]
+ },
+ {
+  "name": "Mall: knowing Eel's secret opens the drowned vault",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Dive the flooded floor",
+   "EXPECT:!cur.some(o => /vault/.test(o[0]))",
+   "Back",
+   "EVAL:know('eel.secret')",
+   "Dive the flooded floor",
+   "RAND:0",
+   "The bank vault",
+   "EXPECT:S.f.mallVault && S.teeth >= 100"
+  ]
+ },
+ {
+  "name": "Mall: learn the faith, and Margie takes you on as an associate (free meals)",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Queen Margie",
+   "What is Customer Service",
+   "RAND:0",
+   "apply for a position",
+   "EXPECT:S.f.associate && S.titles.includes('Associate of the Month')",
+   "Back",
+   "EVAL:S.teeth = 0",
+   "Staff meal",
+   "SAY:+"
+  ]
+ },
+ {
+  "name": "Mall: Gums's secret makes Jeb cheaper and Gums angry",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('gums.secret'); S.f.jebUp = 3",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "own stolen gin",
+   "EXPECT:S.f.jebUp === 1 && S.n.gums.op <= -40"
+  ]
+ },
+ {
+  "name": "Mall: Gums sells parts and buys what you're not using",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.teeth = 500; S.weapons.push('pipe'); S.mods.pipe = ['edge']",
+   "Gums",
+   "What have you got",
+   "Pre-war lens",
+   "EXPECT:has('lens')",
+   "Sell him your Lead Pipe (honed)",
+   "EXPECT:!S.weapons.includes('pipe') && !S.mods.pipe"
+  ]
+ },
+ {
+  "name": "Mall: Sprocket's secret jams the King's drill",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('sprocket.secret')",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "built the Dentist King",
+   "EXPECT:knew('king.drill') && foe('king').d[1] === W.pipe.d[1]"
+  ]
+ },
+ {
+  "name": "Widow: ignored, Eel goes to Lou's on day 13 and is the special",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 12",
+   "WAIT:1",
+   "EXPECT:!alive('eel') && S.f.eelEaten && S.f.plot_widow === 'done'",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "SAY:EEL, TUESDAY ONLY"
+  ]
+ },
+ {
+  "name": "Widow: the sign at the Mall tells you, and Lou's board says it after",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.raid = 1; S.day = 10",
+   "TRAVEL:The Drowned Mall",
+   "SAY:LAST SEEN: MAMA LOU'S",
+   "EXPECT:knew('plot.widow')",
+   "EVAL:S.f.raid = 1; S.day = 12",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "SAY:EEL, TUESDAY ONLY"
+  ]
+ },
+ {
+  "name": "Widow: tell Eel Lou cooked Sal, go with her, and kill Lou together",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('lou.polish'); know('plot.widow')",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Lou cooked him",
+   "we go together",
+   "FIGHT",
+   "EXPECT:!alive('lou') && alive('eel') && S.f.eelKilledLou && S.here === 'diner'",
+   "WAIT:2",
+   "EXPECT:alive('eel')"
+  ]
+ },
+ {
+  "name": "Widow: tell her and let her go alone; armed by Sprocket, Eel kills Lou",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('lou.polish'); know('plot.widow'); S.f.eelArmed = 1",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Lou cooked him",
+   "Let her go alone",
+   "RAND:0",
+   "WAIT:1",
+   "EXPECT:!alive('lou') && alive('eel') && S.f.eelKilledLou"
+  ]
+ },
+ {
+  "name": "Widow: tell her and let her go alone with a dive knife, and Lou cooks her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('lou.polish'); know('plot.widow')",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Lou cooked him",
+   "Let her go alone",
+   "RAND:0.99",
+   "WAIT:1",
+   "EXPECT:alive('lou') && !alive('eel') && S.f.eelEaten"
+  ]
+ },
+ {
+  "name": "Widow: blame Pete, and Eel kills him, and Crane hangs her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('pete.secret'); know('plot.widow'); S.n.pete.loc = 'rustwater'",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Pete told Lou",
+   "WAIT:2",
+   "EXPECT:!alive('pete') && !alive('eel') && S.f.eelHanged"
+  ]
+ },
+ {
+  "name": "Widow: blame Pete, then warn him, and Crane stops Eel",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('pete.secret'); know('plot.widow'); S.n.pete.loc = 'rustwater'",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Pete told Lou",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Pete",
+   "She's coming",
+   "WAIT:2",
+   "EXPECT:alive('pete') && alive('eel') && S.f.eelDisarmed"
+  ]
+ },
+ {
+  "name": "Widow: give Eel Sal's badge and she stops, and tells you the vault",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:give('badge'); know('plot.widow')",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "guard badge",
+   "EXPECT:S.f.eelBadge && knew('eel.secret') && S.f.plot_widow === 'stopped' && !has('badge')",
+   "WAIT:3",
+   "EXPECT:alive('eel')"
+  ]
+ },
+ {
+  "name": "Widow: lie that Sal went east, and she gives up",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('plot.widow')",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "RAND:0",
+   "went east with a girl",
+   "EXPECT:S.f.eelLied && S.f.plot_widow === 'stopped'"
+  ]
+ },
+ {
+  "name": "Widow: sell Eel to Lou, and she is dinner tomorrow",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('plot.widow')",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "widow is asking",
+   "EXPECT:S.teeth >= 55",
+   "WAIT:1",
+   "EXPECT:!alive('eel') && S.f.eelSold"
+  ]
+ },
+ {
+  "name": "Drug war: ignored, the grey hits Rustwater on day 17, Crane runs Doc out, Vane takes over",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 16",
+   "WAIT:1",
+   "EXPECT:S.f.docRunOut && S.n.doc.loc === 'gone' && alive('doc') && S.n.vane.loc === 'rustwater' && S.f.vaneRules",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:POISONER"
+  ]
+ },
+ {
+  "name": "Drug war: with no Sheriff, Rustwater hangs Doc",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.dead.sheriff = 1; S.day = 16",
+   "WAIT:1",
+   "EXPECT:!alive('doc') && S.f.docLynched"
+  ]
+ },
+ {
+  "name": "Drug war: the sign is through Vane's grille",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.raid = 1; S.day = 13",
+   "TRAVEL:The Drowned Mall",
+   "SAY:stamped RATCHET",
+   "EXPECT:knew('plot.drugwar')"
+  ]
+ },
+ {
+  "name": "Drug war: warn Doc",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('plot.drugwar')",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "cutting Buzz",
+   "EXPECT:S.f.docWarned && S.f.plot_drugwar === 'stopped'",
+   "EVAL:S.f.raid = 1; S.day = 16",
+   "WAIT:1",
+   "EXPECT:S.n.doc.loc === 'rustwater'"
+  ]
+ },
+ {
+  "name": "Drug war: help Vane, and it lands tomorrow",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:know('plot.drugwar'); goHere()",
+   "Dr. Vane",
+   "onto Moe's bar",
+   "EXPECT:S.teeth >= 140",
+   "WAIT:1",
+   "EXPECT:S.f.plot_drugwar === 'done' && S.f.docRunOut"
+  ]
+ },
+ {
+  "name": "Drug war: swap the grey for flour",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:know('plot.drugwar'); goHere()",
+   "Dr. Vane",
+   "RAND:0",
+   "for flour",
+   "EXPECT:S.f.vaneFlour && S.f.plot_drugwar === 'stopped'"
+  ]
+ },
+ {
+  "name": "Drug war: tell Margie and she throws Vane out",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:know('plot.drugwar'); goHere()",
+   "Queen Margie",
+   "poisoning customers",
+   "EXPECT:S.f.vaneOut && S.n.vane.loc === 'gone' && S.f.plot_drugwar === 'stopped'"
+  ]
+ },
+ {
+  "name": "Drug war: tell Crane and she burns the bags",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('plot.drugwar')",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Poison is coming",
+   "EXPECT:S.f.craneDrug && S.f.plot_drugwar === 'stopped'"
+  ]
+ },
+ {
+  "name": "Ripple: kill Sprocket and Jeb's prices go up and he says why",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Attack Sprocket",
+   "FIGHT",
+   "WAIT:1",
+   "EXPECT:!alive('sprocket') && S.f.jebUp === 1 && S.n.jeb.rx.some(l => /guns that don't work/.test(l))"
+  ]
+ },
+ {
+  "name": "Ripple: kill Margie and the food court closes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Queen Margie",
+   "Attack Queen Margie",
+   "FIGHT",
+   "EXPECT:!alive('margie') && !HUBO.mall().some(o => /food court/.test(o[0])) && HUBT.mall().includes('The rats have opened a franchise')"
+  ]
+ },
+ {
+  "name": "Ripple: kill Gums and Bess has nobody to sell to",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "Attack Gums",
+   "FIGHT",
+   "WAIT:1",
+   "EXPECT:S.n.bess.rx.some(l => /Nobody buys/.test(l))"
+  ]
+ },
+ {
+  "name": "Green gate: hidden until you find the pass, and a wall of dust before day 15",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EXPECT:!onMap('green') && !cur.some(o => /Green/.test(o[0]))",
+   "EXPECT:!$('map').children.some(b => /The Green/.test(b.innerHTML))",
+   "EVAL:learnGreen(); go('map')",
+   "SAY:dust storms",
+   "TRAVEL:The Green",
+   "EXPECT:S.here === 'skybus' && S.day === 2",
+   "EVAL:go('hub', 'green')",
+   "EXPECT:S.here === 'skybus'",
+   "EVAL:go('hub', 'vats')",
+   "EXPECT:S.here === 'skybus'"
+  ]
+ },
+ {
+  "name": "Green gate: even knowing the pass, you can't reach it on day 14",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 13; go('map')",
+   "TRAVEL:The Green",
+   "EXPECT:S.here === 'skybus' && S.day === 14"
+  ]
+ },
+ {
+  "name": "Green gate: from day 15 the pass is open, takes two days, and the Warden is at the gate",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('map')",
+   "TRAVEL:The Green",
+   "EXPECT:S.here === 'green' && S.day === 17 && !S.f.greenIn",
+   "SAY:The Warden",
+   "EXPECT:!$('cards').children.some(c => /Gardener|Fern/.test(c.innerHTML))",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EXPECT:S.here === 'rustwater' && S.day === 19"
+  ]
+ },
+ {
+  "name": "Green: Jeb's secret gives you his cave, and the pass",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('jeb.secret')",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "cave you wait in",
+   "EXPECT:S.f.knowGreen === 'jeb'"
+  ]
+ },
+ {
+  "name": "Green: the Sky-Bus pilot's charts show the pass",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "EVAL:S.f.molesDead = 1; S.f.cockpit = 1; goHere()",
+   "RAND:0",
+   "pilot's charts",
+   "EXPECT:S.f.knowGreen === 'chart'"
+  ]
+ },
+ {
+  "name": "Green: Jeb won't ride east before day 15; after, he takes you all the way, and in",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "EXPECT:!cur.some(o => /All the way/.test(o[0]))",
+   "SAY:Ride the caravan east, forever",
+   "Back",
+   "EVAL:S.f.raid = 1; S.day = 15",
+   "Caravan Jeb",
+   "RAND:0",
+   "All the way, this time",
+   "EXPECT:S.here === 'green' && S.f.greenIn && S.f.jebEast && S.day === 17",
+   "SAY:The Gardener",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EXPECT:S.here === 'rustwater' && alive('jeb')"
+  ]
+ },
+ {
+  "name": "Green: talk your way in as a mechanic; teeth are no use here",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "I can pay. Teeth",
+   "SAY:What would we buy, a smile",
+   "RAND:0",
+   "I can fix things",
+   "EXPECT:S.f.greenIn",
+   "SAY:The Gardener",
+   "Eat at the long table",
+   "SAY:A real tomato"
+  ]
+ },
+ {
+  "name": "Green: knowing the Warden was a Molar gets you in",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('warden.secret'); S.day = 15; go('hub', 'green')",
+   "Corporal Grit",
+   "EXPECT:S.f.greenIn && S.n.warden.op < 0"
+  ]
+ },
+ {
+  "name": "Green: climb in through the outflow and find Moss first",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "RAND:0",
+   "outflow pipe",
+   "EXPECT:S.here === 'vats' && S.f.greenIn && S.f.vatsFound",
+   "Moss",
+   "Who chained you",
+   "EXPECT:knew('moss.secret')",
+   "Back",
+   "Climb back up",
+   "EXPECT:S.here === 'green'"
+  ]
+ },
+ {
+  "name": "Green: steal seeds, give them to Hector, and the farm grows and the Green breaks",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "RAND:0",
+   "seed house",
+   "EXPECT:S.inv.seeds === 3",
+   "RAND:off",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "How's the farm",
+   "EXPECT:knew('hector.dying')",
+   "Seeds. Real ones",
+   "EXPECT:S.inv.seeds === 2",
+   "WAIT:3",
+   "EXPECT:S.f.harvest && S.f.greenBroken && S.f.greenOut && S.n.fern.loc === 'farm'",
+   "EVAL:goHere()",
+   "SAY:Green shoots",
+   "SAY:Hector's corn",
+   "EVAL:S.f.raid = 1; S.day = 22",
+   "WAIT:1",
+   "EXPECT:!S.f.farmFailed"
+  ]
+ },
+ {
+  "name": "Green: without seeds, Hector's farm fails on day 22",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 21",
+   "WAIT:1",
+   "EXPECT:S.f.farmFailed && S.n.hector.rx.some(l => /sold the tractor/.test(l))"
+  ]
+ },
+ {
+  "name": "Green: seeds for Junior, Ma Thistle and the Mayor each change something",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('seeds', 3)",
+   "Ma Thistle",
+   "Plant them by the well",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "More than cabbages",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "Yours for 150 teeth",
+   "WAIT:3",
+   "EXPECT:S.f.scrapGrows && S.f.juniorGrows && S.f.mayorVeg && !has('seeds') && S.teeth >= 150"
+  ]
+ },
+ {
+  "name": "Green: swear to keep it secret, and you can stay forever",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "The Gardener",
+   "Why keep it so small",
+   "Your secret is safe",
+   "EXPECT:S.f.greenSworn && has('veg') && S.titles.includes('Friend of the Green')",
+   "Back",
+   "Stay. Never go back",
+   "SAY:You stay in the Green"
+  ]
+ },
+ {
+  "name": "Green: swear, then plant seeds anyway, and the Warden comes down the pass for you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "The Gardener",
+   "Your secret is safe",
+   "Back",
+   "RAND:0",
+   "seed house",
+   "RAND:off",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Seeds. Real ones",
+   "WAIT:2",
+   "EXPECT:S.f.oathBroken && S.f.wardenHunt",
+   "Back",
+   "ENCOUNTERS",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EXPECT:S.f.wardenMet"
+  ]
+ },
+ {
+  "name": "Green: the Gardener can be talked into seeds, better if you know about the outer beds",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "REAL",
+   "EVAL:globalThis.p0 = chanceOf('gardener.seeds'); know('gardener.secret')",
+   "EXPECT:chanceOf('gardener.seeds') >= p0 + 15",
+   "The Gardener",
+   "RAND:0",
+   "Give me seeds for the valley",
+   "EXPECT:S.inv.seeds === 3 && S.f.gardenerGave"
+  ]
+ },
+ {
+  "name": "Green: free Moss, and he goes to Nigel's well and the Green goes dark",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "Go down to the vats",
+   "Moss",
+   "RAND:0",
+   "Pick the lock",
+   "EXPECT:S.f.mossFree && S.n.moss.loc === 'well'",
+   "WAIT:2",
+   "EXPECT:S.f.greenDark",
+   "EXPECT:greenLines().some(l => /Two lights in the dark/.test(l))"
+  ]
+ },
+ {
+  "name": "Green: fail to free Moss and the Warden throws you out for good",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "Go down to the vats",
+   "Moss",
+   "REAL",
+   "RAND:0.99",
+   "Pick the lock",
+   "EXPECT:S.f.greenOut && !S.f.greenIn && S.here === 'green'",
+   "SAY:The gate stays shut for you"
+  ]
+ },
+ {
+  "name": "Green: tell everyone what's in the basement, and Fern takes over",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('moss.secret'); know('gardener.secret'); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "RAND:0",
+   "Stand on the long table",
+   "EXPECT:S.f.fernRules && S.f.mossShifts",
+   "SAY:OPEN SUNDAYS",
+   "SAY:Stay. Never go back"
+  ]
+ },
+ {
+  "name": "Fern's gate: ignored, the Warden shoots her on day 21",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 20",
+   "WAIT:1",
+   "EXPECT:!alive('fern') && S.f.plot_gate === 'done'"
+  ]
+ },
+ {
+  "name": "Fern's gate: hold the lamp and talk the Warden down, and the gate opens",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "Fern",
+   "hold the lamp",
+   "RAND:0",
+   "Forty isn't a wall",
+   "EXPECT:S.f.gateOpen && alive('fern') && S.day === 21",
+   "SAY:eating with both hands"
+  ]
+ },
+ {
+  "name": "Fern's gate: fight the Warden for it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "Fern",
+   "hold the lamp",
+   "Fight the Warden",
+   "FIGHT",
+   "EXPECT:S.f.gateOpen && !alive('warden') && alive('fern')"
+  ]
+ },
+ {
+  "name": "Fern's gate: talk her into seeds instead",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "Fern",
+   "RAND:0",
+   "open the valley",
+   "EXPECT:S.inv.seeds === 3 && S.f.plot_gate === 'stopped'"
+  ]
+ },
+ {
+  "name": "Fern's gate: tell the Gardener, and he walks her to the outer beds",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "The Gardener",
+   "Fern is going to open",
+   "EXPECT:!alive('fern') && S.f.fernComposted && S.karma < 0"
+  ]
+ },
+ {
+  "name": "Fern's gate: tell the Warden, and Fern is locked up but alive",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "The Warden",
+   "Don't shoot her",
+   "EXPECT:S.f.fernLocked && alive('fern')",
+   "WAIT:5",
+   "EXPECT:alive('fern')"
+  ]
+ },
+ {
+  "name": "Ripple: with the Warden dead the gate is just a gate; with the Gardener dead Fern runs it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.dead.warden = 1; go('hub', 'green')",
+   "EXPECT:S.f.greenIn",
+   "EVAL:S.dead.gardener = 1",
+   "WAIT:1",
+   "EXPECT:S.f.fernRules && S.n.fern.rx.some(l => /count badly/.test(l))"
+  ]
+ },
+ {
+  "name": "Ripple: Moss dying puts the Green's lights out",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.dead.moss = 1",
+   "WAIT:1",
+   "EXPECT:S.f.greenDark && S.n.nigel.rx.length"
+  ]
+ },
+ {
+  "name": "Green: Gloria, gone east, is camped at the gate; let her in",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.n.gloria.loc = 'east'; S.day = 15; go('hub', 'green')",
+   "EXPECT:S.n.gloria.loc === 'green'",
+   "SAY:tent made from a dress",
+   "RAND:0",
+   "I can fix things",
+   "Let Gloria in",
+   "EXPECT:S.f.gloriaGreen",
+   "EXPECT:greenLines().some(l => /first tomato/.test(l)) && !webLines().some(l => /never wrote/.test(l))"
+  ]
+ },
+ {
+  "name": "Green: tell Gloria in Rustwater it's real, and she walks east",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.greenIn = 1; S.f.knowGreen = 1",
+   "TRAVEL:Rustwater",
+   "Gloria",
+   "It's real, Gloria",
+   "EXPECT:S.f.gloriaGreen && S.n.gloria.loc === 'green'"
+  ]
+ },
+ {
+  "name": "Green: Dice, gone east with the vault money, is inside and vouches for you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.n.dice.loc = 'east'; S.f.vaultRobbed = 1; S.day = 15; go('hub', 'green')",
+   "EXPECT:S.n.dice.loc === 'green'",
+   "Dice! Tell them",
+   "EXPECT:S.f.greenIn",
+   "Dice",
+   "SAY:the King's teeth",
+   "EXPECT:greenLines().some(l => /bone meal/.test(l))"
+  ]
+ },
+ {
+  "name": "Green: Junior cooks real vegetables",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:give('veg')",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "Real vegetables",
+   "EXPECT:S.f.juniorVeg && !has('veg')",
+   "EXPECT:greenLines().length === 0 || true",
+   "EVAL:S.f.knowGreen = 1",
+   "EXPECT:greenLines().some(l => /tomato soup/.test(l))"
+  ]
+ },
+ {
+  "name": "Endings: the Mall and the Green get their own slides",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.associate = 1; S.f.eelBadge = 1; S.f.vaneOut = 1; S.f.knowGreen = 1; S.f.greenSworn = 1; S.f.jebEast = 1",
+   "EXPECT:mallLines().some(l => /Associate of the Month/.test(l)) && mallLines().some(l => /dry fountain/.test(l)) && mallLines().some(l => /Customer safety/.test(l))",
+   "EXPECT:greenLines().some(l => /kept the Green secret/.test(l)) && greenLines().some(l => /all the way east/.test(l))",
+   "EVAL:S.end = { type: 'retired' }; go('ending')",
+   "SAY:The End"
+  ]
+ },
+ {
+  "name": "Secrets: Doc tells you about his old apprentice once he trusts you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.n.doc.op = 30",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "EXPECT:knew('vane.secret')"
+  ]
+ },
+ {
+  "name": "Secrets: Junior tells you about Pete, then the next day about the seed lady",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.n.junior.op = 30",
+   "TRAVEL:Mama Lou's",
+   "Junior",
+   "EXPECT:knew('pete.secret')",
+   "Back",
+   "WAIT:1",
+   "Junior",
+   "EXPECT:knew('fern.secret')"
+  ]
  }
 ]

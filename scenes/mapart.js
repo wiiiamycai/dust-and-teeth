@@ -165,7 +165,7 @@ function mapPaintLand(w, h, dpr) {
 }
 // Called by drawMap after it has put the roads in: paints the land under them.
 function mapPaint(mp) {
-  if (typeof canIso !== 'function' || !canIso() || !mp) return;
+  if (!canDraw() || !mp) return;
   const w = Math.round(mp.clientWidth || 820),
     h = Math.round(mp.clientHeight || (w * 9) / 16),
     dpr = Math.min(2, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);

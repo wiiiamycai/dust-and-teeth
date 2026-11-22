@@ -51,6 +51,7 @@ Told by: Old Teo, The Dentist King, Nigel the Glower, Rook. Worth 25 teeth to ke
 - enemy, The Dentist King: "I don't speak of the silo. I don't speak of the silo. Pass the bread."
 - friend, Nigel the Glower: "The Glower is a holy light. He disagrees. Holy lights are modest."
 - friend, Junior: "Junior comes to service. Sits at the back. Weeps at the toast."
+- rival, Queen Margie: "Margie keeps the rules of a shop that died two hundred years ago. My toaster still works. Sometimes."
 
 ### 👴 Old Pell
 
@@ -86,6 +87,7 @@ Told by: Ma Thistle, The Dentist King. Worth 40 teeth to keep quiet.
 - enemy, Doc Ratchet: "Cereal man want Nigel's liver. Nigel need liver."
 - enemy, The Dentist King: "Nigel no talk about King. King bad tooth. Bad, bad tooth."
 - friend, Bert: "Tractor man good. Tractor eight times weight."
+- friend, Moss: "Moss glow too. Moss go east, long ago. Moss say he be useful. Nigel miss Moss."
 
 ## Rustwater
 
@@ -106,6 +108,7 @@ Told by: Krug, Gloria. Worth 40 teeth to keep quiet.
 - debt, Krug: "Krug drinks here when he's in town. Never pays. I never ask. I like my knees."
 - rival, Gloria: "Gloria took me for forty teeth at cards. Marked deck. MY marked deck."
 - friend, Caravan Jeb: "Jeb tips. Nobody tips. I'd die for that man. Not literally."
+- ally, Dr. Vane: "Vane's stuff? Under the counter. It sells. People stop blinking, but it sells."
 
 ### 🎩 Mayor Fenwick
 
@@ -124,6 +127,7 @@ Told by: Krug, Old Teo. Worth 80 teeth to keep quiet.
 - enemy, Madame Opal: "Opal? A pillar of the community. A pillar with a shotgun under it."
 - enemy, Caravan Jeb: "Jeb's lizards drink from my pump. The road tax pays for the road. The road is very expensive to look at."
 - enemy, Hector: "Hector owes me six months of water. He keeps paying in threats."
+- rival, Queen Margie: "A woman in a paper hat runs a flooded shop and calls herself a queen. Absurd. I have a top hat."
 
 ### ⭐ Sheriff Crane
 
@@ -158,6 +162,8 @@ Told by: Gloria, Madame Opal. Worth 60 teeth to keep quiet.
 - ally, Mama Lou: "Lou? Wonderful cook. Sends me... spare parts. For medicine. Don't ask which parts."
 - friend, Madame Opal: "Opal pays cash and never asks what's in the needle. My favourite patient."
 - ally, The Dentist King: "The King buys my gas. For the patients. He doesn't use it on the patients."
+- enemy, Dr. Vane: "Vane was my apprentice. He liked the screaming. Even I don't like the screaming."
+- family, The Gardener: "The Gardener? My father. He put me out at sixteen for one tomato. I've stolen everything since, to make it worth it."
 
 ### 🌹 Madame Opal
 
@@ -203,6 +209,10 @@ Told by: Old Pell, Pete. Worth 50 teeth to keep quiet.
 - friend, Moe: "Moe keeps my gin cold. That's friendship, out here."
 - enemy, Krug: "Krug wants my road east. He wants to drive people down it in chains."
 - rival, Bess: "Somebody hits my caravan on the farm road every month. Polite raiders. They say thank you."
+- ally, Sprocket: "Sprocket at the Mall makes my guns. Good guns. She charges like she knows it."
+- debt, Eel: "Sal's widow. I paid her a year. Should have been longer. Should have been never."
+- rival, Gums: "Gums at the Mall always has gin. My gin. Same brand, anyway."
+- rival, The Warden: "Somebody watches that cave. I can feel it on my neck."
 
 ### 🛡️ Pete
 
@@ -215,6 +225,7 @@ Told by: Mama Lou, Junior. Worth 15 teeth to keep quiet.
 - friend, Sheriff Crane: "The Sheriff said I could be a deputy if I stop crying. I'm nearly there."
 - friend, Caravan Jeb: "Jeb hired me when nobody else would. Then I got eaten. Nearly. Not his fault."
 - enemy, Mama Lou: "Lou had me in a cage for five days. She sang to me. I still hear it."
+- friend, Eel: "Eel. Sal's wife. I bring her fish. I can't look at her. Don't ask me why."
 
 ## Hector's Farm
 
@@ -233,6 +244,7 @@ Told by: Bert. Worth 40 teeth to keep quiet.
 - family, Bert: "Bert's a good boy. Slow. Kind. Slow."
 - enemy, Krug: "Krug took my wife's brother. I had the shotgun. I didn't fire. I'm not proud of the shot I didn't take."
 - ally, Mama Lou: "I sell Lou hogs. She buys more meat than I sell her. I don't do maths."
+- ally, Gums: "Gums? I don't know any Gums. Who told you about Gums?"
 
 ### 👩‍🌾 Bess
 
@@ -247,6 +259,7 @@ Told by: Bert, Gus. Worth 40 teeth to keep quiet.
 - family, Hector: "Pa thinks I'm still twelve. Pa thinks a lot of things."
 - family, Bert: "Bert? I love him. I'd never say it to his face. He wouldn't understand it anyway."
 - friend, Junior: "Junior leaves flowers on our fence. Dead ones. It's the thought."
+- ally, Gums: "Gums buys what we take. Fair price, bad breath. No teeth, see."
 
 ### 🚜 Bert
 
@@ -259,6 +272,7 @@ Told by: Bess, Nigel the Glower. Worth 5 teeth to keep quiet.
 - friend, Nigel the Glower: "Nigel likes tractor facts. Nobody else does. I go down the well on Sundays."
 - family, Hector: "Pa says tractors can't love you back. Pa doesn't know tractors."
 - family, Bess: "Bess goes out at night. I don't ask. A tractor doesn't ask the field where it's been."
+- friend, Sprocket: "Sprocket knows engines. She let me hold a real spark plug. I didn't sleep."
 
 ## Mama Lou's
 
@@ -277,6 +291,8 @@ Told by: Sheriff Crane, Moe. Worth 40 teeth to keep quiet.
 - family, Junior: "Junior's my boy. Big heart. Bigger hands. Hasn't said a full sentence since the Bombs Day picnic."
 - enemy, Pete: "Pete got away. Nobody gets away. It's bad for the brand."
 - ally, Krug: "Krug sends me what won't sell. Waste not, sweetie."
+- ally, Queen Margie: "Margie buys my leftovers for her food court, sweetie. She calls it product. I call it Tuesday."
+- rival, Eel: "The diver girl. Sal's widow. Lovely strong bones, that family. Lovely."
 
 ### 🔪 Junior
 
@@ -289,6 +305,7 @@ Told by: Brother Crumb, Bess. Worth 10 teeth to keep quiet.
 - friend, Brother Crumb: "...Bread good."
 - friend, Bess: Junior goes red to the ears and chops faster.
 - family, Mama Lou: "...Mama."
+- friend, Fern: "...Seed lady." Junior taps a paper packet in his apron. It says GROW.
 
 ## Chainfield
 
@@ -398,6 +415,131 @@ Told by: Brother Crumb. Worth 30 teeth to keep quiet.
 - friend, Brother Crumb: "Crumb pulled teeth at the silo. I guarded the door. We ran the same night. We don't talk about it."
 - enemy, The Dentist King: "I held the King's back door for three years. I still know the code."
 
+## The Drowned Mall
+
+### 🍟 Queen Margie
+
+**Secret:** The staff handbook's last page says IN THE EVENT OF NUCLEAR WAR, ALL ASSOCIATES ARE RELEASED FROM THEIR DUTIES. Margie tore it out the day she found it. Without the handbook she's a woman in a paper hat.
+
+Told by: Gums, Mama Lou. Worth 50 teeth to keep quiet.
+
+**Bonds:**
+
+- ally, Mama Lou: "Mama Lou is our preferred meat supplier. The handbook says never ask a supplier where. So I never ask."
+- rival, Brother Crumb: "Brother Crumb worships a toaster. I worship Customer Service. Only one of us has a handbook."
+- rival, Mayor Fenwick: "Fenwick calls himself Mayor. I am a Store Manager. There is a chain of command, and he is not on it."
+- ally, Sprocket: "Sprocket is our Repairs Associate. Twelve years without a sick day. I don't allow them."
+- enemy, Gums: "Gums trades on my floor without a till. That is theft from the store. The store is me."
+- ally, Dr. Vane: "Dr. Vane is our Pharmacy Associate. Very polite. Customers who complain stop complaining."
+
+### 🔧 Sprocket
+
+**Secret:** Sprocket built the Dentist King's drill, and she fixes the Molars' repeaters. Every gun they point at the valley, she oiled. She also knows how the drill jams.
+
+Told by: The Dentist King, Rook. Worth 40 teeth to keep quiet.
+
+**Bonds:**
+
+- ally, Queen Margie: "Margie rents me the bench for one gun a month. She doesn't know which end the bullet comes out."
+- ally, The Dentist King: "The King sends me his broken repeaters. Pays in teeth. I don't ask whose."
+- ally, Caravan Jeb: "Half the guns on Jeb's wagons came off my bench. The other half I wouldn't put my name on."
+- friend, Bert: "The farm boy walks two days to tell me about carburettors. I let him. He's right, mostly."
+- friend, Eel: "Eel brings up whatever the water spits out. Half of it is junk. The other half is my living."
+
+### 🐟 Eel
+
+**Secret:** Eel found the old bank vault on the drowned floor, door open. She won't go in. Sal always said they'd retire on whatever was down there.
+
+Told by: Sprocket, Caravan Jeb. Worth 15 teeth to keep quiet.
+
+**Bonds:**
+
+- friend, Sprocket: "Sprocket pays fair for what I find. Then she charges you double. Also fair."
+- friend, Pete: "Pete came back from Lou's. Sal didn't. Pete brings me fish and won't look at me."
+- rival, Mama Lou: "Lou sends me a bowl every month. 'From Sal's friends,' she says. I never eat it."
+- debt, Caravan Jeb: "Jeb paid me Sal's wages for a year after. Then he stopped. I don't blame him. I do."
+
+### ⚗️ Dr. Vane
+
+**Secret:** Dr. Vane was Doc Ratchet's apprentice. Doc threw him out for being too cruel to the patients. Vane has never forgiven him for being right.
+
+Told by: Doc Ratchet, Madame Opal. Worth 60 teeth to keep quiet.
+
+**Bonds:**
+
+- enemy, Doc Ratchet: "Ratchet taught me everything. Then he called me cruel. Me. HIM."
+- ally, Moe: "Moe sells my grey under the bar. Ten percent. Everyone in this valley is ten percent."
+- ally, Queen Margie: "Margie rents me the old pharmacy. She thinks I'm a Pharmacy Associate. I am, in a way."
+
+### 👄 Gums
+
+**Secret:** Gums buys what Bess's raiders take off Jeb's caravan, then sells it back to Jeb at a mark-up. Jeb has bought his own gin back eleven times.
+
+Told by: Bess, Hector. Worth 40 teeth to keep quiet.
+
+**Bonds:**
+
+- enemy, Queen Margie: "Margie wants a cut of every deal under her roof. Her roof leaks. I pay her in drips."
+- ally, Bess: "Bess brings me what her girls take off Jeb. Polite girl. Counts better than me."
+- ally, The Dentist King: "The King pulled every tooth I had, then gave me a job selling his spares. Funny old world."
+- rival, Caravan Jeb: "Jeb buys from me. Good customer. Better than he knows."
+- ally, Hector: "Hector gets a slice of whatever comes off the farm road. I keep his slice warm."
+- ally, The Warden: "I knew a girl who walked east with a repeater, years back. Best shot I ever saw. Never wrote."
+
+## The Green
+
+### 🌱 The Gardener
+
+**Secret:** The Green stays at forty because the Gardener walks the old and the sick to the outer beds. The outer beds are compost. The tomatoes are very good.
+
+Told by: Moss, Doc Ratchet. Worth 0 teeth to keep quiet.
+
+**Bonds:**
+
+- family, Doc Ratchet: "I had a son once. He took a tomato that wasn't his. Rules are the wall. I put him outside it."
+- family, Fern: "Fern is my daughter. She has her mother's heart. Her mother is in the outer beds."
+- ally, The Warden: "The Warden keeps the wall. I keep the rest. Neither of us sleeps."
+- ally, Moss: "Moss is the Green's heart. Hearts stay inside the body."
+
+### 🗝️ The Warden
+
+**Secret:** The Warden was a Molar: Corporal Grit, the King's best shot. She walked east with a repeater, and the Gardener let her in because she could hit a man at half a mile. She still has the tooth tattoo.
+
+Told by: Gums, The Dentist King. Worth 0 teeth to keep quiet.
+
+**Bonds:**
+
+- ally, The Gardener: "The Gardener says who. I say how. Forty is the number."
+- ally, Gums: "Gums? Never heard of him. Tell him I said that."
+- enemy, The Dentist King: "Anything that comes up the pass wearing teeth gets shot first and asked second."
+- rival, Caravan Jeb: "The lizard man sits in the cave under the pass for a month, then goes home. Smartest man in the valley."
+- enemy, Fern: "Fern wants the gate open. Fern has never seen what comes through an open gate."
+
+### 🍄 Moss
+
+**Secret:** Moss is chained to the algae vats under the Green. The light, the clean water, the heat: all of it comes from a mutant they keep in the basement and never let upstairs.
+
+Told by: Nigel the Glower, The Gardener. Worth 0 teeth to keep quiet.
+
+**Bonds:**
+
+- ally, The Gardener: "The Gardener brings me a tomato on Sundays. He never brings the key."
+- friend, Nigel the Glower: "Nigel? Little Nigel from the dentist's? He still glows? Good. Somebody should, outside."
+- friend, Fern: "Fern reads to me at night. Books about the sea. I've never seen the sea. Neither has she."
+
+### 🌻 Fern
+
+**Secret:** Fern has been leaving seed packets in the pass for strangers to find. Three reached the valley. One is growing behind Mama Lou's diner.
+
+Told by: Junior, The Warden. Worth 0 teeth to keep quiet.
+
+**Bonds:**
+
+- family, The Gardener: "Father loves everything that grows. He just counts it first."
+- friend, Moss: "Moss is the kindest person in the Green, and they keep him in the basement."
+- friend, Junior: "Somebody in the valley found my seeds. Cabbages, I think. I hope he's happy."
+- enemy, The Warden: "The Warden would shoot her own shadow if it came in without asking."
+
 ## Silo 9
 
 ### 🦷 The Dentist King
@@ -418,6 +560,9 @@ Told by: Nigel the Glower, Brother Crumb. Worth 0 teeth to keep quiet.
 - ally, Doc Ratchet: "Ratchet's gas makes the screaming stop. Mine, mostly."
 - ally, Krug: "Krug delivers. Krug overcharges. One day Krug becomes a delivery."
 - enemy, Old Teo: "Teo! Lazy digger. Kept asking what we were digging FOR."
+- ally, Sprocket: "Sprocket built my drill. Tell her it squeaks. I like it when it squeaks."
+- ally, Gums: "Gums! My best Molar. Nothing left to bite with. Very loyal, a mouth like that."
+- enemy, The Warden: "Somebody up the pass shoots my scouts. Very good shot. Familiar, almost."
 
 ## Plots (people against people)
 
@@ -430,6 +575,10 @@ Each leaves a sign in one place in the days before. You only hear how it ended i
 - **Day 18, Lou finds Junior's cabbages.** Sign: the cabbages behind the diner. Clue: Crumb, Bess. Change it: talk Junior into leaving (Junior's Greens in Rustwater); hide the patch (Sneak); tell Lou yourself (Speech: cabbage Tuesdays, or she salts it).
 - **Day 14, fight night at Snake Eyes.** Sign: the poster on the pit rail. Clue: Pips, Rook, Nan. Change it: bet on Tam; tell Tam about Gus and bring Gus to the rail (Tam wins); poison the Incisor's water (Sneak); fight the Incisor yourself, to the death. Ignored: the Incisor kills Tam.
 - **Day 20, Dice robs the vault.** Sign: Dice sketching the vault door. Clue: Rook, Teo. Change it: help her (Steal, much easier if Rook looks away); sell her out to Pips; tell Opal her sister is alive and Opal buys her out. Ignored: she is caught and sold.
+- **Day 13, Eel asks Lou about Sal.** Sign: Eel's drawing of Sal on a food court pillar. Clue: Pete, Jeb, Sprocket. Change it: tell her Lou cooked Sal (go with her and fight Lou, or let her go alone: she wins if Sprocket armed her); tell her Pete gave Sal up (she kills Pete and Crane hangs her, unless you warn Pete); give her Sal's badge from Lou's kitchen (she stops, and tells you the vault); lie that Sal went east (Speech); sell her to Lou. Ignored: Lou cooks her.
+- **Day 17, Dr. Vane's grey Buzz hits Rustwater.** Sign: Vane bagging powder stamped RATCHET. Clue: Doc, Gums, Moe. Change it: warn Doc; help Vane (120 teeth, it lands tomorrow); swap it for flour (Sneak); tell Margie (she throws Vane out); tell Crane (she burns the bags). Ignored: two people die, Doc is run out of town (or hanged, with no Sheriff), and Vane takes over Rustwater's medicine.
+- **Day 21, Fern opens the Green's gate.** Sign: Fern oiling the hinges at night. Clue: the Warden, Dice, Moss. Change it: hold the lamp (talk the Warden down or fight her, and the gate opens); talk Fern into giving you seeds instead; tell the Gardener (he walks her to the outer beds); tell the Warden (Fern is locked up). Ignored: the Warden shoots her.
+- **The Green's big choice.** Seeds (stolen, begged from the Gardener, or from Fern) planted with Hector, Junior, Ma Thistle or the Mayor grow food in the valley, and the Green stops being the only green: Fern walks west, the Warden shuts you out. Swear to keep it secret and you get a bed there for life, and Hector's farm fails on day 22. Break the oath and the Warden comes down the pass for you. Free Moss and the Green goes dark; tell everyone about him and Fern takes over.
 
 ## Ripples (a death changes the lives tied to it)
 
@@ -438,4 +587,6 @@ Each leaves a sign in one place in the days before. You only hear how it ended i
 - Jeb: Pete leaves the valley, Gloria is stuck, no shop and no ride east.
 - Lou: Junior moves to Rustwater and opens Junior's Greens.
 - Sheriff: Fenwick puts water up. Opal: Gloria runs the Velvet Rad. Hector: Bess takes the farm road, Jeb's prices rise.
+- Margie: the food court closes. Sprocket: no more mods, and Jeb's prices rise. Gums: Bess's raiders have nobody to sell to.
+- The Gardener: Fern runs the Green. The Warden: the gate is just a gate. Moss: the Green's lights go out.
 - Everyone else: the people tied to them say so, in their own words, the next time you talk.

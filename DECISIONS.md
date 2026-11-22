@@ -250,3 +250,91 @@ Will said to keep going until the game is fully polished. Grid combat was next, 
 ## The final browser pass (v4.2)
 
 130. **Drawing code is fuzzed in a real browser,** because the headless tests have no canvas. The pass ran 40 random games and about 4,000 steps across all three views, with travel, encounters, fights and the gambling games. It also covered all 27 portraits, all 9 places at all five times of day, and every armour with every weapon. It found one thing: walking could be asked for on a map that was no longer on screen (a stale map left over from an earlier game, in the list view). A real click couldn't get there, but walking now only happens on a map that's actually showing.
+
+## Text and portraits only (v4.3)
+
+Will, part way through the city build: "i dont think walking around or the iso does add any value to the game, just work on text and portraits", then "remove all the 3d stuff".
+
+131. **Gone:** the isometric towns (`scenes/iso.js`), the walking tile maps (`scenes/walk.js`, `data/maps.js`), the isometric fight strip (`scenes/arena.js`) and `tests/walk.js`. Every place plays in the list view, the way it did before v3.6. This takes back #89 to #104 and #120 to #123.
+132. **Kept:** talk portraits, the painted world map, the title and ending art, and sound. The fight sounds used to come from the fight strip; a small watcher in `scenes/sound.js` makes them now.
+133. **The sprite data is cut to what portraits need:** bodies, layers, held items and people. Props, shop signs, corpses, your own sprite and the enemy looks are gone. `tests/sprites.js` checks portraits now.
+134. **Old saves** drop their view, position and fog fields when they load.
+
+## The Drowned Mall (v4.3)
+
+Will approved the plan: two cities, the Green late-game only, weapon upgrades as a new mechanic at the Mall.
+
+135. **Where:** south-east, with roads to Mama Lou's and the Sky-Bus. Dangerous (level 4).
+136. **Five people:** Queen Margie (the food court, by the staff handbook), Sprocket (the gunsmith; I made her a woman, the cast leaned male), Eel (Sal's widow, a salvage diver), Dr. Vane (Doc Ratchet's old apprentice, now his rival) and Gums (a toothless Molar fence). Each has bonds into the valley and a secret that someone already in the game can tell: Lou and Gums know Margie's, the King and Rook know Sprocket's, Jeb and Sprocket know Eel's, Doc and Opal know Vane's, Bess and Hector know Gums's.
+137. **Mods (Sprocket's bench).** Each costs teeth plus one part, one of each per weapon or armour, saved in `S.mods`:
+    - scope (guns): +10 to hit, a lens;
+    - long barrel (guns): +3 damage, a steel tube;
+    - honed edge or studs (melee): +3 damage, a file;
+    - grip (melee): +8 to hit, rubber;
+    - plates (armour): +2 damage stopped, sheet steel;
+    - new straps (the car-door plate): no more twitch penalty, rubber.
+
+    They're in `hit()`, the damage roll in `atk()`, `pdr()` and `ptw()`. Not on the plasma rifle, power armour or rags. The balance test still fights without mods, so modded gear is simply better; the price is parts and teeth.
+138. **Parts** come from diving, from Gums (20 to 50 teeth), from the drowned bank vault, and from the gut of whatever lives in the water. Gums also buys gear you aren't using, at 60% of its value plus 15 for each mod on it.
+139. **Diving, once a day:**
+    - the shallows: Sneak, easy; a miss costs 3 to 7 HP;
+    - the deep end: Sneak, hard, much easier with Eel's tips; a miss nearly drowns you (8 to 14 HP) or starts a fight with something in the water. It can turn up a fusion core, once, for the Mayor's power armour;
+    - the bank vault: Science, only once you know Eel's secret, once.
+
+    Guts helps the dives. You can die down there.
+140. **Margie:** learn what Customer Service means, then apply. Get in and you're Associate of the Month, with free meals.
+141. **Eel's plot (day 13):** she goes to Lou's herself and is the special that week. You can:
+    - tell her Lou cooked Sal (only if you know it). Go with her and fight Lou side by side, or let her go alone: 30%, or 65% if Sprocket built her a harpoon gun;
+    - tell her Pete gave Sal up. She kills Pete and Crane hangs her, unless you warn Pete first;
+    - give her Sal's badge from Lou's kitchen. She stops, and tells you where the vault is;
+    - lie that Sal went east with a girl (Speech);
+    - sell her to Lou for 30 teeth.
+142. **The drug war (day 17):** Vane's grey Buzz, stamped RATCHET, hits Rustwater. Two people die, Crane runs Doc out of town (or the town hangs him if Crane is dead), and Vane becomes Rustwater's doctor. You can warn Doc, help Vane (120 teeth, a day early), swap it for flour (Sneak), tell Margie (she throws him out) or tell Crane (she burns the bags).
+143. **Smaller threads:** tell Jeb that Gums sells him his own gin (his prices drop, Gums and Bess sulk); Sprocket's secret jams the King's drill, so in his fight he hits like a lead pipe; Gums tells you where the silo is.
+
+## The Green (v4.3)
+
+144. **Late game only.** It isn't on the map until you find the pass:
+    - Jeb's cave, once you know his secret;
+    - the pilot's charts in the Sky-Bus cockpit (Science);
+    - riding with Jeb himself, from day 15 (Speech, much easier if you know his secret).
+
+    Before day 15 the pass is a wall of dust: trying costs a day and drops you at the Sky-Bus. The pass takes two days each way. Jeb's "ride east forever" ending is still there.
+145. **The gate.** The Warden won't take teeth ("What would we buy, a smile?"). Ways in:
+    - fix something for her (Science);
+    - call her Corporal Grit (her secret);
+    - have Dice vouch for you;
+    - arrive with Jeb;
+    - climb the outflow pipe (Sneak), which puts you in the vat room first;
+    - kill her, and the gate is just a gate.
+146. **Four people:** the Gardener (Doc Ratchet's father: he put Doc out at sixteen for a tomato), the Warden (an ex-Molar), Moss (chained to the algae vats that light the dome) and Fern (the Gardener's daughter, who leaves seed packets in the pass; Junior's cabbages came from one). Doc, Nigel, Junior, Gums and the King know their secrets.
+147. **The big choice.** Seeds come from the seed house (Steal, once), the Gardener (a hard Speech check, easier if you know about the outer beds) or Fern. Then plant them:
+    - with Hector: the farm grows and sells corn;
+    - with Junior: real vegetables;
+    - with Ma Thistle: corn by the well;
+    - or sell them to Fenwick for 150 teeth, and he sells carrots at 20 teeth each.
+
+    Three days after the first planting, the Gardener hears. The Green stops being the only green, Fern walks west to teach Hector, and the Warden shuts you out. If you'd sworn to keep the secret, the Warden comes down the pass after you.
+148. **Keep it secret:** swear to the Gardener and you get a basket of vegetables, the title Friend of the Green and a bed. "Stay. Never go back down the pass" is a new ending.
+149. **Hector's farm fails on day 22 without seeds.** This is new to every game, even one that never finds the Green, so keeping the secret has a cost in the valley. It's small: a line from Hector and Bert, and the farm's text.
+150. **Moss:** free him (Steal) and he walks to Nigel's well; two days later the Green goes dark. Or stand on the long table and tell everyone (Speech): the Gardener is just an old man after that, Fern runs it, Moss works shifts, and you can stay.
+151. **Fern's plot (day 21):** she opens the gate at midnight and the Warden shoots her. You can:
+    - hold the lamp, then talk the Warden down or fight her, and the gate opens and the valley comes over the pass;
+    - talk Fern into giving you seeds instead;
+    - tell the Gardener, and he walks her to the outer beds;
+    - tell the Warden, and Fern is locked in the seed house.
+152. **Threads paid off:**
+    - Gloria (gone east, or told it's real) camps at the gate until you get her in;
+    - Dice, after the vault, has paid her way in with the King's teeth, ground into bone meal;
+    - Junior cooks a basket of real vegetables;
+    - Jeb finally sees the east.
+153. **Ripples:**
+    - the Gardener dies: Fern runs the Green;
+    - the Warden dies: the gate is open;
+    - Moss dies: the lights go out;
+    - Margie dies: the food court closes;
+    - Sprocket dies: no more mods, and Jeb's prices rise;
+    - Gums dies: Bess's raiders have nobody to sell to.
+
+    Everyone tied to them says so.
+154. **Ending slides:** a slide group for the Mall (`mallLines`) and one for the Green (`greenLines`). The Green's lines only show if you found the pass.

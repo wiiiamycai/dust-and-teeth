@@ -1,5 +1,5 @@
 'use strict';
-// ================= DATA: PIXEL SPRITES (the isometric view) =================
+// ================= DATA: PIXEL PORTRAITS =================
 // Every sprite is a 16 x 32 grid of letters, one letter per colour, like the maps. '.' is see-through.
 // People are built from parts: a body, then layers on top (hats, beards, aprons) and what they hold.
 // Colours come from ART_STYLE.md. A person can swap any colour (pal). A capital letter is the shadow of
@@ -196,6 +196,8 @@ const SADD = {
     { y: 23, r: ['......n.........'] },
   ],
   chainbelt: [{ y: 20, r: ['..yyyyyyyyyyyy..'] }],
+  paperhat: [{ y: 4, r: ['.....xxxxxx.....', '....xrrrrrrx....'] }],
+  gummy: [{ y: 10, r: ['.......nn.......'] }],
 };
 
 // ---- things people hold, placed from the hand: dx, dy is the top left corner ----
@@ -224,6 +226,11 @@ const SITEM = {
   wrench: { dx: 0, dy: -4, r: ['M.M', 'MMM', '.M.', '.M.'] },
   potlid: { dx: -1, dy: -2, r: ['.MM.', 'MmmM', 'MmmM', '.MM.'] },
   chain: { dx: 0, dy: 1, r: ['m', 'M', 'm', 'M', 'm', 'M', 'm', 'M'] },
+  handbook: { dx: -1, dy: -3, r: ['rrrr', 'rxxr', 'rxxr', 'RRRR'] },
+  flask: { dx: 0, dy: -3, r: ['.x.', 'xmx', 'xMx'] },
+  trowel: { dx: 0, dy: -4, r: ['mm', 'mM', '.w', '.w'] },
+  paddle: { dx: 0, dy: -10, r: [...srep(9, '.w'), 'ww', 'wW', 'WW'] },
+  sunflower: { dx: 0, dy: -5, r: ['yyy', 'yny', 'yyy', '.f', '.f'] },
 };
 
 // ---- the people ----
@@ -310,344 +317,46 @@ const SNPC = {
   nan: { body: 'woman', pal: { h: '#c8c0b8', c: '#b07a8a', v: '#6a3a4a' }, add: ['bun'], item: 'purse' },
   rook: { body: 'big', pal: { s: '#9a948a', h: '#9a948a', c: '#242024', d: '#242024' } },
   king: { body: 'man', pal: { h: '#3a2a1c', c: '#6a1e24' }, add: ['robe', 'necklace', 'crown'], item: 'drill' },
-};
-
-// ---- you: what you wear and what you hold ----
-const SYOU = { body: 'man', pal: { h: '#4a3020' } };
-const SARMOR = {
-  rags: { pal: { c: '#7a6a50', d: '#54483a' }, add: ['rags'] },
-  jacket: { pal: { c: '#6a4428' } },
-  spikes: { pal: { c: '#5a3a24' }, add: ['spikes'] },
-  vest: { pal: { c: '#8a7a5c', v: '#6a5034' }, add: ['vest', 'star'] },
-  plate: { pal: { c: '#6a5e4a' }, add: ['plate'] },
-  riot: { pal: { c: '#2e3440', d: '#262a32', b: '#1a1c20' }, add: ['helmet'] },
-  power: { body: 'big', pal: { c: '#7a7a72', d: '#6a6a62', s: '#7a7a72', b: '#4a4a44' }, add: ['powerhelm'] },
-};
-const SWEAPON = {
-  knife: 'knife',
-  cleaver: 'cleaver',
-  pipe: 'pipe',
-  sledge: 'sledge',
-  drill: 'drill',
-  zipgun: 'pistol',
-  rifle: 'longgun',
-  shotgun: 'shotgun',
-  molargun: 'longgun',
-  plasma: 'plasmagun',
-};
-
-// ---- things in the open, by place and map letter (they stand on the ground) ----
-const SPROP = {
-  'scrapwell.W': [
-    sbottom([
-      '.WWWWWWWWWWWWWW.',
-      '..W..........W..',
-      '..w....x.....w..',
-      '..w....x.....w..',
-      '..w...MmM....w..',
-      '..w...MMM....w..',
-      '..w..........w..',
-      '.mmmmmmmmmmmmmm.',
-      'mMmmmMmmmmMmmmMm',
-      'mmmMmmmmMmmmmmmm',
-      'MmmmmmMmmmmMmmmM',
-      '.MMMMMMMMMMMMMM.',
-    ]),
-  ],
-  'scrapwell.P': [
-    sbottom(['..WWWWWWWWWWWW..', '..wllllllllllw..', '..wwwwwwwwwwww..', '..WwwwwwwwwwwW..', '...W........W...']),
-  ],
-  'well.L': [
-    { y: 4, r: Array.from({ length: 28 }, (_, i) => (i % 4 === 0 ? '....wwwwwwww....' : '....w......w....')) },
-  ],
-  'farm.R': [
-    {
-      y: 2,
-      r: [
-        '.....nnnnnn.....',
-        '.....nnnnnn.....',
-        '.....nrrrrn.....',
-        '...nnnnnnnnnn...',
-        '......xxxx......',
-        '.....xxnxnx.....',
-        '.....xxxxxx.....',
-        '......xnnx......',
-        '.......WW.......',
-        '.yy.rrrrrrrr.yy.',
-        '..wwrrrrrrrrww..',
-        '....rRrrrrRr....',
-        '....rrrrrrrr....',
-        '....rRrrrrRr....',
-        '.....yyyyyy.....',
-        '......y..y......',
-        ...srep(14, '.......WW.......'),
-      ],
-    },
-  ],
-  'diner.Q': [
-    sbottom([
-      '..FfF.....FfF...',
-      '.fffff...fffff..',
-      '.fFfFf...fFfFf..',
-      '..fff.FfF.fff...',
-      '.....fffff......',
-      '.....fFfFf......',
-      '.llllllfffllll..',
-      'llllllllllllllll',
-    ]),
-  ],
-  'rustwater.U': [
-    sbottom([
-      '..........mm....',
-      '.........m......',
-      '........m.......',
-      '......MMMM......',
-      '......MmmM......',
-      '..mmmMmmmM......',
-      '..m...MmmM......',
-      '..u...MmmM......',
-      '......MmmM......',
-      '.WWW..MmmM......',
-      '.wuw..MmmM......',
-      '.www.MMMMMM.....',
-      '.WWW.MMMMMM.....',
-    ]),
-  ],
-  'rustwater.G': [
-    sbottom([
-      '.ffxxffxxffxxff.',
-      '.ffxxffxxffxxff.',
-      '..w..........w..',
-      '..w..........w..',
-      '..w..frffrf..w..',
-      '.wwwwwwwwwwwwww.',
-      '.WwwwwwwwwwwwwW.',
-      ...srep(3, '.W............W.'),
-    ]),
-  ],
-  'rustwater.J': [
-    sbottom([
-      '...xxxxxxxxxx...',
-      '..xxxxxxxxxxxx..',
-      '.xXxxxxXxxxxXxx.',
-      '.xxxxxxxxxxxxxx.',
-      '.wwwwwwwwwwwwww.',
-      '.wWwwWwwwWwwWww.',
-      '.wwwwwwwwwwwwww.',
-      '.nnn.......nnn..',
-      'nWwWn.....nWwWn.',
-      '.nnn.......nnn..',
-    ]),
-  ],
-  'chainfield.P': [
-    sbottom([
-      '.wwwwwwwwwwwwww.',
-      '.w...w....w...w.',
-      '.w...w.yy.w...w.',
-      '.w...wyYYyw...w.',
-      '.w...wyYYyw...w.',
-      '.wwwwwwwwwwwwww.',
-      '.w...w....w...w.',
-      '.W...W....W...W.',
-    ]),
-  ],
-  'skybus.O': [
-    sbottom(['.....llllll.....', '...lllnnnnlll...', '..llnnnnnnnll...', '.lllnnnnnnnlll..', 'llllllllllllllll']),
-  ],
-  'silo.A': [
-    sbottom([
-      '..n.....n.......',
-      '..n.....n.......',
-      '..nW....nW......',
-      '..n.W...n.W.....',
-      'WWWWWWWWWWWWWW..',
-      'WwwwwwwwwwwwwW..',
-      'WwWwwwwWwwwwwW..',
-      'WwwwwwwwwwwwwW..',
-      'WWWWWWWWWWWWWW..',
-    ]),
-  ],
-  'silo.T': [
-    sbottom([
-      '....t.t.t.t.....',
-      '....yyyyyyyy....',
-      '....yrrrrrry....',
-      '....yrRrrRry....',
-      ...srep(4, '....yrrrrrry....'),
-      '..yyyrrrrrryyy..',
-      '..yrrrrrrrrrry..',
-      '..yyyyyyyyyyyy..',
-      '..Y.y......y.Y..',
-      '..Y.Y......Y.Y..',
-    ]),
-  ],
-  'snakeeyes.B': [
-    sbottom([
-      '.....xx.xx......',
-      '.....xn.nx......',
-      '.WWWWWWWWWWWWWW.',
-      '.wwwwwwwwwwwwww.',
-      ...srep(3, '..W..........W..'),
-    ]),
-  ],
-  'snakeeyes.C': [
-    sbottom([
-      '......xx.x......',
-      '.WWWWWWWWWWWWWW.',
-      '.WffffffffffffW.',
-      '.WWWWWWWWWWWWWW.',
-      ...srep(3, '..W..........W..'),
-    ]),
-  ],
-  'snakeeyes.R': [
-    sbottom(['.wwwwwwwwwwwwww.', '.w..x...x.....w.', '.w.....x......w.', '.wwwwwwwwwwwwww.', '.W............W.']),
-  ],
-  'snakeeyes.P': [
-    sbottom(['.w...w....w...w.', '.yyyyyyyyyyyyyy.', '.w...w....w...w.', '.w...w....w...w.', '.W...W....W...W.']),
-  ],
-};
-
-// ---- shop signs, for things set into a wall: a small board on the roof with an 8 x 6 picture ----
-const SICON = {
-  hut: ['...rr...', '..rrrr..', '.rrrrrr.', '..xnnx..', '..xnnx..', '..xxxx..'],
-  toaster: ['..y..y..', '.mmmmmm.', '.mMMMMm.', '.mmmmmm.', '.mmmmmm.', '.n....n.'],
-  house: ['...uu...', '..uuuu..', '.uuuuuu.', '.xxnnxx.', '.xxnnxx.', '.xxxxxx.'],
-  barn: ['..rrrr..', '.rrrrrr.', 'rrxrrxrr', 'rrrxxrrr', 'rrxrrxrr', 'rrrrrrrr'],
-  bowl: ['..x..x..', '...x..x.', 'rrrrrrrr', '.rrrrrr.', '..rrrr..', '........'],
-  cleaver: ['mmmmm...', 'mmmmm...', 'mmmmmwww', 'mmmmm...', '........', '........'],
-  mug: ['.xxxx...', '.yyyy...', '.yyyyyy.', '.yyyy.y.', '.yyyyyy.', '.yyyy...'],
-  heart: ['.pp..pp.', 'pppppppp', 'pppppppp', '.pppppp.', '..pppp..', '...pp...'],
-  tophat: ['..nnnn..', '..nnnn..', '..nnnn..', '..nrrn..', 'nnnnnnnn', '........'],
-  cross: ['...rr...', '...rr...', '.rrrrrr.', '.rrrrrr.', '...rr...', '...rr...'],
-  star: ['...yy...', 'yyyyyyyy', '.yyyyyy.', '..yyyy..', '.yy..yy.', '.y....y.'],
-  chain: ['........', '.mm..mm.', 'm..mm..m', '.mm..mm.', '........', '........'],
-  wing: ['........', '..xx....', 'xxxxxxxx', '..xx..x.', '........', '........'],
-  coil: ['........', 'r..r..r.', '.rr.rr.r', '........', 'm......m', 'mmmmmmmm'],
-  case: ['..llll..', '..l..l..', 'llllllll', 'lLllllLl', 'llllllll', 'LLLLLLLL'],
-  crate: ['wwwwwwww', 'wn....nw', 'w.n..n.w', 'w..nn..w', 'w.n..n.w', 'wwwwwwww'],
-  tooth: ['.tt..tt.', 'tttttttt', 'tttttttt', '.tttttt.', '.tt..tt.', '.t....t.'],
-  door: ['.nnnnnn.', '.nnnnnn.', '.nnnnyn.', '.nnnnnn.', '.nnnnnn.', '.nnnnnn.'],
-  pick: ['.mmmm...', 'm..w.m..', '...w....', '...w....', '...w....', '........'],
-  valve: ['...rr...', '..r..r..', '...mm...', 'mmmmmmmm', '...mm...', '...mm...'],
-};
-const SSIGN = {
-  'scrapwell.S': 'hut',
-  'scrapwell.C': 'toaster',
-  'farm.H': 'house',
-  'farm.B': 'barn',
-  'diner.K': 'bowl',
-  'diner.D': 'cleaver',
-  'rustwater.M': 'mug',
-  'rustwater.V': 'heart',
-  'rustwater.F': 'tophat',
-  'rustwater.D': 'cross',
-  'rustwater.S': 'star',
-  'chainfield.T': 'chain',
-  'skybus.K': 'wing',
-  'skybus.G': 'coil',
-  'skybus.L': 'case',
-  'skybus.C': 'crate',
-  'silo.G': 'tooth',
-  'silo.B': 'door',
-  'silo.D': 'pick',
-  'silo.C': 'valve',
-};
-const SBOARD = [
-  {
-    y: 0,
-    r: ['.wwwwwwwwwwwwww.', ...srep(8, '.wWWWWWWWWWWWWw.'), '.wwwwwwwwwwwwww.', '...W........W...', '...W........W...'],
+  // ---- the Drowned Mall ----
+  margie: {
+    body: 'woman',
+    pal: { h: '#8a5a3a', c: '#8a3a30', s: '#c8a07c' },
+    add: ['paperhat', 'star'],
+    item: 'handbook',
   },
-];
-
-// ---- a body on the ground, where someone has just died ----
-const SCORPSE = {
-  pal: { c: '#6a6050', d: '#4a4438' },
-  parts: [sbottom(['...rrrRrrrr.....', '.sscccccdddddbb.', '.sSccccCdddDdbb.', '..rrRrrrr.rr....'])],
-};
-
-// ---- enemies in a fight: a look per kind (by icon), then their real armour and weapon on top ----
-// A named person fighting you uses their own sprite. A human with no look here still gets a plain one.
-Object.assign(SADD, {
-  mohawk: [{ y: 2, r: ['.......hh.......', '.......hh.......', '......hhhh......', '......hhhh......'] }],
-  warpaint: [{ y: 9, r: ['.....r.r.r......'] }],
-  grin: [{ y: 11, r: ['......tttt......'] }],
-  bandage: [
-    { y: 7, r: ['.....xxxxxx.....'] },
-    { y: 15, r: ['...x........x...', '...x........x...'] },
-  ],
-});
-const SFOE = {
-  '💀': { body: 'man', pal: { h: '#8a2a1e', c: '#5a4a3a', s: '#b48a6a' }, add: ['mohawk', 'warpaint'] },
-  '☠️': { body: 'big', pal: { h: '#8a2a1e', c: '#4a3a2a', s: '#b48a6a' }, add: ['mohawk', 'warpaint'] },
-  '🦷': { body: 'man', pal: { h: '#2a1e14', c: '#5a2a24' }, add: ['warpaint', 'necklace'] },
-  '⛓️': { body: 'big', pal: { h: '#3a2a1c', z: '#3a2a1c', c: '#4a3a2a' }, add: ['beard', 'chains'] },
-  '👮': { body: 'man', pal: { c: '#4a5e74', v: '#34445a' }, add: ['cap', 'star'] },
-  '💂': { body: 'man', pal: { c: '#6a2a2a' }, add: ['helmet'] },
-  '🎲': { body: 'big', pal: { h: '#1e1612', c: '#2a2430', d: '#2a2430', v: '#4a2a3a' }, add: ['vest', 'bowtie'] },
-  '🎯': { body: 'man', pal: { c: '#5a4a34', v: '#3a2e22' }, add: ['coat', 'hat'] },
-  '💼': { body: 'man', pal: { h: '#6a6a60', c: '#3a3040', d: '#2a2430' }, add: ['bowtie'] },
-  '🧳': { body: 'man', pal: { c: '#6a5a44', v: '#5a4a30' }, add: ['backpack', 'cap'] },
-  '😃': { body: 'man', pal: { h: '#d8ccb0', c: '#d8ccb0' }, add: ['robe', 'grin'] },
-  '🐶': { body: 'man', pal: { h: '#8a6a3a', c: '#6a5a44', s: '#c8a07a' }, add: ['rags'] },
-  '🩹': { body: 'woman', pal: { h: '#3a2a1c', c: '#7a6a5a' }, add: ['bandage'] },
-  '🐕': {
-    parts: [
-      sbottom([
-        '...........ll...',
-        '..........lllll.',
-        'l.lllllllllllelt',
-        '.lllllllllllllll',
-        '.Lllllllllllll..',
-        '..LLLLLLLLLLL...',
-        '..ll.ll...ll.ll.',
-        '..LL.LL...LL.LL.',
-      ]),
-    ],
-    pal: { l: '#9a7058' },
+  sprocket: {
+    body: 'woman',
+    pal: { h: '#2a1e14', c: '#5a5a50', x: '#5a4030', u: '#8aa0a0' },
+    add: ['goggles', 'apron'],
+    item: 'wrench',
   },
-  '🐀': {
-    parts: [
-      sbottom(['...........ll...', '....llllllllllel', 'p..lllllllllllll', '.pplllllllllll..', '....l.l....l.l..']),
-    ],
-    pal: { l: '#6e6458' },
+  eel: {
+    body: 'woman',
+    pal: { h: '#1e2a2a', c: '#2a2e2e', s: '#b08a6a', u: '#5a8a8a' },
+    add: ['goggles'],
+    item: 'knife',
   },
-  '🐄': {
-    parts: [
-      sbottom([
-        '..........xn.xn.',
-        '..........xxexxe',
-        '.nxxxnnxxxxxxxxx',
-        '.xxnnxxxxnnxxx..',
-        '.xxxxxxnnxxxxx..',
-        '.nnxxxxxxxxxnn..',
-        '..xx.xx...xx.xx.',
-        '..nn.nn...nn.nn.',
-      ]),
-    ],
+  vane: { body: 'man', pal: { h: '#1a1a1a', c: '#c8c4b8', v: '#d8d4c8', d: '#3a3a3a' }, add: ['coat'], item: 'flask' },
+  gums: {
+    body: 'man',
+    pal: { h: '#6a6050', c: '#4a2a24', s: '#a88060' },
+    add: ['gummy', 'necklace', 'spikes'],
+    item: 'longgun',
   },
-  // The Gutmaw: drawn twice the size of anything else.
-  '🪱': {
-    scale: 2,
-    parts: [
-      sbottom([
-        '....rrrrrrrr....',
-        '...rtntntntnr...',
-        '..rtnnnnnnnntr..',
-        '..rnnnnnnnnnnr..',
-        '..rtnnnnnnnntr..',
-        '...rtntntntnr...',
-        '....pPpPpPpP....',
-        '....pppppppp....',
-        '...ppppppppppp..',
-        '...pPPPPPPPPPp..',
-        '...ppppppppppp..',
-        '..pppppppppppp..',
-        '..pPPPPPPPPPPPp.',
-        '..ppppppppppppp.',
-        '.lllpppppppppll.',
-        'llllllllllllllll',
-      ]),
-    ],
-    pal: { p: '#a07a70' },
+  // ---- the Green ----
+  gardener: {
+    body: 'man',
+    pal: { h: '#d8d0c0', z: '#d8d0c0', c: '#5e6a3a', s: '#b48a6a' },
+    add: ['beard', 'straw'],
+    item: 'trowel',
   },
+  warden: { body: 'woman', pal: { h: '#2a1e14', c: '#4a4a3a', v: '#3a3a30' }, add: ['plate', 'cap'], item: 'longgun' },
+  moss: {
+    body: 'man',
+    pal: { s: '#6a8a5a', h: '#3e5a32', c: '#4a5a40', d: '#3a4434' },
+    add: ['glowhead', 'rags'],
+    item: 'paddle',
+    glow: '#a8e07c',
+  },
+  fern: { body: 'woman', pal: { h: '#8a5a2a', c: '#5e7a3e', x: '#b8a880' }, add: ['apron'], item: 'sunflower' },
 };

@@ -49,6 +49,9 @@ SC.ending = () => {
     destroyer:
       "You push the button for EVERYTHING. The Dentist King weeps with joy. The world goes white. You were a nobody. Now you're the last thing anyone saw.",
     nukehome: 'You nuked Scrapwell. Your own home. Your own well. Even the King looks at you funny.',
+    green:
+      'You stay in the Green. Real food, clean water, and forty people who count everything. Forty-one now.' +
+      (f.kingStopped ? '' : ' On day 25 the western sky turns white. Under the glass, nobody looks up.'),
   }[E.type];
   if (E.type !== 'nuke' && E.type !== 'destroyer') {
     L.push(
@@ -135,7 +138,7 @@ SC.ending = () => {
     );
   }
   if (E.type !== 'nuke' && E.type !== 'destroyer')
-    L.push(...krugLines(), ...webLines(), ...snakeLines(), ...loveLines());
+    L.push(...krugLines(), ...webLines(), ...snakeLines(), ...mallLines(), ...greenLines(), ...loveLines());
   const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
   // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
   const lines = L.filter(Boolean),

@@ -292,115 +292,21 @@ body::before {
   }
 }
 
-/* ---- 2D town view ---- */
+/* ---- title and ending art (scenes/art.js) ---- */
 #view {
   margin: 10px 0;
   border: 1px solid var(--dim);
-  background: #070502;
   padding: 4px;
-}
-.town {
-  display: grid;
-  gap: 0;
-  user-select: none;
-}
-.town .t {
-  font-style: normal;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: min(2.6vw, 20px);
-  line-height: 1;
-  cursor: pointer;
-  color: var(--dim);
-}
-.town .t.w {
-  background: #2a1d08;
-  box-shadow: inset 0 0 0 1px #1a1205;
-  cursor: default;
-}
-.town .t.s {
-  color: #5a4210;
-}
-.town .t.cr {
-  color: #6f7f2a;
-}
-.town .t.r {
-  background: #140e05;
-  color: #4a3508;
-}
-.town .t.u {
-  color: #5d4a2a;
-}
-.town .t.wa {
-  color: var(--blue);
-  background: #06121a;
-  cursor: default;
-}
-.town .t.fe {
-  color: #8a5f00;
-  cursor: default;
-}
-.town .t.d {
-  color: var(--a);
-  background: #1f1606;
-}
-.town .t.e {
-  color: var(--grn);
-}
-.town .t.ob {
-  background: #1b1307;
-}
-.town .t.ob.live {
-  background: #3a2a06;
-  box-shadow: inset 0 0 0 1px var(--a);
-}
-.town .t.npc {
-  background: #120d05;
-}
-.town .t.me {
-  background: #3a2a06;
-  box-shadow: inset 0 0 0 1px var(--grn);
-}
-.town .t:hover {
-  outline: 1px solid var(--a);
-  outline-offset: -1px;
-}
-
-.town {
-  margin: 0 auto;
-}
-#view .legend {
-  font-size: 12px;
-  margin: 6px 2px 0;
-  line-height: 1.8;
-}
-#view .legend span {
-  cursor: pointer;
-  margin-right: 12px;
-  white-space: nowrap;
-}
-#view .legend span:hover {
-  text-decoration: underline;
-}
-#view .legend.dim {
-  color: var(--dim);
-}
-
-/* ---- isometric view (scenes/iso.js) ---- */
-#view canvas.iso {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  cursor: pointer;
-  filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.1));
-}
-#view:has(canvas.iso) {
   box-shadow:
     inset 0 0 24px rgba(0, 0, 0, 0.8),
     0 0 14px rgba(255, 150, 0, 0.08);
   background: #050302;
+}
+#view canvas.art {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.1));
 }
 
 /* ---- portraits (scenes/sprite.js) ---- */
@@ -469,32 +375,6 @@ body::before {
   text-shadow: 0 1px 0 #000;
   pointer-events: none;
   z-index: 4;
-}
-
-/* ---- the fight arena (scenes/arena.js): a red flash when you get hurt ---- */
-#view canvas.arena {
-  cursor: crosshair;
-}
-#view canvas.arena.hurt {
-  animation: hurt 0.45s ease-out;
-}
-@keyframes hurt {
-  0% {
-    filter: brightness(1.6) sepia(1) hue-rotate(-40deg) saturate(4);
-    transform: translateX(-3px);
-  }
-  30% {
-    transform: translateX(3px);
-  }
-  100% {
-    filter: none;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  #view canvas.arena.hurt {
-    animation: none;
-  }
 }
 
 /* ---- the painted world map (scenes/mapart.js) ---- */

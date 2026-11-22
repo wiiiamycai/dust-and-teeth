@@ -1,5 +1,7 @@
 # Dust & Teeth: Art Style
 
+> v4.3: Will asked for text and portraits only, so the isometric towns, the walking maps, fog of war, town lighting and the fight strip are gone. Sections 3, 6, 7, 8 and 10 are kept for the record only. Section 5 (sprites) now covers portraits only.
+
 One page. Every later art change (isometric view, sprites, frame, portraits) follows it. All art is original and drawn in code (canvas or SVG). Nothing is copied from Fallout: no assets, no Pip-Boy, no bottom panel, no logo, no characters. Inspired by the genre, not by one game.
 
 ## 1. Mood

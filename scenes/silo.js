@@ -141,7 +141,7 @@ SC.console = () => {
   });
 };
 SC.launch = who => {
-  const t = Object.keys(LOC).filter(k => !LOC[k].sub && k !== 'silo' && !S.crater[k]);
+  const t = Object.keys(LOC).filter(k => !LOC[k].sub && onMap(k) && k !== 'silo' && !S.crater[k]);
   show({
     title: 'Choose a target',
     icon: '☢️',
@@ -176,7 +176,9 @@ function nuke(k, who) {
   IDS.forEach(x => {
     if (
       alive(x) &&
-      (S.n[x].loc === k || (k === 'chainfield' && S.n[x].loc === 'pen') || (k === 'scrapwell' && S.n[x].loc === 'well'))
+      (S.n[x].loc === k ||
+        (k === 'chainfield' && S.n[x].loc === 'pen') ||
+        (LOC[S.n[x].loc] && LOC[S.n[x].loc].up === k))
     ) {
       S.dead[x] = 1;
       c++;

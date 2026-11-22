@@ -751,8 +751,9 @@ function webLines() {
     );
   else if (f.plot_route === 'stopped' && alive('jeb'))
     L.push('Jeb kept his road. He named a lizard after you. It bites.');
-  if (f.gloriaEast) L.push('Gloria went east with Jeb. Whether it was green, she never wrote to say.');
-  else if (f.skimPaid)
+  if (f.gloriaEast && !f.gloriaGreen)
+    L.push('Gloria went east with Jeb. Whether it was green, she never wrote to say.');
+  else if (f.skimPaid && !f.gloriaGreen)
     L.push('Gloria never skimmed again. She kept one tooth from your 150 on a string around her neck.');
   else if (f.gloriaRad)
     L.push('Gloria runs the Velvet Rad now. She counts the takings twice, and laughs like a cement mixer.');

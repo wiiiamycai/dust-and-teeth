@@ -2,7 +2,7 @@
 // ================= SOUND =================
 // Quiet, optional, and made in code: no audio files. Off until you turn it on with the speaker in the footer,
 // and your choice is remembered in this browser (not in the save).
-// It only reacts to what's on screen: a soft step when you walk, a thud or a bang when an enemy is hit,
+// It only reacts to what's on screen: a thud or a bang when an enemy is hit,
 // a sting when you're hurt, wind under everything, and a low note at the end. The game never waits on it.
 
 const SND = { on: false, ctx: null, master: null, noise: null, wind: null };
@@ -24,7 +24,7 @@ function sndInit() {
   SND.noise = b;
   return c;
 }
-// A burst of filtered noise: steps, thuds, gunshots.
+// A burst of filtered noise: thuds, gunshots.
 function sndNoise(dur, freq, q, vol, type) {
   const c = SND.ctx,
     t = c.currentTime,
@@ -61,8 +61,7 @@ function sndTone(f0, f1, dur, vol, type) {
 function sfx(name) {
   if (!SND.on || !sndInit() || SND.ctx.state !== 'running') return;
   try {
-    if (name === 'step') sndNoise(0.06, 600 + Math.random() * 400, 1.2, 0.18, 'bandpass');
-    else if (name === 'hit') {
+    if (name === 'hit') {
       sndNoise(0.14, 220, 0.8, 0.9, 'lowpass');
       sndTone(130, 55, 0.14, 0.35, 'sine');
     } else if (name === 'shot') {
@@ -103,6 +102,18 @@ function sndWind(on) {
   src.start();
   lfo.start();
   SND.wind = { src };
+}
+// Fight sounds: a thud or a bang when they're hit, a sting when you are. Watches the fight between screens.
+let SFX_LAST = null;
+function fightSfx() {
+  const F = S && S.scene === 'fight' ? S.fight : null;
+  if (!F) return (SFX_LAST = null);
+  const foeHp = F.en.reduce((a, e) => a + Math.max(0, e.hp), 0);
+  if (SFX_LAST && SFX_LAST.fight === F) {
+    if (foeHp < SFX_LAST.foeHp) sfx(isGun(S.weapon) ? 'shot' : 'hit');
+    if (S.hp < SFX_LAST.hp && typeof setTimeout === 'function') setTimeout(() => sfx('hurt'), 160);
+  }
+  SFX_LAST = { fight: F, foeHp, hp: S.hp };
 }
 function sndLabel() {
   const b = typeof document !== 'undefined' && document.getElementById && document.getElementById('sndb');

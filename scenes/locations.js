@@ -336,10 +336,14 @@ SC.hub = loc => {
     loc === 'silo' && !S.f.siloIn
       ? []
       : IDS.filter(
-          x => alive(x) && x !== S.spouse && (S.n[x].loc === loc || (loc === 'chainfield' && S.n[x].loc === 'pen')),
+          x =>
+            alive(x) &&
+            x !== S.spouse &&
+            (S.n[x].loc === loc || (loc === 'chainfield' && S.n[x].loc === 'pen')) &&
+            (loc !== 'green' || S.f.greenIn || NPC[x].gate || S.n[x].st.gate), // outside the Green's wall you only meet who's outside it
         );
   const cards = ids.map(card);
-  (is2D() ? v => townShow(loc, v) : show)({
+  show({
     ids,
     title: L.n,
     icon: L.i,
@@ -356,9 +360,8 @@ SC.hub = loc => {
     opts: [
       ...(HUBO[loc] ? HUBO[loc]() : []),
       corpseOpt(),
-      loc === 'well' ? ['Climb back up', () => go('hub', 'scrapwell')] : ['Leave (map)', () => go('map')],
+      L.up ? ['Climb back up', () => go('hub', L.up)] : ['Leave (map)', () => go('map')],
       charOpt(),
-      is2D() ? null : viewOpt(),
     ],
   });
 };

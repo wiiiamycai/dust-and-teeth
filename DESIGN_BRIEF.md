@@ -118,15 +118,13 @@ Vanilla JS, no build step. `index.html` loads `css/style.css` and a list of plai
 - Endgame: Silo 9 (find it via Old Teo, Krug, Moe, Ma Thistle or a Molar survivor). Ways in: fight, sneak, slaver tattoo, bribe. Ways to stop the King: fight, talk down, steal the launch key, sabotage via the maintenance shaft. Or join him and nuke a town.
 - Scenes are functions in `SC`, called through `go(scene, ...args)`. `show({title, icon, sub, text, cards, map, opts})` renders everything.
 
-### Graphics (v3.7 to v4.2)
+### Graphics (v3.7 to v4.3)
 
-The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and skipped when there's no canvas (the headless tests), so it can never change how the game plays:
-- `scenes/iso.js`: the isometric towns, fog of war (saved in `S.seen`), light by day number, dust. The views cycle: isometric, flat (`scenes/walk.js`), list.
-- `data/sprites.js` and `scenes/sprite.js`: pixel sprites for people, you, enemies, props, signs and corpses, built from parts, plus the talk portraits.
-- `scenes/arena.js`: fights drawn on an isometric strip; click an enemy to target it.
-- `scenes/mapart.js`: the painted world map. `scenes/art.js`: title and ending art.
+The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and skipped when there's no canvas (`canDraw()` in `engine/core.js`; the headless tests have none), so it can never change how the game plays. Will's call in v4.3: text and portraits only. The isometric towns, the walking tile maps and the isometric fight strip were removed, and every place plays as text.
+- `data/sprites.js` and `scenes/sprite.js`: the talk portraits, built from parts (body, layers, what they hold). Every person needs an `SNPC` entry.
+- `scenes/mapart.js`: the painted world map. `scenes/art.js`: title and ending art, with portraits of the people a slide names.
 - `scenes/sound.js`: optional sound made in code, off by default, toggled in the footer.
-- `engine/core.js` `show()` calls the portrait, arena and art hooks, each inside a try/catch.
+- `engine/core.js` `show()` calls the portrait, sound and art hooks, each inside a try/catch.
 
 ## 12. Suggested build order for v3
 
@@ -149,8 +147,7 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 - `node tests/reload.js index.html` plays random games while reloading mid-game to check saves.
 - `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. God mode tops up HP and maxes skills before each step. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`, `REAL` (restore real skills, so checks can be measured), `RAND:<0..1>` / `RAND:off` (fix every dice roll: 0.99 fails almost any check), `EXPECT:<js>` (fail unless truthy), `SAY:<text>` (fail unless the text is on screen).
 - `tests/paths.json` holds the scripted consequence tests that `all.js` runs. Add one for each new consequence chain.
-- `node tests/walk.js index.html` checks the 2D view: every map draws, every object, person and exit is reachable from where you arrive, walking into things works, and a random walker finds no errors.
-- `node tests/sprites.js index.html` checks the pixel sprites: every grid uses palette letters and fits its box, every person, armour, weapon and map object has a sprite of the right kind, and every sprite builds in every frame and facing.
+- `node tests/sprites.js index.html` checks the portraits: every grid uses palette letters and fits its box, every person has a portrait, it is found from their talk screen, and it draws both open-eyed and blinking.
 - `node tests/golden.js index.html` replays 300 fixed-seed games (with reloads) and compares a fingerprint of every screen and save against `tests/golden.json`. It must match after any refactor. When a change is meant to alter gameplay it will mismatch: re-record with `node tests/golden.js index.html record` and commit the new `golden.json` with that change.
 - For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`). The browser caches the scripts: force fresh copies before checking a change.
 
