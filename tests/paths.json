@@ -4418,5 +4418,34 @@
    "WAIT:8",
    "EXPECT:alive('sheriff') && S.f.hitDone"
   ]
+ },
+ {
+  "name": "Crane: married and walking with you, you can still talk to her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.spouse = 'sheriff'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; goHere()",
+   "Talk to Sheriff Crane (with you)",
+   "SAY:Your wife, the Sheriff"
+  ]
+ },
+ {
+  "name": "Crane: married, pregnant, shoved into the Gutmaw, and the ending remembers all of it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.spouse = 'sheriff'; S.f.spouseWho = 'sheriff'; S.n.sheriff.loc = 'party'; S.f.cranePreg = 1; S.f.pregTold = 1; S.dead.sheriff = 1; S.spouse = null; S.f.spouseFate = 'gutmaw'",
+   "EXPECT:linkLines().some(l => /shoved her into its mouth, badge, baby and all/.test(l))"
+  ]
+ },
+ {
+  "name": "Ending: one slide per place or person",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.f.gusPaid = 1; S.end = { type: 'retired' }; go('ending')",
+   "Next",
+   "EXPECT:!document.getElementById('text').innerHTML.includes(String.fromCharCode(10, 10))"
+  ]
  }
 ]

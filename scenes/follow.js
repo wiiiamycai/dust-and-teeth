@@ -499,7 +499,7 @@ romanceOpts = id => [..._romanceFollow(id), ...followOpts(id)];
 // ---- talking to your follower, wherever you are ----
 function followerOpt() {
   const f = inParty();
-  return f && f !== S.spouse ? [`Talk to ${npcName(f)} (with you)`, () => go('talk', f)] : null;
+  return f ? [`Talk to ${npcName(f)} (with you)`, () => go('talk', f)] : null; // a spouse too: Crane needs talking to
 }
 const _hubFollow = SC.hub;
 SC.hub = loc => {

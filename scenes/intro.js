@@ -155,10 +155,10 @@ SC.ending = () => {
     );
   if (E.type === 'greensafe') L.push(...greenLines());
   const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
-  // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
+  // Fallout-style slides: the headline, then one slide for each place and person.
   const lines = L.filter(Boolean),
     slides = [head];
-  for (let i = 0; i < lines.length; i += 3) slides.push(lines.slice(i, i + 3).join('\n\n'));
+  slides.push(...lines); // one place or person per slide, each with its own picture (scenes/endart.js)
   slides.push(`${head}\n\n${you}\n\nThis life is over. Your save is gone.`);
   wipe();
   S = null;

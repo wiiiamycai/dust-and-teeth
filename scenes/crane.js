@@ -820,3 +820,35 @@ linkLines = () => {
   }
   return L;
 };
+
+// ---- Crane's slides when she doesn't make it ----
+// Every way Crane can end gets a slide, so the ending never forgets her.
+const _linkLinesCraneEnd = linkLines;
+linkLines = () => {
+  const L = _linkLinesCraneEnd(),
+    f = S.f,
+    wed = f.spouseWho === 'sheriff';
+  if (alive('sheriff')) return L;
+  if (f.spouseFate === 'gutmaw' && wed)
+    L.push(
+      f.cranePreg
+        ? 'You married Sheriff Crane in front of a toaster. When the Gutmaw came, you shoved her into its mouth, badge, baby and all. The worm slept for a week. Rustwater never had law again.'
+        : 'You married Sheriff Crane in front of a toaster. When the Gutmaw came, you shoved her into its mouth. It took the badge too. Rustwater never had law again.',
+    );
+  else if (f.thursdayDone === 'sheriff')
+    L.push(
+      "Sheriff Crane was the Thursday special at Mama Lou's. The badge turned up in somebody's stew. Lou kept it.",
+    );
+  else if (f.craneHow) {
+    // her deaths at Chainfield have their own slides in krugLines
+  } else if (wed)
+    L.push(
+      'You married Sheriff Crane in front of a toaster. She died before the valley did. You never said who killed her.',
+    );
+  else if (S.f.craneLeash || lover('sheriff') || S.lovers.sheriff)
+    L.push(
+      'Sheriff Crane died with your name in her file and her leash in her desk. Rustwater buried the badge with her.',
+    );
+  else L.push('Sheriff Crane is dead. Rustwater never found another one.');
+  return L;
+};
