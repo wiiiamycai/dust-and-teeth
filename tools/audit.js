@@ -79,7 +79,10 @@ const reads = new Set();
 const readRe = /(?<![\w.])(?:S\.)?f\.([a-zA-Z_]\w*)(?!\s*(?:=(?!=)|\+\+|--|\+=|-=|\|\|=))/g;
 for (const m of flagSRC.map(s => s.t).join('\n').matchAll(readRe)) reads.add(m[1]);
 for (const m of all.matchAll(/S\.f\['([a-zA-Z_]\w*)'\](?!\s*=(?!=))/g)) reads.add(m[1]);
-const unread = [...writes.keys()].filter(k => !reads.has(k) && !dynPrefix.some(p => k.startsWith(p))).sort();
+// a flag named in quotes (a table of flag names, like DX in scenes/depth.js) is read by name
+const unread = [...writes.keys()]
+  .filter(k => !reads.has(k) && !dynPrefix.some(p => k.startsWith(p)) && !all.includes(`'${k}'`))
+  .sort();
 
 // ---- 3. secrets with no one to tell ----
 const secretUses = {};
@@ -110,7 +113,7 @@ const neverEmitted = evRows.filter(r => r.def && !r.emit).map(r => r.t);
 
 // ---- 5. plots with fewer than three ways ----
 const plotRows = Object.keys(PLOTS)
-  .map(k => ({ k, ways: Object.keys(PLOTS[k].opts || {}).length }))
+  .map(k => ({ k, ways: Object.keys(PLOTS[k].opts || {}).length + Object.keys(PLOTS[k].hub || {}).length }))
   .sort((a, b) => a.ways - b.ways);
 const thinPlots = plotRows.filter(p => p.ways < 3);
 

@@ -812,7 +812,9 @@ linkLines = () => {
       dad = f.craneDad;
     L.push(
       !told
-        ? "Crane had the baby in the spring. She never found out who the father was. She decided it didn't matter, and mostly meant it."
+        ? f.dadDoesntMatter
+          ? "Crane had the baby in the spring. She never found out who the father was. You told her it didn't matter, and you were the one who stayed."
+          : "Crane had the baby in the spring. She never found out who the father was. She decided it didn't matter, and mostly meant it."
         : told === dad
           ? `Crane had the baby in the spring. ${dad === 'you' ? 'Yours. It has your nose and her aim.' : `${NPC[dad].n}'s, and everybody knew it. The child grew up with two parents who were not together and a whole town that was.`}`
           : `Crane had the baby in the spring. You told her it was ${dadName(told)}'s. It was ${dadName(dad)}'s. Children grow into their faces, and this one did.`,

@@ -4688,5 +4688,79 @@
    "EVAL:know('gus.secret'); go('talk', 'elder')",
    "SAY:Gus pawned your ring"
   ]
+ },
+ {
+  "name": "Depth: the Coil guard the pump, see the chained night shift, and Crane tells you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.coilGuards = 1",
+   "WAIT:3",
+   "EXPECT:S.f.shiftSeen && S.n.ohm.rx.some(l => /chains/.test(l))",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Anything strange at the pump",
+   "EXPECT:knew('mayor.secret')"
+  ]
+ },
+ {
+  "name": "Depth: Junior took Bacon Prime, so Thursday's stew is pedigree pork, and Pell hears you ate him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.porkDone = 1; S.dead.pig = 1",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "EVAL:globalThis.p0 = S.n.pell.op",
+   "Order the stew",
+   "EXPECT:S.f.ateBacon && S.n.pell.op <= p0 - 30",
+   "SAY:Pedigree",
+   "EXPECT:linkLines().some(l => /Bacon Prime at Mama Lou/.test(l))"
+  ]
+ },
+ {
+  "name": "Depth: sneak up the Green's outflow pipe, and two days later the Warden welds it shut",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.sneakedGreen = 1",
+   "WAIT:2",
+   "EXPECT:!canTry('green.outflow') && S.n.moss.op >= 15 && S.n.warden.rx.some(l => /welded/.test(l))"
+  ]
+ },
+ {
+  "name": "Depth: sell the Coil's road to Rind, and Ohm works out who, and the Coil take you for an enemy",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.toothSold = 1",
+   "WAIT:1",
+   "EXPECT:S.n.ohm.op <= -40 && coilFoe()"
+  ]
+ },
+ {
+  "name": "Depth: sell the Holy Toaster to Doc, and Crumb sees it in pieces in his window",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.toasterSold = 1",
+   "WAIT:3",
+   "EXPECT:S.n.crumb.op <= -20 && S.n.crumb.rx.some(l => /In pieces/.test(l))"
+  ]
+ },
+ {
+  "name": "Depth: two days before Nan's loan is due, Nan and Moe warn you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "I need a loan",
+   "EVAL:S.day = S.f.debtDue - 3",
+   "WAIT:1",
+   "EXPECT:S.n.nan.rx.some(l => /Two days/.test(l)) && S.n.moe.rx.some(l => /where you sleep/.test(l))"
+  ]
  }
 ]

@@ -8,24 +8,11 @@ A line or check needs this fact, and no code ever teaches it. Either teach it so
 
 None.
 
-## 2. Flags set but never read (14)
+## 2. Flags set but never read (0)
 
 Something happened and set a flag, and nothing ever looks at it again. Each is a consequence waiting to be written.
 
-- `coilGuards` (set at scenes/schism.js:380)
-- `dadDoesntMatter` (set at scenes/crane.js:563)
-- `debtDue` (set at scenes/snakeeyes.js:314)
-- `docLynched` (set at scenes/mall.js:668)
-- `greyHit` (set at scenes/mall.js:661)
-- `ledgerGiven` (set at scenes/talk.js:885)
-- `peteSaved` (set at scenes/jobs.js:1334)
-- `pigStolen` (set at scenes/talk.js:598)
-- `planeHeld` (set at scenes/schism.js:252)
-- `porkDone` (set at scenes/web.js:116)
-- `routeHit` (set at scenes/web.js:268)
-- `sneakedGreen` (set at scenes/green.js:232)
-- `toasterSold` (set at scenes/talk.js:1032)
-- `toothSold` (set at scenes/schism.js:597)
+None.
 
 ## 3. Secrets with no one to tell (28)
 
@@ -40,7 +27,7 @@ Telling is the main use of a secret (decision 238). These have no telling yet. *
 | rook (Rook) | 2 | 0 | 1 |
 | crumb (Brother Crumb) | 3 | 0 | 0 |
 | nigel (Nigel the Glower) | 1 | 0 | 0 |
-| mayor (Mayor Fenwick) | 3 | 0 | 0 |
+| mayor (Mayor Fenwick) | 3 | 0 | 1 |
 | sheriff (Sheriff Crane) | 1 | 0 | 5 |
 | doc (Doc Ratchet) | 1 | 0 | 1 |
 | opal (Madame Opal) | 1 | 0 | 0 |
@@ -71,23 +58,25 @@ None.
 
 Defined but never happen: `slain`.
 
-## 5. Plots with fewer than three ways to change them (3)
+## 5. Plots with fewer than three ways to change them (0)
 
 Every plot should be changeable three or more ways.
 
+None.
+
 | Plot | Ways |
 |---|---|
-| pork | 2 |
-| cabbage | 2 |
-| fightnight | 2 |
+| pork | 3 |
 | skim | 3 |
+| cabbage | 3 |
+| fightnight | 3 |
 | vault | 3 |
-| plane | 3 |
 | pump | 3 |
 | tooth | 3 |
 | poison | 4 |
 | route | 4 |
 | gate | 4 |
+| plane | 4 |
 | saint | 4 |
 | widow | 5 |
 | drugwar | 5 |
@@ -122,16 +111,16 @@ Score = jobs x2 + bonds + plots x2 + secrets they tell + uses of their own secre
 | Sprocket | 21 | 2 | 6 | 2 | 2 | 3 | 0 | 0 | 1 |
 | Mister Pips | 22 | 1 | 7 | 2 | 1 | 4 | 0 | 2 | 1 |
 | Junior | 23 | 2 | 4 | 2 | 2 | 2 | 1 | 3 | 1 |
-| Mayor Fenwick | 26 | 1 | 10 | 2 | 0 | 3 | 0 | 5 | 1 |
 | Hector | 26 | 2 | 8 | 1 | 2 | 2 | 1 | 4 | 1 |
 | Krug | 26 | 0 | 12 | 1 | 5 | 3 | 0 | 2 | 1 |
 | Rook | 26 | 1 | 6 | 3 | 5 | 3 | 0 | 2 | 1 |
 | The Dentist King | 26 | 0 | 13 | 0 | 5 | 1 | 0 | 5 | 1 |
+| Mayor Fenwick | 27 | 1 | 10 | 2 | 0 | 4 | 0 | 5 | 1 |
 | Gums | 27 | 5 | 6 | 3 | 2 | 1 | 0 | 0 | 1 |
 | Brother Crumb | 28 | 1 | 10 | 2 | 5 | 3 | 0 | 2 | 1 |
 | Madame Opal | 28 | 4 | 10 | 2 | 2 | 1 | 0 | 1 | 1 |
 | Doc Ratchet | 29 | 3 | 10 | 2 | 2 | 2 | 1 | 1 | 1 |
 | Moe | 33 | 2 | 10 | 4 | 5 | 2 | 1 | 0 | 1 |
 | Caravan Jeb | 36 | 3 | 11 | 4 | 2 | 3 | 1 | 2 | 1 |
-| Sheriff Crane | 39 | 3 | 8 | 4 | 1 | 6 | 2 | 4 | 1 |
 | Mama Lou | 39 | 5 | 9 | 3 | 3 | 1 | 1 | 6 | 1 |
+| Sheriff Crane | 41 | 4 | 8 | 4 | 1 | 6 | 2 | 4 | 1 |
