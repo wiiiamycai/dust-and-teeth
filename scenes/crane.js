@@ -276,7 +276,7 @@ function craneOut(how) {
 const _huboChainCrane = HUBO.chainfield;
 HUBO.chainfield = () => {
   const o = _huboChainCrane();
-  if (alive('sheriff') && S.n.sheriff.loc === 'pen' && alive('krug'))
+  if (alive('sheriff') && S.n.sheriff.loc === 'pen' && alive('krug') && canTry('pen.lock', 'sheriff'))
     o.push([
       "Pick the lock on Crane's chain tonight" + hint('pen.lock', 'sheriff'),
       () => {

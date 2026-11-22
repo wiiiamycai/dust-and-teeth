@@ -1,17 +1,13 @@
 [
  {
-  "name": "Nigel: a failed check closes, learning about him reopens it, and you get a soft cue",
+  "name": "Nigel: the plane line stays hidden until you know what he is, then it's there",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Climb down the well",
    "Nigel",
-   "REAL",
-   "RAND:0.99",
-   "crashed plane",
    "EXPECT:!canTry('nigel.move')",
    "EXPECT:!cur.some(o => o[0].includes('crashed plane'))",
-   "SAY:looks at you like you're the weather",
    "\"What ARE you?\"",
    "EXPECT:canTry('nigel.move')",
    "SAY:crashed plane"
@@ -34,23 +30,17 @@
   ]
  },
  {
-  "name": "Bess: three failed lines and she shuts you out for good",
+  "name": "Bess: no leaving line until you know her dream, and no cheap line for an average man",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Leave (map)",
    "TRAVEL:Hector's Farm",
    "Bess",
-   "REAL",
-   "RAND:0.99",
-   "leaving this farm",
-   "prettiest girl",
-   "leaving this farm",
-   "SAY:Stop. Just stop.",
-   "EXPECT:!canTry('bess.leave')",
    "EXPECT:!cur.some(o => /leaving this farm|prettiest/.test(o[0]))",
-   "EVAL:S.day += 30; know('bess.other'); S.n.bess.op += 50",
-   "EXPECT:!canTry('bess.leave')"
+   "What do you do for fun",
+   "SAY:leaving this farm",
+   "EXPECT:!cur.some(o => /prettiest/.test(o[0]))"
   ]
  },
  {
@@ -64,16 +54,20 @@
   ]
  },
  {
-  "name": "Once-locked checks never reopen, whatever changes",
+  "name": "Once-locked dice checks never reopen, whatever changes; a story line opens whenever you hold its key",
   "steps": [
    "Crawl out of bed",
    "Go",
    "REAL",
    "RAND:0.99",
-   "EVAL:attempt('king.talk')",
+   "EVAL:attempt('green.outflow')",
+   "EXPECT:!canTry('green.outflow')",
+   "EVAL:S.n.warden.op += 50; S.day += 30",
+   "EXPECT:!canTry('green.outflow')",
+   "EVAL:S.tried['king.talk'] = { n: 1, day: S.day, lock: 'once', who: 'king', op: null, kf: null }",
    "EXPECT:!canTry('king.talk')",
-   "EVAL:know('king.mother'); S.n.king.op += 50; S.day += 30",
-   "EXPECT:!canTry('king.talk') && !canTry('king.mother')"
+   "EVAL:know('king.secret')",
+   "EXPECT:canTry('king.talk')"
   ]
  },
  {
@@ -348,12 +342,10 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "Climb down the well",
-   "Nigel",
    "REAL",
    "RAND:0.99",
-   "EVAL:globalThis.s = S.skills.speech + S.skx.speech || S.skills.speech",
-   "crashed plane",
+   "EVAL:globalThis.s = S.skills.speech + (S.skx.speech || 0)",
+   "EXPECT:!attempt('jeb.haggle')",
    "EXPECT:S.skills.speech + (S.skx.speech || 0) > s"
   ]
  },
@@ -446,6 +438,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.weapons.push('zipgun'); S.weapon = 'zipgun'; S.inv.ammo = 2",
+   "RAND:0.99",
    "EVAL:fight([mkE('Rat', 'R', 9)], {})",
    "Shoot Rat",
    "EXPECT:S.inv.ammo === 1",
@@ -619,11 +612,8 @@
    "TRAVEL:Rustwater",
    "EVAL:S.teeth = 300",
    "Madame Opal",
-   "REAL",
-   "EVAL:globalThis.c = chanceOf('opal.honest')",
-   "EXPECT:c < 50",
-   "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] }))",
-   "RAND:0",
+   "EXPECT:!cur.some(o => /no lies left/.test(o[0]))",
+   "EVAL:learn('opal', event('freed', null, { loc: 'chainfield', wit: [] })); go('talk', 'opal')",
    "no lies left",
    "EXPECT:lover('opal') && S.teeth === 200",
    "SAY:yours"
@@ -1027,7 +1017,7 @@
   ]
  },
  {
-  "name": "Heist: get caught and Fenwick's guards come for you",
+  "name": "Heist: the Plasma Rifle is out of reach until Fenwick trusts you",
   "steps": [
    "Crawl out of bed",
    "Go",
@@ -1035,9 +1025,9 @@
    "TRAVEL:Rustwater",
    "Mayor Fenwick",
    "What's in the parlour",
-   "RAND:99",
-   "Lift the Plasma Rifle",
-   "EXPECT:S.fight && S.fight.en.every(e => e.n === \"Fenwick's guard\") && S.n.mayor.op === -100"
+   "EXPECT:!cur.some(o => /Lift the Plasma Rifle/.test(o[0]))",
+   "EVAL:S.n.mayor.op = 30; go('talk', 'mayor')",
+   "SAY:Lift the Plasma Rifle"
   ]
  },
  {
@@ -1314,7 +1304,7 @@
   ]
  },
  {
-  "name": "Plot: tell Lou about the cabbages; fail and she salts them",
+  "name": "Plot: Lou won't hear Junior's side from a customer; snitch instead and she salts the cabbages",
   "steps": [
    "Crawl out of bed",
    "Go",
@@ -1322,8 +1312,13 @@
    "Leave (map)",
    "TRAVEL:Mama Lou's",
    "Mama Lou",
-   "RAND:99",
-   "Junior grows cabbages",
+   "EXPECT:!cur.some(o => /Junior grows cabbages/.test(o[0]))",
+   "Back",
+   "Junior",
+   "Eat what Junior slides across the counter",
+   "Back",
+   "Mama Lou",
+   "cooking greens behind your back",
    "EXPECT:S.f.cabbageSalted && S.f.plot_cabbage === 'done'"
   ]
  },
@@ -2384,18 +2379,16 @@
   ]
  },
  {
-  "name": "Green: fail to free Moss and the Warden throws you out for good",
+  "name": "Green: no picking Moss's lock until you know where the key is kept",
   "steps": [
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "Go down to the vats",
    "Moss",
-   "REAL",
-   "RAND:0.99",
-   "Pick the lock",
-   "EXPECT:S.f.greenOut && !S.f.greenIn && S.here === 'green'",
-   "SAY:The gate stays shut for you"
+   "EXPECT:!cur.some(o => /Pick the lock/.test(o[0]))",
+   "EVAL:know('moss.secret'); go('talk', 'moss')",
+   "SAY:Pick the lock"
   ]
  },
  {
@@ -4278,7 +4271,7 @@
   ]
  },
  {
-  "name": "Crane and Krug: if the night doesn't move him, Krug stays Krug",
+  "name": "Crane and Krug: no proposal for the three of you until you know he was in the pens",
   "steps": [
    "Crawl out of bed",
    "Go",
@@ -4286,11 +4279,9 @@
    "Leave (map)",
    "TRAVEL:Chainfield",
    "Krug",
-   "proposal. For the three of us",
-   "RAND:0.99",
-   "Go through with it",
-   "EXPECT:S.f.krugNight && !S.f.krugReformed && alive('krug')",
-   "SAY:Business is business"
+   "EXPECT:!cur.some(o => /For the three of us/.test(o[0]))",
+   "EVAL:know('krug.secret'); go('talk', 'krug')",
+   "SAY:For the three of us"
   ]
  },
  {

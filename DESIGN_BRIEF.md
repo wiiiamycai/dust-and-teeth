@@ -30,7 +30,7 @@ A text RPG in the spirit of Fallout 2, built as a single-page browser game. This
 - Dialogue options are real lines ("Ever thought about leaving this farm?"), never labels like "Flirt" or "Persuade".
 - NPC replies are real replies in their own voice.
 
-## 4. Checks (v6.1: logical)
+## 4. Checks (v6.2: logical, and hidden until you can pass)
 
 - **Hidden.** The player never sees a percentage. No `[Speech 62%]` style tags on option labels.
 - **Story checks are logical: know X, pass Y** (Will, v6.1). Any check that touches the story passes if the player holds its key and fails if they don't. No dice. A key is one of:
@@ -38,15 +38,16 @@ A text RPG in the spirit of Fallout 2, built as a single-page browser game. This
   - something carried (Krug's notebook, the Mayor's ledger, a badge).
   - something done (fixed the tractor, fought in the pit, freed the pens).
   - someone's trust (their opinion of you, gossip-driven).
-- Keys and failure lines live in `LOGIC` in `scenes/logic.js`. Every new story check needs a `LOGIC` entry.
+- **A story line is hidden until you hold its key** (Will, v6.2). So a line you can see always works, and nothing on screen is a guess. Gate every story option with `canTry(key)` or `chkOpt(key, ...)` for its own key, so it hides with it.
+- Keys live in `LOGIC` in `scenes/logic.js`. Every new story check needs a `LOGIC` entry.
 - **Context still counts, as logic:**
   - Someone who has heard you lie won't take your word, unless they trust you anyway (opinion 30 or more).
   - Who is in earshot (with Hector listening, only Bess's dream will move her; away from him, her trust is enough).
   - The right line, not just the right fact ("Jeb was drunk" works if you know Jeb drinks; "Jeb's lying" doesn't).
 - **Dice only for the trivial:** the road, gambling, haggling, dives, petty theft, flings, a quiet murder (`DICE` in `scenes/logic.js`). These keep the hidden context modifiers in `data/checks.js` (rapport, opinion, known facts, gear, earshot, titles).
-- **Soft cues after each attempt.** A failure says, in the person's voice, what's missing ("You don't know when the guards change. Somebody in the pens does."). Never a number.
+- **Soft cues after each dice attempt.** Never a number.
 - **Mostly one-shot.** A failed check usually closes that option until something changes (new info about the person, or their opinion swings). A few low-stakes checks can repeat, but each failure raises suspicion. Flirting can be retried a small number of times, then that person shuts you out for good.
-- **Read People perk** (earned by having many conversations) gives vague hints ("she's ready to hear it") but never numbers.
+- **Read People perk** (earned by having many conversations) gives vague hints on dice checks ("she might go for it") but never numbers. Story lines need no hint: if you can see one, it works.
 
 ## 5. Gossip that makes people act (v3)
 

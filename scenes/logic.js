@@ -260,3 +260,14 @@ chance = (s, rec) => {
   if (s && s._logic) return !s._lied && s._logic[0](s._arg) ? 100 : 0;
   return _chanceLogic(s, rec);
 };
+// Will: hide a story line until you hold what it needs. So a story check is offered only when it will work,
+// and a line you can see is never a gamble. Old failure locks don't hide it: holding the key is enough.
+const _canTryLogic = canTry;
+canTry = (key, arg) => {
+  const s = spec(key, arg);
+  if (s._logic) return !s._lied && !!s._logic[0](s._arg);
+  return _canTryLogic(key, arg);
+};
+// Read People has nothing to read on a line that always works.
+const _hintLogic = hint;
+hint = (key, arg) => (spec(key, arg)._logic ? '' : _hintLogic(key, arg));

@@ -88,7 +88,7 @@ SC.throne = () => {
             },
           ]
         : null,
-      !f.kingStopped
+      !f.kingStopped && canTry('king.key')
         ? [
             'Lift the launch key off his neck' + hint('king.key'),
             () => {

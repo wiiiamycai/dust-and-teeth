@@ -582,7 +582,7 @@ ENC.warden = d => {
     t: 'The Warden, on the road, a long way from her gate. "You swore. The Gardener cried. Nobody makes him cry."',
     o: [
       ['Fight', () => fight(en(), { win: 'enc', args: [d], back: ['hub', d] }), 'danger'],
-      [
+      canTry('warden.gate') && [
         '"The valley was starving. You\'d have done it too."' + hint('warden.gate'),
         () => {
           if (attempt('warden.gate')) {
@@ -804,7 +804,7 @@ SC.gatenight = () =>
     icon: '🌻',
     text: 'Fern pulls the bar. The hinges don\'t make a sound. Then the Warden steps out of the dark with her repeater up. "Fern. Step back."',
     opts: [
-      [
+      canTry('warden.gate') && [
         '"Let it open. Forty isn\'t a wall. It\'s a number."' + hint('warden.gate'),
         () => {
           if (attempt('warden.gate'))

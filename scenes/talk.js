@@ -111,7 +111,7 @@ function penTalk(x) {
           : 'Bess, in chains.'
         : '"Hi," says Bert, in chains. "Krug says I have good teeth."',
     o: [
-      [
+      (!alive('krug') || canTry('pen.lock', x)) && [
         alive('krug') ? `Pick ${x === 'bess' ? 'her' : 'his'} lock tonight` + hint('pen.lock', x) : 'Open the pen',
         () => {
           if (!alive('krug') || attempt('pen.lock', x)) go('freed1', x);
@@ -446,7 +446,8 @@ const TALK = {
             go('talk', 'gus');
           },
         ]);
-        o.push([
+        if (canTry('gus.lie'))
+          o.push([
           '"It\'s dead. I killed it."' + hint('gus.lie'),
           () => {
             if (attempt('gus.lie')) {
@@ -490,7 +491,7 @@ const TALK = {
         ? "Crumb prays to an empty altar. A test of faith, he says. He's failing it."
         : 'Crumb prays to a chrome toaster. "When it speaks, the Bread Times come." It hasn\'t popped in 200 years.';
     if (!f.tfixed && !f.tstolen) {
-      if (has('coil'))
+      if (has('coil') && (S.stats.brains >= 8 || canTry('toaster.fix')))
         o.push([
           'Fix the Toaster with your coil' + (S.stats.brains >= 8 ? '' : hint('toaster.fix')),
           () => {
@@ -818,7 +819,7 @@ const TALK = {
           go('talk', 'mayor');
         },
       ]);
-    if (!f.ledgerTaken)
+    if (!f.ledgerTaken && canTry('mayor.ledger'))
       o.push([
         'Steal the ledger from his fridge desk' + hint('mayor.ledger'),
         () => {
@@ -1344,7 +1345,7 @@ const TALK = {
             },
           ],
           knew('jeb.drinks') &&
-            canTry('hector.lying') && [
+            canTry('hector.drunk') && [
               '"Jeb was drunk when he said it. You know how he gets."' + hint('hector.drunk'),
               () => {
                 if (attempt('hector.drunk')) {
@@ -1406,9 +1407,11 @@ const TALK = {
         },
       ],
     ];
-    if (!S.spouse && !f.spouseFate && !sold && canTry('bess.leave')) {
-      o.push(['"Ever thought about leaving this farm?"' + hint('bess.leave'), () => flirt('bess.leave')]);
-      o.push(['"You must be the prettiest girl in the county."' + hint('bess.pretty'), () => flirt('bess.pretty')]);
+    if (!S.spouse && !f.spouseFate && !sold) {
+      if (canTry('bess.leave'))
+        o.push(['"Ever thought about leaving this farm?"' + hint('bess.leave'), () => flirt('bess.leave')]);
+      if (canTry('bess.pretty'))
+        o.push(['"You must be the prettiest girl in the county."' + hint('bess.pretty'), () => flirt('bess.pretty')]);
     }
     return {
       t: sold
@@ -1632,7 +1635,7 @@ SC.confront = () =>
           go('hub', 'diner');
         },
       ],
-      [
+      (S.stats.brawn >= 8 || canTry('lou.stop')) && [
         S.stats.brawn >= 8
           ? 'Hold Junior over the stew pot'
           : '"Dead customers don\'t come back, Lou. Think of the repeat business."' + hint('lou.stop'),

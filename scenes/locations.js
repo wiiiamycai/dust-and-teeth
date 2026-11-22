@@ -220,7 +220,7 @@ const HUBO = {
               }),
             'danger',
           ],
-          [
+          canTry('silo.sneak') && [
             'Sneak past' + hint('silo.sneak'),
             () => {
               if (attempt('silo.sneak')) {
@@ -255,7 +255,7 @@ const HUBO = {
           ],
         ]
       : [
-          !S.armors.includes('riot')
+          !S.armors.includes('riot') && canTry('silo.armoury')
             ? [
                 'Break into the armoury' + hint('silo.armoury'),
                 () => {
@@ -272,7 +272,7 @@ const HUBO = {
                 },
               ]
             : null,
-          !S.f.pitFreed
+          !S.f.pitFreed && canTry('silo.pit')
             ? [
                 'Free the diggers in the pit' + hint('silo.pit'),
                 () => {
@@ -289,7 +289,7 @@ const HUBO = {
                 },
               ]
             : null,
-          !S.f.kingStopped
+          !S.f.kingStopped && canTry('silo.shaft')
             ? [
                 'Crawl the maintenance shaft to the launch console' + hint('silo.shaft'),
                 () => {
