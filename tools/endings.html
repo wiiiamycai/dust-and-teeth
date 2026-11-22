@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- Every ending-slide picture, side by side, with a sample line for each. Open through the dev server:
+     http://localhost:8137/tools/endings.html  Looks only: it loads the game's scripts and draws, nothing else. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dust & Teeth: ending slides</title>
+<style>
+  body { background: #0c0904; color: #ffb000; font: 13px 'Courier New', monospace; margin: 16px; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 16px; }
+  figure { margin: 0; border: 1px solid #8a5f00; background: #16110a; padding: 8px; }
+  canvas { width: 100%; image-rendering: pixelated; display: block; }
+  figcaption { margin-top: 6px; color: #d8a040; line-height: 1.35; }
+  b { color: #ffb000; }
+</style>
+</head>
+<body>
+<h1>Dust &amp; Teeth: every ending slide</h1>
+<div class="grid" id="g"></div>
+<div id="hud" hidden></div><div id="head" hidden></div><div id="log" hidden></div><div id="text" hidden></div>
+<div id="cards" hidden></div><div id="map" hidden></div><div id="view" hidden></div><div id="opts" hidden></div><div id="journal" hidden></div><div id="foot" hidden></div>
+<script>
+  // Load the game's scripts in the order index.html lists them, minus the boot, then draw.
+  fetch('../index.html?' + Date.now())
+    .then(r => r.text())
+    .then(html => {
+      const srcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]).filter(s => !/main\.js/.test(s));
+      const next = i => {
+        if (i >= srcs.length) return draw();
+        const s = document.createElement('script');
+        s.src = '../' + srcs[i];
+        s.onload = () => next(i + 1);
+        document.body.appendChild(s);
+      };
+      next(0);
+    });
+  const SAMPLES = [
+    ['The Gutmaw, and what was left of Crane', 'You married Sheriff Crane in front of a toaster. When the Gutmaw came, you shoved her into its mouth, badge, baby and all.'],
+    ['The Gutmaw', 'The Gutmaw went back under the sand and never came up near a town again.'],
+    ['The wedding', 'You married Sheriff Crane in a chapel with a toaster on the altar. She kept her badge on.'],
+    ["Crane's baby", 'Crane had the baby in the spring. Yours. It has your nose and her aim.'],
+    ['Chainfield', 'Krug opened his own pens the morning after a night nobody in Chainfield talks about.'],
+    ['Snake Eyes', 'Champion of the Pit. Your name is scratched into the rail at Snake Eyes, under nine years of Big Tam.'],
+    ['The Sky-Bus', "Saint Sprocket kept the Coil's plane running until it almost flew."],
+    ['The Drowned Mall', 'Queen Margie kept you on as Associate of the Month for life.'],
+    ['The Green', 'The Green stayed small behind its dome. Forty people, counted every morning.'],
+    ['Silo 9', 'The Big Tooth never launched. Nobody ever knew how close it came. You know.'],
+    ['Silo 9, launched', 'The Dentist King launched. Rustwater is a crater.'],
+    ["Mama Lou's", "Mama Lou's serves cabbage on Tuesdays. Junior cooks it."],
+    ["Crumb's chapel", "Crumb's two churches share one chapel. Everyone gets toast."],
+    ['Scrapwell', 'Ma Thistle grew corn by the well in Scrapwell. The Toaster provides.'],
+    ["Hector's farm", "Hector's farm came back green. Bert drives the tractor through real corn, very slowly."],
+    ['Rustwater', 'Sheriff Crane let you buy her a drink every Friday for the rest of her life.'],
+    ['Anything else: the road', 'You walked out of the valley one morning and kept walking.'],
+  ];
+  function draw() {
+    const G = document.getElementById('g');
+    for (const [name, text] of SAMPLES) {
+      const fig = document.createElement('figure'),
+        cv = document.createElement('canvas');
+      cv.width = EW;
+      cv.height = EH;
+      const p = cv.getContext('2d'),
+        r = eRand(text.length * 131 + text.charCodeAt(0)),
+        named = eNamed(text),
+        hit = ESCENES.find(([re]) => re.test(text)),
+        lead = named[0] || null;
+      if (hit) {
+        hit[1](p, r, text, lead);
+        if (!(hit[2] && hit[2].noPeople))
+          named
+            .filter(id => id !== lead || !/eRustwater|eChainfield/.test(String(hit[1])))
+            .slice(0, 3)
+            .forEach((id, i) => eSprite(p, id, 20 + i * 22, EH - 4, i % 2 === 1));
+      } else {
+        eDesert(p, r);
+        eR(p, 94, HZ + 14, 4, 4, '#0a0604');
+        eR(p, 93, HZ + 18, 6, 8, '#0a0604');
+      }
+      fig.appendChild(cv);
+      const cap = document.createElement('figcaption');
+      cap.innerHTML = `<b>${name}</b><br>${text}`;
+      fig.appendChild(cap);
+      G.appendChild(fig);
+    }
+  }
+</script>
+</body>
+</html>

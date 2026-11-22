@@ -386,8 +386,8 @@ const ESCENES = [
   [/\bGreen\b|Gardener|\bFern\b|\bMoss\b|Warden|\bdome\b/, (g, r) => eGreen(g, r)],
   [/Big Tooth|\bSilo\b|Dentist King|\blaunch|\bnuked?\b|crater/i, (g, r, t) => eSilo(g, r, NUKED(t))],
   [/\bLou\b|Lou's|\bdiner\b|\bstew\b|Thursday|Junior/, (g, r) => eDiner(g, r)],
-  [/Toaster|\bchapel\b|\bCrumb\b|\bCrust\b|Deacon Rind/, (g, r) => eChapel(g, r)],
   [/Scrapwell|Ma Thistle|\bGus\b|\bPell\b|Bacon Prime|\bNigel\b|\bwell\b/, (g, r) => eScrapwell(g, r)],
+  [/Toaster|\bchapel\b|\bCrumb\b|\bCrust\b|Deacon Rind/, (g, r) => eChapel(g, r)],
   [/\bfarm\b|Hector|\bBess\b|\bBert\b|tractor|\bcorn\b|harvest/i, (g, r) => eFarm(g, r)],
   [
     /Crane|Sheriff|Rustwater|\bMoe\b|\bOpal\b|Gloria|\bJeb\b|\bDoc\b|Fenwick|Mayor|\bpump\b|\bPete\b/,
