@@ -2757,5 +2757,141 @@
    "Go",
    "EXPECT:neighbours('mall').includes('diner') && neighbours('mall').includes('skybus') && neighbours('green').includes('skybus') && neighbours('green').includes('vats')"
   ]
+ },
+ {
+  "name": "Links: Pete walks to the Mall and confesses; with Sal's badge given, Eel forgives him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('pete.secret'); S.n.pete.loc = 'rustwater'; S.f.eelBadge = 1; S.f.plot_widow = 'stopped'",
+   "TRAVEL:Rustwater",
+   "Pete",
+   "Yourself. Before somebody else does",
+   "RAND:0",
+   "WAIT:1",
+   "EXPECT:S.f.eelForgave && alive('pete') && S.n.pete.loc === 'mall'",
+   "EXPECT:linkLines().some(l => /They talk about fish/.test(l))"
+  ]
+ },
+ {
+  "name": "Links: Pete confesses without the badge, and Eel doesn't forgive",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('pete.secret'); S.n.pete.loc = 'rustwater'",
+   "TRAVEL:Rustwater",
+   "Pete",
+   "Yourself. Before somebody else does",
+   "RAND:0.99",
+   "WAIT:1",
+   "EXPECT:!alive('pete') && S.f.eelKilledPete && alive('eel')"
+  ]
+ },
+ {
+  "name": "Links: read the handbook's last page and the associates walk out on Margie; two walk home to Scrapwell",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.f.associate = 1; know('margie.secret'); goHere()",
+   "last page out loud",
+   "EXPECT:S.f.courtFreed && S.n.margie.op <= -35 && !hostile('margie') && S.n.elder.rx.some(l => /paper hats/.test(l))",
+   "SAY:OWNED BY THE PEOPLE WHO COOK HERE"
+  ]
+ },
+ {
+  "name": "Links: Lou's death reaches Margie's food court",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.dead.lou = 1",
+   "WAIT:1",
+   "EXPECT:S.n.margie.rx.some(l => /meat supplier/.test(l))"
+  ]
+ },
+ {
+  "name": "Links: buy Hector's tractor back off Gums and give it to Bert",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 21",
+   "WAIT:1",
+   "EXPECT:S.f.farmFailed",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.teeth = 300",
+   "Gums",
+   "What have you got",
+   "Hector's tractor, in pieces",
+   "EXPECT:has('tractor')",
+   "Back",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bert",
+   "got your tractor back",
+   "EXPECT:S.f.tractorBack && !has('tractor')",
+   "EXPECT:linkLines().some(l => /backwards/.test(l))"
+  ]
+ },
+ {
+  "name": "Links: sell Krug the pass; with the Warden losing, the Green's people end up in Chainfield's pens",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.knowGreen = 1",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "forty healthy people behind one wall",
+   "EXPECT:S.teeth >= 175",
+   "RAND:0.99",
+   "WAIT:3",
+   "RAND:off",
+   "EXPECT:S.f.greenTaken && !alive('warden') && S.n.gardener.loc === 'pen' && S.n.fern.loc === 'pen'",
+   "EVAL:goHere()",
+   "SAY:The Gardener",
+   "EVAL:S.teeth = 500",
+   "Krug",
+   "Buy back The Gardener",
+   "EXPECT:S.n.gardener.loc === 'green'"
+  ]
+ },
+ {
+  "name": "Links: sell Krug the pass, and the Warden sends his slavers back down it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:S.f.knowGreen = 1",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "forty healthy people behind one wall",
+   "RAND:0",
+   "WAIT:3",
+   "RAND:off",
+   "EXPECT:S.f.greenRaidBeaten && alive('warden') && S.n.gardener.loc === 'green'"
+  ]
+ },
+ {
+  "name": "Links: the Green's people walk home when the pens are opened",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.gardener.loc = 'pen'; S.n.fern.loc = 'pen'; freePens()",
+   "EXPECT:S.n.gardener.loc === 'green' && S.n.fern.loc === 'green'"
+  ]
+ },
+ {
+  "name": "Links: the day-25 launch, seen from the Green",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.knowGreen = 1; S.end = { type: 'nuke' }; go('ending')",
+   "SAY:forty people watch the white sky"
+  ]
  }
 ]

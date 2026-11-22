@@ -31,28 +31,32 @@ SC.ending = () => {
     f = S.f,
     L = [];
   const al = x => !S.dead[x];
-  const head = {
-    elder: 'You killed Ma Thistle. Her last words: "I knew it would be you. The knives are under the goat."',
-    death: `YOU DIED. ${E.cause || ''}`,
-    caravan:
-      "You ride east with Jeb. It's greenish over there. Nobody knows what you did." +
-      (f.kingStopped ? '' : " Behind you, the sky turns white. You don't look back."),
-    sold:
-      'You sell yourself to Krug for twelve teeth and a blanket. You carry rocks for nineteen years.' +
-      (f.kingStopped ? '' : ' Then the sky turns white.'),
-    retired:
-      'You sit down in your shack and never get up. You get a goat.' +
-      (f.kingStopped ? '' : ' One morning the sky turns white. The goat goes first.'),
-    nuke: f.knowSilo
-      ? "Day 25. The Big Tooth launches. You knew where it was. You didn't get there in time."
-      : 'Day 25. The sky turns white. You never even found out where it came from.',
-    destroyer:
-      "You push the button for EVERYTHING. The Dentist King weeps with joy. The world goes white. You were a nobody. Now you're the last thing anyone saw.",
-    nukehome: 'You nuked Scrapwell. Your own home. Your own well. Even the King looks at you funny.',
-    green:
-      'You stay in the Green. Real food, clean water, and forty people who count everything. Forty-one now.' +
-      (f.kingStopped ? '' : ' On day 25 the western sky turns white. Under the glass, nobody looks up.'),
-  }[E.type];
+  const head =
+    {
+      elder: 'You killed Ma Thistle. Her last words: "I knew it would be you. The knives are under the goat."',
+      death: `YOU DIED. ${E.cause || ''}`,
+      caravan:
+        "You ride east with Jeb. It's greenish over there. Nobody knows what you did." +
+        (f.kingStopped ? '' : " Behind you, the sky turns white. You don't look back."),
+      sold:
+        'You sell yourself to Krug for twelve teeth and a blanket. You carry rocks for nineteen years.' +
+        (f.kingStopped ? '' : ' Then the sky turns white.'),
+      retired:
+        'You sit down in your shack and never get up. You get a goat.' +
+        (f.kingStopped ? '' : ' One morning the sky turns white. The goat goes first.'),
+      nuke: f.knowSilo
+        ? "Day 25. The Big Tooth launches. You knew where it was. You didn't get there in time."
+        : 'Day 25. The sky turns white. You never even found out where it came from.',
+      destroyer:
+        "You push the button for EVERYTHING. The Dentist King weeps with joy. The world goes white. You were a nobody. Now you're the last thing anyone saw.",
+      nukehome: 'You nuked Scrapwell. Your own home. Your own well. Even the King looks at you funny.',
+      green:
+        'You stay in the Green. Real food, clean water, and forty people who count everything. Forty-one now.' +
+        (f.kingStopped ? '' : ' On day 25 the western sky turns white. Under the glass, nobody looks up.'),
+    }[E.type] +
+    (E.type === 'nuke' && f.knowGreen && alive('gardener') && S.n.gardener.loc === 'green'
+      ? ' Over the pass, under the glass, forty people watch the white sky and go back to weeding.'
+      : '');
   if (E.type !== 'nuke' && E.type !== 'destroyer') {
     L.push(
       !al('elder')

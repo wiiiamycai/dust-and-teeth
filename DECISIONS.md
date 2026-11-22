@@ -363,3 +363,17 @@ Will: "make it all linked together as well", and then "dont ask me questions jus
     - Bess's raiders working Hector's rows;
     - water coming down in Rustwater.
 163. **Tests:** 12 new scripted cases cover each link. One also checks that every new person has a bond to, and a secret known by, someone in another town.
+
+## Deeper links (v4.5)
+
+164. **Pete can confess.** If you know what Pete said in the cage, you can tell him to walk to the Mall and tell Eel himself. She forgives him 85% of the time if you've already given her Sal's badge, 45% if not. Otherwise she kills him, and Crane calls it fair. Forgiven, Pete moves to the Mall and carries her tanks. It ends the widow plot.
+165. **The handbook's last page, read aloud.** As an associate who knows Margie's secret, you can read it at the staff meeting. The associates own the food court after that. Margie goes cold on you (she won't talk) but doesn't attack; at first I had her turn hostile, and that felt like a punishment for a good deed. Two associates walk home to Scrapwell with their paper hats.
+166. **Hector's tractor.** When the farm fails on day 22, Hector sells the tractor, and it turns up on Gums's stall in four sacks for 150 teeth. Give it to Bert and he has it running by sundown, backwards.
+167. **Selling Krug the pass** is the dark side of the Green choice. He pays 150 teeth, and three days later his slavers go up the pass:
+    - the Warden turns them back 60% of the time, then goes looking for whoever told;
+    - otherwise she dies, and the Gardener and Fern end up in Chainfield's pens.
+
+    You can buy them back from Krug (200 teeth each), open the pens, or kill Krug, and they walk home.
+168. **Lou's death reaches the Mall:** Margie's food court loses its meat supplier.
+169. **The day-25 launch** gets one more line if you found the Green: forty people under the glass watch the white sky and go back to weeding.
+170. Each of these has an ending slide and a scripted test (9 new cases).
