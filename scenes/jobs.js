@@ -975,3 +975,122 @@ HUBO.silo = () => {
     ]);
   return o;
 };
+
+// ---- Scrapwell: Ma's envelopes, Pell's sty, Crumb's coil ----
+// Ma Thistle: forty years of money on her step. Who sends it? Crumb carries it, from her sister Nan.
+jobs('elder', () => {
+  const f = S.f;
+  return [
+    !f.elderJob &&
+      alive('nan') && [
+        '"Anything you need, Ma?"',
+        () => {
+          f.elderJob = 1;
+          says(
+            'elder',
+            '"Forty years, every month, money on my step. No name. Crumb says it\'s the Toaster. Find out who. I want to know who I owe."',
+          );
+          go('talk', 'elder');
+        },
+      ],
+    f.elderJob === 1 &&
+      knew('nan.secret') && [
+        '"It\'s your sister. Sweet Nan, at Snake Eyes."',
+        () => {
+          f.elderJob = 'nan';
+          gain(30);
+          bump('crumb', -10);
+          later(2, 'elderWrites');
+          says(
+            'elder',
+            '"Nan? That cow. Forty years." She is quiet a long time. "...I\'ll write to her. Here. This month\'s envelope. 30 teeth. You earned it."',
+          );
+          confide('elder');
+          go('talk', 'elder');
+        },
+      ],
+    f.elderJob === 1 &&
+      knew('nan.secret') && [
+        '"It\'s the Toaster, Ma. Just like Crumb says."',
+        () => {
+          f.elderJob = 'toaster';
+          gain(30);
+          bump('crumb', 20);
+          rx('crumb', '"You kept the Toaster\'s secret. And Nan\'s. Bless you. Butter you."');
+          says(
+            'elder',
+            '"I knew it. The Toaster provides. Have this month\'s, then. 30 teeth. The Toaster won\'t miss it."',
+          );
+          confide('elder');
+          go('talk', 'elder');
+        },
+      ],
+  ];
+});
+LATER.elderWrites = () => {
+  if (!alive('nan') || !alive('elder')) return;
+  bump('nan', 20);
+  rx('nan', '"My sister wrote to me. First time in forty years. She called me a cow. I cried all night, dear."');
+  rx('crumb', '"Ma knows who sends the money. I broke an oath to Nan. The Toaster forgives. Nan might."');
+};
+jobs('crumb', () => {
+  const f = S.f;
+  return [
+    !f.tfixed &&
+      !f.tstolen &&
+      !knew('crumb.coil') && [
+        '"What would make the Toaster speak?"',
+        () => {
+          know('crumb.coil');
+          says(
+            'crumb',
+            '"A new heart. A coil. Doc in Rustwater sells them, for sinners\' prices. The dead plane east has them, for the brave."',
+          );
+          go('talk', 'crumb');
+        },
+      ],
+    f.elderJob === 1 &&
+      !knew('nan.secret') && [
+        '"Who leaves Ma\'s money on her step?"',
+        () => {
+          know('nan.secret');
+          says(
+            'crumb',
+            '"...I carry it. From Snake Eyes. From Sweet Nan, her sister. Nan made me swear on the crumbs. Forgive me."',
+          );
+          go('talk', 'crumb');
+        },
+      ],
+  ];
+});
+// Old Pell: something sniffs round the sty at night. It's Junior, for Lou's Thursday pork.
+jobs('pell', () => {
+  const f = S.f;
+  if (!alive('pig')) return [];
+  return [
+    !f.pellJob &&
+      plotOpen('pork') && [
+        '"Anything wrong, Pell?"',
+        () => {
+          f.pellJob = 1;
+          know('plot.pork');
+          says(
+            'pell',
+            '"Something sniffs round the sty at night. Big. Smells of stew. Find out who, and stop him. I\'ll make it worth your while."',
+          );
+          go('talk', 'pell');
+        },
+      ],
+    f.pellJob === 1 &&
+      f.plot_pork === 'stopped' && [
+        '"Bacon Prime is safe."',
+        () => {
+          f.pellJob = 'done';
+          gain(30);
+          says('pell', '"Safe. Hear that, Prime? Safe." 30 teeth, from a sock.');
+          confide('pell');
+          go('talk', 'pell');
+        },
+      ],
+  ];
+});

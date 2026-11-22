@@ -3406,5 +3406,61 @@
    "Your teeth. Top shelf",
    "EXPECT:S.f.gumsJob === 'done' && S.armors.includes('plate') && knew('gums.secret')"
   ]
+ },
+ {
+  "name": "Jobs, Ma Thistle: Crumb says who sends her money, and telling her it's Nan reaches Nan",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Ma Thistle",
+   "Anything you need, Ma",
+   "Back",
+   "Brother Crumb",
+   "Who leaves Ma's money",
+   "EXPECT:knew('nan.secret')",
+   "Back",
+   "Ma Thistle",
+   "It's your sister",
+   "EXPECT:S.f.elderJob === 'nan' && knew('elder.secret')",
+   "EVAL:globalThis.n0 = S.n.nan.op; S.f.raid = 1",
+   "WAIT:2",
+   "EXPECT:S.n.nan.op >= n0 + 20 && S.n.nan.rx.some(l => /wrote/.test(l))"
+  ]
+ },
+ {
+  "name": "Jobs, Ma Thistle: keep the Toaster's secret instead, and Crumb is grateful",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.elderJob = 1; know('nan.secret'); globalThis.c0 = S.n.crumb.op",
+   "Ma Thistle",
+   "It's the Toaster, Ma",
+   "EXPECT:S.f.elderJob === 'toaster' && S.n.crumb.op >= c0 + 20"
+  ]
+ },
+ {
+  "name": "Jobs, Crumb: he tells you what would make the Toaster speak",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Brother Crumb",
+   "What would make the Toaster speak",
+   "EXPECT:knew('crumb.coil')",
+   "SAY:coil"
+  ]
+ },
+ {
+  "name": "Jobs, Pell: his worry opens the pork plot, and saving the pig pays",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Old Pell",
+   "Anything wrong, Pell",
+   "EXPECT:plotKnown('pork')",
+   "Lou's coming for Bacon Prime",
+   "EXPECT:S.f.plot_pork === 'stopped'",
+   "Bacon Prime is safe",
+   "EXPECT:S.f.pellJob === 'done' && knew('pell.secret')"
+  ]
  }
 ]
