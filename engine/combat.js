@@ -96,7 +96,7 @@ function hit(t, mod) {
       (S.addicted && !S.buzzOn ? 10 : 0) -
       t.lvl * 2 +
       mod +
-      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 - (F && F.close ? 10 : 0) : 10),
+      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 - (F && F.close && !w.close ? 10 : 0) : 10),
     5,
     95,
   );

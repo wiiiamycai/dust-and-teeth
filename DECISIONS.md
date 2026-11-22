@@ -435,3 +435,15 @@ Will: "balance the game as you see fit". I measured before changing anything. `t
     - the zip gun is a trap at range: the early kit does a little worse than charging in with the knife. It's the cheapest gun, and the balance test's rule still holds;
     - the Warden (25% for mid gear, 51% upgraded) and the Gutmaw (0% mid, 97% late) are where they should be for late-game threats.
 185. **Tests** updated for the new numbers. The balance test fights fully upgraded gear too (#176), and the melee rule still holds.
+
+## Weapons and growth (v5.0)
+
+Will: "balance the weapons as well and leveling, balance everything". Measured with `tools/weaponodds.js`: each weapon alone, in a jacket with one Gut Glue, against a raider, a slaver at range and up close, and a Molar elite in plate, at skill 30 and 55.
+
+186. **The zip gun was a trap.** Against a slaver at range it won 21% and burned 19 bullets, while the 8-tooth knife won 43% for free. It now does 5 to 12 damage (was 4 to 10) with no accuracy penalty (was -5): 39% at range, still worse than the knife up close, and it still costs bullets. The melee rule in the balance test still holds.
+187. **The shotgun is the close-range gun now.** Every gun took -10 to hit up close, so the shotgun was the worst of them up close (40%, against the rifle's 56%). It now ignores that penalty and wins 67% up close. That gives the three mid guns jobs: the rifle at range, the shotgun up close, the repeater in between.
+188. **Looked at and left alone:**
+    - knife, pipe, cleaver, sledge and drill go up in a sensible ladder, and the sledge pays off against armour (33% against an elite in plate, the knife 1%);
+    - the plasma rifle and power armour stay godlike on purpose (#65).
+189. **Checks teach more.** A speech, sneak, steal or science check taught 1.5 points on a win and 0.75 on a miss, while a fight teaches about 4 (one per landed hit, 0.4 per miss). So talking your way out of a fight taught a third of what fighting did, against "avoiding fights must be a real choice". Checks now teach 2.5 on a win and 1.25 on a miss, about one fight's worth for a few good talks. Diminishing returns are unchanged. This takes back the numbers in #18.
+190. **Combat growth is unchanged.** About ten fights take melee from 35 to the low 60s, which fits a game where fights are rare and deadly. Toughness still never grows (#59).

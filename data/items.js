@@ -20,10 +20,10 @@ const W = {
   sledge: { n: 'Sledgehammer', t: 'melee', d: [9, 18], a: -10, kd: 25, v: 30 },
   cleaver: { n: "Lou's Cleaver", t: 'melee', d: [6, 13], a: 5, kd: 5, v: 25 },
   drill: { n: "King's Drill", t: 'melee', d: [12, 24], a: 5, kd: 15, v: 80 },
-  // guns: one bullet a shot, loud, best at range (-10 up close)
-  zipgun: { n: 'Zip Gun', t: 'guns', d: [4, 10], a: -5, v: 20 },
+  // guns: one bullet a shot, loud, best at range (-10 up close, except the shotgun)
+  zipgun: { n: 'Zip Gun', t: 'guns', d: [5, 12], a: 0, v: 20 },
   rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10, v: 50 },
-  shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0, v: 60 },
+  shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0, v: 60, close: 1 }, // close: no penalty up close, it's made for it
   molargun: { n: 'Molar Repeater', t: 'guns', d: [9, 18], a: 5, v: 55 },
   // free: self-charging, never needs bullets
   plasma: { n: 'Plasma Rifle', t: 'guns', d: [24, 38], a: 15, v: 300, free: 1 },

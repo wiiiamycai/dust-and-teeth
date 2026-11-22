@@ -71,7 +71,7 @@ function attempt(key, arg) {
   const p = chance(s, rec),
     r = Math.random() * 100;
   const won = r < p;
-  practice(s.sk, won ? 1.5 : 0.75); // you learn from failing too, just slower
+  practice(s.sk, won ? 2.5 : 1.25); // you learn from failing too, just slower. A talk-down teaches about what a fight does.
   if (won) {
     gainXP(10);
     if (s.sk === 'speech') count('talkWin');
