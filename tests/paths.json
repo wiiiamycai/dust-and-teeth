@@ -4306,5 +4306,117 @@
    "Changed my mind",
    "EXPECT:!S.f.craneSold && S.n.sheriff.op <= c0 - 30"
   ]
+ },
+ {
+  "name": "Crane's offer: broke, she offers to help any way she can, and a night at the Rad pays, costs a day, and is logged",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneCool = 99; S.teeth = 10; S.f.raid = 1; S.here = 'rustwater'; go('talk', 'sheriff')",
+   "Crane, I'm broke",
+   "SAY:Your call, and mine",
+   "The Rad, then",
+   "EXPECT:S.f.craneNights === 1 && S.day === 2 && S.teeth >= 50 && S.f.craneWith.some(([w]) => RAD_MEN.includes(w))",
+   "SAY:Opal's ledger would"
+  ]
+ },
+ {
+  "name": "Crane's offer: say never, and she's glad you didn't ask",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.teeth = 10; S.here = 'rustwater'; go('talk', 'sheriff')",
+   "Crane, I'm broke",
+   "Not that. Never that",
+   "EXPECT:S.f.craneRadNo && !cur.some(o => /The Rad/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Crane's offer: after five nights she asks you to let her stop",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneOffered = 1; S.f.craneNights = 5; S.f.craneCool = 99; S.here = 'rustwater'; go('talk', 'sheriff')",
+   "Another night at the Rad",
+   "SAY:Tell me I can stop",
+   "You can stop",
+   "EXPECT:S.f.craneStopped && journalList().some(q => q.k === 'radNights' && /let her stop/.test(q.done))"
+  ]
+ },
+ {
+  "name": "Crane's offer: she won't if she's gone cold on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneOffered = 1; S.f.craneCool = 99; S.here = 'rustwater'; go('talk', 'sheriff'); S.n.sheriff.op = 10",
+   "The Rad, then",
+   "SAY:Not any more",
+   "EXPECT:!S.f.craneNights"
+  ]
+ },
+ {
+  "name": "Crane's baby: she falls pregnant by someone in her log, and asks you to help find out who",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.f.craneWith = [['you', 1], ['jeb', 1], ['moe', 2]]; S.f.raid = 1; S.f.kingStopped = 1",
+   "RAND:0",
+   "WAIT:8",
+   "RAND:off",
+   "EXPECT:S.f.cranePreg && ['you', 'jeb', 'moe'].includes(S.f.craneDad)",
+   "EVAL:S.here = 'rustwater'; go('talk', 'sheriff')",
+   "SAY:I don't know whose it is",
+   "We'll find out",
+   "EXPECT:S.f.dadQuest && journalList().some(q => q.k === 'dad')"
+  ]
+ },
+ {
+  "name": "Crane's baby: Doc says it isn't yours, the true father gives himself away, and telling her the truth sets the ending",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.f.dadQuest = 1; S.f.craneDad = 'jeb'; S.f.craneSuspects = ['you', 'jeb', 'moe']; S.teeth = 200",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "father of Crane's baby",
+   "EXPECT:S.f.dadTest === 'not' && !S.f.dadKnown",
+   "Back",
+   "Moe",
+   "Could it be yours",
+   "SAY:The dates are wrong",
+   "EXPECT:S.f.dadKnown === 'jeb'",
+   "SAY:That leaves Caravan Jeb",
+   "Back",
+   "Sheriff Crane",
+   "It's Caravan Jeb's",
+   "EXPECT:S.f.dadTold === 'jeb' && !S.f.dadLied && linkLines().some(l => /Caravan Jeb's, and everybody knew it/.test(l))"
+  ]
+ },
+ {
+  "name": "Crane's baby: the father himself owns up when you ask him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.f.dadQuest = 1; S.f.craneDad = 'gus'; S.f.craneSuspects = ['you', 'gus', 'pips']",
+   "Gus",
+   "Could it be yours",
+   "SAY:going to be a da",
+   "EXPECT:S.f.dadKnown === 'gus'"
+  ]
+ },
+ {
+  "name": "Crane's baby: while she carries, nothing harms her; no murder, no sale, no Thursday, no hired Molar",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; S.f.mayorJob = 1; S.f.mayorJobDay = 1; S.f.raid = 1; S.f.kingStopped = 1; S.f.thursday = 'sheriff'; later(1, 'thursday', 'sheriff')",
+   "EVAL:go('talk', 'sheriff')",
+   "EXPECT:!cur.some(o => /^(Attack|Murder) Sheriff/.test(o[0]))",
+   "EVAL:S.here = 'chainfield'; go('talk', 'krug')",
+   "EXPECT:!cur.some(o => /Your ex-wife/.test(o[0]))",
+   "WAIT:8",
+   "EXPECT:alive('sheriff') && S.f.hitDone"
+  ]
  }
 ]

@@ -176,6 +176,7 @@ SC.krugNight = () =>
         'Go through with it',
         () => {
           S.f.krugNight = 1;
+          craneWith('krug');
           const won = attempt('krug.reform');
           say(pick(FADE));
           if (won) {
@@ -345,3 +346,477 @@ QUESTS.opal.done = () =>
   S.f.opalPaid ? 'Krug is dead. Opal paid.' : S.f.krugReformed ? 'Krug freed his own pens and left.' : null;
 QUESTS.krugbounty.done = () =>
   S.f.krugPaid1 ? 'Crane paid the bounty.' : S.f.krugReformed ? 'Krug is gone, alive.' : null;
+
+// ================= CRANE'S NIGHTS AT THE RAD, AND WHOSE BABY IT IS =================
+// 4. Her offer. Once she's devoted to you (on the leash), and you're short of teeth, Crane offers to help any way
+//    she can: bounty work, or nights at Opal's Velvet Rad. It is her idea and her call. She refuses if she's gone
+//    cold on you, and after enough nights she asks you to let her stop. Each night is with a named man, costs a day,
+//    and costs her standing in Rustwater. Fade to black.
+// 5. Pregnancy. Every man she's been with goes in a log (you, Krug, her clients). Some days in, she's pregnant,
+//    and the father is drawn from the log, weighted to the recent nights. Nobody knows who. That's the quest.
+// 6. Will lifted the "no children" rule for this. The child stays offstage, and nothing can harm Crane while
+//    she's carrying: no murder, no sale, no Thursday special, no hired Molar, no suicide raid.
+const RAD_MEN = ['mayor', 'jeb', 'moe', 'doc', 'pips', 'gus', 'tam', 'rook', 'hector', 'vane', 'gums', 'pete'];
+function craneWith(who) {
+  S.f.craneWith = S.f.craneWith || [];
+  S.f.craneWith.push([who, S.day]);
+}
+const cranePregnant = () => alive('sheriff') && !!S.f.cranePreg;
+// Every night with Crane goes in the log.
+const _becomeLoverCrane = becomeLover;
+becomeLover = (id, how) => {
+  _becomeLoverCrane(id, how);
+  if (id === 'sheriff') craneWith('you');
+};
+const _craneAsksLog = SC.craneAsks;
+SC.craneAsks = loc => {
+  _craneAsksLog(loc);
+  const i = cur.findIndex(o => o[0] === 'Give in');
+  if (i >= 0) {
+    const fn = cur[i][1];
+    cur[i] = [cur[i][0], () => (craneWith('you'), fn()), cur[i][2]];
+  }
+};
+const _threeNightLog = threeNight;
+threeNight = (who, line) => {
+  _threeNightLog(who, line);
+  craneWith('you');
+};
+
+// ---- 4. her offer ----
+const craneDevoted = () => craneLeashed() && S.n.sheriff.op >= 30;
+const radOpen = () => alive('opal') && S.n.opal.loc === 'rustwater';
+const _sheriffRad = TALK.sheriff;
+TALK.sheriff = () => {
+  const r = _sheriffRad();
+  if (!r || !alive('sheriff') || S.n.sheriff.loc === 'pen') return r;
+  const f = S.f;
+  if (craneLeashed() && !f.craneOffered && S.teeth < 60)
+    r.o.push([
+      '"Crane, I\'m broke."',
+      () => {
+        f.craneOffered = 1;
+        says(
+          'sheriff',
+          '"Then let me help. Any way I can." She doesn\'t look away. "I can bring in bounties. Or Opal\'s been after me to work a night at the Rad for years. I\'d do that too. For you. Your call, and mine."',
+        );
+        go('talk', 'sheriff');
+      },
+    ]);
+  if (f.craneOffered && craneLeashed() && f.craneBountyDay !== S.day)
+    r.o.push([
+      '"Let\'s bring in a bounty together." (a day)',
+      () => {
+        f.craneBountyDay = S.day;
+        if (tick()) return go('ending');
+        const t = R(20, 40);
+        gain(t);
+        bump('sheriff', 3);
+        say(
+          `A day on the road with Crane and a wanted poster. Two bounty heads in a sack by sundown. +${t} teeth. She shoots better when you're watching.`,
+        );
+        go('talk', 'sheriff');
+      },
+    ]);
+  if (
+    f.craneOffered &&
+    !f.craneStopped &&
+    !f.craneRadNo &&
+    f.craneRadDay !== S.day &&
+    radOpen() &&
+    S.here === 'rustwater' &&
+    !cranePregnant()
+  )
+    r.o.push([
+      f.craneNights ? '"Another night at the Rad?"' : '"The Rad, then. If you\'re sure."',
+      () => go('craneRad'),
+      'danger',
+    ]);
+  if (f.craneOffered && !f.craneNights && !f.craneStopped && !f.craneRadNo)
+    r.o.push([
+      '"No. Not that. Never that."',
+      () => {
+        f.craneRadNo = 1;
+        bump('sheriff', 8);
+        says(
+          'sheriff',
+          '"...Good." Something in her shoulders lets go. "I\'d have done it. I\'m glad you didn\'t ask."',
+        );
+        go('talk', 'sheriff');
+      },
+    ]);
+  return r;
+};
+const RAD_LINE = [
+  "Crane straightens her badge, then takes it off, and goes up the Velvet Rad's stairs without looking back.",
+  'Second night. Opal has her own room ready. Crane goes up two stairs at a time, like a woman going to work.',
+  'Crane goes up quieter tonight. At the top she looks back down at you, once.',
+  'Rustwater has noticed. A drunk at Moe\'s calls her "Sheriff" in a voice that isn\'t respect. She shoots the bottle out of his hand on her way in.',
+];
+SC.craneRad = () => {
+  const f = S.f,
+    n = f.craneNights || 0;
+  if (S.n.sheriff.op < 30) {
+    says('sheriff', '"For you? Not any more."');
+    return go('talk', 'sheriff');
+  }
+  if (n >= 5 && !f.craneAskedStop)
+    return show({
+      title: 'Sheriff Crane',
+      icon: '⭐',
+      text: 'Crane stops at the bottom of the stairs. "Five nights. I said any way I can, and I meant it." She doesn\'t turn round. "Tell me I can stop."',
+      opts: [
+        [
+          '"You can stop. You should never have started."',
+          () => {
+            f.craneStopped = 1;
+            bump('sheriff', 20);
+            says(
+              'sheriff',
+              'Crane puts her badge back on, right there on the stairs. "...Thank you." She means it more than anything she has ever said to you.',
+            );
+            goHere();
+          },
+        ],
+        [
+          '"One more."',
+          () => {
+            f.craneAskedStop = 1;
+            bump('sheriff', -15);
+            say('Crane nods once, and goes up. She does not look back this time.');
+            radNight();
+          },
+          'danger',
+        ],
+      ],
+    });
+  radNight();
+};
+function radNight() {
+  const f = S.f,
+    n = (f.craneNights = (f.craneNights || 0) + 1),
+    men = RAD_MEN.filter(x => alive(x) && !following(x) && S.n[x].loc !== 'pen'),
+    man = men.length ? pick(men) : null;
+  f.craneRadDay = S.day;
+  if (man) craneWith(man);
+  const t = Math.round(R(60, 90) * 0.7); // Opal takes three in ten
+  say(RAD_LINE[Math.min(n - 1, RAD_LINE.length - 1)] + ' ' + pick(FADE));
+  if (tick()) return go('ending');
+  gain(t);
+  say(
+    `In the morning Crane puts ${t} teeth in your hand, Opal's cut already taken. She doesn't say who it was. Opal's ledger would.`,
+  );
+  if (n >= 4) bump('sheriff', -5);
+  if (n === 2) rx('moe', '"The Sheriff, at Opal\'s. At NIGHT. The whole bar knows. I hate that the whole bar knows."');
+  if (n === 3 && alive('mayor')) {
+    f.waterUp = (f.waterUp || 0) + 2;
+    rx(
+      'mayor',
+      '"Our Sheriff has a second job, I hear. I won\'t mention it to anyone. Water is going up two. No reason."',
+    );
+  }
+  if (man && roll(50)) rx(man, '"I won\'t say a word about the Sheriff. Not one. ...She was very professional."');
+  goHere();
+}
+
+// ---- 5. the pregnancy ----
+const _worldPreg = world;
+world = function () {
+  const f = S.f;
+  const r = _worldPreg.apply(this, arguments);
+  if (
+    !f.cranePreg &&
+    alive('sheriff') &&
+    (f.craneWith || []).length >= 3 &&
+    S.day >= f.craneWith[0][1] + 6 &&
+    roll(35)
+  ) {
+    const recent = f.craneWith.filter(([, d]) => S.day - d <= 12),
+      pool = recent.length ? recent : f.craneWith;
+    f.cranePreg = S.day;
+    f.craneDad = pick(pool)[0];
+    f.craneSuspects = [...new Set(f.craneWith.map(([w]) => w))];
+  }
+  if (cranePregnant()) S.n.sheriff.op = Math.max(S.n.sheriff.op, -55); // never an enemy you could fight
+  return r;
+};
+SC.cranePreg = () => {
+  S.f.pregTold = 1;
+  show({
+    title: 'Sheriff Crane',
+    icon: '⭐',
+    text: 'Crane sits down on the edge of the desk, hard. "I\'m late. I\'m never late. Doc says I\'m carrying." She looks at you for a long time. "I don\'t know whose it is. I want to. Will you help me find out?"',
+    opts: [
+      [
+        '"We\'ll find out. Together."',
+        () => {
+          S.f.dadQuest = 1;
+          bump('sheriff', 10);
+          says('sheriff', '"...Together." She takes your hand and puts it on her stomach, briefly, like evidence.');
+          go('talk', 'sheriff');
+        },
+      ],
+      [
+        '"Does it matter? It\'s ours either way."',
+        () => {
+          S.f.dadQuest = 1;
+          S.f.dadDoesntMatter = 1;
+          bump('sheriff', 20);
+          says(
+            'sheriff',
+            'Crane laughs, wet-eyed, for the first time you can remember. "...It matters to me. But thank you for saying that."',
+          );
+          go('talk', 'sheriff');
+        },
+      ],
+    ],
+  });
+};
+const _sheriffPreg = TALK.sheriff;
+TALK.sheriff = () => {
+  if (cranePregnant() && !S.f.pregTold && S.n.sheriff.loc !== 'pen') {
+    go('cranePreg');
+    return null;
+  }
+  const r = _sheriffPreg();
+  if (!r || !cranePregnant()) return r;
+  const f = S.f;
+  if (f.dadQuest && !f.dadTold && f.dadKnown)
+    r.o.push(
+      ...[...new Set(['you', ...(f.craneSuspects || [])])].map(w => [
+        w === 'you' ? '"It\'s mine."' : `"It's ${NPC[w].n}'s."`,
+        () => tellCrane(w),
+        w === f.dadKnown ? null : 'danger',
+      ]),
+    );
+  r.t += ' One hand rests on her stomach when she thinks nobody is looking.';
+  return r;
+};
+// ---- 6. the quest: who is the father? ----
+const dadName = w => (w === 'you' ? 'you' : NPC[w].n);
+// Doc's pre-war kit says yes or no for one man: you.
+jobs('doc', () =>
+  S.f.dadQuest && !S.f.dadTest && S.n.doc.loc === 'rustwater'
+    ? [
+        [
+          `"Can you tell who the father of Crane's baby is?" (${cost(80, 'doc')} teeth)`,
+          () => {
+            if (pay(cost(80, 'doc'))) {
+              S.f.dadTest = S.f.craneDad === 'you' ? 'yours' : 'not';
+              says(
+                'doc',
+                S.f.craneDad === 'you'
+                  ? '"Pre-war kit, two drops of blood, one prayer. ...Congratulations. Or condolences. It\'s yours."'
+                  : '"Pre-war kit, two drops of blood, one prayer. ...It isn\'t yours. Whose it is, the kit doesn\'t say. It only knows you."',
+              );
+              if (S.f.craneDad === 'you') S.f.dadKnown = 'you';
+              else if ((S.f.craneSuspects || []).filter(w => w !== 'you').length === 1)
+                S.f.dadKnown = S.f.craneSuspects.find(w => w !== 'you');
+            }
+            go('talk', 'doc');
+          },
+        ],
+      ]
+    : [],
+);
+// Opal's ledger says who she saw at the Rad, and when.
+jobs('opal', () =>
+  S.f.dadQuest && S.f.craneNights && !S.f.dadLedger
+    ? [
+        [
+          '"Who did Crane see at the Rad?"',
+          () => {
+            S.f.dadLedger = 1;
+            const men = [...new Set((S.f.craneWith || []).filter(([w]) => RAD_MEN.includes(w)).map(([w]) => NPC[w].n))];
+            says(
+              'opal',
+              `She opens the ledger without being asked twice. "${men.join(', ') || 'Nobody I wrote down'}. I keep good books, sugar. Go and ask them."`,
+            );
+            go('talk', 'opal');
+          },
+        ],
+      ]
+    : [],
+);
+// Ask any suspect. The father gives himself away; the others don't.
+const DAD_YES = {
+  mayor: '"...Mine? A Fenwick? Water will have to go up. For the nursery."',
+  jeb: 'Jeb sits down on a lizard. "I counted the days. I count everything. It\'s mine. Oh, no. Oh, yes."',
+  moe: 'Moe stops wiping the glass, for the first time in thirty years. "...Mine. I did the sums on a beer mat."',
+  doc: "\"I ran my own blood through the kit after hers. It's mine. I'm going to be a terrible father. I'm so pleased.\"",
+  pips: '"Statistically, it\'s mine." Pips is not smiling. Pips is, for once, afraid.',
+  gus: 'Gus drops his pick. He doesn\'t pick it up. "...I\'m going to be a da."',
+  tam: 'Big Tam sits down in the sand like you hit him. "...Mine. I\'d know. I\'d know it in the sand."',
+  rook: 'Rook leaves the door. He has never left the door. "Mine. Tell her I\'ll watch over that one instead."',
+  hector: 'Hector goes white. "...Bess and Bert are going to have a brother. Or a sister. Lord help me."',
+  vane: '"Mine, of course. I\'ll be an excellent influence. Medically."',
+  gums: '"Mine? A baby? Without teeth?" Gums laughs until he cries. "We\'ll match."',
+  pete: 'Pete goes grey, then red. "...Mine. I\'ll be a deputy AND a dad. I can\'t do either."',
+  krug: 'Krug opens his notebook, runs a finger down the page, and stops. "Mine. I keep records, Ruth knows I keep records."',
+};
+const DAD_NO = '"Mine? No. The dates are wrong, and I\'d know. Ask someone else."';
+for (const w of [...RAD_MEN, 'krug'])
+  jobs(w, () =>
+    S.f.dadQuest && !S.f.dadKnown && (S.f.craneSuspects || []).includes(w) && !(S.f.dadAsked || {})[w]
+      ? [
+          [
+            '"Crane is carrying. Could it be yours?"',
+            () => {
+              S.f.dadAsked = Object.assign(S.f.dadAsked || {}, { [w]: 1 });
+              if (S.f.craneDad === w) {
+                S.f.dadKnown = w;
+                (DAD_YES[w][0] === '"' ? l => says(w, l) : say)(DAD_YES[w]);
+              } else {
+                says(w, DAD_NO);
+                // By elimination: one name left that nobody has ruled out.
+                const left = (S.f.craneSuspects || []).filter(
+                  x => !(S.f.dadAsked || {})[x] && !(x === 'you' && S.f.dadTest === 'not'),
+                );
+                if (left.length === 1 && left[0] !== 'you' && S.f.dadTest === 'not') {
+                  S.f.dadKnown = left[0];
+                  say(`Everyone else is ruled out. That leaves ${NPC[left[0]].n}.`);
+                }
+              }
+              go('talk', w);
+            },
+          ],
+        ]
+      : [],
+  );
+function tellCrane(w) {
+  const f = S.f,
+    truth = f.craneDad;
+  f.dadTold = w;
+  f.dadLied = w !== truth;
+  if (w === 'you') {
+    bump('sheriff', 25);
+    says('sheriff', '"Ours, then." She says it like she is reading someone their rights, and means every word.');
+  } else {
+    bump('sheriff', 5);
+    says(
+      'sheriff',
+      `"${NPC[w].n}." She is quiet a long time. "...Then that's who it is. It changes less than I thought."`,
+    );
+    if (alive(w)) rx(w, '"The Sheriff came to see me. About the baby. I don\'t know what to do with my hands."');
+  }
+  if (f.dadLied && roll(40)) later(5, 'dadLie');
+  go('talk', 'sheriff');
+}
+LATER.dadLie = () => {
+  if (!alive('sheriff')) return;
+  bump('sheriff', -30);
+  rx('sheriff', `"I found out whose it really is. You lied to me about my own child. Of everything, that."`);
+};
+
+// ---- 7. nothing harms her while she carries ----
+const _talkPregGuard = SC.talk;
+SC.talk = id => {
+  _talkPregGuard(id);
+  if (id === 'sheriff' && cranePregnant() && S.scene === 'talk')
+    drawOpts(cur.filter(o => !/^(Attack|Murder) Sheriff Crane/.test(o[0])));
+};
+const _charPregGuard = SC.char;
+SC.char = (...a) => {
+  _charPregGuard(...a);
+  if (cranePregnant()) drawOpts(cur.filter(o => !/^Murder your spouse/.test(o[0])));
+};
+const _thursdayPreg = LATER.thursday;
+LATER.thursday = x => {
+  if (x === 'sheriff' && cranePregnant()) {
+    rx('lou', '"She\'s carrying, honey. Even I have rules. One rule."');
+    return;
+  }
+  return _thursdayPreg(x);
+};
+const _raidPreg = raidOutcome;
+raidOutcome = mod => {
+  if (cranePregnant()) {
+    S.f.raidDone = 1;
+    rx('sheriff', '"I was going to ride on Chainfield. I\'m not riding anywhere now. Krug can wait nine months."');
+    return;
+  }
+  return _raidPreg(mod);
+};
+const _worldHitPreg = world;
+world = function () {
+  const f = S.f;
+  if (cranePregnant() && f.mayorJob && !f.mayorPaid && !f.hitDone && alive('mayor') && S.day >= f.mayorJobDay + 6) {
+    f.hitDone = 1;
+    rx(
+      'mayor',
+      '"The Molar I hired saw she was carrying and walked off. Molars have scruples now. What is the world coming to."',
+    );
+  }
+  return _worldHitPreg.apply(this, arguments);
+};
+// The sale is off while she carries.
+const _krugPreg = TALK.krug;
+TALK.krug = () => {
+  const r = _krugPreg();
+  if (cranePregnant()) {
+    r.o = r.o.filter(o => !o || !String(o[0]).includes('Your ex-wife'));
+    if (following('sheriff')) r.t += ' He looks at Crane, then at her stomach, and for once says nothing at all.';
+  }
+  return r;
+};
+
+// ---- the journal ----
+QUESTS.dad = Q(
+  'Whose baby is it?',
+  'Sheriff Crane, Rustwater',
+  () => S.f.dadQuest,
+  () =>
+    S.f.dadTold
+      ? S.f.dadTold === 'you'
+        ? 'You told her it was yours.'
+        : `You told her it was ${NPC[S.f.dadTold].n}'s.`
+      : null,
+  () =>
+    S.f.dadKnown
+      ? 'You know. Tell Crane.'
+      : [
+          !S.f.dadTest && 'Doc Ratchet has a pre-war test. It only knows you.',
+          S.f.craneNights && !S.f.dadLedger && "Opal's ledger says who she saw at the Rad.",
+          'Ask the men she was with.',
+        ]
+          .filter(Boolean)
+          .join(' '),
+);
+QUESTS.radNights = Q(
+  'Nights at the Velvet Rad',
+  'Sheriff Crane, Rustwater',
+  () => S.f.craneNights,
+  () =>
+    S.f.craneStopped
+      ? `You let her stop after ${S.f.craneNights} nights.`
+      : !alive('sheriff')
+        ? 'Crane is dead.'
+        : null,
+  () =>
+    `${S.f.craneNights} night${S.f.craneNights === 1 ? '' : 's'} so far. She'll go as long as you ask. She'll ask you to let her stop.`,
+);
+
+// ---- ending slides ----
+const _linkLinesBaby = linkLines;
+linkLines = () => {
+  const L = _linkLinesBaby(),
+    f = S.f;
+  if (f.craneNights)
+    L.push(
+      f.craneStopped
+        ? `Crane worked ${f.craneNights} nights at the Velvet Rad so you could eat, then you let her stop. Rustwater never looked at the badge the same way. She said she would do it again.`
+        : `Crane worked ${f.craneNights} nights at the Velvet Rad because you let her. Rustwater stopped calling her Sheriff.`,
+    );
+  if (f.cranePreg && alive('sheriff')) {
+    const told = f.dadTold,
+      dad = f.craneDad;
+    L.push(
+      !told
+        ? "Crane had the baby in the spring. She never found out who the father was. She decided it didn't matter, and mostly meant it."
+        : told === dad
+          ? `Crane had the baby in the spring. ${dad === 'you' ? 'Yours. It has your nose and her aim.' : `${NPC[dad].n}'s, and everybody knew it. The child grew up with two parents who were not together and a whole town that was.`}`
+          : `Crane had the baby in the spring. You told her it was ${dadName(told)}'s. It was ${dadName(dad)}'s. Children grow into their faces, and this one did.`,
+    );
+  }
+  return L;
+};

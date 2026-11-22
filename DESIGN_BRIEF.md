@@ -101,7 +101,7 @@ The player is a man. Most adult women can be seduced, each in her own way. Conte
 ## 10. Content limits (keep these)
 
 - No sexual violence of any kind.
-- No children in the world, and no killing children.
+- Children: Will lifted the "no children in the world" rule on 23 Nov 2026, for Crane's pregnancy. A child may exist, offstage. Children are never harmed, killed, endangered or sexualised, and a pregnant woman can't be killed, sold or harmed by the game's own systems.
 - Sex is always fade-to-black.
 - Everything else at Fallout 2 darkness is fine.
 

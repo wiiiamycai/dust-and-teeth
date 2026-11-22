@@ -625,6 +625,7 @@ TALK.crumb = () => {
           S.spouse = 'sheriff';
           S.f.spouseWho = 'sheriff';
           S.lovers.sheriff.how = 'married';
+          craneWith('you');
           if (!following('sheriff')) follow('sheriff');
           addTitle('Married');
           event('married', 'sheriff', { loc: 'scrapwell' });
@@ -686,6 +687,7 @@ SC.craneLeash = () =>
         'Clip the leash on. "Good girl."',
         () => {
           S.f.craneLeash = 'yes';
+          craneWith('you');
           bump('sheriff', 20);
           say(
             'She closes her eyes when the clip clicks, and lets out a breath she has been holding for about ten years. ' +
