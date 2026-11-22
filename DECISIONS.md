@@ -377,3 +377,15 @@ Will: "make it all linked together as well", and then "dont ask me questions jus
 168. **Lou's death reaches the Mall:** Margie's food court loses its meat supplier.
 169. **The day-25 launch** gets one more line if you found the Green: forty people under the glass watch the white sky and go back to weeding.
 170. Each of these has an ending slide and a scripted test (9 new cases).
+
+## More to ask (v4.6)
+
+171. **One more question each, and the answer matters:**
+    - Vane: what's in the grey (+15 to swapping it for flour);
+    - Fern: what she wants (+10 to talking her into seeds);
+    - Margie: who ran the store before her (+10 to applying);
+    - the Warden, once you're inside: why she lets anyone in (+10 to talking her down at the gate);
+    - Gums: what happened to his teeth (he warms to you, so his prices drop a little);
+    - Sprocket: who taught her guns. It was Hector's father, and that opens a line with Hector at the farm.
+172. **Rook and the Warden:** both walked out on the King, a night apart. Rook now knows her secret too, so someone at Snake Eyes can tell you she was Corporal Grit.
+173. 4 new scripted tests.

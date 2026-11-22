@@ -2893,5 +2893,63 @@
    "EVAL:S.f.knowGreen = 1; S.end = { type: 'nuke' }; go('ending')",
    "SAY:forty people watch the white sky"
   ]
+ },
+ {
+  "name": "Questions: asking Vane what's in the grey makes the flour swap easier",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "REAL",
+   "EVAL:globalThis.p0 = chanceOf('vane.flour')",
+   "Dr. Vane",
+   "What's actually in the grey",
+   "EXPECT:knew('vane.grey') && chanceOf('vane.flour') >= p0 + 15"
+  ]
+ },
+ {
+  "name": "Questions: Sprocket's teacher was Hector's father, and Hector has something to say about it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Who taught you guns",
+   "EXPECT:knew('sprocket.hector')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "your father taught her guns",
+   "EXPECT:S.f.hectorGuns && S.n.hector.op >= 15"
+  ]
+ },
+ {
+  "name": "Questions: Fern, Margie and the Warden each tell you something that helps a check",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "EVAL:learnGreen(); S.day = 15; S.f.raid = 1; S.f.greenIn = 1; go('hub', 'green'); globalThis.a = chanceOf('fern.seeds'); globalThis.b = chanceOf('warden.gate')",
+   "Fern",
+   "What do you want, Fern",
+   "Back",
+   "The Warden",
+   "Why let anyone in at all",
+   "EXPECT:chanceOf('fern.seeds') > a && chanceOf('warden.gate') > b",
+   "EVAL:globalThis.c = chanceOf('margie.apply'); S.here = 'mall'; go('talk', 'margie')",
+   "Who ran the store before you",
+   "EXPECT:chanceOf('margie.apply') > c"
+  ]
+ },
+ {
+  "name": "Questions: Rook knows the Warden from the silo",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:SECRETS.warden.tell.includes('rook') && bondOf('rook', 'warden') && bondOf('warden', 'rook').kind === 'friend'"
+  ]
  }
 ]

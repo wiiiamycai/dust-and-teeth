@@ -794,6 +794,13 @@ const BONDS = [
   ],
   // ---- across the valley (v4.4) ----
   [
+    'rook',
+    'warden',
+    'friend',
+    '"Grit, the King\'s best shot. She walked out of the silo the night before I did. Showed me it could be done."',
+    '"Rook still holds doors for crooks? Tell him the door here is better. Tell him nothing else."',
+  ],
+  [
     'vane',
     'opal',
     'enemy',
@@ -1013,7 +1020,7 @@ const SECRETS = {
     t: 'The Green stays at forty because the Gardener walks the old and the sick to the outer beds. The outer beds are compost. The tomatoes are very good.',
   },
   warden: {
-    tell: ['gums', 'king'],
+    tell: ['gums', 'king', 'rook'],
     pay: 0,
     short: '',
     t: "The Warden was a Molar: Corporal Grit, the King's best shot. She walked east with a repeater, and the Gardener let her in because she could hit a man at half a mile. She still has the tooth tattoo.",

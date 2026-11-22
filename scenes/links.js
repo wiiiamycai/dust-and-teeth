@@ -340,3 +340,98 @@ linkLines = () => {
     L.push('You sold Krug the pass. The Warden sent his slavers back down it. She is still looking for whoever told.');
   return L;
 };
+
+// ---- 11. one more question each: what they tell you changes a check, or opens a door elsewhere ----
+function askOpt(id, fact, label, line, after) {
+  return knew(fact)
+    ? null
+    : [
+        label,
+        () => {
+          know(fact);
+          quote(`${NPC[id].n}: ${line}`);
+          if (after) after();
+          go('talk', id);
+        },
+      ];
+}
+const ASK = {
+  gums: () =>
+    askOpt(
+      'gums',
+      'gums.teeth',
+      '"What happened to your teeth?"',
+      '"Tooth tax. Every month, nine years. I paid in mine till there weren\'t any. Then they let me collect it."',
+      () => bump('gums', 10),
+    ),
+  vane: () =>
+    askOpt(
+      'vane',
+      'vane.grey',
+      '"What\'s actually in the grey?"',
+      '"Buzz, chalk and rat poison. Mostly chalk. The rat poison is for flavour."',
+    ),
+  warden: () =>
+    S.f.greenIn
+      ? askOpt(
+          'warden',
+          'warden.rule',
+          '"Why let anyone in at all?"',
+          '"Forty. One goes to the outer beds, one comes in. Somebody died so you could eat that tomato. Enjoy it."',
+        )
+      : null,
+  fern: () =>
+    askOpt(
+      'fern',
+      'fern.sea',
+      '"What do you want, Fern?"',
+      '"To see the sea. Moss says it\'s real. Moss has never seen it either. We\'re both very sure."',
+    ),
+  margie: () =>
+    askOpt(
+      'margie',
+      'margie.line',
+      '"Who ran the store before you?"',
+      '"My mother. Before her, hers. Before her, a man called Gary. The handbook says Gary was let go. We don\'t talk about Gary."',
+    ),
+  sprocket: () =>
+    askOpt(
+      'sprocket',
+      'sprocket.hector',
+      '"Who taught you guns?"',
+      '"Hector\'s father. He fixed guns for the caravans. When he died I fixed his. Hector never came for them."',
+    ),
+};
+for (const id in ASK) {
+  const _t = TALK[id];
+  TALK[id] = () => {
+    const r = _t();
+    const a = ASK[id]();
+    if (a) r.o.splice(Math.max(0, r.o.length - 1), 0, a);
+    return r;
+  };
+}
+// What you learn feeds the checks.
+CK['vane.flour'].likes = { 'vane.grey': 15 };
+CK['warden.gate'].likes = { ...CK['warden.gate'].likes, 'warden.rule': 10 };
+CK['fern.seeds'].likes = { ...CK['fern.seeds'].likes, 'fern.sea': 10 };
+CK['margie.apply'].likes = { ...CK['margie.apply'].likes, 'margie.line': 10 };
+// Sprocket's teacher was Hector's father: Hector has guns waiting at the Mall.
+const _talkHectorLink = TALK.hector;
+TALK.hector = () => {
+  const r = _talkHectorLink();
+  if (knew('sprocket.hector') && alive('hector') && !S.f.hectorGuns)
+    r.o.push([
+      '"Sprocket at the Mall says your father taught her guns. She still has his."',
+      () => {
+        S.f.hectorGuns = 1;
+        bump('hector', 15);
+        if (alive('sprocket')) bump('sprocket', 10);
+        quote(
+          "Hector looks at his hands for a long time. \"...Da's guns. I couldn't go and look at them. Tell her to keep them. Tell her thank you. Don't tell her I cried.\"",
+        );
+        go('talk', 'hector');
+      },
+    ]);
+  return r;
+};

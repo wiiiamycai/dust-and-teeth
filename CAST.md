@@ -417,6 +417,7 @@ Told by: Brother Crumb. Worth 30 teeth to keep quiet.
 - rival, Big Tam: "Tam is the best fighter in the valley. I've seen him lose on purpose. That makes him dangerous."
 - friend, Brother Crumb: "Crumb pulled teeth at the silo. I guarded the door. We ran the same night. We don't talk about it."
 - enemy, The Dentist King: "I held the King's back door for three years. I still know the code."
+- friend, The Warden: "Grit, the King's best shot. She walked out of the silo the night before I did. Showed me it could be done."
 
 ## The Drowned Mall
 
@@ -511,7 +512,7 @@ Told by: Moss, Doc Ratchet. Worth 0 teeth to keep quiet.
 
 **Secret:** The Warden was a Molar: Corporal Grit, the King's best shot. She walked east with a repeater, and the Gardener let her in because she could hit a man at half a mile. She still has the tooth tattoo.
 
-Told by: Gums, The Dentist King. Worth 0 teeth to keep quiet.
+Told by: Gums, The Dentist King, Rook. Worth 0 teeth to keep quiet.
 
 **Bonds:**
 
@@ -520,6 +521,7 @@ Told by: Gums, The Dentist King. Worth 0 teeth to keep quiet.
 - enemy, The Dentist King: "Anything that comes up the pass wearing teeth gets shot first and asked second."
 - rival, Caravan Jeb: "The lizard man sits in the cave under the pass for a month, then goes home. Smartest man in the valley."
 - enemy, Fern: "Fern wants the gate open. Fern has never seen what comes through an open gate."
+- friend, Rook: "Rook still holds doors for crooks? Tell him the door here is better. Tell him nothing else."
 
 ### 🍄 Moss
 
