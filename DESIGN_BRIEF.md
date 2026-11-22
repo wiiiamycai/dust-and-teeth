@@ -30,19 +30,23 @@ A text RPG in the spirit of Fallout 2, built as a single-page browser game. This
 - Dialogue options are real lines ("Ever thought about leaving this farm?"), never labels like "Flirt" or "Persuade".
 - NPC replies are real replies in their own voice.
 
-## 4. Checks (v3)
+## 4. Checks (v6.1: logical)
 
-- **Hidden.** The player never sees a percentage. Remove all `[Speech 62%]` style tags from option labels.
-- **Context modifiers** (hidden), for example:
-  - Chatted with this person before (rapport).
-  - Know something relevant about them (a "known fact" flag learned from dialogue or gossip). Example: Bess told you she dreams of leaving the farm, so "Come see the world with me" gets a big bonus and a cheesy line gets a penalty.
-  - Their opinion of you (gossip-driven).
-  - What you are wearing or carrying (slaver tattoo, sheriff's vest, a gift).
-  - Who is in earshot (Hector nearby makes flirting with Bess harder).
-  - Your reputation titles.
-- **Soft cues after each attempt:** "She laughs, but she's still listening." / "He narrows his eyes." Never a number.
-- **Mostly one-shot.** A failed check usually closes that option until something changes (new info, opinion shift, time passes). A few low-stakes checks can repeat, but each failure raises suspicion and lowers the next chance. Flirting can be retried a small number of times, then that person shuts you out for good.
-- **Read People perk** (earned by having many conversations) gives vague hints ("she's close to saying yes") but never numbers.
+- **Hidden.** The player never sees a percentage. No `[Speech 62%]` style tags on option labels.
+- **Story checks are logical: know X, pass Y** (Will, v6.1). Any check that touches the story passes if the player holds its key and fails if they don't. No dice. A key is one of:
+  - something learned from dialogue or gossip (a "known fact" in `S.know`). Example: Bess told you she dreams of leaving the farm, so "Ever thought about leaving this farm?" works. Without it, it doesn't.
+  - something carried (Krug's notebook, the Mayor's ledger, a badge).
+  - something done (fixed the tractor, fought in the pit, freed the pens).
+  - someone's trust (their opinion of you, gossip-driven).
+- Keys and failure lines live in `LOGIC` in `scenes/logic.js`. Every new story check needs a `LOGIC` entry.
+- **Context still counts, as logic:**
+  - Someone who has heard you lie won't take your word, unless they trust you anyway (opinion 30 or more).
+  - Who is in earshot (with Hector listening, only Bess's dream will move her; away from him, her trust is enough).
+  - The right line, not just the right fact ("Jeb was drunk" works if you know Jeb drinks; "Jeb's lying" doesn't).
+- **Dice only for the trivial:** the road, gambling, haggling, dives, petty theft, flings, a quiet murder (`DICE` in `scenes/logic.js`). These keep the hidden context modifiers in `data/checks.js` (rapport, opinion, known facts, gear, earshot, titles).
+- **Soft cues after each attempt.** A failure says, in the person's voice, what's missing ("You don't know when the guards change. Somebody in the pens does."). Never a number.
+- **Mostly one-shot.** A failed check usually closes that option until something changes (new info about the person, or their opinion swings). A few low-stakes checks can repeat, but each failure raises suspicion. Flirting can be retried a small number of times, then that person shuts you out for good.
+- **Read People perk** (earned by having many conversations) gives vague hints ("she's ready to hear it") but never numbers.
 
 ## 5. Gossip that makes people act (v3)
 
@@ -145,7 +149,7 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 - **`node tests/all.js` runs everything below and prints PASS/FAIL per test.** It takes about 4 minutes. `--quick` uses 300 fuzz games instead of 1500 for fast iteration; always do a full run before committing.
 - `node tests/fuzz.js index.html 1500 rand` plays 1500 random games. `survive` mode avoids instant-ending options and tops up HP to reach deeper content. `late` mode starts each game on day 15 at the Drowned Mall or the Green, to play the late content. Reports crashes, dead ends (screens with no options), any "undefined", "NaN" or "null" text on screen, and any visible check (`[Speech 62%]`, `[Brains]`, `Run (40%)`).
 - `node tests/reload.js index.html` plays random games while reloading mid-game to check saves.
-- `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. God mode tops up HP and maxes skills before each step. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`, `REAL` (restore real skills, so checks can be measured), `RAND:<0..1>` / `RAND:off` (fix every dice roll: 0.99 fails almost any check), `EXPECT:<js>` (fail unless truthy), `SAY:<text>` (fail unless the text is on screen).
+- `node tests/path.js index.html '[...steps]'` runs a scripted playthrough by clicking options whose text contains each step string. God mode tops up HP and maxes skills before each step. Special steps: `TRAVEL:<place>`, `FIGHT`, `EVAL:<js>` (inspect state), `WAIT:<days>`, `REAL` (restore real skills, so checks can be measured), `RAND:<0..1>` / `RAND:off` (fix every dice roll: 0.99 fails almost any check; a logical story check ignores dice, so a test gives it its key instead, e.g. `EVAL:know('krug.rota')`), `EXPECT:<js>` (fail unless truthy), `SAY:<text>` (fail unless the text is on screen).
 - `tests/paths.json` holds the scripted consequence tests that `all.js` runs. Add one for each new consequence chain.
 - `node tests/sprites.js index.html` checks the portraits: every grid uses palette letters and fits its box, every person has a portrait, it is found from their talk screen, and it draws both open-eyed and blinking.
 - `node tests/golden.js index.html` replays 300 fixed-seed games (with reloads) and compares a fingerprint of every screen and save against `tests/golden.json`. It must match after any refactor. When a change is meant to alter gameplay it will mismatch: re-record with `node tests/golden.js index.html record` and commit the new `golden.json` with that change.

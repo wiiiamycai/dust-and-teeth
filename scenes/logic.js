@@ -96,9 +96,14 @@ const LOGIC = {
     () => knew('hector.secret') || knew('hector.dying'),
     "Hector's shotgun has heard every excuse. Find something he cares about more.",
   ],
-  'hector.lying': [() => knew('jeb.drinks') || knew('hector.secret'), 'Hector: "Liar." You had nothing to back it up.'],
+  // Knowing Jeb drinks only helps if you say so: the bare "Jeb's lying" still has nothing behind it.
+  'hector.lying': [() => knew('hector.secret'), 'Hector: "Liar." You had nothing to back it up.'],
   'hector.drunk': [() => knew('jeb.drinks'), ''],
-  'bess.leave': [() => knew('bess.dreams'), "Bess goes back to the hoe. You don't know what she wants yet."],
+  // Her dream works anywhere. Away from her father, a friend (her trust) is enough.
+  'bess.leave': [
+    () => knew('bess.dreams') || (!(alive('hector') && S.n.hector.loc === S.here) && trusted('bess', 20)),
+    "Bess goes back to the hoe. You don't know what she wants yet.",
+  ],
   'bess.pretty': [() => S.stats.charm >= 8, 'Bess has heard that line from every raider on the farm road.'],
   'queen.sorry': [() => op('bess') >= -20 || S.f.bessHome, "The Raider Queen isn't ready to hear sorry from you."],
   'queen.out': [() => knew('bess.dreams'), "You don't know what she wanted from life. She does."],
@@ -127,7 +132,8 @@ const LOGIC = {
   'mayor.debt': [() => knew('mayor.secret') || has('ledger'), 'Fenwick: "I owe nobody." You need something on him.'],
   'doc.vial': [() => knew('doc.secret'), "You don't know which of Doc's bottles matters."],
   'opal.honest': [
-    () => !liarTo('opal') && (heard('opal', 'freed') || knew('opal.secret') || S.teeth >= 250),
+    // Money alone never wins her: it buys the evening, not her belief.
+    () => !liarTo('opal') && (heard('opal', 'freed') || knew('opal.secret')),
     'Opal: "Everyone says that." Show her you mean it.',
   ],
   'crane.respect': [() => goodHeard('sheriff') >= 2, "Crane is working. She's always working. Do good in her town."],
@@ -243,11 +249,14 @@ spec = (key, arg) => {
   const s = _specLogic(key, arg),
     L = !DICE.has(key) && LOGIC[key];
   if (!L) return s;
-  return { ...s, _logic: L, _arg: arg, ...(L[1] ? { near: L[1], far: L[1] } : {}) };
+  // Someone who has heard you lie won't take your word on anything, unless they trust you anyway.
+  const lied = s.sk === 'speech' && s.who && S.n[s.who] && liarTo(s.who) && !trusted(s.who, 30);
+  const cue = lied ? `${NPC[s.who].n} has heard about your lies.` : L[1];
+  return { ...s, _logic: L, _arg: arg, _lied: lied, ...(cue ? { near: cue, far: cue } : {}) };
 };
 // A story check: it passes if you hold the key, and fails if you don't. 100 or 0, never a roll.
 const _chanceLogic = chance;
 chance = (s, rec) => {
-  if (s && s._logic) return s._logic[0](s._arg) ? 100 : 0;
+  if (s && s._logic) return !s._lied && s._logic[0](s._arg) ? 100 : 0;
   return _chanceLogic(s, rec);
 };
