@@ -821,6 +821,35 @@ const BONDS = [
     '"A valley farmer traded me his last goat for seed once. The wheat came up gold, he wrote. Teo. I count goats and think of him."',
     '"A man from the east traded me seed for my last goat. The wheat came up gold. Then I sold the farm anyway. Fool."',
   ],
+  // ---- the Toaster Schism ----
+  [
+    'rind',
+    'crumb',
+    'rival',
+    '"Crumb found the Toaster and never asked why it was silent. I asked. The silence IS the sermon."',
+    '"Rind was my best acolyte. Now he burns clocks. I taught him to listen. He listened to the wrong thing."',
+  ],
+  [
+    'ohm',
+    'crumb',
+    'friend',
+    '"Brother Crumb heard the first hum. He just never turned the dial."',
+    '"Ohm prays to wires. It is the wrong prayer. She prays it more kindly than anyone."',
+  ],
+  [
+    'rind',
+    'ohm',
+    'enemy',
+    '"The Mother of Wires. She would plug the dead back in if she could find the socket."',
+    '"Rind smashes what he is afraid to understand. I pray for him. With a fuse."',
+  ],
+  [
+    'ohm',
+    'sprocket',
+    'ally',
+    '"Sprocket at the Mall makes dead guns live. She is a saint. Nobody has told her."',
+    '"A woman in goggles keeps calling me holy. I charge her double."',
+  ],
 ];
 // One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
 // pay: what the secret is worth to its owner if you lean on them.
@@ -1036,6 +1065,19 @@ const SECRETS = {
     pay: 0,
     short: '',
     t: "Fern has been leaving seed packets in the pass for strangers to find. Three reached the valley. One is growing behind Mama Lou's diner.",
+  },
+  // ---- the Toaster Schism ----
+  rind: {
+    tell: ['crumb', 'ohm'],
+    pay: 40,
+    short: 'about your hands',
+    t: "Deacon Rind was a mechanic. He fixed the pump that poisoned his own village. He burns machines because he can't burn himself.",
+  },
+  ohm: {
+    tell: ['rind', 'sprocket'],
+    pay: 30,
+    short: 'about the Voice',
+    t: "The Voice that Mother Ohm hears in the plane's radio is a pre-war recording, on a loop. She knows. She preaches it anyway, because the Coil need it more than she needs the truth.",
   },
 };
 // Bonds feed the gossip web: news travels along them and hits harder.

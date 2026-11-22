@@ -87,3 +87,10 @@ Pushback and open points:
 - The match barrel is new gear: a little more power for one gun. The balance test doesn't cover modded gear.
 - Bert's tractor now saves Hector's farm from failing on day 22 without seeds. There is no ending slide for it yet: the farm just doesn't fail.
 - Jobs are first-meeting hooks. Once done, a few people (Junior, Pete, Rook) have little left to say on later visits.
+
+## Added in v5.8: the Toaster Schism
+
+| Who | Status | What you can do |
+|---|---|---|
+| Deacon Rind (Crust) | pass | Tells you the Crust will burn the Coil's plane on the ninth. Join him, help with every plot (teeth, at the Coil's cost), or break him with his own secret. |
+| Mother Ohm (Coil) | pass | Wants a coil to wake the machines (a part, science practice and her secret). Join her, warn her, march with her into the Silo, or expose her Voice. |

@@ -52,6 +52,8 @@ Told by: Old Teo, The Dentist King, Nigel the Glower, Rook. Worth 25 teeth to ke
 - friend, Nigel the Glower: "The Glower is a holy light. He disagrees. Holy lights are modest."
 - friend, Junior: "Junior comes to service. Sits at the back. Weeps at the toast."
 - rival, Queen Margie: "Margie keeps the rules of a shop that died two hundred years ago. My toaster still works. Sometimes."
+- rival, Deacon Rind: "Rind was my best acolyte. Now he burns clocks. I taught him to listen. He listened to the wrong thing."
+- friend, Mother Ohm: "Ohm prays to wires. It is the wrong prayer. She prays it more kindly than anyone."
 
 ### 👴 Old Pell
 
@@ -88,6 +90,17 @@ Told by: Ma Thistle, The Dentist King. Worth 40 teeth to keep quiet.
 - enemy, The Dentist King: "Nigel no talk about King. King bad tooth. Bad, bad tooth."
 - friend, Bert: "Tractor man good. Tractor eight times weight."
 - friend, Moss: "Moss glow too. Moss go east, long ago. Moss say he be useful. Nigel miss Moss."
+
+### 🔥 Deacon Rind
+
+**Secret:** Deacon Rind was a mechanic. He fixed the pump that poisoned his own village. He burns machines because he can't burn himself.
+
+Told by: Brother Crumb, Mother Ohm. Worth 40 teeth to keep quiet.
+
+**Bonds:**
+
+- rival, Brother Crumb: "Crumb found the Toaster and never asked why it was silent. I asked. The silence IS the sermon."
+- enemy, Mother Ohm: "The Mother of Wires. She would plug the dead back in if she could find the socket."
 
 ## Rustwater
 
@@ -450,6 +463,7 @@ Told by: The Dentist King, Rook. Worth 40 teeth to keep quiet.
 - ally, Caravan Jeb: "Half the guns on Jeb's wagons came off my bench. The other half I wouldn't put my name on."
 - friend, Bert: "The farm boy walks two days to tell me about carburettors. I let him. He's right, mostly."
 - friend, Eel: "Eel brings up whatever the water spits out. Half of it is junk. The other half is my living."
+- ally, Mother Ohm: "A woman in goggles keeps calling me holy. I charge her double."
 
 ### 🐟 Eel
 
@@ -548,6 +562,20 @@ Told by: Junior, The Warden. Worth 0 teeth to keep quiet.
 - friend, Junior: "Somebody in the valley found my seeds. Cabbages, I think. I hope he's happy."
 - enemy, The Warden: "The Warden would shoot her own shadow if it came in without asking."
 
+## The Sky-Bus
+
+### ⚡ Mother Ohm
+
+**Secret:** The Voice that Mother Ohm hears in the plane's radio is a pre-war recording, on a loop. She knows. She preaches it anyway, because the Coil need it more than she needs the truth.
+
+Told by: Deacon Rind, Sprocket. Worth 30 teeth to keep quiet.
+
+**Bonds:**
+
+- friend, Brother Crumb: "Brother Crumb heard the first hum. He just never turned the dial."
+- enemy, Deacon Rind: "Rind smashes what he is afraid to understand. I pray for him. With a fuse."
+- ally, Sprocket: "Sprocket at the Mall makes dead guns live. She is a saint. Nobody has told her."
+
 ## Silo 9
 
 ### 🦷 The Dentist King
@@ -586,6 +614,11 @@ Each leaves a sign in one place in the days before. You only hear how it ended i
 - **Day 13, Eel asks Lou about Sal.** Sign: Eel's drawing of Sal on a food court pillar. Clue: Pete, Jeb, Sprocket. Change it: tell her Lou cooked Sal (go with her and fight Lou, or let her go alone: she wins if Sprocket armed her); tell her Pete gave Sal up (she kills Pete and Crane hangs her, unless you warn Pete); give her Sal's badge from Lou's kitchen (she stops, and tells you the vault); lie that Sal went east (Speech); sell her to Lou. Ignored: Lou cooks her.
 - **Day 17, Dr. Vane's grey Buzz hits Rustwater.** Sign: Vane bagging powder stamped RATCHET. Clue: Doc, Gums, Moe. Change it: warn Doc; help Vane (120 teeth, it lands tomorrow); swap it for flour (Sneak); tell Margie (she throws Vane out); tell Crane (she burns the bags). Ignored: two people die, Doc is run out of town (or hanged, with no Sheriff), and Vane takes over Rustwater's medicine.
 - **Day 21, Fern opens the Green's gate.** Sign: Fern oiling the hinges at night. Clue: the Warden, Dice, Moss. Change it: hold the lamp (talk the Warden down or fight her, and the gate opens); talk Fern into giving you seeds instead; tell the Gardener (he walks her to the outer beds); tell the Warden (Fern is locked up). Ignored: the Warden shoots her.
+- **The Toaster Schism (scenes/schism.js).** Crumb's church split: the Crust (Deacon Rind) burn machines, the Coil (Mother Ohm) worship them. Fixing the Toaster lifts the Coil, stealing it lifts the Crust. Ending it: Crumb gets both in one room; break Rind with his secret; expose the Coil's Voice.
+- **Day 9, the Crust burn the Coil's plane.** Sign: rags in lamp oil behind the chapel. Clue: Rind, Crumb, Ohm, Nigel. Change it: warn Ohm; stand and fight with the Coil; show the Crust the cargo door; loot the plane during the raid. Ignored: half the plane burns.
+- **Day 15, the Crust break Rustwater's pump.** Sign: crossed-out cogs on the pump. Clue: Moe, Jeb, Rind, Crane. Change it: warn Crane; tell Fenwick (he hires the Coil, water up one); carry the hammer yourself. Ignored: water up four for good.
+- **Day 18, both churches come for Sprocket.** Sign: BLESSED and BURN on her bench. Clue: Eel, Gums, Margie, Ohm, Rind. Change it: she goes with the Coil on her terms; she hides her tools and they fight over an empty bench; tell Rind (bench burns); tell Ohm (they take her now). Ignored: the stronger church wins (saint at the plane, or no more mods).
+- **Day 23, the Coil march to kneel to the Big Tooth.** Sign: a banner at the plane. Clue: Gums, Rook, Ohm, Rind. Change it: talk Ohm out of it; march with them into the Silo; sell Rind their road (Ohm dies). Ignored: if the Crust are stronger they massacre the march, otherwise the Coil kneel and guard the King's gate.
 - **The Green's big choice.** Seeds (stolen, begged from the Gardener, or from Fern) planted with Hector, Junior, Ma Thistle or the Mayor grow food in the valley, and the Green stops being the only green: Fern walks west, the Warden shuts you out. Swear to keep it secret and you get a bed there for life, and Hector's farm fails on day 22. Break the oath and the Warden comes down the pass for you. Free Moss and the Green goes dark; tell everyone about him and Fern takes over.
 
 ## Ripples (a death changes the lives tied to it)

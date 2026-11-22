@@ -200,6 +200,7 @@ const SITEM = {
   trowel: { dx: 0, dy: -4, r: ['mm', 'mM', '.w', '.w'] },
   paddle: { dx: 0, dy: -10, r: [...srep(9, '.w'), 'ww', 'wW', 'WW'] },
   sunflower: { dx: 0, dy: -5, r: ['yyy', 'yny', 'yyy', '.f', '.f'] },
+  torch: { dx: 0, dy: -7, r: ['.a', 'ar', '.r', ...srep(5, '.w')] },
 };
 
 // ---- the people ----
@@ -327,5 +328,7 @@ const SNPC = {
     item: 'paddle',
     glow: '#a8e07c',
   },
+  rind: { body: 'man', pal: { h: '#2a1e14', c: '#5a4a3a', s: '#b48a6a' }, add: ['tonsure', 'robe'], item: 'torch' },
+  ohm: { body: 'woman', pal: { h: '#8c8a80', c: '#4a5e74', v: '#3a4a5e' }, add: ['goggles', 'robe'], item: 'wrench' },
   fern: { body: 'woman', pal: { h: '#8a5a2a', c: '#5e7a3e', x: '#b8a880' }, add: ['apron'], item: 'sunflower' },
 };

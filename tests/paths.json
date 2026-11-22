@@ -3683,5 +3683,227 @@
    "WAIT:2",
    "EXPECT:S.n.warden.op <= w0 - 30 && S.n.king.rx.some(l => /dome/.test(l))"
   ]
+ },
+ {
+  "name": "Schism: fixing the Toaster lifts the Coil, stealing it lifts the Crust",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:coilP() === 0 && crustP() === 0",
+   "EVAL:S.f.tfixed = 1",
+   "EXPECT:coilP() === 2",
+   "EVAL:S.f.tfixed = 0; S.f.tstolen = 1",
+   "EXPECT:crustP() === 2"
+  ]
+ },
+ {
+  "name": "Schism, the plane: Rind tells you, you warn Mother Ohm, and the plane bites back",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Deacon Rind",
+   "What does the Crust want",
+   "EXPECT:plotKnown('plane')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "Mother Ohm",
+   "The Crust are coming to burn the plane",
+   "EXPECT:S.f.planeHeld && S.f.plot_plane === 'stopped' && coilP() > crustP()"
+  ]
+ },
+ {
+  "name": "Schism, the plane: stand with the Coil on the ninth and win",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.plane'); S.f.raid = 1",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "Mother Ohm",
+   "stand with you when they come",
+   "EXPECT:S.day === 9 && S.fight",
+   "FIGHT",
+   "EXPECT:S.f.planeHeld && S.f.plot_plane === 'stopped' && S.n.ohm.op >= 40"
+  ]
+ },
+ {
+  "name": "Schism, the plane: show the Crust the way in and the whole wing burns",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Deacon Rind",
+   "What does the Crust want",
+   "show your people the soft way in",
+   "EXPECT:S.f.planeBurned === 2 && crustP() >= 3 && S.n.ohm.op <= -40"
+  ]
+ },
+ {
+  "name": "Schism, the plane: ignored, the Crust burn half of it on day 9",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1",
+   "WAIT:9",
+   "EXPECT:S.f.plot_plane === 'done' && S.f.planeBurned === 1 && crustP() === 2"
+  ]
+ },
+ {
+  "name": "Schism, the plane: loot it on raid night while both sides fight",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.plane'); S.f.raid = 1",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "EVAL:globalThis.t0 = S.teeth",
+   "strip the plane while they fight",
+   "EXPECT:S.day === 9 && S.f.plot_plane === 'done' && S.teeth >= t0 + 40"
+  ]
+ },
+ {
+  "name": "Schism, the pump: ignored, the Crust break it on day 15 and water costs four more",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; globalThis.w0 = waterCost()",
+   "WAIT:15",
+   "EXPECT:S.f.pumpBroken && waterCost() >= w0 + 4"
+  ]
+ },
+ {
+  "name": "Schism, the pump: warn Crane and it holds; or tell Fenwick and he hires the Coil",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.pump')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Crust will hit the pump",
+   "EXPECT:S.f.plot_pump === 'stopped' && !S.f.pumpBroken",
+   "EVAL:delete S.f.plot_pump; go('talk', 'mayor')",
+   "Fanatics are coming for your pump",
+   "EXPECT:S.f.coilGuards && coilP() >= 2"
+  ]
+ },
+ {
+  "name": "Schism, the saint: Coil ahead on day 18, they carry Sprocket and her bench to the plane",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.f.kingStopped = 1; S.f.coil = 9; S.f.plot_pump = 'stopped'; S.f.plot_plane = 'stopped'",
+   "WAIT:18",
+   "EXPECT:S.f.saintSprocket && S.n.sprocket.loc === 'skybus'",
+   "EVAL:S.here = 'skybus'; go('talk', 'sprocket')",
+   "SAY:Saint Sprocket",
+   "EXPECT:cur.some(o => o[0].includes('Can you fit something'))"
+  ]
+ },
+ {
+  "name": "Schism, the saint: Crust ahead on day 18, her bench burns and the mods are gone",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.f.kingStopped = 1; S.f.crust = 9; S.f.plot_plane = 'stopped'",
+   "WAIT:18",
+   "EXPECT:S.f.benchBurned && S.n.sprocket.loc === 'mall'",
+   "EVAL:S.here = 'mall'; go('talk', 'sprocket')",
+   "EXPECT:!cur.some(o => o[0].includes('Can you fit something'))"
+  ]
+ },
+ {
+  "name": "Schism, the saint: hide her tools and both churches fight over an empty bench",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.saint'); S.f.coil = 3; S.f.crust = 3",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Hide your tools",
+   "EXPECT:S.f.benchHidden && S.f.plot_saint === 'stopped' && S.f.coil === 2 && S.f.crust === 2"
+  ]
+ },
+ {
+  "name": "Schism, the Big Tooth: march with the Coil and walk into the Silo with them",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.tooth'); S.f.raid = 1; S.f.coil = 5; ['plane','pump','saint'].forEach(k => S.f['plot_' + k] = 'stopped')",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "Mother Ohm",
+   "march with you",
+   "EXPECT:S.day === 23 && S.f.siloIn && S.f.coilKing && S.here === 'silo'"
+  ]
+ },
+ {
+  "name": "Schism, the Big Tooth: sell Rind the Coil's road and Mother Ohm dies on the twenty-third",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('plot.tooth'); S.f.raid = 1; ['plane','pump','saint'].forEach(k => S.f['plot_' + k] = 'stopped')",
+   "Deacon Rind",
+   "Here's their road",
+   "EXPECT:S.f.toothSold",
+   "WAIT:23",
+   "EXPECT:!alive('ohm') && S.f.coilMassacre && linkLines().some(l => /Silo road/.test(l))"
+  ]
+ },
+ {
+  "name": "Schism, the Big Tooth: if the Coil kneel, a friend of the Coil walks into the Silo",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.coilKing = 1; S.f.faith = 'coil'; learnSilo()",
+   "Leave (map)",
+   "TRAVEL:Silo 9",
+   "Walk in with the Coil",
+   "EXPECT:S.f.siloIn"
+  ]
+ },
+ {
+  "name": "Schism: Crumb gets both leaders in one room and the war ends",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.rind.ch = 1; S.n.ohm.ch = 1",
+   "Brother Crumb",
+   "RAND:0",
+   "Get Rind and Mother Ohm in one room",
+   "EXPECT:S.f.schismPeace && S.f.plot_plane === 'stopped' && S.f.plot_tooth === 'stopped' && S.titles.includes('Breaker of Bread')",
+   "EXPECT:linkLines().some(l => /share one chapel/.test(l))"
+  ]
+ },
+ {
+  "name": "Schism: join the Crust, Rind confides, and breaking him with his own secret ends the Crust",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Deacon Rind",
+   "join the Crust",
+   "EXPECT:S.f.faith === 'crust' && knew('rind.secret') && S.titles.includes('Brother of the Crust')",
+   "EXPECT:/bless/.test(ENC.crust('scrapwell').t)",
+   "EXPECT:/zip gun/.test(ENC.coil('scrapwell').t)",
+   "RAND:0",
+   "You were a mechanic",
+   "EXPECT:S.f.crustBroken && !crustOn() && S.f.plot_pump === 'stopped'"
+  ]
+ },
+ {
+  "name": "Schism: give Mother Ohm a coil, she confides, and exposing the Voice breaks the Coil",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('coil')",
+   "Leave (map)",
+   "TRAVEL:The Sky-Bus",
+   "Mother Ohm",
+   "Give Mother Ohm a heating coil",
+   "EXPECT:knew('ohm.secret') && coilP() === 1",
+   "Tell your flock the Voice is a recording",
+   "EXPECT:S.f.coilBroken && !coilOn() && alive('ohm')"
+  ]
  }
 ]
