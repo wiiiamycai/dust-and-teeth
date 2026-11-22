@@ -4762,5 +4762,110 @@
    "WAIT:1",
    "EXPECT:S.n.nan.rx.some(l => /Two days/.test(l)) && S.n.moe.rx.some(l => /where you sleep/.test(l))"
   ]
+ },
+ {
+  "name": "People: tell Fern that Jeb never went east, and she walks out to find the sea",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); know('jeb.secret'); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "Fern",
+   "Jeb has never been east",
+   "EXPECT:S.f.fernEast",
+   "WAIT:2",
+   "EXPECT:S.n.fern.loc === 'gone' && S.f.fernGone",
+   "EXPECT:linkLines().some(l => /find out if the sea/.test(l))"
+  ]
+ },
+ {
+  "name": "People: tell Vane that Doc is poisoning the Mayor, and Vane saves Fenwick to spite Doc",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('doc.secret')",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Dr. Vane",
+   "slow poison",
+   "EXPECT:S.f.vaneTold",
+   "WAIT:1",
+   "EXPECT:S.f.plot_poison === 'stopped' && S.f.vaneSaved && S.n.doc.op <= -20"
+  ]
+ },
+ {
+  "name": "People: carry B flat from Moss to Nigel, and a feather back, and the Green burns brighter",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "Go down to the vats",
+   "Moss",
+   "glows like you",
+   "Want me to tell Nigel",
+   "EVAL:S.here = 'scrapwell'; go('hub', 'scrapwell')",
+   "Climb down the well",
+   "Nigel",
+   "says: B flat",
+   "EXPECT:has('feather')",
+   "EVAL:go('hub', 'vats')",
+   "Moss",
+   "Nigel sends this",
+   "EXPECT:S.f.mossBright && !has('feather') && S.f.mossJob === 'done'"
+  ]
+ },
+ {
+  "name": "People: tell Big Tam whose paper he fights on, and he walks home to Gus",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('pips.secret')",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Big Tam",
+   "Your paper is the King's paper",
+   "EXPECT:S.f.tamQuit",
+   "WAIT:1",
+   "EXPECT:S.n.tam.loc === 'scrapwell' && S.f.brothers && !plotOpen('fightnight')"
+  ]
+ },
+ {
+  "name": "People: give Eel Sal's half of the vault, and she retires to a bath in Rustwater",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.mallVault = 1; S.teeth = 200",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Sal's half of the vault",
+   "EXPECT:S.f.eelShare && S.teeth === 100",
+   "WAIT:3",
+   "EXPECT:S.n.eel.loc === 'rustwater' && !S.n.eel.rx.some(l => /emptied the vault/.test(l))"
+  ]
+ },
+ {
+  "name": "People: tell Bert his father takes a cut from the raiders, and Bert turns him in",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:know('hector.secret')",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Bert",
+   "takes a cut from the raiders",
+   "EXPECT:S.f.bertTold",
+   "WAIT:1",
+   "EXPECT:S.f.hectorFined && S.n.hector.rx.some(l => /My own son/.test(l))"
+  ]
+ },
+ {
+  "name": "People: empty the drowned vault and keep it all, and Eel hears and comes looking",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:globalThis.e0 = S.n.eel.op; S.f.mallVault = 1",
+   "WAIT:3",
+   "EXPECT:S.n.eel.op <= e0 - 30 && S.n.eel.rx.some(l => /emptied the vault/.test(l))"
+  ]
  }
 ]

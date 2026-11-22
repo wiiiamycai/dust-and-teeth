@@ -20,7 +20,7 @@ Telling is the main use of a secret (decision 238). These have no telling yet. *
 
 | Secret | Unlocks a check | Telling lines | Other uses |
 |---|---|---|---|
-| pips (Mister Pips) | 2 | 0 | 2 |
+| pips (Mister Pips) | 2 | 0 | 3 |
 | dice (Dice) | 0 | 0 | 3 |
 | tam (Big Tam) | 1 | 0 | 1 |
 | nan (Sweet Nan) | 0 | 0 | 4 |
@@ -29,12 +29,12 @@ Telling is the main use of a secret (decision 238). These have no telling yet. *
 | nigel (Nigel the Glower) | 1 | 0 | 0 |
 | mayor (Mayor Fenwick) | 3 | 0 | 1 |
 | sheriff (Sheriff Crane) | 1 | 0 | 5 |
-| doc (Doc Ratchet) | 1 | 0 | 1 |
+| doc (Doc Ratchet) | 1 | 0 | 2 |
 | opal (Madame Opal) | 1 | 0 | 0 |
 | gloria (Gloria) | 0 | 0 | 1 |
-| jeb (Caravan Jeb) | 2 | 0 | 1 |
+| jeb (Caravan Jeb) | 2 | 0 | 2 |
 | pete (Pete) | 1 | 0 | 4 |
-| hector (Hector) | 2 | 0 | 0 |
+| hector (Hector) | 2 | 0 | 1 |
 | lou (Mama Lou) | 1 | 0 | 0 |
 | junior (Junior) | 1 | 0 | 1 |
 | krug (Krug) | 3 | 0 | 0 |
@@ -87,16 +87,16 @@ Score = jobs x2 + bonds + plots x2 + secrets they tell + uses of their own secre
 
 | Person | Score | Jobs | Bonds | Plots | Tells | Own secret uses | Hears | Checks | Ripple |
 |---|---|---|---|---|---|---|---|---|---|
-| Fern | 11 | 0 | 4 | 1 | 0 | 2 | 0 | 1 | 1 |
-| Dr. Vane | 12 | 1 | 4 | 1 | 0 | 1 | 0 | 1 | 1 |
-| Moss | 12 | 0 | 3 | 1 | 1 | 3 | 0 | 1 | 1 |
-| Big Tam | 13 | 1 | 4 | 1 | 0 | 2 | 0 | 1 | 1 |
-| Eel | 14 | 1 | 4 | 2 | 0 | 1 | 0 | 1 | 1 |
-| Bert | 15 | 2 | 4 | 0 | 2 | 1 | 1 | 0 | 1 |
+| Moss | 14 | 1 | 3 | 1 | 1 | 3 | 0 | 1 | 1 |
+| Fern | 14 | 1 | 4 | 1 | 1 | 2 | 0 | 1 | 1 |
+| Big Tam | 15 | 2 | 4 | 1 | 0 | 2 | 0 | 1 | 1 |
+| Dr. Vane | 15 | 2 | 4 | 1 | 1 | 1 | 0 | 1 | 1 |
 | Old Pell | 16 | 1 | 6 | 1 | 3 | 1 | 0 | 0 | 1 |
+| Eel | 16 | 2 | 4 | 2 | 0 | 1 | 0 | 1 | 1 |
 | Mother Ohm | 16 | 0 | 3 | 3 | 1 | 3 | 0 | 1 | 1 |
 | Gus | 17 | 1 | 7 | 0 | 3 | 2 | 0 | 1 | 1 |
 | Gloria | 17 | 2 | 3 | 2 | 2 | 1 | 0 | 1 | 1 |
+| Bert | 17 | 3 | 4 | 0 | 2 | 1 | 1 | 0 | 1 |
 | Old Teo | 17 | 0 | 5 | 2 | 5 | 1 | 0 | 0 | 1 |
 | Dice | 17 | 1 | 5 | 2 | 1 | 3 | 0 | 0 | 1 |
 | Queen Margie | 17 | 1 | 7 | 2 | 0 | 1 | 0 | 1 | 1 |
@@ -105,22 +105,22 @@ Score = jobs x2 + bonds + plots x2 + secrets they tell + uses of their own secre
 | Sweet Nan | 19 | 2 | 4 | 1 | 1 | 4 | 1 | 0 | 1 |
 | The Warden | 19 | 1 | 6 | 1 | 1 | 3 | 0 | 3 | 1 |
 | Ma Thistle | 20 | 3 | 7 | 0 | 1 | 2 | 1 | 0 | 1 |
-| Nigel the Glower | 20 | 1 | 6 | 1 | 4 | 1 | 1 | 1 | 1 |
 | Pete | 20 | 2 | 4 | 2 | 1 | 5 | 0 | 0 | 1 |
 | Bess | 21 | 1 | 6 | 1 | 3 | 2 | 0 | 4 | 1 |
 | Sprocket | 21 | 2 | 6 | 2 | 2 | 3 | 0 | 0 | 1 |
-| Mister Pips | 22 | 1 | 7 | 2 | 1 | 4 | 0 | 2 | 1 |
+| Nigel the Glower | 22 | 2 | 6 | 1 | 4 | 1 | 1 | 1 | 1 |
 | Junior | 23 | 2 | 4 | 2 | 2 | 2 | 1 | 3 | 1 |
-| Hector | 26 | 2 | 8 | 1 | 2 | 2 | 1 | 4 | 1 |
+| Mister Pips | 23 | 1 | 7 | 2 | 1 | 5 | 0 | 2 | 1 |
 | Krug | 26 | 0 | 12 | 1 | 5 | 3 | 0 | 2 | 1 |
 | Rook | 26 | 1 | 6 | 3 | 5 | 3 | 0 | 2 | 1 |
 | The Dentist King | 26 | 0 | 13 | 0 | 5 | 1 | 0 | 5 | 1 |
 | Mayor Fenwick | 27 | 1 | 10 | 2 | 0 | 4 | 0 | 5 | 1 |
+| Hector | 27 | 2 | 8 | 1 | 2 | 3 | 1 | 4 | 1 |
 | Gums | 27 | 5 | 6 | 3 | 2 | 1 | 0 | 0 | 1 |
 | Brother Crumb | 28 | 1 | 10 | 2 | 5 | 3 | 0 | 2 | 1 |
 | Madame Opal | 28 | 4 | 10 | 2 | 2 | 1 | 0 | 1 | 1 |
-| Doc Ratchet | 29 | 3 | 10 | 2 | 2 | 2 | 1 | 1 | 1 |
+| Doc Ratchet | 30 | 3 | 10 | 2 | 2 | 3 | 1 | 1 | 1 |
 | Moe | 33 | 2 | 10 | 4 | 5 | 2 | 1 | 0 | 1 |
-| Caravan Jeb | 36 | 3 | 11 | 4 | 2 | 3 | 1 | 2 | 1 |
+| Caravan Jeb | 37 | 3 | 11 | 4 | 2 | 4 | 1 | 2 | 1 |
 | Mama Lou | 39 | 5 | 9 | 3 | 3 | 1 | 1 | 6 | 1 |
 | Sheriff Crane | 41 | 4 | 8 | 4 | 1 | 6 | 2 | 4 | 1 |

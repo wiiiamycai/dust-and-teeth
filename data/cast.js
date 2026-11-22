@@ -1036,14 +1036,14 @@ const SECRETS = {
     t: "Dr. Vane was Doc Ratchet's apprentice. Doc threw him out for being too cruel to the patients. Vane has never forgiven him for being right.",
   },
   gums: {
-    tell: ['bess', 'hector'],
+    tell: ['bess', 'hector', 'vane'],
     pay: 40,
     short: "about Jeb's gin",
     t: "Gums buys what Bess's raiders take off Jeb's caravan, then sells it back to Jeb at a mark-up. Jeb has bought his own gin back eleven times.",
   },
   // ---- the Green: nobody there has teeth to pay with, so these are used, not sold ----
   gardener: {
-    tell: ['moss', 'doc'],
+    tell: ['moss', 'doc', 'fern'],
     pay: 0,
     short: '',
     t: 'The Green stays at forty because the Gardener walks the old and the sick to the outer beds. The outer beds are compost. The tomatoes are very good.',
