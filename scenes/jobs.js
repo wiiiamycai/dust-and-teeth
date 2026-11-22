@@ -11,7 +11,8 @@ function jobs(id, fn) {
     return r;
   };
 }
-const says = (id, line) => quote(`${NPC[id].n}: ${line}`);
+// Speech is quoted with their name; a line that starts with narration is just said.
+const says = (id, line) => (line[0] === '"' ? quote(`${NPC[id].n}: ${line}`) : say(line));
 
 // ---- Snake Eyes: the House (Pips, Rook), Sweet Nan's money, and the pit ----
 ITEMS.letter = "Dice's letter, sealed";
@@ -488,4 +489,489 @@ LATER.rookTaken = () => {
     S.here === 'snakeeyes',
   );
   rx('gums', '"The King paid. Rook\'s back at his old door. On a spike, next to it."');
+};
+
+// ---- the Drowned Mall: Margie's food court, Vane's pharmacy, and the divers ----
+ITEMS.matchbarrel = 'Pre-war match barrel';
+ITEMS.grey = "Vane's grey Buzz, stamped RATCHET";
+ITEMS.gumsteeth = "Gums's teeth, in a jar";
+MODS.match = {
+  n: 'match barrel',
+  on: 'gun',
+  cost: 0,
+  hit: 5,
+  dmg: 2,
+  t: "Sprocket's match barrel (hits truer and harder)",
+};
+Object.assign(CK, {
+  'shift.riot': { sk: 'speech', base: 0, lock: 'none', likes: { 'margie.faith': 15 } },
+  'dive.gunshop': {
+    sk: 'sneak',
+    base: -25,
+    lock: 'none',
+    likes: { 'eel.tips': 15 },
+    mods: () => (S.stats.guts - 5) * 3,
+  },
+  'silo.jar': { sk: 'steal', base: -10, lock: 'none' },
+});
+
+// Margie: the application becomes a job. Three shifts, one a day, trouble on each.
+jobs('margie', () => {
+  const f = S.f,
+    n = f.shifts || 0;
+  if (!f.associate || !courtOpen() || n >= 3) return [];
+  return [f.shiftDay === S.day ? null : [`"Put me on a shift." (shift ${n + 1} of 3)`, () => go('shift', n + 1)]];
+});
+SC.shift = n => {
+  const f = S.f,
+    done = (line, fn) => () => {
+      const r = fn ? fn() : null;
+      if (r === false) return; // died on shift
+      if (r === 'again') return go('shift', n); // couldn't pay
+      f.shifts = n;
+      f.shiftDay = S.day;
+      if (line) say(line);
+      if (n === 3) {
+        addTitle('Shift Manager');
+        gain(60);
+        says(
+          'margie',
+          '"Three shifts. No deaths on the premises. You are Shift Manager now. 60 teeth. The handbook says I must tell you something."',
+        );
+        confide('margie');
+      }
+      go('talk', 'margie');
+    };
+  const T = {
+    1: {
+      t: 'Shift one. A scavenger is stuffing ketchup packets into his coat. A lot of ketchup packets. He sees you see him.',
+      o: [
+        [
+          'Tackle him',
+          done(
+            'You bring him down by the fries. The packets burst. You look like a crime scene. Margie is delighted.',
+            () => {
+              bump('margie', 10);
+              bump('gums', -10);
+              rx('gums', '"One of my boys got tackled by an associate. Nobody tackles for minimum wage."');
+            },
+          ),
+        ],
+        [
+          'Let him go',
+          done(null, () => {
+            bump('gums', 10);
+            say(`He slips you ${partFind()} on the way out. "Gums pays me per packet. You never saw me."`);
+          }),
+        ],
+      ],
+    },
+    2: {
+      t: 'Shift two. A man in a clean coat is selling little grey bags at table six. Every bag says RATCHET.',
+      o: [
+        [
+          'Throw him out',
+          done(
+            'You walk him to the car park. He tells you Dr. Vane will remember your face. The bags say RATCHET. The powder says Vane.',
+            () => {
+              bump('vane', -20);
+              bump('margie', 10);
+              know('plot.drugwar');
+            },
+          ),
+        ],
+        [
+          `Buy a bag and say nothing (${cost(10, 'vane')} teeth)`,
+          done(null, () => {
+            if (!pay(cost(10, 'vane'))) return 'again';
+            bump('vane', 10);
+            know('vane.grey');
+            say('Grey powder, chalky. It smells of rat poison. Now you know exactly what Vane is cutting it with.');
+          }),
+        ],
+      ],
+    },
+    3: {
+      t: 'Shift three. One Value Meal left. Two divers and a raider want it. The fists are coming out.',
+      o: [
+        chkOpt(
+          'shift.riot',
+          null,
+          '"The customer is always right. All of you. Split it."',
+          done(null, () => {
+            if (attempt('shift.riot')) {
+              gain(15);
+              say('Three people share one burger in perfect hatred. They tip you 15 teeth to stop talking.');
+            } else {
+              bad('Nobody wants Customer Service. A raider wants your teeth. You keep most of them.');
+              if (hurt(R(3, 6), 'Killed over the last Value Meal.')) return false;
+            }
+          }),
+        ),
+        [
+          'Eat it yourself',
+          done(null, () => {
+            bump('margie', -15);
+            say(
+              `You eat the last Value Meal in front of all three of them. +${heal(20)} HP. Margie writes something in the handbook.`,
+            );
+          }),
+        ],
+        alive('eel') && S.n.eel.loc === 'mall'
+          ? [
+              'Give it to Eel, who dived all day',
+              done('Eel eats it in four bites. The raider glares. The divers will remember this.', () =>
+                bump('eel', 15),
+              ),
+            ]
+          : null,
+      ],
+    },
+  }[n];
+  show({ title: 'The food court', icon: '🍟', text: T.t, opts: T.o.filter(Boolean) });
+};
+
+// Sprocket: one part from the deepest shop. A risky dive, and a mod nobody else has.
+jobs('sprocket', () => {
+  const f = S.f;
+  if (S.n.sprocket.loc !== 'mall') return [];
+  return [
+    !f.sprJob && [
+      '"Need anything from the water?"',
+      () => {
+        f.sprJob = 1;
+        says(
+          'sprocket',
+          '"There\'s a gun shop at the very bottom. Behind the counter, a pre-war match barrel. Bring it up and I\'ll make you something nobody else has."',
+        );
+        go('talk', 'sprocket');
+      },
+    ],
+    f.sprJob === 1 &&
+      has('matchbarrel') && [
+        '"Your match barrel. From the bottom."',
+        () => {
+          take('matchbarrel');
+          f.sprJob = 'done';
+          f.matchReady = 1;
+          says(
+            'sprocket',
+            'She turns it in the light like a jewel. "Two hundred years and not a pit in it. Bring me a gun. Any gun. I\'ll fit it free."',
+          );
+          confide('sprocket');
+          go('talk', 'sprocket');
+        },
+      ],
+  ];
+});
+const _diveJob = SC.dive;
+SC.dive = () => {
+  _diveJob();
+  if (S.f.sprJob === 1 && !has('matchbarrel') && S.f.diveDay !== S.day) {
+    const list = cur.slice();
+    list.splice(list.length - 1, 0, [
+      'The gun shop at the very bottom' + hint('dive.gunshop'),
+      () => gunshopDive(),
+      'danger',
+    ]);
+    drawOpts(list);
+  }
+};
+function gunshopDive() {
+  S.f.diveDay = S.day;
+  if (attempt('dive.gunshop')) {
+    give('matchbarrel');
+    say(
+      'Down past the department store, past the light, to a shop with bars on the window. Behind the counter, wrapped in oilcloth: the barrel.',
+    );
+    return go('dive');
+  }
+  if (roll(50)) {
+    bad('Something lives in the gun shop. It does not want you in the gun shop.');
+    return fight([spawn('mallEel')], { close: true, started: true, win: 'dived', back: ['hub', 'mall'] });
+  }
+  bad('The bars on the window close behind you. You find another way out. It takes all your air.');
+  if (hurt(R(10, 16), 'Drowned in a gun shop at the bottom of a mall.')) return;
+  go('dive');
+}
+const _benchJob = SC.bench;
+SC.bench = () => {
+  _benchJob();
+  if (!S.f.matchReady) return;
+  const list = cur.slice();
+  for (const k of S.weapons)
+    if (W[k] && isGun(k) && !W[k].free && !modsOf(k).includes('match'))
+      list.splice(list.length - 1, 0, [
+        `${W[k].n}: the match barrel (free, once)`,
+        () => {
+          S.f.matchReady = 0;
+          S.mods[k] = [...modsOf(k), 'match'];
+          says('sprocket', `"There. The only one in the valley. Don't sell it to Gums." (${modName(k)})`);
+          go('bench');
+        },
+      ]);
+  drawOpts(list);
+};
+jobs('gums', () =>
+  has('matchbarrel') && S.f.sprJob === 1
+    ? [
+        [
+          `"A pre-war match barrel. Want it?" (${cost(90, 'gums')} teeth)`,
+          () => {
+            take('matchbarrel');
+            S.f.sprJob = 'sold';
+            gain(cost(90, 'gums'));
+            bump('sprocket', -30);
+            rx(
+              'sprocket',
+              '"Gums has my barrel. He sold it on to the Molars. Some Molar can hit you from a mile now. Thanks."',
+            );
+            rx('king', '"A beautiful barrel came up from the Mall. My best shot has it now."');
+            says('gums', '"Shweet. Sweet. The Molars will pay double."');
+            go('talk', 'gums');
+          },
+          'danger',
+        ],
+      ]
+    : [],
+);
+
+// Eel: hire you from day one to ask around about Sal, so you can know before her day 13 walk to Lou's.
+jobs('eel', () => {
+  const f = S.f;
+  if (!alive('eel') || S.n.eel.loc !== 'mall') return [];
+  if (f.eelJob === 1 && f.plot_widow) {
+    f.eelJob = 'paid';
+    gain(20);
+    say('Eel pays you the other 20 teeth. She keeps her word, whatever you told her.');
+    if (!f.eelLied && !f.eelSold) confide('eel');
+  }
+  return [
+    !f.eelJob &&
+      plotOpen('widow') && [
+        '"I could ask around about Sal."',
+        () => {
+          f.eelJob = 1;
+          gain(20);
+          know('plot.widow');
+          says(
+            'eel',
+            '"Sal. Caravan guard. Big. Kind. Last seen at Mama Lou\'s. Twenty now, twenty when you know. Ask Jeb, he hired him. Ask anyone."',
+          );
+          go('talk', 'eel');
+        },
+      ],
+  ];
+});
+jobs('jeb', () =>
+  S.f.eelJob === 1 && !knew('sal.jeb')
+    ? [
+        [
+          '"Eel at the Mall is asking after Sal. You hired him."',
+          () => {
+            know('sal.jeb');
+            says(
+              'jeb',
+              '"Sal and Pete. Stopped at Lou\'s on the way back. Pete came home weeks later, from a cage. Sal never did. I stopped asking."',
+            );
+            go('talk', 'jeb');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('lou', () =>
+  S.f.eelJob === 1 && !knew('sal.lou')
+    ? [
+        [
+          '"Ever cook for a caravan guard called Sal?"',
+          () => {
+            know('sal.lou');
+            says('lou', '"Sweetie, I cook for everyone. Eventually." She keeps smiling. She stops stirring.');
+            go('talk', 'lou');
+          },
+        ],
+      ]
+    : [],
+);
+jobs('pete', () =>
+  S.f.eelJob === 1 && !knew('pete.secret') && alive('pete') && S.n.pete.loc === 'rustwater'
+    ? [
+        [
+          '"Sal\'s widow wants to know what happened to him."',
+          () => {
+            know('pete.secret');
+            says(
+              'pete',
+              'Pete goes grey. "...Lou had room for one more. I told her Sal was fatter. She took him first. That\'s what happened to Sal."',
+            );
+            go('talk', 'pete');
+          },
+        ],
+      ]
+    : [],
+);
+
+// Dr. Vane: a runner for the grey, under Doc's name. Leave it on Moe's bar, swap it for flour, or hand it to Doc.
+jobs('vane', () => {
+  const f = S.f;
+  return [
+    !f.greyRun &&
+      !f.drugHelped &&
+      plotOpen('drugwar') &&
+      S.n.vane.loc === 'mall' && [
+        '"You look like you need a runner."',
+        () => {
+          f.greyRun = 1;
+          give('grey');
+          gain(60);
+          karma(-1);
+          know('plot.drugwar');
+          says(
+            'vane',
+            '"Legs in Rustwater. Little grey bags, Ratchet\'s name on every one. Leave them on Moe\'s bar. Sixty now, sixty after."',
+          );
+          go('talk', 'vane');
+        },
+        'danger',
+      ],
+  ];
+});
+const _vaneOpt = PLOTS.drugwar.opts.vane;
+PLOTS.drugwar.opts.vane = () => (S.f.greyRun ? null : _vaneOpt());
+const _huboRustJob = HUBO.rustwater;
+HUBO.rustwater = () => {
+  const o = _huboRustJob(),
+    f = S.f;
+  if (has('grey') && plotOpen('drugwar') && alive('moe') && S.n.moe.loc === 'rustwater')
+    o.push(
+      [
+        "Leave Vane's grey on Moe's bar",
+        () => {
+          take('grey');
+          f.greyRun = 'done';
+          f.drugHelped = 1;
+          f.drugDay = S.day + 1;
+          karma(-3);
+          gain(60);
+          bump('vane', 30);
+          say("Little grey bags, under the beer mats. Vane's man meets you at the pump with the other sixty.");
+          goHere();
+        },
+        'danger',
+      ],
+      [
+        'Swap the grey for flour, then leave it on the bar',
+        () => {
+          take('grey');
+          f.greyRun = 'swapped';
+          stopPlot('drugwar');
+          f.vaneFlour = 1;
+          gain(60);
+          later(3, 'vaneKnows');
+          say(
+            "Grey into the pump trough, flour into the bags. Vane's man pays you the other sixty. Rustwater gets very calm.",
+          );
+          goHere();
+        },
+      ],
+    );
+  return o;
+};
+LATER.vaneKnows = () => {
+  bump('vane', -50);
+  rx('vane', '"My grand batch was FLOUR. Rustwater made bread with it. You will make a lovely patient one day."');
+};
+jobs('doc', () =>
+  has('grey') && plotOpen('drugwar') && S.n.doc.loc === 'rustwater'
+    ? [
+        [
+          '"Vane paid me to sell this under your name."',
+          () => {
+            take('grey');
+            S.f.greyRun = 'doc';
+            stopPlot('drugwar');
+            S.f.docWarned = 1;
+            bump('doc', 30);
+            bump('vane', -40);
+            gain(40);
+            says(
+              'doc',
+              '"Vane. My old apprentice. He always did sign my name better than me." He burns the bags and pays you 40 teeth.',
+            );
+            confide('doc', 0);
+            go('talk', 'doc');
+          },
+        ],
+      ]
+    : [],
+);
+
+// Gums: his teeth back, from the tooth-tax jar in the Silo.
+jobs('gums', () => {
+  const f = S.f;
+  return [
+    !f.gumsJob && [
+      '"What do you want most, Gums?"',
+      () => {
+        f.gumsJob = 1;
+        says(
+          'gums',
+          '"My teeth. The King keepsh the tooth tax in jars by his throne. Mine are in one. Top shelf. Labelled GUMS. Bring them, I\'ll make it worth it."',
+        );
+        go('talk', 'gums');
+      },
+    ],
+    f.gumsJob === 1 &&
+      has('gumsteeth') && [
+        '"Your teeth. Top shelf, labelled GUMS."',
+        () => {
+          take('gumsteeth');
+          f.gumsJob = 'done';
+          bump('gums', 30);
+          const gift = !S.armors.includes('plate');
+          if (gift) S.armors.push('plate');
+          else gain(100);
+          says(
+            'gums',
+            `He holds the jar to his chest. "...Mine." ${gift ? 'He gives you a car-door plate off the stall. "Barely anyone left in it."' : 'He pays you 100 teeth.'}`,
+          );
+          confide('gums', 0);
+          go('talk', 'gums');
+        },
+      ],
+    f.gumsJob === 1 &&
+      has('gumsteeth') && [
+        `"Sixty teeth and they're yours."`,
+        () => {
+          take('gumsteeth');
+          f.gumsJob = 'sold';
+          gain(60);
+          bump('gums', -30);
+          says('gums', '"Buying my own teeth back. Like Jeb with his gin." He pays. He is used to paying.');
+          go('talk', 'gums');
+        },
+        'danger',
+      ],
+  ];
+});
+const _huboSiloJob = HUBO.silo;
+HUBO.silo = () => {
+  const o = _huboSiloJob();
+  if (S.f.siloIn && S.f.gumsJob === 1 && !has('gumsteeth') && alive('king'))
+    o.unshift([
+      'Find the tooth-tax jar labelled GUMS' + hint('silo.jar'),
+      () => {
+        if (attempt('silo.jar')) {
+          give('gumsteeth');
+          rx('king', '"Somebody robbed my tax jars. One jar. Why ONE jar?"');
+          say('Jars of teeth to the ceiling, every one labelled. GUMS, top shelf. It rattles.');
+          goHere();
+        } else {
+          bad('The shelf comes down. So does a Molar guard.');
+          fight([spawn('molarGuard')], { win: 'back', back: ['map'] });
+        }
+      },
+    ]);
+  return o;
 };

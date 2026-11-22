@@ -3232,5 +3232,179 @@
    "WAIT:4",
    "EXPECT:!alive('rook')"
   ]
+ },
+ {
+  "name": "Jobs, Margie: three shifts with trouble on each, then Shift Manager and the handbook's last page",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.f.associate = 1; S.teeth = 100",
+   "Queen Margie",
+   "Put me on a shift",
+   "SAY:ketchup",
+   "Tackle him",
+   "EXPECT:S.f.shifts === 1 && !cur.some(o => o[0].includes('Put me on a shift'))",
+   "EVAL:S.f.raid = 1; S.day++; go('talk', 'margie')",
+   "Put me on a shift",
+   "Throw him out",
+   "EXPECT:knew('plot.drugwar') && S.f.shifts === 2",
+   "EVAL:S.day++; go('talk', 'margie')",
+   "Put me on a shift",
+   "Eat it yourself",
+   "EXPECT:S.f.shifts === 3 && S.titles.includes('Shift Manager') && knew('margie.secret')",
+   "Back",
+   "SAY:last page"
+  ]
+ },
+ {
+  "name": "Jobs, Sprocket: dive the gun shop for her barrel, and she fits a match barrel nobody else has",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.weapons.push('rifle'); S.teeth = 100",
+   "Sprocket",
+   "Need anything from the water",
+   "Back",
+   "Dive the flooded floor",
+   "RAND:0",
+   "The gun shop at the very bottom",
+   "EXPECT:has('matchbarrel')",
+   "RAND:off",
+   "Back",
+   "Sprocket",
+   "Your match barrel",
+   "EXPECT:S.f.sprJob === 'done' && knew('sprocket.secret')",
+   "Can you fit something",
+   "Hunting Rifle: the match barrel",
+   "EXPECT:modsOf('rifle').includes('match') && !S.f.matchReady"
+  ]
+ },
+ {
+  "name": "Jobs, Sprocket: sell her barrel to Gums instead, and she turns on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.f.sprJob = 1; give('matchbarrel'); globalThis.s0 = S.n.sprocket.op",
+   "Gums",
+   "A pre-war match barrel",
+   "EXPECT:S.f.sprJob === 'sold' && S.n.sprocket.op <= s0 - 30"
+  ]
+ },
+ {
+  "name": "Jobs, Eel: hired on day 1, Jeb's clue lets you tell her about Lou before day 13, and she pays",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "ask around about Sal",
+   "EXPECT:S.f.eelJob === 1 && plotKnown('widow')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Caravan Jeb",
+   "Eel at the Mall is asking after Sal",
+   "EXPECT:knew('sal.jeb')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Eel",
+   "Lou cooked him",
+   "Let her go alone",
+   "Eel",
+   "EXPECT:S.f.eelJob === 'paid' && knew('eel.secret')"
+  ]
+ },
+ {
+  "name": "Jobs, Eel: Pete tells you about Sal himself when you ask for her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.n.pete.loc = 'rustwater'; S.f.eelJob = 1",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Pete",
+   "Sal's widow wants to know",
+   "EXPECT:knew('pete.secret')"
+  ]
+ },
+ {
+  "name": "Jobs, Vane: run his grey to Moe's bar and Rustwater turns on Doc the next day",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Dr. Vane",
+   "need a runner",
+   "EXPECT:has('grey') && !cur.some(o => o[0].includes('onto Moe'))",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Leave Vane's grey on Moe's bar",
+   "EXPECT:S.f.drugHelped && S.f.drugDay === S.day + 1",
+   "EVAL:S.f.raid = 1",
+   "WAIT:1",
+   "EXPECT:S.f.greyHit"
+  ]
+ },
+ {
+  "name": "Jobs, Vane: swap his grey for flour, the plot is stopped, and Vane finds out",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.greyRun = 1; give('grey'); know('plot.drugwar'); globalThis.v0 = S.n.vane.op",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Swap the grey for flour",
+   "EXPECT:S.f.vaneFlour && S.f.plot_drugwar === 'stopped'",
+   "EVAL:S.f.raid = 1",
+   "WAIT:3",
+   "EXPECT:S.n.vane.op <= v0 - 50"
+  ]
+ },
+ {
+  "name": "Jobs, Vane: hand his grey to Doc, and Doc trusts you with his own secret",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.greyRun = 1; give('grey'); know('plot.drugwar')",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Doc Ratchet",
+   "Vane paid me to sell this",
+   "EXPECT:S.f.docWarned && knew('doc.secret') && !has('grey')"
+  ]
+ },
+ {
+  "name": "Jobs, Gums: his teeth from the Silo's tax jar, and he gives you a plate",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "What do you want most",
+   "Back",
+   "EVAL:S.f.knowSilo = 1; S.f.siloIn = 1",
+   "Leave (map)",
+   "TRAVEL:Silo 9",
+   "RAND:0",
+   "tooth-tax jar labelled GUMS",
+   "EXPECT:has('gumsteeth')",
+   "RAND:off",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "Your teeth. Top shelf",
+   "EXPECT:S.f.gumsJob === 'done' && S.armors.includes('plate') && knew('gums.secret')"
+  ]
  }
 ]

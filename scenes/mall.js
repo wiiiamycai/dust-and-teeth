@@ -464,7 +464,8 @@ TALK.pete = () => {
 
 // ---- plot: the widow ----
 // Eel asks after Sal until day 13, then walks into Mama Lou's to ask in person. Lou answers with a cleaver.
-const eelCanBlameLou = () => knew('pete.secret') || knew('lou.polish') || !!S.f.kitchen || !!S.f.jebPaid;
+const eelCanBlameLou = () =>
+  knew('pete.secret') || knew('lou.polish') || knew('sal.jeb') || knew('sal.lou') || !!S.f.kitchen || !!S.f.jebPaid;
 PLOTS.widow = {
   where: 'mall',
   day: () => S.f.widowDay || 13,
