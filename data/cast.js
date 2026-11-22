@@ -930,7 +930,7 @@ const SECRETS = {
     tell: ['krug', 'moe'],
     pay: 30,
     short: "about Krug's money",
-    t: "Years ago, Crane took Krug's money to look the other way. Once. She has been trying to shoot her way back from it ever since.",
+    t: 'Crane was married to Krug once, before the badge. When she left him he paid her to look the other way, and she took it. She has been trying to shoot her way back from it ever since.',
   },
   doc: {
     tell: ['gloria', 'opal'],

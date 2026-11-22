@@ -560,7 +560,7 @@ TALK.sheriff = () => {
       () => {
         says(
           'sheriff',
-          '"Krug. Years back he paid me to look the other way, once. I took it. I\'ve been trying to shoot my way back from it ever since."',
+          '"Krug. I was married to him, before the badge. When I left, he paid me to look the other way. I took it. I\'ve been trying to shoot my way back from it ever since."',
         );
         confide('sheriff', 10);
         go('talk', 'sheriff');

@@ -4206,5 +4206,105 @@
    "TRAVEL:Rustwater",
    "EXPECT:!S.f.craneAskDay && S.scene === 'hub'"
   ]
+ },
+ {
+  "name": "Crane after the leash: she'll take a third; Gloria says yes and tells everyone",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.here = 'rustwater'; S.f.craneCool = 99; go('talk', 'sheriff')",
+   "inviting someone else",
+   "EXPECT:S.f.craneOpen && knew('crane.krug')",
+   "SAY:I was married to him",
+   "Back",
+   "Gloria",
+   "join us tonight",
+   "EXPECT:S.f.three.gloria && S.n.moe.rx.some(l => /Sheriff/.test(l))"
+  ]
+ },
+ {
+  "name": "Crane after the leash: Lou says yes, and a week later Crane is the Thursday special",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.f.craneOpen = 1; S.n.sheriff.loc = 'party'; S.f.raid = 1; S.f.craneCool = 99",
+   "Leave (map)",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "join us tonight",
+   "SAY:on the menu by Thursday",
+   "join us tonight",
+   "EXPECT:S.f.thursday === 'sheriff'",
+   "WAIT:8",
+   "EXPECT:!alive('sheriff')"
+  ]
+ },
+ {
+  "name": "Crane and Krug: one night, the three of you, and Krug opens his own pens and walks away",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); know('crane.krug'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "proposal. For the three of us",
+   "RAND:0",
+   "Go through with it",
+   "EXPECT:S.f.krugReformed && !alive('krug') && S.f.freed && S.f.krugHow === 'reformed'",
+   "EXPECT:linkLines().some(l => /his own pens/.test(l))",
+   "EVAL:S.f.raid = 1",
+   "WAIT:1",
+   "EXPECT:S.n.mayor.rx.some(l => /WALKED OFF/.test(l))"
+  ]
+ },
+ {
+  "name": "Crane and Krug: if the night doesn't move him, Krug stays Krug",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); know('crane.krug'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "proposal. For the three of us",
+   "RAND:0.99",
+   "Go through with it",
+   "EXPECT:S.f.krugNight && !S.f.krugReformed && alive('krug')",
+   "SAY:Business is business"
+  ]
+ },
+ {
+  "name": "Selling Crane to Krug: you're warned what he'll do, the town loses its law, and you can still get her out",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "Your ex-wife",
+   "SAY:dig till her hands bleed",
+   "Take the 400 teeth",
+   "EXPECT:S.f.craneSold && S.n.sheriff.loc === 'pen' && !lover('sheriff') && !hostile('sheriff') && S.titles.includes('Sold the Sheriff')",
+   "Back",
+   "RAND:0",
+   "Pick the lock on Crane's chain",
+   "EXPECT:S.n.sheriff.loc === 'rustwater' && S.f.craneFreed === 'freed' && S.f.craneSuspect"
+  ]
+ },
+ {
+  "name": "Selling Crane to Krug: change your mind and she knows what you nearly did",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:becomeLover('sheriff'); S.n.sheriff.loc = 'party'; S.f.craneCool = 99; globalThis.c0 = S.n.sheriff.op",
+   "Leave (map)",
+   "TRAVEL:Chainfield",
+   "Krug",
+   "Your ex-wife",
+   "Changed my mind",
+   "EXPECT:!S.f.craneSold && S.n.sheriff.op <= c0 - 30"
+  ]
  }
 ]
