@@ -390,6 +390,7 @@ TALK.moss = () => {
       chkOpt('moss.free', null, 'Pick the lock on his chain', () => {
         if (attempt('moss.free')) {
           f.mossFree = 1;
+          event('rescued', 'moss', { wit: [] });
           S.n.moss.loc = alive('nigel') && S.n.nigel.loc === 'well' ? 'well' : 'scrapwell';
           later(2, 'greenDark');
           bump('moss', 40);

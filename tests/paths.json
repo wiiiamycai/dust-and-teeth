@@ -2588,5 +2588,174 @@
    "Junior",
    "EXPECT:knew('fern.secret')"
   ]
+ },
+ {
+  "name": "Links: while Sprocket lives, Jeb sells her spares and scoped rifles; after she dies, he doesn't",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:S.teeth = 600",
+   "Caravan Jeb",
+   "What's on the wagons",
+   "SAY:spare from Sprocket's bench",
+   "Hunting Rifle, scoped by Sprocket",
+   "EXPECT:S.weapons.includes('rifle') && modsOf('rifle').includes('scope')",
+   "Back",
+   "Back",
+   "EVAL:S.dead.sprocket = 1",
+   "Caravan Jeb",
+   "What's on the wagons",
+   "EXPECT:!cur.some(o => /Sprocket/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Links: Gums sells Jeb's stolen gin while Bess's raiders have a buyer, and stops once Jeb knows",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "What have you got",
+   "Jeb's gin, \"found\"",
+   "SAY:PROPERTY OF CARAVAN JEB",
+   "Back",
+   "Back",
+   "EVAL:S.f.ginTold = 1",
+   "Gums",
+   "What have you got",
+   "EXPECT:!cur.some(o => /Jeb's gin/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Links: Hector's harvest makes Rustwater's water cheaper and puts corn on Moe's bar; Fenwick's carrots make it dearer",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:globalThis.w0 = waterCost(); S.f.harvest = 1",
+   "EXPECT:waterCost() === w0 - 3",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:Hector's corn at Moe's",
+   "EVAL:S.f.harvest = 0; S.f.mayorVeg = 1; goHere()",
+   "EXPECT:waterCost() === w0 + 5",
+   "SAY:Fenwick's carrots"
+  ]
+ },
+ {
+  "name": "Links: seeds with Junior turn his Greens into tomato soup",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.juniorFree = 1; S.n.junior.loc = 'rustwater'; S.f.juniorGrows = 1",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "SAY:tomato and bean soup"
+  ]
+ },
+ {
+  "name": "Links: the Mall's food court serves Hector's corn after the harvest",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "EVAL:S.f.harvest = 1; S.teeth = 50",
+   "RAND:0",
+   "Value Meal",
+   "SAY:Corn on the cob from Hector's farm"
+  ]
+ },
+ {
+  "name": "Links: Doc, run out of Rustwater by Vane's poison, walks east to his father",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1; S.day = 16",
+   "WAIT:1",
+   "EXPECT:S.f.docRunOut",
+   "WAIT:3",
+   "EXPECT:S.n.doc.loc === 'green' && S.f.docEast",
+   "EVAL:learnGreen(); S.f.greenIn = 1; go('hub', 'green')",
+   "Doc Ratchet",
+   "SAY:Father says I can stay",
+   "EXPECT:linkLines().some(l => /father's gate/.test(l))"
+  ]
+ },
+ {
+  "name": "Links: tell Opal her sister is in the Green, and she crosses the pass and Gloria gets the Rad",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('dice.secret'); S.n.dice.loc = 'green'",
+   "TRAVEL:Rustwater",
+   "Madame Opal",
+   "She's in the Green",
+   "EXPECT:S.n.opal.loc === 'green' && S.f.sistersGreen && S.f.gloriaRad",
+   "EXPECT:linkLines().some(l => /bean row/.test(l))"
+  ]
+ },
+ {
+  "name": "Links: what you do at the Mall is news in other towns",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "EVAL:know('plot.widow')",
+   "TRAVEL:Mama Lou's",
+   "Mama Lou",
+   "widow is asking",
+   "EXPECT:S.ev.some(e => e.type === 'sold' && e.v === 'eel')",
+   "WAIT:6",
+   "EXPECT:['pete', 'jeb', 'sprocket'].some(x => S.n[x].k.some(i => S.ev[i].type === 'sold' && S.ev[i].v === 'eel'))"
+  ]
+ },
+ {
+  "name": "Links: giving Hector seeds is news his family hears",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:give('seeds')",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Seeds. Real ones",
+   "EXPECT:S.ev.some(e => e.type === 'helped' && e.v === 'hector')",
+   "WAIT:4",
+   "EXPECT:S.n.bess.k.some(i => S.ev[i].type === 'helped' && S.ev[i].v === 'hector')"
+  ]
+ },
+ {
+  "name": "Links: Moe talks about the Mall",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "RAND:0.99",
+   "What's the word?",
+   "SAY:A queen in a paper hat runs it"
+  ]
+ },
+ {
+  "name": "Links: every new person has a bond to someone in another town",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:['margie','sprocket','eel','vane','gums','gardener','warden','moss','fern'].every(id => BONDS.some(b => (b[0] === id && NPC[b[1]].home !== NPC[id].home) || (b[1] === id && NPC[b[0]].home !== NPC[id].home)))",
+   "EXPECT:['margie','sprocket','eel','vane','gums','gardener','warden','moss','fern'].every(id => SECRETS[id].tell.some(t => NPC[t].home !== NPC[id].home))"
+  ]
+ },
+ {
+  "name": "Links: the Mall sits on roads to Mama Lou's and the Sky-Bus, and the pass leaves from the Sky-Bus",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:neighbours('mall').includes('diner') && neighbours('mall').includes('skybus') && neighbours('green').includes('skybus') && neighbours('green').includes('vats')"
+  ]
  }
 ]

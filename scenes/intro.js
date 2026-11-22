@@ -138,7 +138,15 @@ SC.ending = () => {
     );
   }
   if (E.type !== 'nuke' && E.type !== 'destroyer')
-    L.push(...krugLines(), ...webLines(), ...snakeLines(), ...mallLines(), ...greenLines(), ...loveLines());
+    L.push(
+      ...krugLines(),
+      ...webLines(),
+      ...snakeLines(),
+      ...mallLines(),
+      ...greenLines(),
+      ...linkLines(),
+      ...loveLines(),
+    );
   const you = `${S.day} day${S.day === 1 ? '' : 's'}. ${S.kills} kills. ${S.teeth} teeth.\nKnown as: ${karmaTitle()}${S.titles.length ? '. ' + S.titles.join('. ') : ''}.`;
   // Fallout-style slides: the headline, then what became of each place and person, a few at a time.
   const lines = L.filter(Boolean),

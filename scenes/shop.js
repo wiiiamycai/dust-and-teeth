@@ -15,22 +15,35 @@ TALK.jeb = () => {
 };
 SC.shop = () => {
   const o = [];
+  // While Sprocket lives, her work rides on Jeb's wagons: his rifles come scoped, and he carries her spares.
+  const sprocket = alive('sprocket') && S.n.sprocket.loc === 'mall';
   for (const k in STOCK.wep)
     if (!S.weapons.includes(k)) {
-      const c = cost(STOCK.wep[k], 'jeb'),
+      const scoped = k === 'rifle' && sprocket,
+        c = cost(STOCK.wep[k] + (scoped ? 40 : 0), 'jeb'),
         w = W[k];
       o.push([
-        `${w.n}: ${w.t}, ${w.d[0]}-${w.d[1]} damage. ${c} teeth`,
+        `${w.n}${scoped ? ', scoped by Sprocket' : ''}: ${w.t}, ${w.d[0]}-${w.d[1]} damage. ${c} teeth`,
         () => {
           if (pay(c)) {
             S.weapons.push(k);
             S.weapon = k;
+            if (scoped) S.mods[k] = ['scope'];
             say(`Jeb: "${w.n}. Point the loud end away from me." You're holding it.`);
           }
           go('shop');
         },
       ]);
     }
+  if (sprocket)
+    for (const k of ['lens', 'tube'])
+      o.push([
+        `${ITEMS[k]}, a spare from Sprocket's bench. ${cost(55, 'jeb')} teeth`,
+        () => {
+          if (pay(cost(55, 'jeb'))) give(k);
+          go('shop');
+        },
+      ]);
   for (const k in STOCK.arm)
     if (!S.armors.includes(k)) {
       const c = cost(STOCK.arm[k], 'jeb'),

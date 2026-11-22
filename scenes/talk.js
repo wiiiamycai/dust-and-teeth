@@ -1604,6 +1604,10 @@ function moeWord() {
     '"Krug buys anything that walks. Opal wants him dead."',
     '"There\'s a dead plane out east. Very quiet passengers."',
     '"Doc pays you to drink his stuff. Last guy can hear the colour blue."',
+    S.f.knowGreen
+      ? '"They say it really is green, past the mountains. They say the woman on the gate can shoot a fly off a lizard."'
+      : '"Jeb says east is green. Jeb also says his lizards can sing."',
+    '"There\'s a mall south of Lou\'s, half full of sea. A queen in a paper hat runs it. Sprocket there can make a pipe shoot straight."',
   ]);
   if (w.startsWith('"Jeb drinks')) know('jeb.drinks');
   return w;

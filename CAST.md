@@ -181,6 +181,8 @@ Told by: Old Teo, Krug. Worth 50 teeth to keep quiet.
 - friend, Gloria: "Gloria is the best earner I've got and the worst liar I've met. I like that in a girl."
 - enemy, Krug: "Krug took my sister. Sold her twice. I want him dead and I want to watch."
 - friend, Old Teo: "Teo saw my sister last. I send him food. He gives it to the others."
+- enemy, Dr. Vane: "Vane checked my girls, once, before Doc. He liked it when they flinched. I sent him out with a shotgun behind him."
+- rival, Queen Margie: "The paper-hat queen sent me a letter about Customer Service, sugar. I sent her a price list."
 
 ### 💋 Gloria
 
@@ -342,6 +344,7 @@ Told by: Hector, Old Pell. Worth 5 teeth to keep quiet.
 - friend, Madame Opal: "Opal's sister? Marigold. Sang in the pens. I'm sorry. I'm so sorry."
 - enemy, Krug: "Krug. I've watched him sell four hundred people. I've counted. Somebody has to."
 - enemy, The Dentist King: "I dug for the King, before Krug. He's digging up the end of the world. Didn't care for the pension plan."
+- friend, The Gardener: "A man from the east traded me seed for my last goat. The wheat came up gold. Then I sold the farm anyway. Fool."
 
 ## Snake Eyes
 
@@ -431,6 +434,7 @@ Told by: Gums, Mama Lou. Worth 50 teeth to keep quiet.
 - ally, Sprocket: "Sprocket is our Repairs Associate. Twelve years without a sick day. I don't allow them."
 - enemy, Gums: "Gums trades on my floor without a till. That is theft from the store. The store is me."
 - ally, Dr. Vane: "Dr. Vane is our Pharmacy Associate. Very polite. Customers who complain stop complaining."
+- rival, Madame Opal: "Madame Opal runs an establishment. I run a store. The difference is the handbook."
 
 ### 🔧 Sprocket
 
@@ -470,6 +474,7 @@ Told by: Doc Ratchet, Madame Opal. Worth 60 teeth to keep quiet.
 - enemy, Doc Ratchet: "Ratchet taught me everything. Then he called me cruel. Me. HIM."
 - ally, Moe: "Moe sells my grey under the bar. Ten percent. Everyone in this valley is ten percent."
 - ally, Queen Margie: "Margie rents me the old pharmacy. She thinks I'm a Pharmacy Associate. I am, in a way."
+- enemy, Madame Opal: "Opal threw me out of the Rad once. Said I checked her girls like I was pricing them. I was."
 
 ### 👄 Gums
 
@@ -500,6 +505,7 @@ Told by: Moss, Doc Ratchet. Worth 0 teeth to keep quiet.
 - family, Fern: "Fern is my daughter. She has her mother's heart. Her mother is in the outer beds."
 - ally, The Warden: "The Warden keeps the wall. I keep the rest. Neither of us sleeps."
 - ally, Moss: "Moss is the Green's heart. Hearts stay inside the body."
+- friend, Old Teo: "A valley farmer traded me his last goat for seed once. The wheat came up gold, he wrote. Teo. I count goats and think of him."
 
 ### 🗝️ The Warden
 

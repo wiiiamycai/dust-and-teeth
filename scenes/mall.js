@@ -25,7 +25,9 @@ HUBO.mall = () =>
               say(
                 `+${heal(20)} HP. ` +
                   pick([
-                    'Fried something on a bun. A paper hat says THANK YOU FOR CHOOSING VALUMART.',
+                    S.f.harvest
+                      ? "Corn on the cob from Hector's farm. The associate looks at it like a miracle with butter."
+                      : 'Fried something on a bun. A paper hat says THANK YOU FOR CHOOSING VALUMART.',
                     'It came in a box with a toy. The toy is a tooth.',
                     'You ask what the meat is. The associate checks the handbook. "Product."',
                   ]),
@@ -239,6 +241,18 @@ SC.gums = () => {
       go('gums');
     },
   ]);
+  // What Bess's raiders took off Jeb's caravan this month, while they still have a buyer.
+  if (alive('bess') && S.n.bess.loc === 'farm' && !S.f.ginTold)
+    o.push([
+      `A bottle of Jeb's gin, "found" on the farm road. ${c(4)} teeth`,
+      () => {
+        if (pay(c(4))) {
+          give('beer');
+          say('The label says PROPERTY OF CARAVAN JEB. Gums has drawn a moustache on it.');
+        }
+        go('gums');
+      },
+    ]);
   // He buys anything you aren't holding or wearing.
   for (const k of S.weapons)
     if (k !== S.weapon && k !== 'fists' && W[k].v) {
@@ -299,6 +313,7 @@ TALK.margie = () => {
         if (attempt('margie.apply')) {
           S.f.associate = 1;
           bump('margie', 20);
+          event('helped', 'margie', { wit: ['margie'] });
           addTitle('Associate of the Month');
           quote(
             'Margie pins a name badge on you. It says TRAINEE, over someone else\'s name. "Welcome to the family. Meals are free. Weekends are not."',
@@ -520,6 +535,7 @@ PLOTS.widow = {
               stopPlot('widow');
               S.f.eelBadge = 1;
               bump('eel', 30);
+              event('helped', 'eel', { wit: ['eel'] });
               know('eel.secret');
               quote(
                 'Eel turns the gnawed badge over and over. She doesn\'t ask where you found it. "...He\'d want me to stop diving for him." Later she tells you where the old bank vault is. "Sal\'s retirement. Go on. Somebody should."',
@@ -535,6 +551,7 @@ PLOTS.widow = {
             () => {
               S.f.eelSold = 1;
               S.f.widowDay = S.day + 1;
+              event('sold', 'eel', { wit: ['lou'] });
               know('plot.widow');
               karma(-3);
               gain(30);
@@ -648,6 +665,7 @@ PLOTS.drugwar = {
     }
     S.n.vane.loc = 'rustwater';
     S.f.vaneRules = 1;
+    if (S.f.docRunOut) later(3, 'docEast'); // Doc goes home to his father, if the Green will have him
     rx('moe', '"Doc\'s gone. Vane\'s here. Same drugs, worse jokes."');
   },
   opts: {

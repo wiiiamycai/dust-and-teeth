@@ -792,6 +792,28 @@ const BONDS = [
     '"The Warden would shoot her own shadow if it came in without asking."',
     '"Fern wants the gate open. Fern has never seen what comes through an open gate."',
   ],
+  // ---- across the valley (v4.4) ----
+  [
+    'vane',
+    'opal',
+    'enemy',
+    '"Opal threw me out of the Rad once. Said I checked her girls like I was pricing them. I was."',
+    '"Vane checked my girls, once, before Doc. He liked it when they flinched. I sent him out with a shotgun behind him."',
+  ],
+  [
+    'margie',
+    'opal',
+    'rival',
+    '"Madame Opal runs an establishment. I run a store. The difference is the handbook."',
+    '"The paper-hat queen sent me a letter about Customer Service, sugar. I sent her a price list."',
+  ],
+  [
+    'gardener',
+    'teo',
+    'friend',
+    '"A valley farmer traded me his last goat for seed once. The wheat came up gold, he wrote. Teo. I count goats and think of him."',
+    '"A man from the east traded me seed for my last goat. The wheat came up gold. Then I sold the farm anyway. Fool."',
+  ],
 ];
 // One secret each. tell: who knows it and will tell you once they like you (opinion 25+, or a few good chats).
 // pay: what the secret is worth to its owner if you lean on them.

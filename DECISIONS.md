@@ -338,3 +338,28 @@ Will approved the plan: two cities, the Green late-game only, weapon upgrades as
 
     Everyone tied to them says so.
 154. **Ending slides:** a slide group for the Mall (`mallLines`) and one for the Green (`greenLines`). The Green's lines only show if you found the pass.
+
+## Linking the new cities into the valley (v4.4)
+
+Will: "make it all linked together as well", and then "dont ask me questions just build". So every call here is mine. The cross-town code is in `scenes/links.js`, plus small hooks in the towns it touches.
+
+155. **Trade crosses towns.** While Sprocket is alive and at the Mall, Jeb's hunting rifles come scoped (40 teeth more) and he carries her spare lenses and steel tubes. When she dies, both stop and his prices rise. While Bess's raiders still have a buyer, Gums sells Jeb's stolen gin for 4 teeth; once Jeb knows about the gin, it's gone.
+156. **The Green's seeds move prices in Rustwater.** Hector's harvest takes 3 teeth off a cup of water (his farm catches its own dew, so Fenwick loses his best customer), and Moe sells bowls of Hector's corn. Seeds sold to Fenwick add 5 teeth to water (he waters his carrots first), and he sells carrots at 20 teeth each. Junior's seeds or the basket of vegetables turn Junior's Greens into tomato soup (+25 HP). The Mall's food court serves Hector's corn too.
+157. **Doc goes home.** If Vane's poison gets Doc run out of Rustwater, three days later he turns up in the Green, at his father's gate, and the Gardener lets him in without counting him. He's there to talk to, and it gets an ending slide.
+158. **Opal crosses the pass.** If Marigold (Dice) made it to the Green and you know who she is, you can tell Opal. She hands Gloria the Velvet Rad and walks east, and the sisters weed side by side.
+159. **News travels out of the new cities.** These go into the gossip engine, so bonded people in other towns hear and change their minds:
+    - selling Eel to Lou (Pete, Jeb and Sprocket hear);
+    - giving Eel Sal's badge;
+    - becoming Margie's associate;
+    - planting the Green's seeds (Hector's family hears);
+    - freeing Moss.
+160. **Moe talks about the new places,** the Mall always and the Green once you know the pass.
+161. **Three more bonds across towns:** Vane and Opal (she threw him out of the Rad); Margie and Opal (rival businesswomen); the Gardener and Old Teo (Teo once traded his last goat for the Gardener's seed, and the wheat came up gold, on the farm that is Hector's now).
+162. **Ending slides show the links:**
+    - Doc at his father's gate;
+    - Opal and Marigold in the Green;
+    - Fern cooked for by Junior, who grew her cabbages;
+    - the food court buying Hector's corn, and Lou losing the order;
+    - Bess's raiders working Hector's rows;
+    - water coming down in Rustwater.
+163. **Tests:** 12 new scripted cases cover each link. One also checks that every new person has a bond to, and a secret known by, someone in another town.

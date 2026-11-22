@@ -655,7 +655,9 @@ reactions = function () {
   runRipples();
 };
 // Water follows the town: Krug's night shift, the Sheriff, the Doc running the pump.
-const waterCost = () => 10 + (S.f.waterUp || 0) + (S.f.docPump ? 5 : 0);
+// The Green's seeds move it too: Hector's farm catches its own dew (cheaper), Fenwick waters his carrots first (dearer).
+const waterCost = () =>
+  10 + (S.f.waterUp || 0) + (S.f.docPump ? 5 : 0) + (S.f.mayorVeg ? 5 : 0) - (S.f.harvest ? 3 : 0);
 
 // ---- what you see in a place ----
 // Signs of a plot coming, and the aftermath of one that happened. Every place calls these.
@@ -695,9 +697,16 @@ for (const loc in HUBO) {
     const o = [..._huboWeb[loc](), ...plotHub(loc)];
     if (loc === 'rustwater' && S.f.juniorFree && alive('junior') && S.n.junior.loc === 'rustwater')
       o.push([
-        "Junior's Greens: cabbage soup (5 teeth, +15 HP)",
+        S.f.juniorGrows || S.f.juniorVeg
+          ? "Junior's Greens: tomato and bean soup (5 teeth, +25 HP)"
+          : "Junior's Greens: cabbage soup (5 teeth, +15 HP)",
         () => {
-          if (pay(5)) say(`+${heal(15)} HP. Vegetables. Real ones. Junior watches you eat it and nearly smiles.`);
+          if (pay(5))
+            say(
+              S.f.juniorGrows || S.f.juniorVeg
+                ? `+${heal(25)} HP. Tomatoes from the Green's seeds. Junior talks you through every one.`
+                : `+${heal(15)} HP. Vegetables. Real ones. Junior watches you eat it and nearly smiles.`,
+            );
           goHere();
         },
       ]);
