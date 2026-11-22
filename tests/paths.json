@@ -3907,10 +3907,48 @@
   ]
  },
  {
-  "name": "Followers: anyone who doesn't dislike you comes along, one at a time, and the last one goes home",
+  "name": "Journal: taking a job adds it with a notice and the next step; finishing it moves it to Done",
   "steps": [
    "Crawl out of bed",
    "Go",
+   "Gus",
+   "I'll look into it",
+   "SAY:New in your journal: Something's eating the chickens",
+   "EXPECT:journalList().some(q => q.k === 'well' && !q.done && /well/.test(q.hint))",
+   "EVAL:S.f.gusPaid = 1",
+   "EXPECT:journalList().find(q => q.k === 'well').done === 'Gus paid you.'"
+  ]
+ },
+ {
+  "name": "Journal: a plot you know about shows its day, and how it ended once it's over",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Deacon Rind",
+   "What does the Crust want",
+   "SAY:New in your journal: The Coil's plane",
+   "EXPECT:journalList().find(q => q.k === 'plot_plane').hint === 'Coming on day 9.'",
+   "EVAL:S.f.raid = 1",
+   "WAIT:9",
+   "EXPECT:journalList().find(q => q.k === 'plot_plane').done === 'It happened.'"
+  ]
+ },
+ {
+  "name": "Journal: plots you never heard of stay off it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.raid = 1",
+   "WAIT:15",
+   "EXPECT:!journalList().some(q => q.k === 'plot_fightnight')"
+  ]
+ },
+ {
+  "name": "Followers: once their conditions are met they come, one at a time, and the last one goes home",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.gusPaid = 1; S.f.moeJob = 'sold'; S.n.moe.op = 20",
    "Gus",
    "Come with me",
    "EXPECT:following('gus')",
@@ -3928,6 +3966,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.gusPaid = 1",
    "Gus",
    "Come with me",
    "EVAL:fight([spawn('raider')], { started: true })",
@@ -3955,20 +3994,22 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.n.pell.op = 0",
+   "EVAL:S.f.pellJob = 'done'",
+   "EVAL:S.n.pell.op = 15",
    "Old Pell",
    "Come with me",
    "EXPECT:following('pell')",
-   "EVAL:event('sold', 'gus', { wit: [] }); event('sold', 'gus', { wit: [] }); goHere()",
+   "EVAL:event('sold', 'gus', { wit: [] }); event('sold', 'gus', { wit: [] }); event('sold', 'gus', { wit: [] }); goHere()",
    "EXPECT:!following('pell') && S.n.pell.loc === 'scrapwell'",
    "SAY:has seen enough"
   ]
  },
  {
-  "name": "Followers: take Big Tam away before fight night and the Incisor never gets him",
+  "name": "Followers: talk Tam into fighting for real, take him away before fight night, and the Incisor never gets him",
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.tamFights = 1; S.n.tam.op = 15",
    "Leave (map)",
    "TRAVEL:Snake Eyes",
    "Big Tam",
@@ -3984,6 +4025,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.sprJob = 'done'; S.n.sprocket.op = 15",
    "Leave (map)",
    "TRAVEL:The Drowned Mall",
    "Sprocket",
@@ -4035,7 +4077,7 @@
    "Ride with me, Crane",
    "EXPECT:!following('sheriff')",
    "SAY:earned more than a drink",
-   "EVAL:becomeLover('sheriff'); S.f.peteDeputy = 1; S.n.pete.loc = 'rustwater'; globalThis.w0 = waterCost(); go('talk', 'sheriff')",
+   "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.peteDeputy = 1; S.n.pete.loc = 'rustwater'; globalThis.w0 = waterCost(); go('talk', 'sheriff')",
    "Ride with me, Crane",
    "EXPECT:following('sheriff') && !S.f.lawless && waterCost() === w0",
    "SAY:Pete wears Crane's badge"
@@ -4046,6 +4088,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.gusPaid = 1",
    "EVAL:S.spouse = 'bess'; S.n.bess.loc = 'party'",
    "Gus",
    "Come with me",
@@ -4059,40 +4102,26 @@
   ]
  },
  {
-  "name": "Journal: taking a job adds it with a notice and the next step; finishing it moves it to Done",
+  "name": "Followers: not ready, they refuse with a reason, and the journal ticks off what it takes",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Gus",
-   "I'll look into it",
-   "SAY:New in your journal: Something's eating the chickens",
-   "EXPECT:journalList().some(q => q.k === 'well' && !q.done && /well/.test(q.hint))",
-   "EVAL:S.f.gusPaid = 1",
-   "EXPECT:journalList().find(q => q.k === 'well').done === 'Gus paid you.'"
+   "Come with me",
+   "EXPECT:!following('gus')",
+   "SAY:Chickens first",
+   "EXPECT:(h => h.includes('☐ The thing in the well') && h.includes('☑ Likes you enough'))(journalList().find(q => q.k === 'ask_gus').hint)",
+   "EVAL:S.f.gusPaid = 1; go('talk', 'gus')",
+   "Come with me",
+   "EXPECT:following('gus') && journalList().find(q => q.k === 'ask_gus').done === 'Came with you.'"
   ]
  },
  {
-  "name": "Journal: a plot you know about shows its day, and how it ended once it's over",
+  "name": "Followers: nobody walks out with a stranger; on a first meeting everyone has a reason to say no",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "Deacon Rind",
-   "What does the Crust want",
-   "SAY:New in your journal: The Coil's plane",
-   "EXPECT:journalList().find(q => q.k === 'plot_plane').hint === 'Coming on day 9.'",
-   "EVAL:S.f.raid = 1",
-   "WAIT:9",
-   "EXPECT:journalList().find(q => q.k === 'plot_plane').done === 'It happened.'"
-  ]
- },
- {
-  "name": "Journal: plots you never heard of stay off it",
-  "steps": [
-   "Crawl out of bed",
-   "Go",
-   "EVAL:S.f.raid = 1",
-   "WAIT:15",
-   "EXPECT:!journalList().some(q => q.k === 'plot_fightnight')"
+   "EXPECT:IDS.filter(id => id !== 'king' && !recruitNo(id)).length === 0"
   ]
  }
 ]

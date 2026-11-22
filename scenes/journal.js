@@ -259,6 +259,22 @@ function journalList() {
     const d = q.done();
     L.push({ k, t: q.t, who: q.who, done: d || null, hint: d ? null : q.hint() });
   }
+  for (const id in S.f.asked || {}) {
+    if (S.spouse === id) continue;
+    const joined = S.f.joined && S.f.joined[id];
+    L.push({
+      k: 'ask_' + id,
+      t: `${NPC[id].n} might come with you`,
+      who: LOC[NPC[id].home] ? LOC[NPC[id].home].n : '',
+      done: joined ? 'Came with you.' : !alive(id) ? 'Dead.' : null,
+      hint:
+        joined || !alive(id)
+          ? null
+          : [...(RECRUIT[id] || []), ...(S.n[id].op < 0 ? [['Stops disliking you', () => false]] : [])]
+              .map(c => `${c[1]() ? '☑' : '☐'} ${c[0]}`)
+              .join('\n'),
+    });
+  }
   for (const k in PLOTS) {
     const P = PLOTS[k];
     if (!P.known()) continue;
@@ -297,7 +313,7 @@ function journalDraw() {
     act = L.filter(q => !q.done),
     old = L.filter(q => q.done);
   const row = q =>
-    `<li class="${q.done ? 'qd' : 'qa'}"><b>${esc(q.t)}</b><span class="qw">${esc(q.who)}</span><span class="qh">${esc(q.done || q.hint)}</span></li>`;
+    `<li class="${q.done ? 'qd' : 'qa'}"><b>${esc(q.t)}</b><span class="qw">${esc(q.who)}</span><span class="qh">${esc(q.done || q.hint).replace(/\n/g, '<br>')}</span></li>`;
   el.innerHTML = `<details${journalOpen ? ' open' : ''}><summary>Journal${act.length ? ` (${act.length})` : ''}</summary>${
     act.length
       ? `<ul>${act.map(row).join('')}</ul>`

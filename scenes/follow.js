@@ -1,7 +1,8 @@
 'use strict';
 // ================= FOLLOWERS: anyone can walk out and come with you =================
 // Will: "everyone should be given an option to just waltz out and follow." One at a time.
-// Ask anyone "Come with me." Most say yes if they don't dislike you; a few have their own reasons first.
+// Ask anyone "Come with me." Each has their own conditions (RECRUIT). Not ready, and they say why, and the
+// journal lists what it would take, with a box for each.
 // A follower walks with you (loc 'party'), fights beside you, talks on the road, and judges what you do.
 // Push one too far and they walk home. While they're with you they're not at home: their shop, their post and
 // their plot wait. A plot whose person is away on its day doesn't happen at all.
@@ -10,26 +11,295 @@ const inParty = () => IDS.find(x => alive(x) && S.n[x].loc === 'party') || null;
 const following = id => alive(id) && S.n[id].loc === 'party';
 const npcName = id => NPC[id].n;
 
-// ---- who says yes, and why not ----
-// Each returns null (yes) or the reason they won't, in their own voice.
-const NOT_YET = {
-  sheriff: () =>
-    lover('sheriff') ? null : '"I\'ve got a town to keep alive. Ask me again when you\'ve earned more than a drink."',
-  krug: () => (S.f.slaver || S.n.krug.op >= 40 ? null : '"Krug follows nobody. People follow Krug. In chains."'),
-  teo: () =>
-    alive('krug') && !S.f.freed && S.n.teo.loc === 'chainfield'
-      ? '"Krug counts us twice a day. Get me out first."'
-      : null,
-  moss: () => (S.n.moss.loc === 'vats' && !S.f.mossShifts ? '"The chain says no. The chain always says no."' : null),
-  nigel: () => (S.n.nigel.op >= 25 ? null : '"Nigel no go up. Up is bright. Up has people."'),
-  junior: () =>
-    S.n.junior.loc === 'diner' && alive('lou') && S.n.junior.op < 30 ? '"...Mama needs me." He keeps chopping.' : null,
-  warden: () =>
-    S.n.warden.op >= 20 ? null : '"Leave the gate? For you? Name. Use. Reason. You have none of the three."',
-  gardener: () => (S.n.gardener.op >= 20 ? null : '"Forty people are counted here. I am one of them. No."'),
-  mayor: () =>
-    S.n.mayor.op >= 20 ? null : '"Walk? In the SUN? With YOU? I have a carriage for that. I don\'t, but I would."',
+// ---- who comes, and what it takes ----
+// Nobody just walks out with a stranger. Each person has their own conditions: usually their own job finished,
+// and liking you enough. Ask before you're ready and they tell you why not, in their own words, and the journal
+// gets an entry with a box for each condition, ticked as you meet it.
+// Each condition is [what the journal says, test, what they say when it isn't met].
+const likes = (id, n) => [
+  'Likes you enough',
+  () => S.n[id].op >= n,
+  `"I don't know you well enough for that. Not yet."`,
+];
+const RECRUIT = {
+  elder: [
+    [
+      'You found out who sends her money',
+      () => ['nan', 'toaster'].includes(S.f.elderJob),
+      `"Not while some fool leaves money on my step and I don't know who."`,
+    ],
+    likes('elder', 20),
+  ],
+  gus: [
+    ['The thing in the well is dealt with', () => S.f.gusPaid, `"Chickens first. Then adventures."`],
+    likes('gus', 15),
+  ],
+  crumb: [
+    [
+      'The Toaster has spoken, or the two churches made peace',
+      () => S.f.tfixed || S.f.schismPeace,
+      `"I can't leave Him silent, with my flock tearing itself in half."`,
+    ],
+  ],
+  pell: [
+    [
+      'Bacon Prime is safe',
+      () => S.f.pellJob === 'done' || !alive('pig'),
+      `"And leave Prime alone with whoever's sniffing round the sty? No."`,
+    ],
+    likes('pell', 15),
+  ],
+  pig: [
+    [
+      'You have food on you',
+      () => has('meat'),
+      'Bacon Prime sniffs your empty hands and lies down. He is not that kind of pig.',
+    ],
+  ],
+  nigel: [
+    ['He has a hat for the sun', () => S.f.nigel === 'hat', `"Up is bright. Nigel need hat."`],
+    likes('nigel', 25),
+  ],
+  moe: [
+    [
+      "Gus's tab is settled",
+      () => S.f.moeJob === 'sold',
+      `"Gus owes me two years. I leave this bar, I never see a tooth of it."`,
+    ],
+    likes('moe', 20),
+  ],
+  mayor: [
+    [
+      'He owes you a favour',
+      () => S.f.nanJob === 'tipped' || S.f.mayorPaid,
+      `"Walk with YOU? What have you ever done for me?"`,
+    ],
+    likes('mayor', 30),
+  ],
+  sheriff: [
+    [
+      'She is yours',
+      () => lover('sheriff'),
+      `"I've got a town to keep alive. Ask me again when you've earned more than a drink."`,
+    ],
+    [
+      'She has told you what keeps her up at night',
+      () => knew('sheriff.secret'),
+      `"There's something you should know about me first. Ask me sometime. Not here."`,
+    ],
+  ],
+  doc: [
+    [
+      'Nobody is selling poison in his name',
+      () => !!S.f.plot_drugwar || !alive('vane'),
+      `"Somebody is selling grey with my name on it. I stay and watch my shop."`,
+    ],
+    likes('doc', 20),
+  ],
+  opal: [
+    [
+      'Her sister is found',
+      () => S.f.sisters || S.f.sistersGreen,
+      `"Not while Marigold is out there. I need to be where the news comes."`,
+    ],
+    likes('opal', 25),
+  ],
+  gloria: [
+    [
+      'You found her a way east',
+      () => S.f.gloriaJob === 'done',
+      `"Following you where, honey? East? Then find me a ride first. Jeb's got wagons."`,
+    ],
+    likes('gloria', 10),
+  ],
+  jeb: [
+    [
+      'His road is safe',
+      () => !!S.f.plot_route,
+      `"Krug's got eyes on my road. I don't leave the wagons till that's settled."`,
+    ],
+    likes('jeb', 20),
+  ],
+  hector: [
+    [
+      'His farm will live',
+      () => S.f.tractorRuns || S.f.harvest,
+      `"And leave the farm to die? It's doing that fine without me watching."`,
+    ],
+    likes('hector', 25),
+  ],
+  bess: [
+    [
+      'You asked her what she does for fun',
+      () => knew('bess.dreams'),
+      `"Out there? With you? You don't even know what I like."`,
+    ],
+    likes('bess', 10),
+  ],
+  bert: [
+    [
+      'His tractor runs',
+      () => S.f.tractorRuns,
+      `"Can't leave Pa with a dead tractor. He'd sit in the field and stare."`,
+    ],
+    likes('bert', 15),
+  ],
+  lou: [
+    [
+      'She loves you, or your appetite',
+      () => lover('lou') || S.f.cannibal,
+      `"Leave my kitchen? For a customer? Honey, you'd have to be family. Or a regular."`,
+    ],
+  ],
+  junior: [
+    [
+      'He trusts you with his cooking',
+      () => S.f.juniorBowl === 'ate' || S.n.junior.op >= 30,
+      'Junior looks at you, then at the kitchen door. He keeps chopping.',
+    ],
+    [
+      'His cabbages are safe',
+      () => S.f.juniorFree || S.f.louCabbage || S.f.cabbageHidden || !alive('lou'),
+      `"...My cabbages." He looks out back, and doesn't move.`,
+    ],
+  ],
+  pete: [
+    [
+      'He feels safe',
+      () => S.f.peteDeputy || !alive('lou') || S.f.eelForgave || S.f.peteWarned,
+      `"Out there? Lou's out there. And Eel. I stay near Crane, where it's safe."`,
+    ],
+  ],
+  krug: [
+    ['You wear the chain on your neck', () => S.f.slaver, `"Krug follows nobody. People follow Krug. In chains."`],
+  ],
+  teo: [
+    [
+      'He is free',
+      () => !alive('krug') || S.f.freed || S.n.teo.loc !== 'chainfield',
+      `"Krug counts us twice a day. Get me out first."`,
+    ],
+  ],
+  pips: [
+    [
+      'The house owes you',
+      () => S.f.pipsJob === 'told' || S.f.diceSold,
+      `"The house doesn't leave the house, friend. Unless the house owes you."`,
+    ],
+    likes('pips', 20),
+  ],
+  dice: [
+    [
+      "Pips doesn't own her any more",
+      () => S.f.pipsJob === 'covered' || S.f.vaultRobbed || S.f.sisters || !alive('pips'),
+      `"Pips owns my paper. I walk out that door, Rook brings me back."`,
+    ],
+    likes('dice', 20),
+  ],
+  tam: [
+    [
+      "He means to win fight night, or it's over",
+      () => !!S.f.plot_fightnight || S.f.tamFights || S.f.tamWarned,
+      `"Fight night first. Till then Pips owns me."`,
+    ],
+    likes('tam', 15),
+  ],
+  nan: [
+    [
+      "Fenwick's debt is collected",
+      () => S.f.nanJob === 'done',
+      `"Leave my book, dear? Half the valley would stop paying. Collect Fenwick first."`,
+    ],
+    ['You owe her nothing', () => !S.f.debt, `"You owe me, dear. Debtors don't get walks."`],
+  ],
+  rook: [
+    [
+      'He knows where he stands with the King',
+      () => ['told', 'freed'].includes(S.f.rookJob),
+      `"Out there? If the King still wants my head, I'm safer in a doorway."`,
+    ],
+  ],
+  margie: [
+    [
+      'You are Shift Manager',
+      () => (S.f.shifts || 0) >= 3,
+      `"Associates come and go. The Manager stays, unless she has a Shift Manager to leave in charge."`,
+    ],
+  ],
+  sprocket: [
+    [
+      'She owes you a favour',
+      () => S.f.sprJob === 'done' || S.f.saintSprocket || S.f.benchHidden,
+      `"Leave my bench? For a customer? Bring me something worth leaving it for."`,
+    ],
+    likes('sprocket', 15),
+  ],
+  eel: [
+    ["Sal's fate is settled", () => !!S.f.plot_widow, `"I'm still looking for Sal. I don't go anywhere till I know."`],
+  ],
+  vane: [
+    [
+      'You have run errands for him',
+      () => S.f.greyRun === 'done' || S.f.vaneRules,
+      `"A house call, with you? Do something for the pharmacy first."`,
+    ],
+  ],
+  gums: [
+    [
+      'He has his teeth back',
+      () => S.f.gumsJob === 'done',
+      `"Out in the shun without my teeth? Sun. Bring me my teeth first."`,
+    ],
+  ],
+  gardener: [
+    [
+      'The valley can feed itself',
+      () => S.f.harvest || S.f.scrapGrows || S.f.juniorGrows,
+      `"Forty people are counted here. I leave when the valley can feed itself."`,
+    ],
+    likes('gardener', 20),
+  ],
+  warden: [
+    ['The ridge is clear', () => S.f.wardenJob === 'done', `"Leave the gate with a Molar on the ridge? No."`],
+    likes('warden', 20),
+  ],
+  moss: [
+    [
+      'He is off the chain',
+      () => S.n.moss.loc !== 'vats' || S.f.mossShifts,
+      `"The chain says no. The chain always says no."`,
+    ],
+  ],
+  fern: [
+    [
+      'You told her about the world',
+      () => knew('fern.sea'),
+      `"Tell me about it first. What's out there? What do I want to see?"`,
+    ],
+    likes('fern', 10),
+  ],
+  rind: [
+    [
+      'You walk with the Crust',
+      () => S.f.faith === 'crust',
+      `"Walk with an unbeliever? Kneel at the fire first, brother."`,
+    ],
+  ],
+  ohm: [
+    [
+      'The Voice knows you',
+      () => S.f.faith === 'coil' || S.f.ohmCoil,
+      `"The Voice does not know you yet. Bring it a coil. Or kneel."`,
+    ],
+  ],
 };
+// What stops them, or null if they'll come. A spouse always comes. Anyone who dislikes you says no first.
+function recruitNo(id) {
+  if (S.spouse === id) return null;
+  if (S.n[id].op < 0) return '"No. Not with you."';
+  const miss = (RECRUIT[id] || [likes(id, 15)]).find(c => !c[1]());
+  return miss ? miss[2] : null;
+}
 const YES = {
   elder: '"About time somebody took me somewhere. I\'ll bring the goat leather."',
   gus: '"Chickens can sort themselves out. Where are we digging?"',
@@ -159,6 +429,8 @@ event = (type, victim, opts) => {
 
 // ---- joining and leaving ----
 function follow(id) {
+  S.f.joined = S.f.joined || {};
+  S.f.joined[id] = 1;
   const now = inParty();
   if (now && now !== id) {
     sendHome(now);
@@ -203,11 +475,13 @@ function followOpts(id) {
         },
       ],
     ];
-  const no = S.spouse === id ? null : S.n[id].op < 0 ? `"No. Not with you."` : NOT_YET[id] ? NOT_YET[id]() : null;
   return [
     [
       id === 'sheriff' ? '"Ride with me, Crane."' : '"Come with me."',
       () => {
+        const no = recruitNo(id);
+        S.f.asked = S.f.asked || {};
+        S.f.asked[id] = 1;
         if (no) {
           NPC[id].animal ? say(no) : says(id, no);
           return go('talk', id);
