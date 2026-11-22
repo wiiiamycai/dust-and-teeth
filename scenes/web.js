@@ -26,6 +26,13 @@ function spillSecret(id) {
   know(owner + '.secret');
   say(`${NPC[id].n} leans in. ${SECRETS[owner].t}`);
 }
+// A finished job earns trust: they tell you their own secret themselves, no gossip needed.
+function confide(id, n) {
+  bump(id, n == null ? 20 : n);
+  if (!alive(id) || !SECRETS[id] || knew(id + '.secret')) return;
+  know(id + '.secret');
+  say(`${NPC[id].n} trusts you now, and tells you the thing nobody says. ${SECRETS[id].t}`);
+}
 SC.secret = id => {
   const d = NPC[id],
     sc = SECRETS[id],

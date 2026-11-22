@@ -3016,5 +3016,221 @@
    "Crawl out of bed",
    "EXPECT:S.teeth === PLAYER.teeth && S.day === 1"
   ]
+ },
+ {
+  "name": "Jobs, Pips: turn Dice in for skimming; Pips trusts you, Dice hates you and tries the vault sooner",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Mister Pips",
+   "man with a problem",
+   "Back",
+   "🎴Dice",
+   "beating his tables",
+   "Back",
+   "Mister Pips",
+   "It's Dice. She skims",
+   "EXPECT:S.f.pipsJob === 'told' && knew('pips.secret') && S.n.dice.op <= -50 && S.f.vaultDay === S.day + 3",
+   "SAY:trusts you now"
+  ]
+ },
+ {
+  "name": "Jobs, Pips: cover for Dice and she tells you who she really is",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Mister Pips",
+   "man with a problem",
+   "Back",
+   "🎴Dice",
+   "beating his tables",
+   "Back",
+   "Mister Pips",
+   "RAND:0",
+   "Nobody. The house had bad luck",
+   "EXPECT:S.f.pipsJob === 'covered' && knew('dice.secret')"
+  ]
+ },
+ {
+  "name": "Jobs, Dice: win at her table, carry her letter to Opal, and the sisters are together",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.teeth = 100",
+   "Cards with Dice",
+   "RAND:0",
+   "Play a hand (10 teeth)",
+   "RAND:off",
+   "Back",
+   "🎴Dice",
+   "ask you for a favour",
+   "EXPECT:has('letter')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Madame Opal",
+   "Read Dice's letter first",
+   "EXPECT:knew('opal.secret') && knew('dice.secret')",
+   "A letter for you",
+   "EXPECT:S.f.sisters && S.n.dice.loc === 'rustwater' && !has('letter')"
+  ]
+ },
+ {
+  "name": "Jobs, Dice: sell her letter to Pips and she is gone",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "EVAL:S.f.diceWon = 1",
+   "🎴Dice",
+   "ask you for a favour",
+   "Back",
+   "Mister Pips",
+   "writing letters to Rustwater",
+   "EXPECT:!alive('dice') && S.f.diceSold"
+  ]
+ },
+ {
+  "name": "Jobs, Tam: talk him into winning fight night, and he wins",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Big Tam",
+   "fight coming",
+   "EXPECT:plotKnown('fightnight')",
+   "RAND:0",
+   "Win it, for once",
+   "EXPECT:S.f.tamFights && knew('tam.secret')",
+   "EVAL:S.f.raid = 1; S.day = 14; runPlots()",
+   "EXPECT:alive('tam') && S.f.tamWon"
+  ]
+ },
+ {
+  "name": "Jobs, Tam: sell Pips the fix and Tam dies; sell it and warn him, and Tam wins and Pips turns on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Big Tam",
+   "fight coming",
+   "Back",
+   "Mister Pips",
+   "make sure Big Tam goes down",
+   "EXPECT:S.f.tamFixed && !tamWins()",
+   "EVAL:S.f.gusCame = 1",
+   "EXPECT:!tamWins()",
+   "Back",
+   "Big Tam",
+   "Don't drink your water",
+   "EXPECT:tamWins()",
+   "EVAL:globalThis.p0 = S.n.pips.op; S.f.raid = 1; S.day = 14; runPlots()",
+   "EXPECT:S.f.tamWon && S.n.pips.op <= p0 - 40"
+  ]
+ },
+ {
+  "name": "Jobs, Nan: collect Fenwick's debt, water goes up, and Nan tells you about Ma's money",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "Any work for a stranger",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:globalThis.w0 = waterCost()",
+   "Mayor Fenwick",
+   "RAND:0",
+   "Sweet Nan wants her hundred",
+   "EXPECT:S.f.nanColl && waterCost() === w0 + 2",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "Fenwick paid",
+   "EXPECT:S.f.nanJob === 'done' && knew('nan.secret')"
+  ]
+ },
+ {
+  "name": "Jobs, Nan: keep Fenwick's hundred and her collectors come",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "Any work for a stranger",
+   "EVAL:S.f.nanColl = 1; S.f.raid = 1",
+   "WAIT:7",
+   "EXPECT:S.f.nanJob === 'kept' && S.f.collectors"
+  ]
+ },
+ {
+  "name": "Jobs, Nan: tip Fenwick off and Nan turns on you",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Sweet Nan",
+   "Any work for a stranger",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Mayor Fenwick",
+   "Nan is sending people",
+   "EXPECT:S.f.nanJob === 'tipped' && S.n.nan.op <= -20"
+  ]
+ },
+ {
+  "name": "Jobs, Rook: ask Gums about the price on him, tell Rook the truth, and he gives up the back door",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Rook",
+   "watching the door for",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "still want Rook",
+   "EXPECT:knew('rook.price')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Snake Eyes",
+   "Rook",
+   "still wants you",
+   "EXPECT:knew('rook.secret')",
+   "RAND:0",
+   "back door. Give me the code",
+   "EXPECT:S.f.backDoor"
+  ]
+ },
+ {
+  "name": "Jobs, Rook: sell him to the King through Gums and the Molars take him",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.rookJob = 1; know('rook.price'); S.f.raid = 1",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Gums",
+   "Tell the King where Rook is",
+   "WAIT:4",
+   "EXPECT:!alive('rook')"
+  ]
  }
 ]

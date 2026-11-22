@@ -117,6 +117,7 @@ SC.cards = () => {
     if (roll(p)) {
       gain(b);
       houseWin(b);
+      S.f.diceWon = 1;
       say(`You read her. She folds. +${b} teeth.`);
     } else {
       S.teeth -= b;
@@ -130,6 +131,7 @@ SC.cards = () => {
     o.push(
       chkOpt('cards.cheat', null, 'Deal yourself a better hand (25 teeth, pays double)', () => {
         if (attempt('cards.cheat')) {
+          S.f.diceWon = 1;
           gain(50);
           houseWin(50);
           bump('dice', 5);
@@ -445,7 +447,9 @@ SC.hub = loc => {
 
 // ---- plots at Snake Eyes ----
 // Fight night, day 14: Big Tam against the King's champion, to the death for once.
-const tamWins = () => !!(S.f.gusCame || S.f.incisorDrugged);
+// A fix with Pips beats everything, unless you warned Tam after you sold it (scenes/jobs.js).
+const tamWins = () =>
+  (!S.f.tamFixed || !!S.f.tamWarned) && !!(S.f.gusCame || S.f.incisorDrugged || S.f.tamFights || S.f.tamWarned);
 PLOTS.fightnight = {
   where: 'snakeeyes',
   day: () => 14,
@@ -541,7 +545,7 @@ WIN.incisor = () => {
 // Marigold's escape, day 20: Dice robs the vault and runs, with you or without you.
 PLOTS.vault = {
   where: 'snakeeyes',
-  day: () => 20,
+  day: () => S.f.vaultDay || 20, // sooner if you cost Dice her savings
   live: () => alive('dice') && alive('pips') && S.n.dice.loc === 'snakeeyes',
   known: () => plotKnown('vault'),
   clue: { rook: 1, teo: 1 },
