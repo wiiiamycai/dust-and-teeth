@@ -34,7 +34,10 @@ jobs('sheriff', () => {
           bump('sheriff', 10);
           bump('moe', -45); // Crane leans on him, and only one stranger asks questions in his bar
           event('helped', null, { wit: ['sheriff'] });
-          says('sheriff', '"Ten teeth a head?" She checks her rifle. "I drink there." She goes over the road. The bar goes quiet.');
+          says(
+            'sheriff',
+            '"Ten teeth a head?" She checks her rifle. "I drink there." She goes over the road. The bar goes quiet.',
+          );
           go('talk', 'sheriff');
         },
       ],
@@ -65,7 +68,10 @@ jobs('moe', () => {
           if (pay(cost(40, 'moe'))) {
             f.ringBought = 1;
             give('ring');
-            says('moe', 'Moe fishes it out of a jar of other people\'s rings. "Two years of drink, that. Gus still owes me the interest."');
+            says(
+              'moe',
+              'Moe fishes it out of a jar of other people\'s rings. "Two years of drink, that. Gus still owes me the interest."',
+            );
           }
           go('talk', 'moe');
         },
@@ -113,7 +119,10 @@ jobs('nigel', () => {
           spill('elder', 'nigel');
           bump('nigel', 10);
           later(1, 'nigelGlow');
-          says('nigel', '"She said he walked into the wastes." Nigel glows brighter. Much brighter. The chicken starts to cook.');
+          says(
+            'nigel',
+            '"She said he walked into the wastes." Nigel glows brighter. Much brighter. The chicken starts to cook.',
+          );
           go('talk', 'nigel');
         },
       ],
@@ -132,7 +141,10 @@ jobs('elder', () => {
           f.ringBack = 'well';
           bump('elder', 30);
           bump('gus', 30); // you covered for him, and he knows it
-          says('elder', 'Ma puts it on and doesn\'t say anything for a while. "Forty years. Gus, come and look." Gus looks at you like you saved his life. You did.');
+          says(
+            'elder',
+            'Ma puts it on and doesn\'t say anything for a while. "Forty years. Gus, come and look." Gus looks at you like you saved his life. You did.',
+          );
           go('talk', 'elder');
         },
       ],
@@ -153,7 +165,7 @@ jobs('elder', () => {
           says(
             'elder',
             f.ringBack
-              ? 'Ma takes the ring, puts it on, and walks very slowly to Gus\'s door with her stick.'
+              ? "Ma takes the ring, puts it on, and walks very slowly to Gus's door with her stick."
               : '"My ring." Ma gets up. She takes her stick. She walks very slowly to Gus\'s door.',
           );
           go('talk', 'elder');
@@ -175,8 +187,14 @@ jobs('lou', () => {
           spill('pell', 'lou');
           if (plotOpen('pork')) stopPlot('pork');
           bump('lou', 10);
-          rx('pell', '"Mama Lou had me round for dinner. I didn\'t ask what it was. I cried anyway. She said that\'s the seasoning."');
-          says('lou', '"He eats his own pig, and WEEPS?" She puts a hand on her heart. "That\'s not a meal, honey. That\'s a sacrament. I won\'t touch his pig. I\'ll have him over Thursdays."');
+          rx(
+            'pell',
+            '"Mama Lou had me round for dinner. I didn\'t ask what it was. I cried anyway. She said that\'s the seasoning."',
+          );
+          says(
+            'lou',
+            '"He eats his own pig, and WEEPS?" She puts a hand on her heart. "That\'s not a meal, honey. That\'s a sacrament. I won\'t touch his pig. I\'ll have him over Thursdays."',
+          );
           go('talk', 'lou');
         },
       ],
@@ -198,7 +216,10 @@ jobs('jeb', () => {
           gain(40);
           bump('jeb', 20);
           later(3, 'bessShot');
-          says('jeb', '"Bess? The polite one? She says thank you while she takes my gin." He counts out 40 teeth. "I\'ll hire some guns for the next run."');
+          says(
+            'jeb',
+            '"Bess? The polite one? She says thank you while she takes my gin." He counts out 40 teeth. "I\'ll hire some guns for the next run."',
+          );
           go('talk', 'jeb');
         },
       ],
@@ -267,7 +288,10 @@ jobs('hector', () => {
           spill('teo', 'hector');
           bump('hector', 10);
           later(2, 'teoHome');
-          says('hector', '"...Teo? Dad said he moved away." Hector looks at the fields for a long time. "Krug sells old men cheap."');
+          says(
+            'hector',
+            '"...Teo? Dad said he moved away." Hector looks at the fields for a long time. "Krug sells old men cheap."',
+          );
           go('talk', 'hector');
         },
       ],
@@ -290,7 +314,10 @@ jobs('doc', () => {
             stopPlot('drugwar');
             f.docWarned = 1;
           }
-          says('doc', '"Vane. Too cruel even for me, and I saw legs off for fun." He smiles. "Then I\'ll sell cheaper than he can cut."');
+          says(
+            'doc',
+            '"Vane. Too cruel even for me, and I saw legs off for fun." He smiles. "Then I\'ll sell cheaper than he can cut."',
+          );
           go('talk', 'doc');
         },
       ],
@@ -315,7 +342,10 @@ jobs('junior', () => {
           spill('fern', 'junior');
           bump('junior', 20);
           later(2, 'juniorGoes');
-          says('junior', '"...On purpose? For somebody?" Junior puts the cleaver down. Nobody has ever seen him put the cleaver down.');
+          says(
+            'junior',
+            '"...On purpose? For somebody?" Junior puts the cleaver down. Nobody has ever seen him put the cleaver down.',
+          );
           go('talk', 'junior');
         },
       ],
@@ -403,8 +433,11 @@ function secretLines() {
     L = [];
   if (f.nanStops) L.push('Sweet Nan never sent another envelope. Ma Thistle sold the rocking chair.');
   if (f.nigelMa && alive('nigel'))
-    L.push("Nigel stood outside Ma Thistle's window every night after that, glowing. She never slept in the dark again.");
-  if (f.ringBack === 'well') L.push("Ma Thistle was buried with her ring on. Gus dug the grave, and never drank again.");
+    L.push(
+      "Nigel stood outside Ma Thistle's window every night after that, glowing. She never slept in the dark again.",
+    );
+  if (f.ringBack === 'well')
+    L.push('Ma Thistle was buried with her ring on. Gus dug the grave, and never drank again.');
   if (f.gusGone)
     L.push(
       f.kingStopped
@@ -416,9 +449,10 @@ function secretLines() {
   if (f.bessShot && alive('bess')) L.push('Bess never raided the farm road again. She kept the bullet on a string.');
   if (f.bessBounty && alive('bess') && S.n.bess.loc === 'gone')
     L.push("Bess ran from Crane's poster and kept running. Nobody on the farm says her name.");
-  if (f.bertReads && alive('bert')) L.push('Bert reads now. Tractor manuals, mostly. He reads them aloud to the goats.');
+  if (f.bertReads && alive('bert'))
+    L.push('Bert reads now. Tractor manuals, mostly. He reads them aloud to the goats.');
   if (f.teoHome && alive('teo'))
-    L.push("Old Teo died on the farm he once owned. Hector buried him under the corn and never told anyone why.");
+    L.push('Old Teo died on the farm he once owned. Hector buried him under the corn and never told anyone why.');
   if (f.docUndercut && alive('doc'))
     L.push('Doc Ratchet sold cheap for years, just to spite Vane. The valley got healthier out of pure malice.');
   if (f.juniorGreen && alive('junior'))

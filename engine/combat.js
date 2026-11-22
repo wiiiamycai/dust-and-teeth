@@ -1,18 +1,38 @@
 'use strict';
 // ================= COMBAT =================
 const CRIT = {
-  eyes: [t => `Eye shot. ${t} never sees it coming. Or anything else.`, t => `Right through ${t}'s eye.`],
+  eyes: [
+    t => `Eye shot. ${t} never sees it coming. Or anything else.`,
+    t => `Right through ${t}'s eye.`,
+    t => `${t}'s eye goes somewhere behind ${t}. The rest follows.`,
+  ],
   groin: [
     t => `Groin crit. ${t} makes a kettle noise and folds.`,
     t => `You hit ${t} somewhere nobody should be hit. Stunned.`,
+    t => `${t} sits down very suddenly, and thinks about family plans.`,
   ],
-  body: [t => `Crit! ${t} bends the wrong way.`, t => `Crit. Something in ${t} goes pop.`],
+  legs: [t => `Kneecap crit. ${t}'s leg now bends both ways.`, t => `${t}'s shin splits like a dry branch.`],
+  arms: [t => `Crit. ${t}'s arm flaps like laundry.`, t => `You hear ${t}'s elbow change its mind.`],
+  body: [
+    t => `Crit! ${t} bends the wrong way.`,
+    t => `Crit. Something in ${t} goes pop.`,
+    t => `Crit. ${t} coughs up something important.`,
+    t => `Crit. You can see daylight through ${t}.`,
+  ],
 };
 const KILLED = [
   t => `${t} dies. Not pretty. Very final.`,
   t => `${t} hits the dirt and stays there.`,
   t => `${t} is dead. The wasteland gets a little better fertilised.`,
+  t => `${t} drops like a sack of wet teeth.`,
+  t => `${t} twitches twice, then takes up a career as scenery.`,
 ];
+const KILLED_BEAST = [
+  t => `${t} squeals, kicks, and goes still. Something will eat it by morning.`,
+  t => `${t} folds up in a heap of fur and bad smells.`,
+  t => `${t} dies with its mouth open, still trying.`,
+];
+const deathLine = e => pick(e.beast ? KILLED_BEAST : KILLED)(e.n);
 const MISS = ['You miss. The air is unharmed.', 'Miss. A nearby rock flinches.', 'You miss and nearly hit yourself.'];
 const QUIET = [
   n => `You wait until ${n} is alone. Then ${n} stays alone, forever.`,
@@ -43,6 +63,21 @@ function mkE(n, i, lv, o) {
     wep: o.wep || null,
     npc: o.npc || null,
     cap: o.cap || (o.npc === 'krug' ? 1 : null),
+    // Beasts (no talking, no gear), their heavy moves, and how they behave. See TELE below.
+    beast: !!o.beast,
+    kind: o.kind || null, // shell, swarm or flesh (MATCH above); people have none
+    venom: !!o.venom, // its bite poisons you
+    bleed: 0,
+    burn: 0,
+    moves: o.moves || null,
+    pack: !!o.pack,
+    flee: !!o.flee,
+    rage: !!o.rage,
+    boss: !!o.boss,
+    lame: false,
+    weak: false,
+    blind: 0,
+    tele: null,
   };
 }
 const foe = id => {
@@ -101,6 +136,48 @@ function hit(t, mod) {
     95,
   );
 }
+// ---- the right tool: damage types against beast kinds (Pokemon-style matchups, Will's idea) ----
+// Shells crack under blunt weapons and shrug off blades and bullets. Swarms are torn up by spread shot and fire,
+// and a single bullet mostly misses something that small. Flesh bleeds under a blade. People are neutral.
+const DTYPE = {
+  fists: 'blunt',
+  knife: 'cut',
+  pipe: 'blunt',
+  sledge: 'blunt',
+  cleaver: 'cut',
+  machete: 'cut',
+  drill: 'blunt',
+  ripper: 'cut',
+  shotgun: 'spread',
+  plasma: 'energy',
+};
+const dtype = w => DTYPE[w] || (W[w].t === 'guns' ? 'shot' : 'blunt');
+const MATCH = {
+  shell: { blunt: 1.5, cut: 0.5, shot: 0.5, spread: 0.75, fire: 0.75 },
+  swarm: { spread: 1.5, fire: 1.5, shot: 0.6 },
+  flesh: { cut: 1.5, fire: 1.25 },
+};
+const matchOf = (e, ty) => (e.kind && MATCH[e.kind] && MATCH[e.kind][ty]) || 1;
+const matchTxt = m => (m >= 1.5 ? ': this works on it' : m <= 0.6 ? ': it barely feels this' : '');
+const SUPER = [t => `That's the way to hurt ${t}.`, t => `${t} was not built for that.`, t => `That got through.`];
+const WRONG = [t => `It barely bothers ${t}. Wrong tool.`, t => `${t} shrugs it off.`, t => `Like hitting a wall.`];
+// ---- reading the enemy: heavy moves you see coming ----
+// Every so often an enemy winds up something big, and says so. Next round it lands at double damage, unless
+// you dodge, brace, or put it down first. Beasts bring their own moves; people get one by weapon.
+function teleFor(e) {
+  if (e.moves) return pick(e.moves);
+  const g = e.wep && W[e.wep] && W[e.wep].t === 'guns';
+  return g
+    ? { w: `${e.n} stops, and takes careful aim at your head.`, h: 'aimed shot', x: 2, acc: 20 }
+    : { w: `${e.n} winds up a huge swing.`, h: 'big swing', x: 2, acc: 10 };
+}
+const dodgeP = () => clamp(35 + ptw() * 5 + S.stats.luck, 15, 90);
+const runP = () => {
+  const live = S.fight.en.filter(e => e.hp > 0);
+  return clamp(fleeP() + (live.length && live.every(e => e.lame) ? 30 : 0), 5, 95);
+};
+const winding = () => S.fight.en.some(e => e.hp > 0 && e.tele);
+const pct = n => ` (${n}%)`;
 // The best weapon of the other kind, for a quick switch mid-fight.
 function otherWeapon() {
   if (S.fight && S.fight.pit) return null; // fists and blades only in the pit
@@ -160,9 +237,18 @@ SC.fight = () => {
   const cards = F.en.map((e, i) => ({
     icon: e.i,
     name: e.n,
-    sub: kn
-      ? `Lv ${e.lvl} · armour ${e.dr}${e.hp <= 0 ? ' · dead' : ''}${e.wep || e.arm || e.loot ? ' · has ' + [e.wep && W[e.wep].n, e.arm && A[e.arm].n, ...Object.keys(e.loot || {}).map(k => ITEMS[k])].filter(Boolean).join(', ') : ''}`
-      : `${dangerWord(e.lvl)} · ${condWord(e.hp, e.max)}`,
+    sub:
+      (kn
+        ? `Lv ${e.lvl} · armour ${e.dr}${e.hp <= 0 ? (e.fled ? ' · fled' : ' · dead') : ''}${e.wep || e.arm || e.loot ? ' · has ' + [e.wep && W[e.wep].n, e.arm && A[e.arm].n, ...Object.keys(e.loot || {}).map(k => ITEMS[k])].filter(Boolean).join(', ') : ''}`
+        : `${dangerWord(e.lvl)} · ${e.fled ? 'fled' : condWord(e.hp, e.max)}`) +
+      (e.hp > 0
+        ? (e.tele ? ' · winding up' : '') +
+          (e.lame ? ' · limping' : '') +
+          (e.weak ? ' · crippled' : '') +
+          (e.blind ? ' · dazzled' : '') +
+          (e.bleed ? ' · bleeding' : '') +
+          (e.burn ? ' · on fire' : '')
+        : ''),
     hp: kn ? e.hp : null,
     max: e.max,
     sel: i === F.t,
@@ -182,13 +268,90 @@ SC.fight = () => {
   if (dry(S.weapon)) o.push(null);
   else if (!gun && !F.close) o.push([`Close in with your ${w.n}`, () => closeIn(), 'danger']);
   else {
-    const v = gun ? 'Shoot' : 'Hit';
+    const v = gun ? 'Shoot' : 'Hit',
+      la = perk('eagle') ? -5 : -10,
+      aa = perk('eagle') ? -10 : -15,
+      op = F.opening ? 15 : 0;
     o.push(
-      [`${v} ${t.n}`, () => atk(0, null)],
-      [`${v} for the eyes (hard, but it can end it)`, () => atk(ea, 'eyes')],
-      [`${v} for the groin (tricky, a good one stuns)`, () => atk(ga, 'groin')],
+      [`${v} ${t.n}${pct(hit(t, op))}${matchTxt(matchOf(t, dtype(S.weapon)))}`, () => atk(0, null)],
+      [`${v} for the eyes${pct(hit(t, ea + op))}: hard, but it can end it`, () => atk(ea, 'eyes')],
+      [`${v} for the groin${pct(hit(t, ga + op))}: a good one stuns`, () => atk(ga, 'groin')],
+      [`${v} for the legs${pct(hit(t, la + op))}: it slows, and you can run`, () => atk(la, 'legs')],
+      [`${v} for the ${t.beast ? 'jaws' : 'arms'}${pct(hit(t, aa + op))}: it hits softer`, () => atk(aa, 'arms')],
     );
   }
+  // Something is winding up: get out of the way, or brace for it.
+  if (winding())
+    o.push(
+      [
+        `Dodge${pct(dodgeP())}: if it works, the big one misses, and you get an opening`,
+        () => {
+          F.log = [];
+          F.dodged = roll(dodgeP());
+          F.log.push(F.dodged ? 'You move before it does.' : 'You move. Not far enough.');
+          enemy();
+        },
+      ],
+      [
+        'Brace: take half of everything this round',
+        () => {
+          F.log = ['You set your feet and tuck your chin.'];
+          F.brace = true;
+          enemy();
+        },
+      ],
+    );
+  // Things to throw.
+  const beasts = F.en.some(e => e.hp > 0 && e.beast);
+  if (has('meat') && beasts)
+    o.push([
+      `Throw meat (${S.inv.meat} left): the beasts go for it, not you`,
+      () => {
+        take('meat');
+        F.log = ['You throw the meat. Every beast in the fight forgets you exist.'];
+        F.en.forEach((e, i) => {
+          if (e.hp > 0 && e.beast && !F.stun.includes(i)) F.stun.push(i);
+        });
+        enemy();
+      },
+    ]);
+  if (has('flare'))
+    o.push([
+      `Light a flare (${S.inv.flare} left): everything here is dazzled`,
+      () => {
+        take('flare');
+        F.log = ['You crack a flare. Red light, and a lot of squinting.'];
+        F.en.forEach(e => {
+          if (e.hp > 0) {
+            e.blind = 2;
+            e.tele = null;
+          }
+        });
+        enemy();
+      },
+    ]);
+  if (has('molotov'))
+    o.push([
+      `Throw a molotov (${S.inv.molotov} left): fire on all of them, and loud`,
+      () => {
+        take('molotov');
+        F.loud = true;
+        F.log = ['Glass, a rag, and then everything is on fire.'];
+        F.en.forEach(e => {
+          if (e.hp <= 0) return;
+          const d = Math.round(R(6, 12) * matchOf(e, 'fire'));
+          e.hp -= d;
+          e.burn = 2;
+          F.log.push(`${e.n} burns for ${d}.`);
+          if (e.hp <= 0) {
+            e.hp = 0;
+            F.log.push(deathLine(e));
+          }
+        });
+        if (F.en.every(e => e.hp <= 0)) return win();
+        enemy();
+      },
+    ]);
   const ow = otherWeapon();
   if (ow)
     o.push([
@@ -219,7 +382,10 @@ SC.fight = () => {
             `Gut Glue, back to full (${S.inv.gutglue} left)`,
             () => {
               take('gutglue');
-              F.log = [`You glue yourself back together. +${heal(GLUE())} HP.`];
+              F.log = [
+                `You glue yourself back together. +${heal(GLUE())} HP.${F.poison ? ' The poison goes with it.' : ''}`,
+              ];
+              F.poison = 0;
               enemy();
             },
           ]
@@ -236,9 +402,9 @@ SC.fight = () => {
         : null,
       F.back
         ? [
-            'Run',
+            `Run${pct(runP())}`,
             () => {
-              if (roll(fleeP())) {
+              if (roll(runP())) {
                 say('You run. Your dignity covers your escape.');
                 S.fight = null;
                 S.buzzOn = false;
@@ -287,26 +453,51 @@ function atk(mod, part) {
     if (!F.loud) F.log.push('BANG. That will be heard for miles.');
     F.loud = true;
   }
-  const landed = roll(hit(t, mod));
+  const landed = roll(hit(t, mod + (F.opening ? 15 : 0)));
+  F.opening = false;
   practice(w.t, landed ? 1 : 0.4);
   if (landed) {
     if (part) count('aimHit');
     let d = R(w.d[0], w.d[1]) + modSum(S.weapon, 'dmg') + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
     if (w.t === 'melee' && perk('hands')) d = Math.round(d * 1.3);
     let crit = false;
-    if (roll(S.stats.luck * 2 + (perk('lucky') ? 10 : 0) + (part === 'eyes' ? 30 : part === 'groin' ? 12 : 0))) {
+    if (
+      roll(
+        S.stats.luck * 2 +
+          (perk('lucky') ? 10 : 0) +
+          (part === 'eyes' ? 30 : part === 'groin' ? 12 : part === 'legs' || part === 'arms' ? 8 : 0),
+      )
+    ) {
       crit = true;
       d *= part === 'eyes' ? 3 : 2;
       count('crit');
       F.log.push(pick(CRIT[part || 'body'])(t.n));
       if (part === 'groin') F.stun.push(F.t);
     }
+    const m = matchOf(t, dtype(S.weapon));
+    if (m !== 1) {
+      d = Math.round(d * m);
+      F.log.push(pick(m > 1 ? SUPER : WRONG)(t.n));
+    }
+    if (dtype(S.weapon) === 'cut' && t.kind !== 'shell' && !t.bleed && roll(t.kind === 'flesh' ? 50 : 25)) {
+      t.bleed = 3;
+      F.log.push(`${t.n} is bleeding.`);
+    }
+    if (part === 'legs' && !t.lame) {
+      t.lame = true;
+      F.log.push(`${t.n} is limping now.`);
+    }
+    if (part === 'arms' && !t.weak && (crit || roll(50))) {
+      t.weak = true;
+      t.tele = null;
+      F.log.push(t.beast ? `${t.n}'s jaw hangs loose.` : `${t.n}'s arm hangs useless.`);
+    }
     d = Math.max(1, d - t.dr);
     t.hp -= d;
     F.log.push(`You hit ${t.n} for ${d}.`);
     if (t.hp <= 0) {
       t.hp = 0;
-      F.log.push(pick(KILLED)(t.n));
+      F.log.push(deathLine(t));
       if (w.t === 'melee') count('meleeKill');
     } else if (
       w.t === 'melee' &&
@@ -328,7 +519,7 @@ function atk(mod, part) {
       F.log.push(`${NPC[a].n} hits ${tt.n} for ${d}.`);
       if (tt.hp <= 0) {
         tt.hp = 0;
-        F.log.push(pick(KILLED)(tt.n));
+        F.log.push(deathLine(tt));
       }
     }
   }
@@ -337,18 +528,72 @@ function atk(mod, part) {
 }
 function enemy() {
   const F = S.fight;
+  const pack = F.en.filter(e => e.hp > 0 && e.pack).length >= 2;
   for (let i = 0; i < F.en.length; i++) {
     const e = F.en[i];
     if (e.hp <= 0) continue;
-    if (F.stun.includes(i)) {
-      F.log.push(`${e.n} is on the ground.`);
+    // Bleeding and burning tick before it acts.
+    for (const [k, dmg, txt] of [
+      ['bleed', 2, 'bleeds'],
+      ['burn', 3, 'burns'],
+    ])
+      if (e[k] > 0) {
+        e[k]--;
+        e.hp -= dmg;
+        F.log.push(`${e.n} ${txt}. ${dmg} damage.`);
+      }
+    if (e.hp <= 0) {
+      e.hp = 0;
+      F.log.push(deathLine(e));
       continue;
     }
-    if (roll(clamp(e.skill - ptw() * 3 + (F.charge ? 20 : 0), 5, 95))) {
-      const d = Math.max(1, R(e.d[0], e.d[1]) - pdr());
+    // A hurt beast that values its skin runs for it. No loot from a thing that got away.
+    if (e.flee && !e.boss && e.hp < e.max * 0.3 && roll(40)) {
+      e.hp = 0;
+      e.fled = true;
+      e.tele = null;
+      F.log.push(`${e.n} bolts, bleeding, into the dark.`);
+      continue;
+    }
+    if (F.stun.includes(i)) {
+      if (e.tele) F.log.push(`${e.n} loses its wind-up.`);
+      e.tele = null;
+      F.log.push(e.beast && !e.lame ? `${e.n} is busy with something else.` : `${e.n} is on the ground.`);
+      continue;
+    }
+    if (e.rage && !e.raged && e.hp <= e.max / 2) {
+      e.raged = true;
+      F.log.push(`${e.n} is angry now. Properly angry.`);
+    }
+    const heavy = e.tele;
+    e.tele = null;
+    if (heavy && F.dodged) {
+      F.log.push(`${e.n}'s ${heavy.h} hits nothing but dirt.`);
+      F.opening = true;
+      continue;
+    }
+    const acc =
+      e.skill -
+      ptw() * 3 +
+      (F.charge ? 20 : 0) +
+      (heavy ? heavy.acc || 0 : 0) +
+      (pack && e.pack ? 10 : 0) +
+      (e.raged ? 15 : 0) -
+      (e.lame ? 10 : 0) -
+      (e.blind ? 30 : 0);
+    if (roll(clamp(acc, 5, 95))) {
+      let d = R(e.d[0], e.d[1]) + (e.raged ? 3 : 0);
+      if (heavy) d *= heavy.x || 2;
+      if (e.weak) d = Math.round(d * 0.6);
+      d = Math.max(1, d - pdr());
+      if (F.brace) d = Math.max(1, Math.round(d / 2));
       S.hp -= d;
       count('dmgTaken', d);
-      F.log.push(`${e.n} hits you for ${d}.`);
+      F.log.push(heavy ? `${e.n}'s ${heavy.h} lands. ${d} damage.` : `${e.n} hits you for ${d}.`);
+      if (e.venom && !F.poison && roll(40)) {
+        F.poison = 3;
+        F.log.push('Its bite burns. You are poisoned.');
+      }
       if (S.hp <= 0) {
         if (perk('wind') && !F.wind) {
           F.wind = true;
@@ -363,10 +608,31 @@ function enemy() {
           return die(`Killed by ${e.n}.`);
         }
       }
-    } else F.log.push(`${e.n} misses.`);
+    } else F.log.push(heavy ? `${e.n}'s ${heavy.h} misses you by a hair.` : `${e.n} misses.`);
+    if (e.blind) e.blind--;
+    // Wind up the next big one. You'll see it coming.
+    if (e.hp > 0 && !e.weak && !e.blind && roll(e.beast ? 35 : 25)) {
+      e.tele = teleFor(e);
+      F.log.push(e.tele.w);
+    }
   }
+  if (pack && F.round === 1) F.log.push('They spread out. They have done this before.');
+  // Poison works on you at the end of every round, until it runs out or Gut Glue cleans it out.
+  if (F.poison > 0) {
+    F.poison--;
+    S.hp -= 2;
+    F.log.push('The poison bites. 2 damage.');
+    if (S.hp <= 0) {
+      S.hp = 0;
+      return die('Poisoned, in a fight with animals.');
+    }
+  }
+  // Everything left ran away: the fight is over, and you're still standing.
+  if (F.en.every(e => e.hp <= 0)) return win();
   F.stun = [];
   F.charge = false;
+  F.dodged = false;
+  F.brace = false;
   F.round++;
   go('fight');
 }
@@ -379,6 +645,7 @@ function win() {
   // The pit: they yield, nobody dies, nothing is looted. The prize is the purse.
   if (F.pit) return WIN[F.win](...F.args);
   for (const e of F.en) {
+    if (e.fled) continue;
     if (e.npc) {
       kill(e.npc, F.started ? 'murder' : 'slain', F.loud);
       continue;

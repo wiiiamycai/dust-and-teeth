@@ -4867,5 +4867,160 @@
    "WAIT:3",
    "EXPECT:S.n.eel.op <= e0 - 30 && S.n.eel.rx.some(l => /emptied the vault/.test(l))"
   ]
+ },
+ {
+  "name": "Towns: Hector tells you about Gristmill; clear all four stages and the Rat Queen, and he pays",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Seen anything odd on the north road",
+   "EXPECT:onMap('gristmill')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Gristmill",
+   "SAY:chewed through",
+   "outer houses",
+   "FIGHT",
+   "granary",
+   "FIGHT",
+   "mill race",
+   "FIGHT",
+   "to the nest",
+   "FIGHT",
+   "EXPECT:townClear('gristmill') && S.titles.includes('Rat-catcher')",
+   "SAY:millwheel turns",
+   "Leave (map)",
+   "TRAVEL:Hector's Farm",
+   "Hector",
+   "Gristmill's clear",
+   "EXPECT:S.f.gristPaid"
+  ]
+ },
+ {
+  "name": "Towns: you can turn back between stages, and the town remembers how far you got",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.f.knowSalt = 1",
+   "Leave (map)",
+   "TRAVEL:Saltpan",
+   "outer flats",
+   "FIGHT",
+   "EXPECT:townStage('saltpan') === 1",
+   "Leave (map)",
+   "TRAVEL:Scrapwell",
+   "Leave (map)",
+   "TRAVEL:Saltpan",
+   "SAY:cleared 1 of the way",
+   "SAY:pan-works"
+  ]
+ },
+ {
+  "name": "Towns: Fenwick pays you to leave Kettle's hive alone; clear it anyway, water gets cheaper and he wants blood",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Sheriff Crane",
+   "Where else could Rustwater get water",
+   "Back",
+   "Mayor Fenwick",
+   "Kettle's water tower",
+   "EXPECT:S.f.kettlePaid",
+   "EVAL:globalThis.w0 = waterCost(); S.f.town_kettle = 3",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:Kettle",
+   "to the hive",
+   "FIGHT",
+   "EXPECT:townClear('kettle') && waterCost() === w0 - 4 && S.n.mayor.op <= -60",
+   "EXPECT:linkLines().some(l => /cleared Kettle anyway/.test(l))"
+  ]
+ },
+ {
+  "name": "Towns: leave a town too long and it spreads onto the roads",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.day = 13",
+   "WAIT:1",
+   "EXPECT:S.f.spread_gristmill && S.f.spread_kettle && S.n.hector.rx.some(l => /Rats in the corn/.test(l))"
+  ]
+ },
+ {
+  "name": "Combat: odds show on every action, and the right tool for a shell says so",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.weapons.push('sledge'); S.weapon = 'sledge'; fight([spawn('saltback')], { close: true, back: ['map'] })",
+   "SAY:%)",
+   "SAY:this works on it",
+   "SAY:Run (",
+   "EVAL:S.fight = null; S.weapon = 'knife'; fight([spawn('saltback')], { close: true, back: ['map'] })",
+   "SAY:it barely feels this",
+   "EXPECT:matchOf(spawn('saltback'), dtype('sledge')) === 1.5 && matchOf(spawn('saltback'), dtype('knife')) === 0.5 && matchOf(spawn('hound'), dtype('machete')) === 1.5 && matchOf(spawn('stinger'), dtype('shotgun')) === 1.5"
+  ]
+ },
+ {
+  "name": "Combat: a beast winds up a heavy move; dodge it, and it hits dirt, and you get an opening",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([spawn('saltback')], { close: true, back: ['map'] }); S.fight.en[0].tele = { w: 'x', h: 'double claw', x: 2, acc: 10 }; go('fight')",
+   "SAY:winding up",
+   "RAND:0",
+   "Dodge",
+   "EXPECT:S.fight.opening",
+   "SAY:hits nothing but dirt"
+  ]
+ },
+ {
+  "name": "Combat: a venomous bite poisons you, and Gut Glue cleans it out",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "REAL",
+   "RAND:0",
+   "EVAL:S.hp = S.maxhp = 999; fight([spawn('stinger')], { close: true, back: ['map'] }); S.fight.en[0].tele = null; enemy()",
+   "EXPECT:S.fight.poison > 0",
+   "SAY:poisoned",
+   "Gut Glue",
+   "SAY:The poison goes with it"
+  ]
+ },
+ {
+  "name": "Combat: Moe sells molotovs and Sprocket sells flares, and fire burns a swarm",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.teeth = 200",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "Moe",
+   "Molotov",
+   "EXPECT:has('molotov')",
+   "Back",
+   "Leave (map)",
+   "TRAVEL:The Drowned Mall",
+   "Sprocket",
+   "Road flare",
+   "EXPECT:has('flare')",
+   "EVAL:fight([spawn('stinger'), spawn('stinger')], { close: true, back: ['map'] })",
+   "Throw a molotov",
+   "EXPECT:!S.fight || S.fight.en.every(e => e.hp <= 0 || e.burn)"
+  ]
+ },
+ {
+  "name": "Combat: shoot every beast's legs and running gets much easier",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([spawn('hound')], { close: true, back: ['map'] }); globalThis.r0 = runP(); S.fight.en[0].lame = true",
+   "EXPECT:runP() >= Math.min(95, r0 + 30)"
+  ]
  }
 ]

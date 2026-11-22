@@ -15,7 +15,7 @@ A text RPG in the spirit of Fallout 2, built as a single-page browser game. This
 1. **Depth over size.** Keep the current map size. Go deeper in every place and person. It will get big later, but depth comes first.
 2. **Every action has consequences 2 to 3 layers deep.** Example: sell Bess to slavers, then Hector hears through gossip, then Bert goes after her and gets taken too, then Bess comes back months later as a raider queen.
 3. **Gossip must change behaviour, not just a hidden opinion number.** See section 5.
-4. **No visible checks.** No percentages on dialogue or actions. Real life has no "Speech 62%". Use soft cues instead ("she's warming to you", "he's not buying it").
+4. **No visible checks in conversation.** No percentages on dialogue. Real life has no "Speech 62%". Use soft cues instead ("she's warming to you", "he's not buying it"). In a fight, the odds are shown (Will, v6.5).
 5. **Information drives success.** Hidden checks are modified by what the player has learned and done (see section 4). Spam-clicking should be a bad strategy.
 6. **Enemies never scale with the player.** Each enemy type has fixed strength. Early game can have huge, deadly monsters. Late game can still have weak rats. The world gets more dangerous only because of story (the Dentist King recruiting) or the player's own notoriety (bigger hunters because you made bigger enemies).
 7. **Combat is hard.** Avoiding fights (talking, sneaking, paying, running) must be a real choice.
@@ -84,10 +84,18 @@ Keep the current combat loop (hit, aim for eyes, aim for groin, Gut Glue, Buzz, 
 - Fix the v2 balance problem: melee is currently strictly worse than guns.
 - Combat stays hard. A few hits can kill an average character.
 
+### Combat in v6.5
+
+- Every attack, the dodge and the run show their percentage.
+- Damage types against beast kinds, Pokemon style: shells crack under blunt weapons, swarms under spread shot and fire, flesh bleeds under blades. People are neutral. The attack option says when a weapon is right or wrong for the target.
+- Enemies telegraph heavy moves a round ahead: dodge, brace or knock them down. Legs and arms are targets. Meat, flares and molotovs can be thrown. Packs, rage, fleeing, bleeding, burning and poison.
+- Gear runs in four tiers at Jeb's wagons (`scenes/shop.js`), and each lost town is built for one tier.
+
 ## 8. Enemies (v3)
 
 - Every enemy type has a fixed strength that never changes with the player's level or progress.
 - Danger is mixed everywhere: near home is mostly weak, but strong things can appear anywhere at any time.
+- Four lost towns (`scenes/beasts.js`): Gristmill (rad-rats, starter gear), Saltpan (saltbacks, heavy weapons), Fanghill (grave-hounds, armour and blades) and Kettle (stingers, pre-war gear). Found through a neighbour, cleared in three stages and a boss, and clearing changes the neighbours. Left alone, they spread onto the roads.
 - Add at least one roaming apex monster, the **Gutmaw**: huge burrowing beast with a big health bar and heavy attacks. Early game the only options are run, hide or distract it (throw meat, sacrifice something). Late game it can be killed and it should feel earned.
 - Descriptions make danger readable ("It's the size of a car. The ground shakes when it moves.") so the player can choose to back off.
 - The world worsens only through story (the Dentist King's army grows over time) and notoriety (hunters are stronger because the player made bigger enemies).

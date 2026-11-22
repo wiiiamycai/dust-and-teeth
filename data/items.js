@@ -19,12 +19,16 @@ const W = {
   pipe: { n: 'Lead Pipe', t: 'melee', d: [6, 11], a: 0, kd: 10, v: 10 },
   sledge: { n: 'Sledgehammer', t: 'melee', d: [9, 18], a: -10, kd: 25, v: 30 },
   cleaver: { n: "Lou's Cleaver", t: 'melee', d: [6, 13], a: 5, kd: 5, v: 25 },
+  machete: { n: 'Machete', t: 'melee', d: [8, 15], a: 5, kd: 0, v: 45 },
   drill: { n: "King's Drill", t: 'melee', d: [12, 24], a: 5, kd: 15, v: 80 },
+  // the top of Jeb's wagons: expensive, and a real step up (nobody in the valley carries these, so no fight gets harder)
+  ripper: { n: 'Pre-War Ripper', t: 'melee', d: [15, 28], a: 0, kd: 20, v: 200 },
   // guns: one bullet a shot, loud, best at range (-10 up close, except the shotgun)
   zipgun: { n: 'Zip Gun', t: 'guns', d: [5, 12], a: 0, v: 20 },
   rifle: { n: 'Hunting Rifle', t: 'guns', d: [8, 16], a: 10, v: 50 },
   shotgun: { n: 'Shotgun', t: 'guns', d: [10, 20], a: 0, v: 60, close: 1 }, // close: no penalty up close, it's made for it
   molargun: { n: 'Molar Repeater', t: 'guns', d: [9, 18], a: 5, v: 55 },
+  autorifle: { n: 'Pre-War Battle Rifle', t: 'guns', d: [15, 26], a: 10, v: 220 },
   // free: self-charging, never needs bullets
   plasma: { n: 'Plasma Rifle', t: 'guns', d: [24, 38], a: 15, v: 300, free: 1 },
 };
@@ -35,6 +39,7 @@ const A = {
   vest: { n: "Sheriff's Vest", dr: 5, v: 60 },
   plate: { n: 'Car-Door Plate', dr: 7, tw: -2, v: 50 },
   riot: { n: 'Pre-War Riot Suit', dr: 10, v: 100 },
+  combat: { n: 'Pre-War Combat Armour', dr: 13, v: 250 },
   power: { n: 'Power Armour', dr: 16, v: 400 },
 };
 const ITEMS = {

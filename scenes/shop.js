@@ -3,9 +3,12 @@
 // Gear is strength now, so you need a place to buy it. Jeb's wagons carry guns and armour
 // for teeth. Prices follow what he thinks of you (cost()). The godlike stuff is not for sale:
 // the Plasma Rifle and Power Armour are the Mayor's, and you have to take them.
+// Four tiers (v6.5): starter (pipe, jacket), working (sledge, rifle, spikes), serious (shotgun, repeater, plate,
+// riot suit) and pre-war (ripper, battle rifle, combat armour). Each tier is a clear step, at a clear price.
+// Each lost town (scenes/beasts.js) is built for one tier.
 const STOCK = {
-  wep: { pipe: 25, sledge: 75, rifle: 120, molargun: 140, shotgun: 150 },
-  arm: { jacket: 70, spikes: 85, plate: 130, vest: 150, riot: 300 },
+  wep: { pipe: 25, sledge: 90, machete: 120, rifle: 110, shotgun: 190, molargun: 220, ripper: 420, autorifle: 460 },
+  arm: { jacket: 45, spikes: 90, plate: 180, riot: 320, combat: 550 },
 };
 const _jebShop = TALK.jeb;
 TALK.jeb = () => {

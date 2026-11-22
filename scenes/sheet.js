@@ -63,6 +63,9 @@ const WPIX = {
     '......nn................',
   ],
 };
+WPIX.autorifle = WPIX.molargun;
+WPIX.ripper = WPIX.drill;
+WPIX.machete = WPIX.cleaver || WPIX.knife;
 const IPIX = {
   gutglue: ['..mm..', '.xxxx.', '.xrrx.', '.xrrx.', '.xxxx.'],
   buzz: ['....m.', '..xgx.', '.xgx..', 'xgx...', 'm.....'],
@@ -150,6 +153,7 @@ const DOLL_ARMOUR = {
   plate: { add: ['plate'] },
   riot: { add: ['plate', 'goggles'], pal: { m: '#3a4a5e', u: '#2a3a4e' } },
   power: { add: ['plate', 'goggles'], pal: { m: '#5e6a4a', u: '#a8e07c' } },
+  combat: { add: ['plate', 'goggles'], pal: { m: '#4a4a3a', u: '#6a6a4a' } },
 };
 const DOLL_HOLD = {
   knife: 'knife',
@@ -162,6 +166,9 @@ const DOLL_HOLD = {
   shotgun: 'shotgun',
   molargun: 'longgun',
   plasma: 'longgun',
+  autorifle: 'longgun',
+  machete: 'knife',
+  ripper: 'drill',
 };
 function dollSpec() {
   const a = DOLL_ARMOUR[S.armor] || DOLL_ARMOUR.rags,

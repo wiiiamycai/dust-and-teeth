@@ -448,24 +448,24 @@ const TALK = {
         ]);
         if (canTry('gus.lie'))
           o.push([
-          '"It\'s dead. I killed it."' + hint('gus.lie'),
-          () => {
-            if (attempt('gus.lie')) {
-              f.nigel = 'lied';
-              f.gusPaid = 1;
-              quote('Gus: "Good riddance."');
-              gain(40);
-              gainXP(50);
-              karma(-1);
-            } else {
-              bad('Gus: "Then why can I hear it humming?" No pay.');
-              event('lied', 'gus', { wit: [] });
-              f.gusPaid = 1;
-              f.nigel = 'dentist';
-            }
-            go('talk', 'gus');
-          },
-        ]);
+            '"It\'s dead. I killed it."' + hint('gus.lie'),
+            () => {
+              if (attempt('gus.lie')) {
+                f.nigel = 'lied';
+                f.gusPaid = 1;
+                quote('Gus: "Good riddance."');
+                gain(40);
+                gainXP(50);
+                karma(-1);
+              } else {
+                bad('Gus: "Then why can I hear it humming?" No pay.');
+                event('lied', 'gus', { wit: [] });
+                f.gusPaid = 1;
+                f.nigel = 'dentist';
+              }
+              go('talk', 'gus');
+            },
+          ]);
       } else
         o.push([
           '"It\'s dealt with."',
