@@ -186,3 +186,8 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 
 - Roads join neighbours only, and you go through the towns between: one day a town. Scrapwell is in the middle of the bottom of the map and it gets harder the further out you go.
 - The calendar is 120 days to the launch. Every date in the story is written as `DAYS(n)` (old 25-day calendar times 4.8).
+
+### Combat and the status bar (v9.6)
+
+- In a fight: attack (with its hit chance), or look for a weak spot (30%, costs the turn; found, every later hit does 150 to 200%). No aimed shots, no dodge, no brace. Items and running as before.
+- The status bar: health, the perk bar, teeth and the day, and under them 🎒 You (gear, inventory, body, skills, perks), 📜 Journal and ⚙️ Settings.

@@ -166,13 +166,8 @@ function mood(op) {
             ? '🙂 friendly'
             : '😍 loyal';
 }
-const charOpt = () => [
-  'Character (stats, gear, perks)',
-  () => {
-    S.ret = { scene: S.scene, args: S.args };
-    go('char');
-  },
-];
+// The character screen used to be an option on every screen. It's the 🎒 in the status bar now (v9.6).
+const charOpt = () => null;
 function corpseOpt() {
   if (!S.f.cannibal || !S.f.corpse) return null;
   return [

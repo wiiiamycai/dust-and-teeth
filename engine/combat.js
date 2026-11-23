@@ -1,18 +1,6 @@
 'use strict';
 // ================= COMBAT =================
 const CRIT = {
-  eyes: [
-    t => `Eye shot. ${t} never sees it coming. Or anything else.`,
-    t => `Right through ${t}'s eye.`,
-    t => `${t}'s eye goes somewhere behind ${t}. The rest follows.`,
-  ],
-  groin: [
-    t => `Groin crit. ${t} makes a kettle noise and folds.`,
-    t => `You hit ${t} somewhere nobody should be hit. Stunned.`,
-    t => `${t} sits down very suddenly, and thinks about family plans.`,
-  ],
-  legs: [t => `Kneecap crit. ${t}'s leg now bends both ways.`, t => `${t}'s shin splits like a dry branch.`],
-  arms: [t => `Crit. ${t}'s arm flaps like laundry.`, t => `You hear ${t}'s elbow change its mind.`],
   body: [
     t => `Crit! ${t} bends the wrong way.`,
     t => `Crit. Something in ${t} goes pop.`,
@@ -177,7 +165,7 @@ const SUPER = [t => `That's the way to hurt ${t}.`, t => `${t} was not built for
 const WRONG = [t => `It barely bothers ${t}. Wrong tool.`, t => `${t} shrugs it off.`, t => `Like hitting a wall.`];
 // ---- reading the enemy: heavy moves you see coming ----
 // Every so often an enemy winds up something big, and says so. Next round it lands at double damage, unless
-// you dodge, brace, or put it down first. Beasts bring their own moves; people get one by weapon.
+// you put it down first (no dodge or brace since v9.6: hit it, throw something at it, or run). Beasts bring their own moves; people get one by weapon.
 function teleFor(e) {
   if (e.moves) return pick(e.moves);
   const g = e.wep && W[e.wep] && W[e.wep].t === 'guns';
@@ -185,7 +173,6 @@ function teleFor(e) {
     ? { w: `${e.n} stops, and takes careful aim at your head.`, h: 'aimed shot', x: 2, acc: 20 }
     : { w: `${e.n} winds up a huge swing.`, h: 'big swing', x: 2, acc: 10 };
 }
-const dodgeP = () => clamp(35 + ptw() * 5 + S.stats.luck, 15, 90);
 // Running (Will: "the harder the fight, the lower the percentage to run"): every living enemy costs you
 // two points a level, scaled by how much of it is left, and a boss costs fifteen more. One hurt rat is easy
 // to leave; the Hive Mother is not.
@@ -249,9 +236,7 @@ SC.fight = () => {
   if (!F.en[F.t] || F.en[F.t].hp <= 0) F.t = F.en.findIndex(e => e.hp > 0);
   const t = F.en[F.t],
     w = W[S.weapon],
-    gun = w.t === 'guns',
-    ea = perk('eagle') ? -15 : -30,
-    ga = perk('eagle') ? -10 : -20;
+    gun = w.t === 'guns';
   const kn = keen();
   const cards = F.en.map((e, i) => ({
     icon: e.i,
@@ -289,39 +274,15 @@ SC.fight = () => {
   if (dry(S.weapon)) o.push(null);
   else if (!gun && !F.close) o.push([`Close in with your ${w.n}`, () => closeIn(), 'danger']);
   else {
-    const v = gun ? 'Shoot' : 'Hit',
-      la = perk('eagle') ? -5 : -10,
-      aa = perk('eagle') ? -10 : -15,
-      op = F.opening ? 15 : 0;
-    o.push(
-      [`${v} ${t.n}${pct(hit(t, op))}${matchTxt(matchOf(t, dtype(S.weapon)))}`, () => atk(0, null)],
-      [`Eyes${pct(hit(t, ea + op))}: can end it`, () => atk(ea, 'eyes')],
-      [`Groin${pct(hit(t, ga + op))}: stuns`, () => atk(ga, 'groin')],
-      [`Legs${pct(hit(t, la + op))}: slows it, so you can run`, () => atk(la, 'legs')],
-      [`${t.beast ? 'Jaws' : 'Arms'}${pct(hit(t, aa + op))}: softer hits`, () => atk(aa, 'arms')],
-    );
+    // Two choices (v9.6, Will: "remove all the options to shoot things in the leg. One standard attack with a miss
+    // chance, and one with a chance to find a weakness, at 30%"). Found, every hit after it does 150 to 200%.
+    const v = gun ? 'Shoot' : 'Hit';
+    o.push([
+      `${v} ${t.n}${pct(hit(t, 0))}${matchTxt(matchOf(t, dtype(S.weapon)))}${t.weakSpot ? ': weak spot' : ''}`,
+      () => atk(0),
+    ]);
+    if (!t.weakSpot) o.push([`Look for a weak spot${pct(weakP())}`, () => seekWeak()]);
   }
-  // Something is winding up: get out of the way, or brace for it.
-  if (winding())
-    o.push(
-      [
-        `Dodge${pct(dodgeP())}: the big one misses`,
-        () => {
-          F.log = [];
-          F.dodged = roll(dodgeP());
-          F.log.push(F.dodged ? 'You move before it does.' : 'You move. Not far enough.');
-          enemy();
-        },
-      ],
-      [
-        'Brace: half damage this round',
-        () => {
-          F.log = ['You set your feet and tuck your chin.'];
-          F.brace = true;
-          enemy();
-        },
-      ],
-    );
   // Things to throw.
   const beasts = F.en.some(e => e.hp > 0 && e.beast);
   if (has('meat') && beasts)
@@ -464,7 +425,28 @@ function closeIn() {
   F.charge = true;
   enemy();
 }
-function atk(mod, part) {
+// ---- the weak spot ----
+const weakP = () => (perk('eagle') ? 45 : 30);
+const weakX = () => R(150, 200) / 100; // rolled fresh on every hit
+const WEAK = [
+  t => `You watch ${t} move, and see it: the place it keeps covering. You know where to hit now.`,
+  t => `There. An old wound on ${t}, badly healed. Everything you hit from now on goes there.`,
+  t => `${t} favours one side. You see it, and it sees you see it.`,
+];
+function seekWeak() {
+  const F = S.fight,
+    t = F.en[F.t];
+  F.log = [];
+  if (roll(weakP())) {
+    t.weakSpot = true;
+    count('weakSpot');
+    F.log.push(pick(WEAK)(t.n));
+  } else F.log.push(`You watch ${t.n} for an opening, and it doesn't give you one.`);
+  allyTurn();
+  if (F.en.every(e => e.hp <= 0)) return win();
+  enemy();
+}
+function atk(mod) {
   const F = S.fight,
     t = F.en[F.t],
     w = W[S.weapon];
@@ -474,26 +456,22 @@ function atk(mod, part) {
     if (!F.loud) F.log.push('BANG. That will be heard for miles.');
     F.loud = true;
   }
-  const landed = roll(hit(t, mod + (F.opening ? 15 : 0)));
-  F.opening = false;
+  const landed = roll(hit(t, mod));
   practice(w.t, landed ? 1 : 0.4);
   if (landed) {
-    if (part) count('aimHit');
     let d = R(w.d[0], w.d[1]) + modSum(S.weapon, 'dmg') + (w.t === 'melee' ? Math.max(0, S.stats.brawn - 5) : 0);
     if (w.t === 'melee' && perk('hands')) d = Math.round(d * 1.3);
     let crit = false;
-    if (
-      roll(
-        S.stats.luck * 2 +
-          (perk('lucky') ? 10 : 0) +
-          (part === 'eyes' ? 30 : part === 'groin' ? 12 : part === 'legs' || part === 'arms' ? 8 : 0),
-      )
-    ) {
+    if (roll(S.stats.luck * 2 + (perk('lucky') ? 10 : 0))) {
       crit = true;
-      d *= part === 'eyes' ? 3 : 2;
+      d *= 2;
       count('crit');
-      F.log.push(pick(CRIT[part || 'body'])(t.n));
-      if (part === 'groin') F.stun.push(F.t);
+      F.log.push(pick(CRIT.body)(t.n));
+    }
+    if (t.weakSpot) {
+      const x = weakX();
+      d = Math.round(d * x);
+      F.log.push(`Right in the weak spot (${Math.round(x * 100)}%).`);
     }
     const m = matchOf(t, dtype(S.weapon));
     if (m !== 1) {
@@ -503,15 +481,6 @@ function atk(mod, part) {
     if (dtype(S.weapon) === 'cut' && t.kind !== 'shell' && !t.bleed && roll(t.kind === 'flesh' ? 50 : 25)) {
       t.bleed = 3;
       F.log.push(`${t.n} is bleeding.`);
-    }
-    if (part === 'legs' && !t.lame) {
-      t.lame = true;
-      F.log.push(`${t.n} is limping now.`);
-    }
-    if (part === 'arms' && !t.weak && (crit || roll(50))) {
-      t.weak = true;
-      t.tele = null;
-      F.log.push(t.beast ? `${t.n}'s jaw hangs loose.` : `${t.n}'s arm hangs useless.`);
     }
     d = Math.max(1, d - t.dr);
     t.hp -= d;
@@ -530,6 +499,13 @@ function atk(mod, part) {
       F.log.push(`${t.n} goes down.`);
     }
   } else F.log.push(pick(MISS));
+  allyTurn();
+  if (F.en.every(e => e.hp <= 0)) return win();
+  enemy();
+}
+// whoever walks with you hits someone too
+function allyTurn() {
+  const F = S.fight;
   for (const a of F.al) {
     if (!alive(a)) continue;
     const tt = F.en.find(e => e.hp > 0);
@@ -544,8 +520,6 @@ function atk(mod, part) {
       }
     }
   }
-  if (F.en.every(e => e.hp <= 0)) return win();
-  enemy();
 }
 function enemy() {
   const F = S.fight;
@@ -588,11 +562,6 @@ function enemy() {
     }
     const heavy = e.tele;
     e.tele = null;
-    if (heavy && F.dodged) {
-      F.log.push(`${e.n}'s ${heavy.h} hits nothing but dirt.`);
-      F.opening = true;
-      continue;
-    }
     // They land about nine in ten too (v8.6), less the quicker you are; their damage is cut to match (ENEMY_DMG).
     const acc =
       HIT_BASE -
@@ -609,7 +578,6 @@ function enemy() {
       if (heavy) d *= heavy.x || 2;
       if (e.weak) d = Math.round(d * 0.6);
       d = Math.max(1, Math.round((d - pdr()) * ENEMY_DMG));
-      if (F.brace) d = Math.max(1, Math.round(d / 2));
       S.hp -= d;
       count('dmgTaken', d);
       F.log.push(heavy ? `${e.n}'s ${heavy.h} lands. ${d} damage.` : `${e.n} hits you for ${d}.`);
@@ -654,8 +622,6 @@ function enemy() {
   if (F.en.every(e => e.hp <= 0)) return win();
   F.stun = [];
   F.charge = false;
-  F.dodged = false;
-  F.brace = false;
   F.round++;
   go('fight');
 }

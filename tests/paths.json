@@ -323,7 +323,7 @@
    "Go",
    "EXPECT:!/Lv |XP|Level up/.test(document.getElementById('hud').innerHTML)",
    "EXPECT:document.getElementById('hud').innerHTML.includes('bar xp')",
-   "Character",
+   "EVAL:openPanel('char')",
    "EXPECT:!/skill points|PERK:|Level/.test(document.getElementById('text').innerHTML + document.getElementById('head').innerHTML + cur.map(o => o[0]).join())"
   ]
  },
@@ -356,13 +356,13 @@
    "Crawl out of bed",
    "Go",
    "REAL",
-   "Character",
+   "EVAL:openPanel('char')",
    "SAY:Speech: Clumsy",
    "SAY:Brawn: average",
    "EXPECT:!document.getElementById('text').innerHTML.includes('Speech: Clumsy (')",
    "Close",
    "EVAL:S.perks.push('keen')",
-   "Character",
+   "EVAL:openPanel('char')",
    "SAY:Speech: Clumsy (35)"
   ]
  },
@@ -4973,16 +4973,13 @@
   ]
  },
  {
-  "name": "Combat: a beast winds up a heavy move; dodge it, and it hits dirt, and you get an opening",
+  "name": "Combat: a beast winds up a heavy move and says so; no dodge, no brace: hit it first, throw something, or run",
   "steps": [
    "Crawl out of bed",
    "Go",
    "EVAL:fight([spawn('saltback')], { close: true, back: ['map'] }); S.fight.en[0].tele = { w: 'x', h: 'double claw', x: 2, acc: 10 }; go('fight')",
    "SAY:winding up",
-   "RAND:0",
-   "Dodge",
-   "EXPECT:S.fight.opening",
-   "SAY:hits nothing but dirt"
+   "EXPECT:!cur.some(o => /^(Dodge|Brace)/.test(o[0])) && cur.some(o => /^Run/.test(o[0]))"
   ]
  },
  {
@@ -5022,12 +5019,30 @@
   ]
  },
  {
-  "name": "Combat: shoot every beast's legs and running gets much easier",
+  "name": "Combat: two choices, attack or look for a weak spot; no more eyes, groin, legs or arms",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:fight([spawn('hound')], { close: true, back: ['map'] }); globalThis.r0 = runP(); S.fight.en[0].lame = true",
-   "EXPECT:runP() >= Math.min(95, r0 + 30)"
+   "EVAL:fight([spawn('hound')], { close: true, back: ['map'] })",
+   "EXPECT:cur.some(o => /^Hit Grave-hound \\(\\d+%\\)/.test(o[0])) && cur.some(o => o[0] === 'Look for a weak spot (30%)')",
+   "EXPECT:!cur.some(o => /^(Eyes|Groin|Legs|Arms|Jaws)/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Combat: looking for a weak spot costs your turn; found, every hit after does 150 to 200%",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([spawn('hound', { hpm: 9 })], { close: true, back: ['map'] }); globalThis.h0 = S.fight.en[0].hp",
+   "RAND:0.99",
+   "Look for a weak spot",
+   "EXPECT:!S.fight.en[0].weakSpot && S.fight.en[0].hp === h0 && S.fight.log.some(l => /doesn't give you one/.test(l))",
+   "RAND:0",
+   "Look for a weak spot",
+   "EXPECT:S.fight.en[0].weakSpot && S.fight.en[0].hp === h0 && !cur.some(o => /weak spot \\(/.test(o[0])) && cur.some(o => /: weak spot$/.test(o[0]))",
+   "Hit Grave-hound",
+   "EXPECT:S.fight.log.some(l => /Right in the weak spot \\(150%\\)/.test(l)) && S.fight.en[0].hp < h0",
+   "RAND:off"
   ]
  },
  {
@@ -5084,13 +5099,13 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:for (let i = 0; i < 4; i++) count('aimHit')",
-   "EXPECT:perkBar().p === 'eagle' && perkBar().txt === 'Eagle Eye 4/10' && Math.abs(perkBar().frac - 0.4) < 0.01",
+   "EVAL:for (let i = 0; i < 4; i++) count('weakSpot')",
+   "EXPECT:perkBar().p === 'eagle' && perkBar().txt === 'Eagle Eye 4/5' && Math.abs(perkBar().frac - 0.8) < 0.01",
    "EVAL:count('meleeKill')",
    "EXPECT:perkBar().p === 'hands' && perkBar().txt === 'Bloody Hands 1/10'",
-   "EVAL:for (let i = 0; i < 6; i++) count('aimHit')",
+   "EVAL:count('weakSpot')",
    "EXPECT:perk('eagle') && perkBar().p !== 'eagle'",
-   "Character",
+   "EVAL:openPanel('char')",
    "SAY:NEW PERK: Eagle Eye",
    "EVAL:hud()",
    "EXPECT:document.getElementById('hud').innerHTML.includes('bar xp')"

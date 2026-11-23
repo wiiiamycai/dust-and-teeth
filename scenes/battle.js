@@ -320,7 +320,7 @@ function battleStop() {
   BK = null;
 }
 // ---- the menu: FIGHT, BAG, RUN ----
-const FIGHT_RE = /^(Hit |Shoot |Eyes|Groin|Legs|Jaws|Arms|Close in|Click\. No bullets|Dodge|Brace)/;
+const FIGHT_RE = /^(Hit |Shoot |Look for a weak spot|Close in|Click\. No bullets|Dodge|Brace)/;
 const BAG_RE = /^(Gut Glue|Snort Buzz|Throw meat|Light a flare|Throw a molotov|Switch to)/;
 const _fightBattle = SC.fight;
 SC.fight = () => {

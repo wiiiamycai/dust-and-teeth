@@ -207,14 +207,22 @@ SC.restart = () => {
     if (e.target && e.target.closest && e.target.closest('#rstb')) restartAsk();
   });
 })();
-// The ☰ on the status bar: journal, character panel, sound, a new life, and a new life. On a phone they
-// live here, so every other screen fits in one, pinned.
-function togglePanel(on) {
-  const b = document.body;
-  b.classList.toggle('panel', on == null ? !b.classList.contains('panel') : on);
-  if (b.classList.contains('panel'))
-    document.querySelectorAll('#journal details, #sheet details').forEach(d => (d.open = true));
-  $('wrap').scrollTop = 0;
+// ---- the status bar (v9.6, Will: "character and inventory in one, journals in one, as icons under the XP bar;
+// audit the HUD, a lot of it doesn't make sense") ----
+// Health, then the experience bar towards your next perk, teeth and the day; under them three buttons:
+// 🎒 you (stats, gear, what you carry, perks, reputation), 📜 the journal, ⚙️ sound and a new life.
+// Your name (always Nobody), your gear and your reputation were crammed into the bar and cut off on a phone:
+// they live in 🎒 now. The ☰ panel, the side panels and the footer are gone.
+const PANELS = ['char', 'journal', 'settings'];
+function openPanel(k) {
+  if (!S || S.fight || S.end || !SC[k]) return;
+  if (S.scene === k) return panelClose();
+  if (!PANELS.includes(S.scene)) S.ret = { scene: S.scene, args: S.args };
+  go(k);
+}
+function panelClose() {
+  const r = S.ret || { scene: 'map', args: [] };
+  go(r.scene, ...(r.args || []));
 }
 function hud() {
   const h = $('hud');
@@ -222,5 +230,15 @@ function hud() {
     h.innerHTML = '<b>DUST &amp; TEETH</b>';
     return;
   }
-  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div>${(pb => (pb ? `<div class="bl">★ ${esc(pb.txt)}</div><div class="bar xp"><i style="width:${Math.round(pb.frac * 100)}%"></i></div>` : ''))(perkBar())}</div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span class="hx">🛡️ ${A[S.armor].n}</span><span class="hx">⚔️ ${W[S.weapon].n}</span><span class="hx">${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div><button class="hpanel" onclick="togglePanel()" aria-label="Journal and character">☰</button>`;
+  const pb = perkBar(),
+    q = typeof journalList === 'function' ? journalList().filter(x => !x.done).length : 0,
+    off = S.fight || ['title', 'intro', 'ending', 'restart'].includes(S.scene) ? ' disabled' : '',
+    btn = (k, t) => `<button class="hb${S.scene === k ? ' on' : ''}" onclick="openPanel('${k}')"${off}>${t}</button>`;
+  h.innerHTML =
+    `<div class="hrow"><div class="hbars"><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i><span>HP ${S.hp}/${S.maxhp}</span></div>` +
+    (pb
+      ? `<div class="bar xp"><i style="width:${Math.round(pb.frac * 100)}%"></i><span>★ ${esc(pb.txt)}</span></div>`
+      : '') +
+    `</div><div class="hstat"><span>🦷 ${S.teeth}</span><span>Day ${S.day}</span></div></div>` +
+    `<div class="hicons">${btn('char', '🎒 You')}${btn('journal', `📜 Journal${q ? ` (${q})` : ''}`)}${btn('settings', '⚙️')}</div>`;
 }

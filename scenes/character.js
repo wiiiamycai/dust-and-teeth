@@ -63,33 +63,41 @@ SC.char = () => {
       },
       'danger',
     ]);
-  o.push([
-    'Close',
-    () => {
-      const r = S.ret || { scene: 'map', args: [] };
-      go(r.scene, ...r.args);
-    },
-  ]);
+  o.push(['Close', () => panelClose()]);
   const items = Object.keys(S.inv)
     .filter(k => S.inv[k] > 0)
     .map(k => `${ITEMS[k] || k}${S.inv[k] > 1 ? ' x' + S.inv[k] : ''}`);
   const kn = keen(),
     stl = Object.keys(st)
       .map(k => `${cap(k)}: ${kn ? (k === 'twitch' ? ptw() : st[k]) : statWord(k === 'twitch' ? ptw() : st[k])}`)
-      .join('  '),
+      .join(', '),
     skl = Object.keys(sk)
       .map(k => `${cap(k)}: ${skillWord(k)}${kn ? ' (' + sk[k] + ')' : ''}`)
-      .join('  ');
+      .join(', ');
+  const wp = W[S.weapon],
+    gun = isGun(S.weapon) && !wp.free;
   show({
-    title: S.name,
-    icon: '🧍',
-    sub: `Day ${S.day} · ${S.kills} kills`,
-    text: `${stl}
+    title: 'You',
+    icon: '🎒',
+    sub: `HP ${S.hp}/${S.maxhp} · 🦷 ${S.teeth} · ${S.kills} kills`,
+    text: `GEAR
+Weapon: ${modName(S.weapon)}${gun ? ` (${S.inv.ammo || 0} bullets)` : ''}
+Armour: ${modName(S.armor)}
+
+CARRYING
+${items.join(', ') || 'Regret.'}
+
+BODY
+${stl}
+
+SKILLS
 ${skl}
-Gear: ${modName(S.weapon)}, ${modName(S.armor)}
-Perks: ${S.perks.length ? S.perks.map(p => `${PERKS[p].n} (${PERKS[p].d})`).join(', ') : 'none yet. You earn them by what you do.'}
-Carrying: ${items.join(', ') || 'regret'}
-Reputation: ${karmaTitle()}${S.titles.length ? ' · ' + S.titles.join(' · ') : ''}${S.addicted ? ' · ADDICTED' : ''}${S.f.rash ? ' · RASH' : ''}`,
+
+PERKS
+${S.perks.length ? S.perks.map(p => `${PERKS[p].n}: ${PERKS[p].d}`).join('\n') : 'None yet. You earn them by what you do.'}
+
+KNOWN AS
+${karmaTitle()}${S.titles.length ? ' · ' + S.titles.join(' · ') : ''}${S.spouse ? ` · married to ${NPC[S.spouse].n}` : ''}${S.addicted ? ' · ADDICTED' : ''}${S.f.rash ? ' · RASH' : ''}`,
     opts: o,
   });
 };

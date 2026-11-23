@@ -99,7 +99,7 @@ const PERKS = {
   tongue: { n: 'Silver Tongue', d: '+15 Speech.' },
   hombre: { n: 'Bad Hombre', d: 'Weaker nobodies sometimes flee.' },
   gut: { n: 'Iron Gut', d: 'Immune to addiction and the rash.' },
-  eagle: { n: 'Eagle Eye', d: 'Aimed shots lose half the usual penalty.' },
+  eagle: { n: 'Eagle Eye', d: 'Weak spots: you find them 45% of the time, not 30%.' },
   skin: { n: 'Thick Skin', d: '+3 damage reduction.' },
   fingers: { n: 'Sticky Fingers', d: '+15 Steal and Sneak.' },
   hands: { n: 'Bloody Hands', d: '+30% melee damage.' },
