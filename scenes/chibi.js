@@ -588,19 +588,19 @@ function chibiDraw(g, id, dir, fr) {
       legs = wear === 'dress' ? Sk : B;
     if (side) {
       const a = fr === 1 ? -2 : fr === 2 ? 2 : 0;
-      L.rect(10 + a, 25, 3, 4).rect(11 - a, 25, 3, 4);
+      L.rect(10 + a, 26, 3, 3).rect(11 - a, 26, 3, 3);
       F.rect(9 + a, 28, 4, 2).rect(10 - a, 28, 4, 2);
     } else {
       const l = fr === 1 ? -1 : 0,
         r = fr === 2 ? -1 : 0;
-      L.rect(8, 25, 3, 4 + l).rect(13, 25, 3, 4 + r);
+      L.rect(8, 26, 3, 3 + l).rect(13, 26, 3, 3 + r);
       F.rect(7, 28 + l, 4, 2).rect(13, 28 + r, 4, 2);
     }
     L.paint(g, wear === 'shorts' ? Sk : legs, o);
     F.paint(g, Sh, o);
   }
   // ---- the body ----
-  const y0 = 17 + bob + old;
+  const y0 = 19 + bob + old;
   const body = PX.mask();
   if (side) body.rect(8, y0, 9, 26 - y0 + (wear === 'robe' ? 4 : 0));
   else body.rect(bx0, y0, bx1 - bx0 + 1, 26 - y0 + bob * 0 + (wear === 'robe' ? 4 : 0));
@@ -737,7 +737,8 @@ function chibiDraw(g, id, dir, fr) {
   }
   // ---- the head ----
   const hx = side ? 11 : 12,
-    hy = 10 + bob + old;
+    hy = 11 + bob + old,
+    fy = hy + 2; // seen from above: the face sits low, under a big crown of hair
   const head = PX.mask();
   if (has('square'))
     head.rect(hx - 7, hy - 7, 15, 15).cut((x, y) => (x === hx - 7 || x === hx + 7) && (y === hy - 7 || y === hy + 7));
@@ -751,7 +752,8 @@ function chibiDraw(g, id, dir, fr) {
         .oval(side ? hx + 5 : hx, side ? hy - 7 : hy - 8, 3, 2)
         .paint(g, H, o);
   }
-  const hm = PX.mask();
+  const deep = r => (r.length > 7 ? [...r.slice(0, 7), r[6], r[6], ...r.slice(7)] : r),
+    hm = PX.mask();
   if (up) {
     if (s.hs === 'tonsure')
       hm.rows(3, hy - 1, [
@@ -784,7 +786,7 @@ function chibiDraw(g, id, dir, fr) {
       );
     else {
       hm.oval(hx + 1, hy - 1, 8, 7).cut(
-        (x, y) => (x < hx + 1 && y > hy - 4) || (x < hx - 3 && y > hy - 6) || y > hy + 5,
+        (x, y) => (x < hx + 1 && y > hy - 2) || (x < hx - 3 && y > hy - 4) || y > hy + 5,
       );
       const long = ['long', 'curly', 'bob', 'bunches'].includes(s.hs) ? (s.hs === 'long' ? 9 : 4) : 0;
       if (long) hm.rect(hx + 2, hy, 7, long + 2);
@@ -793,8 +795,13 @@ function chibiDraw(g, id, dir, fr) {
           .px(hx + 2, hy - 9)
           .px(hx + 7, hy - 7);
     }
-  } else hm.rows(3, hy - 10, CHIBI_HAIR[s.hs] || []);
+  } else hm.rows(3, hy - 10, deep(CHIBI_HAIR[s.hs] || []));
   hm.paint(g, H, o);
+  // from the side, an ear, unless the hair hides it
+  if (side && !['long', 'bob', 'curly', 'bunches'].includes(s.hs))
+    PX.mask()
+      .rect(hx + 2, fy, 3, 3)
+      .paint(g, Sk, { t: 0.6 });
   if (s.hs === 'braid')
     PX.mask()
       .rect(side ? hx + 5 : 17, hy + 4, 3, 9)
@@ -805,53 +812,54 @@ function chibiDraw(g, id, dir, fr) {
       .paint(g, H, o);
   // the face
   if (!up) {
-    const ey = hy + 1,
+    const ey = fy + 1,
       eye = (x, lash) => {
-        PX.r(g, x, ey, 1, 2, '#1a1010');
-        if (lash) PX.p(g, x + (x < hx ? -1 : 1), ey - 1, '#1a1010');
+        PX.r(g, x, ey, 2, 2, '#1a1010');
+        PX.p(g, x + (x < hx ? 1 : 0), ey + 1, '#3a2a28');
+        if (lash) PX.p(g, x < hx ? x - 1 : x + 2, ey - 1, '#1a1010');
       };
     if (has('glow') || id === 'nigel') {
       // pale, glowing eyes
     }
-    if (side) eye(hx - 5, has('lash'));
+    if (side) eye(hx - 6, has('lash'));
     else {
       eye(hx - 4, has('lash'));
-      eye(hx + 4, has('lash'));
+      eye(hx + 3, has('lash'));
     }
     const mx = side ? hx - 6 : hx;
-    if (has('grin')) PX.r(g, side ? mx - 1 : mx - 2, hy + 5, side ? 3 : 5, 1, '#f0ece0');
-    else if (has('gummy')) PX.r(g, side ? mx - 1 : mx - 1, hy + 5, 3, 1, '#d8707a');
-    else if (has('lips')) PX.r(g, side ? mx : mx - 1, hy + 5, 2, 1, '#b0303a');
-    else PX.r(g, side ? mx : mx - 1, hy + 5, 2, 1, Sk.d);
+    if (has('grin')) PX.r(g, side ? mx - 1 : mx - 2, fy + 5, side ? 3 : 5, 1, '#f0ece0');
+    else if (has('gummy')) PX.r(g, side ? mx - 1 : mx - 1, fy + 5, 3, 1, '#d8707a');
+    else if (has('lips')) PX.r(g, side ? mx : mx - 1, fy + 5, 2, 1, '#b0303a');
+    else PX.r(g, side ? mx : mx - 1, fy + 5, 2, 1, Sk.d);
     if (has('blush')) {
-      PX.r(g, side ? hx - 6 : hx - 6, hy + 3, 2, 1, '#e08a7a');
-      if (!side) PX.r(g, hx + 5, hy + 3, 2, 1, '#e08a7a');
+      PX.r(g, side ? hx - 6 : hx - 6, fy + 3, 2, 1, '#e08a7a');
+      if (!side) PX.r(g, hx + 5, fy + 3, 2, 1, '#e08a7a');
     }
     if (has('freckles'))
       [
-        [hx - 5, hy + 3],
-        [hx - 3, hy + 4],
-        [hx + 3, hy + 4],
-        [hx + 5, hy + 3],
+        [hx - 5, fy + 3],
+        [hx - 3, fy + 4],
+        [hx + 3, fy + 4],
+        [hx + 5, fy + 3],
       ].forEach(([x, y]) => !(side && x > hx) && PX.p(g, x, y, '#a86a4a'));
-    if (has('sunburn')) PX.r(g, side ? hx - 8 : hx - 1, hy + 3, 2, 1, '#e07a6a');
-    if (has('ash')) PX.rows(g, hx - 1 - (side ? 3 : 0), hy - 4, ['.a.', 'aaa', '.a.'], { a: '#3a3430' });
+    if (has('sunburn')) PX.r(g, side ? hx - 8 : hx - 1, fy + 3, 2, 1, '#e07a6a');
+    if (has('ash')) PX.rows(g, hx - 1 - (side ? 3 : 0), fy - 4, ['.a.', 'aaa', '.a.'], { a: '#3a3430' });
     if (has('glasses') && !side)
       PX.rows(g, hx - 6, ey, ['ooooo.ooooo'.padEnd(13, '.'), 'o...ooo...o'], { o: '#c8a040' });
     if (has('shades')) PX.r(g, side ? hx - 7 : hx - 6, ey, side ? 4 : 13, 2, '#14141a');
     if (has('beard') || has('white') || has('goatee')) {
       const Bd = has('white') ? R('#d8d0c0') : H;
       const bm = PX.mask();
-      if (has('goatee')) bm.rect(side ? hx - 7 : hx - 2, hy + 4, side ? 3 : 5, 4);
-      else if (side) bm.rect(hx - 7, hy + 3, 7, 5).rect(hx - 6, hy + 8, 4, 1 + (has('white') ? 2 : 0));
+      if (has('goatee')) bm.rect(side ? hx - 7 : hx - 2, fy + 4, side ? 3 : 5, 4);
+      else if (side) bm.rect(hx - 7, fy + 3, 7, 5).rect(hx - 6, fy + 8, 4, 1 + (has('white') ? 2 : 0));
       else
-        bm.rect(hx - 6, hy + 3, 13, 4)
-          .rect(hx - 5, hy + 7, 11, 1)
-          .rect(hx - 3, hy + 8, 7, has('white') ? 3 : 1);
+        bm.rect(hx - 6, fy + 3, 13, 4)
+          .rect(hx - 5, fy + 7, 11, 1)
+          .rect(hx - 3, fy + 8, 7, has('white') ? 3 : 1);
       bm.paint(g, Bd, o);
-      PX.r(g, side ? hx - 7 : hx - 2, hy + 5, side ? 2 : 4, 1, '#3a1a14');
+      PX.r(g, side ? hx - 7 : hx - 2, fy + 5, side ? 2 : 4, 1, '#3a1a14');
     }
-    if (has('moustache')) PX.r(g, side ? hx - 8 : hx - 3, hy + 4, side ? 3 : 7, 1, H.d);
+    if (has('moustache')) PX.r(g, side ? hx - 8 : hx - 3, fy + 4, side ? 3 : 7, 1, H.d);
   }
   if (has('goggles') && !up) {
     PX.r(g, side ? hx - 7 : hx - 8, hy - 3, side ? 14 : 17, 1, '#3a3a30');
