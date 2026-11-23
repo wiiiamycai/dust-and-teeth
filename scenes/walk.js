@@ -16,13 +16,8 @@ const walkSize = () => {
   VH = Math.max(7, Math.round((VW * h) / w));
 };
 const WALK_KEY = 'dust_teeth_walk';
-const walkOn = () => {
-  try {
-    return canDraw() && localStorage.getItem(WALK_KEY) !== 'text';
-  } catch (e) {
-    return false;
-  }
-};
+// Walking is the only mode wherever the game can draw (Will, v7.4). No canvas (the headless tests): text.
+const walkOn = () => canDraw();
 // ---- palette and tiles, drawn once ----
 const WPAL = {
   sand: '#e8d4a0',
@@ -296,12 +291,87 @@ const valleyTown = (x, y) =>
   Object.keys(LOC).find(k => !LOC[k].sub && onMap(k) && vx(LOC[k]) === x && vy(LOC[k]) + 1 === y);
 // ---- the walking state, kept in the save ----
 let WK = null; // the live screen: canvas, map, people, timers
-function walkMap(loc) {
+function walkMap(loc, opts, ids) {
   if (loc === 'valley') return { rows: valleyRows(), use: {}, spots: {}, valley: 1 };
-  return MAPS[loc] || null;
+  return MAPS[loc] || genMap(loc, opts || [], ids || []);
+}
+// ---- a map for every place without a hand-drawn one ----
+// Built from what's actually there: each thing you can do is a building with a door and a name board over it,
+// people stand along the paths, and the place has its own look. The same place always builds the same way.
+const THEME = {
+  farm: { fill: ',', deco: 'f', n: 6 },
+  diner: { fill: '.', deco: 'x', n: 4 },
+  chainfield: { fill: '.', deco: 'f', n: 10 },
+  skybus: { fill: '.', deco: 'x', n: 8 },
+  silo: { fill: '.', deco: '#', n: 10 },
+  snakeeyes: { fill: '.', deco: 'x', n: 3 },
+  mall: { fill: '.', deco: '~', n: 0, lake: 1 },
+  green: { fill: ',', deco: 'T', n: 4 },
+  well: { fill: 's', deco: '#', n: 12 },
+  vats: { fill: 's', deco: '~', n: 6 },
+  gristmill: { fill: ',', deco: 'x', n: 8 },
+  saltpan: { fill: '.', deco: '~', n: 6 },
+  kettle: { fill: '.', deco: 'x', n: 6 },
+  fanghill: { fill: '.', deco: 'T', n: 8 },
+};
+const optLabel = o => o[0].split(' (')[0].replace(/^"|"$/g, '').slice(0, 18);
+function genMap(loc, opts, ids) {
+  const T = THEME[loc] || { fill: '.', deco: 'x', n: 5 };
+  const acts = opts.filter(o => o && !/^Back to walking/.test(o[0]));
+  const perRow = 4,
+    houseRows = Math.max(1, Math.ceil(acts.length / perRow));
+  const W = 22,
+    H = Math.max(16, 7 + houseRows * 6);
+  const g = [];
+  for (let y = 0; y < H; y++) g.push([...(y === 0 || y === H - 1 ? '#'.repeat(W) : '#' + T.fill.repeat(W - 2) + '#')]);
+  const set = (x, y, c) => {
+    if (y > 0 && y < H - 1 && x > 0 && x < W - 1) g[y][x] = c;
+  };
+  // a seeded scatter of the place's look, kept off the middle
+  let seed = [...loc].reduce((a, c) => a * 31 + c.charCodeAt(0), 7);
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  for (let i = 0; i < T.n; i++) {
+    const x = 1 + Math.floor(rnd() * (W - 2)),
+      y = 1 + Math.floor(rnd() * (H - 2));
+    if (Math.abs(x - W / 2) > 2) set(x, y, T.deco);
+  }
+  if (T.lake) for (let x = 1; x < W - 1; x++) for (const y of [1, H - 3]) if (Math.abs(x - W / 2) > 1) set(x, y, '~');
+  // the main street, from the exit at the bottom to the top
+  const mx = Math.floor(W / 2);
+  for (let y = 2; y < H - 1; y++) set(mx, y, '=');
+  g[H - 1][mx] = 'E';
+  // buildings: a row of up to four, each a roof, a wall with a door, and a path to the street
+  const use = {},
+    boards = [];
+  acts.forEach((o, i) => {
+    const row = Math.floor(i / perRow),
+      col = i % perRow,
+      bx = [2, 6, 13, 17][col],
+      by = 2 + row * 6;
+    for (let dx = 0; dx < 3; dx++) {
+      set(bx + dx, by, 'H');
+      set(bx + dx, by + 1, dx === 1 ? 'D' : 'h');
+    }
+    for (let dx = Math.min(bx + 1, mx); dx <= Math.max(bx + 1, mx); dx++) set(dx, by + 3, '=');
+    set(bx + 1, by + 2, '=');
+    use[`${bx + 1},${by + 1}`] = { opt: o[0] };
+    boards.push({ x: bx + 1, y: by, t: optLabel(o) });
+  });
+  // people: along the cross paths, either side of the street
+  const spots = {};
+  const free = [];
+  for (let y = 4; y < H - 2; y += 3)
+    for (const x of [mx - 2, mx + 2, mx - 5, mx + 5, mx - 8, mx + 8]) free.push([x, y]);
+  ids.forEach(id => {
+    const s = free.find(([x, y]) => g[y] && TILEDEF[g[y][x]] && TILEDEF[g[y][x]].walk);
+    if (!s) return;
+    free.splice(free.indexOf(s), 1);
+    spots[id] = s;
+  });
+  return { rows: g.map(r => r.join('')), spawn: [mx, H - 2], use, spots, boards, sign: null, gen: 1 };
 }
 SC.walk = (loc, ids, opts, text) => {
-  const M = walkMap(loc);
+  const M = walkMap(loc, opts, ids);
   S.wk = S.wk || {};
   if (S.wk.loc !== loc) {
     let sp = M.spawn;
@@ -317,12 +387,7 @@ SC.walk = (loc, ids, opts, text) => {
     icon: M.valley ? '🏜️' : LOC[loc].i,
     sub: `Day ${S.day} · tap to walk, tap someone to talk`,
     text: M.valley ? 'Walk into a place to go there. Each trip takes a day.' : text || '',
-    opts: [
-      ['Back to walking', () => document.body.classList.remove('walkmenu')],
-      ...(opts || []),
-      M.valley ? ['The old map (pick a place)', () => go('map', 'text')] : null,
-      charOpt(),
-    ],
+    opts: [['Back to walking', () => document.body.classList.remove('walkmenu')], ...(opts || []), charOpt()],
   });
   walkMount(loc, M, ids || []);
 };
@@ -449,7 +514,9 @@ function walkMount(loc, M, ids) {
     .slice(-2)
     .map(p => p.textContent)
     .join(' ');
-  if (said) setTimeout(() => walkMsg(said), 0);
+  const look = ($('text').textContent || '').trim();
+  if (said || (look && S.wk.seen !== loc + S.day)) setTimeout(() => walkMsg(said || look), 0);
+  S.wk.seen = loc + S.day; // a place describes itself once a day
   // a few people wander a step or two from their spot
   WK.timers.push(
     setInterval(() => {
@@ -577,6 +644,19 @@ function walkDraw(now) {
   g.fillStyle = GP.ink;
   g.fillRect(0, 0, SW, SH);
   g.drawImage(big, Math.round(-cx), Math.round(-cy)); // the whole map, shifted; the canvas clips it
+  // name boards over the buildings of a generated place
+  for (const bd of WK.M.boards || []) {
+    g.font = 'bold 7px monospace';
+    const w = Math.ceil(g.measureText(bd.t).width) + 6,
+      bx = Math.round(bd.x * TILE + 8 - w / 2 - cx),
+      by = Math.round(bd.y * TILE - 9 - cy);
+    g.fillStyle = GP.ink;
+    g.fillRect(bx - 1, by - 1, w + 2, 11);
+    g.fillStyle = GP.white;
+    g.fillRect(bx, by, w, 9);
+    g.fillStyle = GP.ink;
+    g.fillText(bd.t, bx + 3, by + 7);
+  }
   // people are taller than a tile, so the ones further down the screen are drawn last
   const step = WK.moving ? 1 + (Math.floor(now / (STEP_MS / 2)) % 2) : 0;
   const all = [
@@ -738,6 +818,13 @@ function walkUse() {
   const c = walkTile(x, y),
     use = WK.M.use || {};
   const u = use[`${x},${y}`] || use[c];
+  if (u && u.opt) {
+    const op = (WK.opts || []).find(o => o && o[0] === u.opt);
+    if (op) {
+      walkStop();
+      return op[1]();
+    }
+  }
   if (u instanceof RegExp) {
     const op = (WK.opts || []).find(o => o && u.test(o[0]));
     if (op) {
@@ -772,7 +859,8 @@ const walkSay = t => walkMsg(t);
 // and what it would have shown becomes the people you can find and the things you can use.
 const _hubWalk = SC.hub;
 SC.hub = loc => {
-  if (!walkOn() || !MAPS[loc] || S.crater[loc]) return _hubWalk(loc);
+  if (!walkOn() || S.crater[loc] || !LOC[loc]) return _hubWalk(loc);
+  if (typeof TOWNS !== 'undefined' && TOWNS[loc]) return go('town', loc); // the lost towns have their own screen
   let v = null;
   const _show = show;
   show = x => {
@@ -791,10 +879,32 @@ SC.hub = loc => {
   if (WK) WK.opts = opts;
 };
 const _mapWalk = SC.map;
-SC.map = mode => {
-  if (!walkOn() || mode === 'text') return _mapWalk();
+SC.map = () => {
+  if (!walkOn()) return _mapWalk();
   SC.walk('valley', [], []);
 };
+// The lost towns (scenes/beasts.js) are walked too: each stage is a building you go into.
+if (typeof SC.town === 'function') {
+  const _townWalk = SC.town;
+  SC.town = k => {
+    if (!walkOn() || S.crater[k]) return _townWalk(k);
+    let v = null;
+    const _show = show;
+    show = x => {
+      v = x;
+    };
+    try {
+      _townWalk(k);
+    } finally {
+      show = _show;
+    }
+    if (!v) return;
+    if (S.scene !== 'town') return show(v);
+    const opts = (v.opts || []).filter(o => o && !/^Leave \(map\)$/.test(o[0]) && !/^Character/.test(o[0]));
+    SC.walk(k, [], opts, v.text);
+    if (WK) WK.opts = opts;
+  };
+}
 // Leaving the walking screen for any other screen stops the walking loop.
 const _goWalk = go;
 go = (id, ...args) => {
@@ -802,23 +912,3 @@ go = (id, ...args) => {
   if (id !== 'walk') walkStop();
   return _goWalk(id, ...args);
 };
-// The switch in the footer: walk, or play it all as text.
-function walkSwitch() {
-  try {
-    if (!canDraw() || typeof document === 'undefined') return;
-    const f = $('foot');
-    if (!f || $('walksw')) return;
-    const b = document.createElement('button');
-    b.id = 'walksw';
-    b.className = 'walksw';
-    const label = () => (b.textContent = walkOn() ? 'Walking: on' : 'Walking: off');
-    label();
-    b.onclick = () => {
-      localStorage.setItem(WALK_KEY, walkOn() ? 'text' : 'walk');
-      label();
-      if (S && !S.end && !S.fight) goHere();
-    };
-    f.appendChild(b);
-  } catch (e) {}
-}
-walkSwitch();
