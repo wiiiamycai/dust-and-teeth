@@ -42,6 +42,8 @@ const QUIET = [
 // Strength is what they carry: their weapon sets their damage, their armour sets their DR.
 // Level only means training: a little more accuracy, and more teeth and XP when they die.
 const BODY = 30;
+// Everyone hits far more often since v8.6, so what lands on you is cut to keep fights as dangerous as before.
+const ENEMY_DMG = 0.5;
 function mkE(n, i, lv, o) {
   o = o || {};
   const hp = Math.round(BODY * (o.hpm || 1)),
@@ -120,20 +122,32 @@ const ammo = () => S.inv.ammo || 0;
 // Out of shots? Self-charging guns (the plasma rifle) never are.
 const dry = w => isGun(w) && !W[w].free && ammo() <= 0;
 const ammoTxt = w => (W[w].free ? 'self-charging' : `${ammo()} bullets`);
+// To hit (v8.6, Will: "the miss chances are way too high, make miss chance like 10%"). A plain hit lands about
+// nine times in ten; skill, weapon, eyes and the rest still move it, a quarter as much as before, so getting
+// better still shows. Aimed shots (eyes, groin, legs, arms) keep their full cost, half again: those are the gamble.
+const HIT_BASE = 90;
 function hit(t, mod) {
   const w = W[S.weapon],
-    F = S.fight;
-  return clamp(
-    S.skills[w.t] +
-      w.a +
-      modSum(S.weapon, 'hit') +
-      (S.buzzOn ? 15 : 0) -
-      (S.addicted && !S.buzzOn ? 10 : 0) -
+    F = S.fight,
+    skill =
+      S.skills[w.t] +
+      w.a -
       t.lvl * 2 +
-      mod +
-      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 - (F && F.close && !w.close ? 10 : 0) : 10),
+      (w.t === 'guns' ? (S.stats.eyes - 5) * 2 - (F && F.close && !w.close ? 10 : 0) : 10);
+  // a gun at range strays a little more than a blade in your hand
+  return clamp(
+    Math.round(
+      HIT_BASE +
+        (skill - 50) / 4 +
+        (w.t === 'guns' && !(F && F.close) ? -6 : 0) +
+        // gear and Buzz count in full: you paid for them
+        modSum(S.weapon, 'hit') +
+        (S.buzzOn ? 15 : 0) -
+        (S.addicted && !S.buzzOn ? 10 : 0) +
+        (mod < 0 ? mod * 1.5 : mod),
+    ),
     5,
-    95,
+    97,
   );
 }
 // ---- the right tool: damage types against beast kinds (Pokemon-style matchups, Will's idea) ----
@@ -518,7 +532,7 @@ function atk(mod, part) {
     if (!alive(a)) continue;
     const tt = F.en.find(e => e.hp > 0);
     if (!tt) break;
-    if (roll(clamp(30 + lvl(a) * 5 - tt.lvl * 2, 5, 90))) {
+    if (roll(clamp(80 + lvl(a) * 2 - tt.lvl * 2, 5, 95))) {
       const d = Math.max(1, R(lvl(a), 2 + lvl(a) * 2) - tt.dr);
       tt.hp -= d;
       F.log.push(`${NPC[a].n} hits ${tt.n} for ${d}.`);
@@ -577,20 +591,22 @@ function enemy() {
       F.opening = true;
       continue;
     }
+    // They land about nine in ten too (v8.6), less the quicker you are; their damage is cut to match (ENEMY_DMG).
     const acc =
-      e.skill -
-      ptw() * 3 +
+      HIT_BASE -
+      2 +
+      (e.skill - ptw() * 3 - 17) / 4 +
       (F.charge ? 20 : 0) +
       (heavy ? heavy.acc || 0 : 0) +
       (pack && e.pack ? 10 : 0) +
       (e.raged ? 15 : 0) -
       (e.lame ? 10 : 0) -
       (e.blind ? 30 : 0);
-    if (roll(clamp(acc, 5, 95))) {
+    if (roll(clamp(Math.round(acc), 5, 97))) {
       let d = R(e.d[0], e.d[1]) + (e.raged ? 3 : 0);
       if (heavy) d *= heavy.x || 2;
       if (e.weak) d = Math.round(d * 0.6);
-      d = Math.max(1, d - pdr());
+      d = Math.max(1, Math.round((d - pdr()) * ENEMY_DMG));
       if (F.brace) d = Math.max(1, Math.round(d / 2));
       S.hp -= d;
       count('dmgTaken', d);
