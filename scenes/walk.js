@@ -395,7 +395,7 @@ function walkMount(loc, M, ids) {
   walkStop();
   walkSize();
   document.body.classList.add('walking');
-  document.body.classList.remove('walkmenu');
+  document.body.classList.remove('walkmenu', 'overlay');
   const vw = $('view');
   vw.hidden = false;
   const L = LOC[loc],
@@ -405,7 +405,8 @@ function walkMount(loc, M, ids) {
     `<div class="walk"><canvas id="wcv" width="${VW * TILE}" height="${VH * TILE}"></canvas>` +
     `<div class="whud"><div class="wl"><b>${esc(M.valley ? 'The Wasteland' : L.n)}</b><span>🦷 ${S.teeth} · Day ${S.day}</span></div>` +
     `<div class="whp"><i style="width:${hp}%"></i></div><button class="wmenu">Menu</button></div>` +
-    '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div></div>';
+    '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div>' +
+    '<div class="wab"><button class="wb" data-k="b">B</button><button class="wa" data-k="a">A</button></div></div>';
   vw.querySelector('.wmenu').addEventListener('pointerdown', e => {
     e.preventDefault();
     e.stopPropagation();
@@ -462,7 +463,7 @@ function walkMount(loc, M, ids) {
   WK.g.imageSmoothingEnabled = false;
   // input: the pad and A/B on screen, arrows or WASD and Z/X on a keyboard
   // The hidden pad: put a thumb down anywhere and drag the way you want to go. You keep walking while it's
-  // down, slide to steer, let go to stop. A quick tap with no drag walks to that spot, or talks to whoever is there.
+  // down, slide to steer, let go to stop. A tap alone does nothing (Will: "remove the touch to walk"): A and B do the rest.
   const ring = $('wring');
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
@@ -494,19 +495,27 @@ function walkMount(loc, M, ids) {
     if (!T) return;
     WK.touch = null;
     ring.hidden = true;
-    if (T.drag || cancel) {
-      WK.held = null;
-      return;
-    }
-    if (Date.now() - T.t > 500) return;
-    walkMsg(null);
-    const b = cv.getBoundingClientRect(),
-      sc = b.width / (VW * TILE);
-    walkTo(
-      Math.floor(((e.clientX - b.left) / sc + (WK.cx || 0)) / TILE),
-      Math.floor(((e.clientY - b.top) / sc + (WK.cy || 0)) / TILE),
-    );
+    WK.held = null;
   };
+  // A talks to or uses whatever you're facing. B closes a message, or opens the menu.
+  $('view')
+    .querySelectorAll('.wab button')
+    .forEach(btn =>
+      btn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!WK || WK.busy) return;
+        const m = $('wmsg');
+        if (btn.dataset.k === 'a') {
+          if (m && !m.hidden) return walkMsg(null);
+          return walkUse();
+        }
+        if (m && !m.hidden) return walkMsg(null);
+        WK.held = null;
+        document.body.classList.add('walkmenu');
+        $('wrap').scrollTop = 0;
+      }),
+    );
   cv.addEventListener('pointerup', e => lift(e, false));
   cv.addEventListener('pointercancel', e => lift(e, true));
   // A message from the place (what just happened) shows in the box when you arrive.
@@ -546,6 +555,10 @@ function walkMount(loc, M, ids) {
 function walkStop() {
   if (typeof document !== 'undefined' && document.body) document.body.classList.remove('walking');
   if (!WK) return;
+  try {
+    const bg = $('bgmap');
+    if (bg && WK.cv) bg.style.backgroundImage = `url(${WK.cv.toDataURL()})`;
+  } catch (e) {}
   cancelAnimationFrame(WK.raf);
   WK.timers.forEach(t => clearInterval(t));
   WK = null;
@@ -907,8 +920,13 @@ if (typeof SC.town === 'function') {
 }
 // Leaving the walking screen for any other screen stops the walking loop.
 const _goWalk = go;
+const NO_OVERLAY = ['title', 'intro', 'ending', 'restart'];
 go = (id, ...args) => {
-  if (typeof document !== 'undefined' && document.body) document.body.classList.remove('panel'); // a new screen closes the ☰ panel
+  if (typeof document !== 'undefined' && document.body) {
+    document.body.classList.remove('panel'); // a new screen closes the ☰ panel
+    // every screen but walking (and the title and the end) sits over the map: Pokemon style
+    document.body.classList.toggle('overlay', walkOn() && !NO_OVERLAY.includes(id));
+  }
   if (id !== 'walk') walkStop();
   return _goWalk(id, ...args);
 };

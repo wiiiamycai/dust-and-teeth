@@ -1105,3 +1105,188 @@ body {
     display: none; /* there are no number keys on a phone */
   }
 }
+/* ---- Pokemon-style screens over the map (v7.5) ----
+   Talking, shops, events and fights don't replace the map: it stays behind, a little dimmed, and the screen is
+   a dialogue box at the bottom (portrait, name, their words) with the choices in a menu box above it. */
+#bgmap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #2a1e18 center / cover no-repeat;
+  image-rendering: pixelated;
+  display: none;
+}
+body.overlay #bgmap {
+  display: block;
+}
+body.overlay #bgmap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(20, 12, 6, 0.15), rgba(20, 12, 6, 0.55));
+}
+body.overlay #wrap {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  justify-content: flex-end;
+}
+body.overlay #hud {
+  margin-bottom: auto;
+  background: rgba(20, 12, 6, 0.8);
+  border-radius: 10px;
+}
+/* the dialogue box: who, and what they say */
+body.overlay #head,
+body.overlay #log,
+body.overlay #text {
+  background: #fbf8ec;
+  color: #2a1e18;
+  text-shadow: none;
+  margin: 0;
+}
+body.overlay #head {
+  order: 3;
+  border: 3px solid #5a6a8a;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  padding: 8px 10px 2px;
+  box-shadow: 0 0 0 2px #2a1e18;
+}
+body.overlay #head h1 {
+  color: #2a1e18;
+  text-shadow: none;
+}
+body.overlay #head .sub {
+  color: #6a5a4a;
+}
+body.overlay #log {
+  order: 4;
+  border-left: 3px solid #5a6a8a;
+  border-right: 3px solid #5a6a8a;
+  padding: 0 10px;
+  box-shadow: 0 0 0 2px #2a1e18;
+}
+body.overlay #log p {
+  color: #7a3a1a;
+}
+body.overlay #text {
+  order: 5;
+  border: 3px solid #5a6a8a;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  padding: 4px 10px 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 0 2px #2a1e18;
+  max-height: 30vh;
+}
+/* the choices: a menu box over the dialogue box, like a handheld RPG */
+body.overlay #cards {
+  order: 1;
+  margin-bottom: 6px;
+}
+body.overlay #opts {
+  order: 2;
+  flex: 0 1 auto;
+  max-height: 42vh;
+  background: #fbf8ec;
+  border: 3px solid #c4583a;
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px #2a1e18;
+  margin: 0 0 8px auto;
+  width: min(100%, 360px);
+  padding: 4px;
+}
+body.overlay #opts button {
+  color: #2a1e18;
+  text-shadow: none;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #e4dcc4;
+  text-align: left;
+  width: 100%;
+  padding: 9px 8px;
+  min-height: 0;
+}
+body.overlay #opts button:last-child {
+  border-bottom: 0;
+}
+body.overlay #opts button .n {
+  color: #c4583a;
+}
+body.overlay #opts button .n::before {
+  content: '▶ ';
+  font-size: 10px;
+}
+body.overlay #opts button.danger {
+  color: #a8281a;
+}
+body.overlay #opts button:active {
+  background: #f0e4c0;
+}
+body.overlay #cards .card {
+  background: rgba(251, 248, 236, 0.92);
+  color: #2a1e18;
+  border-color: #5a6a8a;
+}
+body.overlay #cards .card .cn {
+  color: #2a1e18;
+}
+body.overlay #cards .card .cs {
+  color: #6a5a4a;
+}
+body.overlay #view {
+  order: 0;
+}
+/* A and B, bottom right, round, like a handheld */
+.walk .wab {
+  position: absolute;
+  right: 14px;
+  bottom: calc(env(safe-area-inset-bottom) + 18px);
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  z-index: 3;
+}
+.walk .wab button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font: inherit;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fbf8ec;
+  border: 3px solid rgba(42, 30, 24, 0.9);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+  touch-action: none;
+}
+.walk .wab .wa {
+  background: rgba(196, 88, 58, 0.85);
+  transform: translateY(-22px);
+}
+.walk .wab .wb {
+  background: rgba(90, 106, 138, 0.85);
+}
+.walk .wab button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.walk .wab .wa:active {
+  transform: translateY(-20px);
+}
+/* the message box sits above A and B */
+body.walking .walk .wmsg:not(.top) {
+  bottom: calc(env(safe-area-inset-bottom) + 112px);
+}
+/* over the map, the boxes are clean (no scanlines), and choices get a ▶ instead of a number */
+body.overlay #wrap {
+  z-index: 21;
+}
+body.overlay #opts button .n {
+  font-size: 0;
+}
+body.overlay #opts button .n::before {
+  font-size: 12px;
+}
