@@ -1201,51 +1201,86 @@ PORTRAIT.mayor = (g, PX, o) => {
 // Sheriff Crane: has shot a lot of people, regrets maybe two. Hat, vest, the star. Krug's ex-wife, Ruth.
 PORTRAIT.sheriff = (g, PX, o) => {
   PX.bg(g, 'rustwater');
-  const S = PX.ramp('#b88866'),
-    H = PX.ramp('#5a3a22'),
-    C = PX.ramp('#8a7a5c'),
-    V = PX.ramp('#6a5034'),
-    Hat = PX.ramp('#7a6040'),
-    St = PX.ramp('#d8b040'),
+  const S = PX.ramp('#c48e6a'),
+    H = PX.ramp('#6a3a1e'),
+    C = PX.ramp('#c8b898'),
+    V = PX.ramp('#5a3a24'),
+    Hat = PX.ramp('#7a5a3a'),
+    St = PX.ramp('#e0b840'),
     Mt = PX.ramp('#6a6a70'),
-    Wd = PX.ramp('#6a4a2a');
-  // the rifle over her shoulder, behind
-  PX.mask().line(46, 63, 58, 20, 2).paint(g, Wd);
-  PX.mask().line(57, 24, 61, 8, 1).paint(g, Mt, { line: false });
-  // shirt, a leather vest, the star
-  PX.torso(g, C, 44, 18, 46, 4, 60);
-  PX.mask().trap(46, 63, 14, 26, 6, 26).paint(g, V);
-  PX.mask().trap(46, 63, 38, 50, 38, 58).paint(g, V);
-  PX.mask().rows(15, 50, ['..o..', '.ooo.', 'ooooo', '.ooo.', 'o...o']).paint(g, St, { hi: 1 });
-  PX.mask().rect(27, 38, 10, 8).paint(g, S, { t: 0.55 });
-  PX.line(g, 28, 45, 32, 49, C.d);
-  PX.line(g, 36, 45, 32, 49, C.d);
-  // hair pulled back under the hat, a braid on her shoulder
-  PX.mask().oval(32, 26, 12, 12).paint(g, H, { hi: 1 });
-  PX.mask().line(41, 34, 44, 46, 3).paint(g, H, { hi: 1 });
-  PX.rows(g, 42, 37, ['a', '.a', 'a.', '.a', 'a.', '.a', 'a'], { a: H.d });
-  // a lean, hard face: high cheekbones, set jaw
-  PX.head(g, 32, 27, 10, 12, S, 30, 0.8);
-  PX.rows(g, 24, 30, ['l..........l', 'd..........d', '.d........d.'], { l: S.l, d: S.d });
-  // a narrow look, flat mouth
-  PX.brows(g, 25, 23, 10, ['aaaa.', '....a'], H.d);
-  PX.eyes(g, o, 26, 25, 9, { w: 4, skin: S, iris: '#5a6a4a', lash: 1, lid: 1 });
-  PX.nose(g, 32, 27, 'small', S);
-  PX.mouth(g, 32, 33, ['.ooooo.', '..ddd..'], S, '#6a3a30');
-  // a scar across her chin
-  PX.p(g, 34, 36, S.l);
-  PX.p(g, 35, 37, S.l);
-  // the hat, brim tipped low
-  PX.mask().oval(32, 15, 9, 5).paint(g, Hat, { hi: 1 });
-  PX.r(g, 24, 16, 17, 2, PX.ramp('#4a3424').m);
+    Wd = PX.ramp('#6a4a2a'),
+    Lip = PX.ramp('#b8303a');
+  // the rifle resting on her shoulder, behind her
+  PX.mask().line(50, 63, 60, 22, 2).paint(g, Wd);
+  PX.mask().line(59, 26, 62, 10, 1).paint(g, Mt, { line: false });
+  // her hair, long and loose, falling in waves over both shoulders
+  PX.mask().oval(32, 27, 14, 14).oval(19, 44, 6, 13).oval(45, 44, 6, 13).paint(g, H, { hi: 1, t: 0.66 });
+  // a shirt open at the collar, a fitted leather vest, the star
+  PX.mask().trap(46, 63, 16, 48, 6, 58).paint(g, C, { t: 0.72 });
+  PX.mask().trap(48, 63, 14, 25, 7, 23).paint(g, V, { hi: 1 });
+  PX.mask().trap(48, 63, 39, 50, 41, 57).paint(g, V, { hi: 1 });
+  // the open V of the collar: her throat and collarbones
+  PX.mask().trap(40, 50, 26, 38, 31, 33).rect(28, 38, 8, 3).paint(g, S, { t: 0.6, hi: 1 });
+  PX.line(g, 27, 45, 30, 46, S.d);
+  PX.line(g, 37, 45, 34, 46, S.d);
+  PX.line(g, 25, 43, 31, 51, C.o);
+  PX.line(g, 39, 43, 33, 51, C.o);
+  PX.mask().rows(16, 51, ['..o..', '.ooo.', 'ooooo', '.ooo.', 'o...o']).paint(g, St, { hi: 1 });
+  // the waves, lit from the top left
+  PX.rows(g, 15, 34, ['.l.', 'l..', '.l.', '..l', '.l.', 'l..', '.l.', '..l', '.l.'], { l: H.l });
+  PX.rows(g, 46, 34, ['.d.', '..d', '.d.', 'd..', '.d.', '..d', '.d.', 'd..', '.d.'], { d: H.d });
+  // an oval face, high cheekbones, a soft jaw
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.r(g, 24, 31, 2, 1, '#d8847a');
+  PX.r(g, 39, 31, 2, 1, '#d8847a');
+  PX.rows(g, 24, 29, ['l..........l'], { l: S.h });
+  // hair swept across her brow, a lock falling past one eye
   PX.mask()
-    .rows(14, 18, [
-      'oooooooooooooooooooooooooooooooooooo',
-      '.oooooooooooooooooooooooooooooooooo.',
-      '...oooooooooooooooooooooooooooooo...',
+    .spans(17, [
+      [24, 41],
+      [22, 42],
+      [22, 42],
+      [22, 34],
+      [22, 29],
+      [22, 26],
+      [22, 24],
     ])
-    .paint(g, Hat);
-  PX.r(g, 30, 11, 4, 1, Hat.d);
+    .rect(38, 20, 5, 3)
+    .rect(40, 23, 3, 6)
+    .paint(g, H, { hi: 1 });
+  // heavy-lidded green eyes with long lashes, one brow raised
+  PX.rows(g, 25, 22, ['..aaa', 'aa...'], { a: H.d });
+  PX.rows(g, 35, 21, ['.aaa.', 'a...a'], { a: H.d });
+  PX.eyes(g, o, 26, 25, 9, { w: 4, skin: S, iris: '#4a8a5a', lash: 1, lid: 1 });
+  if (!o.shut) {
+    PX.r(g, 26, 25, 4, 1, S.d);
+    PX.r(g, 35, 25, 4, 1, S.d);
+    PX.p(g, 24, 24, S.o);
+    PX.p(g, 40, 24, S.o);
+    PX.p(g, 28, 26, '#e8f0d8');
+    PX.p(g, 37, 26, '#e8f0d8');
+  }
+  PX.nose(g, 32, 27, 'small', S);
+  // full red lips, a little smirk at one corner
+  PX.rows(g, 28, 32, ['.oo.oo..', 'oaaaaaao', '.obbbbo.', '..oooo..'], { o: Lip.o, a: Lip.m, b: Lip.l });
+  PX.p(g, 36, 31, Lip.o);
+  PX.p(g, 30, 34, '#f0c0c0');
+  // the scar on her chin, so you remember who she is
+  PX.p(g, 35, 36, S.l);
+  PX.p(g, 36, 37, S.l);
+  // the hat, tipped at an angle
+  PX.mask().oval(33, 14, 9, 5).paint(g, Hat, { hi: 1 });
+  PX.r(g, 25, 15, 17, 2, PX.ramp('#4a3020').m);
+  PX.mask()
+    .rows(13, 16, [
+      '.........................ooooooooooo',
+      '...........oooooooooooooooooooooooo.',
+      'oooooooooooooooooooooooooooooooooo..',
+      '.ooooooooooooooooooooooooooooooo....',
+      '...ooooooooooooooooooooooooo........',
+    ])
+    .paint(g, Hat, { hi: 1 });
+  PX.r(g, 31, 10, 4, 1, Hat.d);
 };
 
 // Doc Ratchet: his degree is a cereal box with DOCTOR on it. Goggles up, a dirty coat, a syringe ready.
