@@ -588,28 +588,28 @@ function chibiDraw(g, id, dir, fr) {
       legs = wear === 'dress' ? Sk : B;
     if (side) {
       const a = fr === 1 ? -2 : fr === 2 ? 2 : 0;
-      L.rect(10 + a, 26, 3, 3).rect(11 - a, 26, 3, 3);
-      F.rect(9 + a, 28, 4, 2).rect(10 - a, 28, 4, 2);
+      L.rect(10 + a, 25, 3, 2).rect(11 - a, 25, 3, 2);
+      F.rect(9 + a, 27, 4, 2).rect(10 - a, 27, 4, 2);
     } else {
       const l = fr === 1 ? -1 : 0,
         r = fr === 2 ? -1 : 0;
-      L.rect(8, 26, 3, 3 + l).rect(13, 26, 3, 3 + r);
-      F.rect(7, 28 + l, 4, 2).rect(13, 28 + r, 4, 2);
+      L.rect(8, 25, 3, 2 + l).rect(13, 25, 3, 2 + r);
+      F.rect(7, 27 + l, 4, 2).rect(13, 27 + r, 4, 2);
     }
     L.paint(g, wear === 'shorts' ? Sk : legs, o);
     F.paint(g, Sh, o);
   }
   // ---- the body ----
-  const y0 = 19 + bob + old;
+  const y0 = 18 + bob + old;
   const body = PX.mask();
-  if (side) body.rect(8, y0, 9, 26 - y0 + (wear === 'robe' ? 4 : 0));
-  else body.rect(bx0, y0, bx1 - bx0 + 1, 26 - y0 + bob * 0 + (wear === 'robe' ? 4 : 0));
+  if (side) body.rect(8, y0, 9, 25 - y0 + (wear === 'robe' ? 4 : 0));
+  else body.rect(bx0, y0, bx1 - bx0 + 1, 25 - y0 + (wear === 'robe' ? 4 : 0));
   body.cut((x, y) => y === y0 && (x === (side ? 8 : bx0) || x === (side ? 16 : bx1)));
   body.paint(g, T, o);
   // trousers up to the belt, a skirt, a long coat
   if (wear === 'trousers' || wear === 'shorts')
     PX.mask()
-      .rect(side ? 8 : bx0, 23 + bob, side ? 9 : bx1 - bx0 + 1, 3 - bob)
+      .rect(side ? 8 : bx0, 22 + bob, side ? 9 : bx1 - bx0 + 1, 3 - bob)
       .paint(g, B, o);
   if (wear === 'dress')
     PX.mask()
@@ -617,10 +617,10 @@ function chibiDraw(g, id, dir, fr) {
       .paint(g, B, o);
   if (wear === 'robe') {
     PX.mask()
-      .trap(20 + bob, 29, side ? 8 : bx0, side ? 16 : bx1, side ? 6 : bx0 - 2, side ? 18 : bx1 + 2)
+      .trap(19 + bob, 28, side ? 8 : bx0, side ? 16 : bx1, side ? 6 : bx0 - 2, side ? 18 : bx1 + 2)
       .paint(g, T, o);
-    PX.r(g, side ? 7 : 9, 29, 3, 1, Sh.o);
-    PX.r(g, side ? 11 : 13, 29, 3, 1, Sh.o);
+    PX.r(g, side ? 7 : 9, 28, 3, 1, Sh.o);
+    PX.r(g, side ? 11 : 13, 28, 3, 1, Sh.o);
   }
   if (wear === 'coat') {
     const C = R(s.coat);
@@ -725,15 +725,15 @@ function chibiDraw(g, id, dir, fr) {
   const sleeve = wear === 'coat' ? R(s.coat) : T,
     hand = has('gloves') ? R('#a82a24') : Sk,
     arm = (x, y, w) => {
-      PX.mask().rect(x, y, w, 5).paint(g, sleeve, o);
+      PX.mask().rect(x, y, w, 3).paint(g, sleeve, o);
       PX.mask()
-        .rect(x, y + 5, w, has('gloves') ? 3 : 2)
+        .rect(x, y + 3, w, has('gloves') ? 3 : 2)
         .paint(g, hand, o);
     };
   if (side) arm(fr === 1 ? 10 : fr === 2 ? 13 : 11, y0 + 1, 3);
   else {
-    arm(bx0 - 2, y0 + 1 + (fr === 1 ? 1 : 0), 3);
-    arm(bx1, y0 + 1 + (fr === 2 ? 1 : 0), 3);
+    arm(bx0 - 3, y0 + (fr === 1 ? 1 : 0), 3);
+    arm(bx1 + 1, y0 + (fr === 2 ? 1 : 0), 3);
   }
   // ---- the head ----
   const hx = side ? 11 : 12,
@@ -742,7 +742,7 @@ function chibiDraw(g, id, dir, fr) {
   const head = PX.mask();
   if (has('square'))
     head.rect(hx - 7, hy - 7, 15, 15).cut((x, y) => (x === hx - 7 || x === hx + 7) && (y === hy - 7 || y === hy + 7));
-  else head.oval(hx, hy, 8, 8);
+  else head.oval(hx, hy, side ? 8 : 9, 8);
   if (side) head.px(hx - 9, hy + 2);
   head.paint(g, Sk, { t: 0.74, hi: 1 });
   // hair
@@ -752,7 +752,7 @@ function chibiDraw(g, id, dir, fr) {
         .oval(side ? hx + 5 : hx, side ? hy - 7 : hy - 8, 3, 2)
         .paint(g, H, o);
   }
-  const deep = r => (r.length > 7 ? [...r.slice(0, 7), r[6], r[6], ...r.slice(7)] : r),
+  const deep = r => (r.length > 7 ? [...r.slice(0, 7), r[6], r[6], r[6], r[6], ...r.slice(7)] : r),
     hm = PX.mask();
   if (up) {
     if (s.hs === 'tonsure')
@@ -767,8 +767,8 @@ function chibiDraw(g, id, dir, fr) {
     else if (s.hs === 'bald')
       hm.rows(3, hy, ['..o.............o', '..oo...........oo', '..ooo.........ooo', '...oo.........oo']);
     else {
-      hm.oval(hx, hy, 8, 8).cut((x, y) => y > hy + 5);
-      const rows = CHIBI_HAIR[s.hs] || [];
+      hm.oval(hx, hy, 9, 8).cut((x, y) => y > hy + 7);
+      const rows = deep(CHIBI_HAIR[s.hs] || []);
       hm.rows(
         3,
         hy - 10,
@@ -785,9 +785,7 @@ function chibiDraw(g, id, dir, fr) {
           : ['...ooo', '..oooo', '...ooo'],
       );
     else {
-      hm.oval(hx + 1, hy - 1, 8, 7).cut(
-        (x, y) => (x < hx + 1 && y > hy - 2) || (x < hx - 3 && y > hy - 4) || y > hy + 5,
-      );
+      hm.oval(hx + 1, hy, 8, 8).cut((x, y) => (x < hx + 1 && y > hy + 1) || (x < hx - 3 && y > hy - 1) || y > hy + 7);
       const long = ['long', 'curly', 'bob', 'bunches'].includes(s.hs) ? (s.hs === 'long' ? 9 : 4) : 0;
       if (long) hm.rect(hx + 2, hy, 7, long + 2);
       if (s.hs === 'messy' || s.hs === 'wild')
@@ -812,7 +810,7 @@ function chibiDraw(g, id, dir, fr) {
       .paint(g, H, o);
   // the face
   if (!up) {
-    const ey = fy + 1,
+    const ey = fy + 2,
       eye = (x, lash) => {
         PX.r(g, x, ey, 2, 2, '#1a1010');
         PX.p(g, x + (x < hx ? 1 : 0), ey + 1, '#3a2a28');
@@ -827,10 +825,10 @@ function chibiDraw(g, id, dir, fr) {
       eye(hx + 3, has('lash'));
     }
     const mx = side ? hx - 6 : hx;
-    if (has('grin')) PX.r(g, side ? mx - 1 : mx - 2, fy + 5, side ? 3 : 5, 1, '#f0ece0');
-    else if (has('gummy')) PX.r(g, side ? mx - 1 : mx - 1, fy + 5, 3, 1, '#d8707a');
-    else if (has('lips')) PX.r(g, side ? mx : mx - 1, fy + 5, 2, 1, '#b0303a');
-    else PX.r(g, side ? mx : mx - 1, fy + 5, 2, 1, Sk.d);
+    if (has('grin')) PX.r(g, side ? mx - 1 : mx - 2, fy + 4, side ? 3 : 5, 1, '#f0ece0');
+    else if (has('gummy')) PX.r(g, side ? mx - 1 : mx - 1, fy + 4, 3, 1, '#d8707a');
+    else if (has('lips')) PX.r(g, side ? mx : mx - 1, fy + 4, 2, 1, '#b0303a');
+    else PX.r(g, side ? mx : mx - 1, fy + 4, 2, 1, Sk.d);
     if (has('blush')) {
       PX.r(g, side ? hx - 6 : hx - 6, fy + 3, 2, 1, '#e08a7a');
       if (!side) PX.r(g, hx + 5, fy + 3, 2, 1, '#e08a7a');
@@ -857,7 +855,7 @@ function chibiDraw(g, id, dir, fr) {
           .rect(hx - 5, fy + 7, 11, 1)
           .rect(hx - 3, fy + 8, 7, has('white') ? 3 : 1);
       bm.paint(g, Bd, o);
-      PX.r(g, side ? hx - 7 : hx - 2, fy + 5, side ? 2 : 4, 1, '#3a1a14');
+      PX.r(g, side ? hx - 7 : hx - 2, fy + 4, side ? 2 : 4, 1, '#3a1a14');
     }
     if (has('moustache')) PX.r(g, side ? hx - 8 : hx - 3, fy + 4, side ? 3 : 7, 1, H.d);
   }
@@ -879,7 +877,7 @@ function chibiDraw(g, id, dir, fr) {
   // ---- hats ----
   if (s.hat) chibiHat(g, s.hat, R(s.hatc), hx, hy, dir);
   // ---- what they carry, in the right hand, facing you or to the side ----
-  if (s.hold && !up) chibiHold(g, s.hold, side ? 12 : bx1 + 1, y0 + 7);
+  if (s.hold && !up) chibiHold(g, s.hold, side ? 12 : bx1 + 2, y0 + 4);
   return true;
 }
 function chibiHat(g, k, C, hx, hy, dir) {
@@ -887,10 +885,10 @@ function chibiHat(g, k, C, hx, hy, dir) {
     up = dir === 'up',
     o = { t: 0.72, hi: 1 },
     M = () => PX.mask();
-  const top = hy - 8;
+  const top = hy - 5;
   if (k === 'cap' || k === 'military') {
     M()
-      .oval(hx + (side ? 1 : 0), top + 3, 8, 4)
+      .oval(hx + (side ? 1 : 0), top + 1, 9, 6)
       .cut((x, y) => y > top + 5)
       .paint(g, C, o);
     if (side)
@@ -908,7 +906,7 @@ function chibiHat(g, k, C, hx, hy, dir) {
     if (k === 'military' && !up && !side) PX.p(g, hx, top + 2, '#c8a040');
   } else if (k === 'brim' || k === 'straw') {
     M()
-      .oval(hx + (side ? 1 : 0), top + 1, 6, 3)
+      .oval(hx + (side ? 1 : 0), top, 7, 5)
       .paint(g, C, o);
     M()
       .rect(side ? hx - 10 : hx - 11, top + 4, side ? 22 : 23, 2)
@@ -941,14 +939,14 @@ function chibiHat(g, k, C, hx, hy, dir) {
     if (!up) [hx - 4, hx, hx + 4].forEach(x => PX.p(g, x, top - 1, '#f0e8d0'));
   } else if (k === 'rag') {
     M()
-      .oval(hx + (side ? 1 : 0), top + 2, 8, 3)
+      .oval(hx + (side ? 1 : 0), top, 9, 5)
       .paint(g, C, o);
     if (!side)
       M()
         .rect(hx + 6, top + 1, 3, 2)
         .paint(g, C, o);
   } else if (k === 'headset') {
-    PX.r(g, hx - 7, top, 15, 1, C.o);
+    PX.r(g, hx - 7, top - 3, 15, 1, C.o);
     if (!side) {
       M()
         .rect(hx - 9, hy - 1, 3, 4)
