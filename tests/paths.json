@@ -62,7 +62,7 @@
    "RAND:0.99",
    "EVAL:attempt('green.outflow')",
    "EXPECT:!canTry('green.outflow')",
-   "EVAL:S.n.warden.op += 50; S.day += 30",
+   "EVAL:S.n.warden.op += 50; S.day += DAYS(30)",
    "EXPECT:!canTry('green.outflow')",
    "EVAL:S.tried['king.talk'] = { n: 1, day: S.day, lock: 'once', who: 'king', op: null, kf: null }",
    "EXPECT:!canTry('king.talk')",
@@ -252,7 +252,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.n.hector.op = -80",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.bertWarned && hostile('bert') && S.n.bert.st.wep === 'rifle'"
   ]
  },
@@ -262,9 +262,9 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.n.gus.op = -60",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.tipped === 'gus' && !S.f.netNight",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.f.netNight === 'gus'",
    "Your shack",
    "Sleep until tomorrow",
@@ -280,7 +280,7 @@
    "EVAL:globalThis.m = S.n.moe.op",
    "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
    "EXPECT:S.later.length === 1 && S.n.moe.op === m",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.moe.op >= m + 15 && S.later.length === 0"
   ]
  },
@@ -538,9 +538,9 @@
    "Crawl out of bed",
    "Go",
    "EXPECT:molarCrew().length === 2 && molarCrew().every(e => e.lvl === 4)",
-   "EVAL:S.day = 12",
+   "EVAL:S.day = DAYS(12)",
    "EXPECT:molarCrew().some(e => e.lvl === 5)",
-   "EVAL:S.day = 17",
+   "EVAL:S.day = DAYS(17)",
    "EXPECT:molarCrew().length === 3"
   ]
  },
@@ -676,7 +676,7 @@
    "EVAL:becomeLover('gloria'); learn('sheriff', S.ev[S.ev.length - 1])",
    "EXPECT:!lover('sheriff') && S.f.craneSuspect && S.n.sheriff.op <= -20",
    "EXPECT:!heard('sheriff', 'murder', 'pell')",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.ev.some(e => e.type === 'murder' && e.v === 'pell' && !e.secret && e.wit.includes('sheriff'))"
   ]
  },
@@ -688,9 +688,9 @@
    "EVAL:S.lovers.lou = { day: 1 }",
    "EVAL:becomeLover('gloria'); learn('lou', S.ev[S.ev.length - 1])",
    "EXPECT:S.f.thursday === 'gloria' && alive('gloria')",
-   "WAIT:6",
+   "WAIT:29",
    "EXPECT:alive('gloria')",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('gloria') && S.f.thursdayDone === 'gloria'",
    "EVAL:go('hub', 'diner')",
    "SAY:THURSDAY SPECIAL: GLORIA"
@@ -776,7 +776,7 @@
    "SAY:You riding with me?",
    "It's your fight",
    "EXPECT:alive('krug')",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:!alive('krug') && S.f.krugHow === 'crane' && alive('sheriff') && S.f.freed"
   ]
  },
@@ -794,7 +794,7 @@
    "SAY:You riding with me?",
    "It's your fight",
    "RAND:0.99",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:!alive('sheriff') && S.f.craneHow === 'died' && alive('krug')"
   ]
  },
@@ -818,7 +818,7 @@
    "Krug",
    "Crane is coming for you",
    "EXPECT:S.f.raidBetrayed && S.titles.includes('Sold Out the Law')",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:!alive('sheriff') && S.f.craneHow === 'ambushed' && alive('krug')"
   ]
  },
@@ -839,7 +839,7 @@
    "Back",
    "Leave (map)",
    "TRAVEL:Chainfield",
-   "WAIT:2",
+   "EVAL:waitFor(S.f.craneRaid)",
    "EVAL:go('hub', 'chainfield')",
    "SAY:Ready?",
    "Go in with them",
@@ -855,7 +855,7 @@
    "EVAL:give('krugbook'); S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; go('throne')",
    "Krug has been selling you dying men",
    "EXPECT:S.f.molarsSent && !has('krugbook')",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:!alive('krug') && S.f.chainfieldBurned && S.n.bess.loc === 'gone' && molarCrew().length >= 3",
    "EVAL:go('hub', 'chainfield')",
    "SAY:Krug's head watches the road"
@@ -871,7 +871,7 @@
    "RAND:0",
    "Tell your King",
    "EXPECT:S.f.molarsSent",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:!alive('krug') && S.f.krugHow === 'molars'"
   ]
  },
@@ -885,7 +885,7 @@
    "RAND:0",
    "changes guards at midnight",
    "EXPECT:S.f.hectorWent === 'bess'",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('krug') && S.f.krugHow === 'hector' && alive('hector') && S.n.bess.loc === 'farm'"
   ]
  },
@@ -898,7 +898,7 @@
    "RAND:0",
    "Go and get her yourself",
    "RAND:0.99",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('hector') && alive('krug') && S.ev.some(e => e.type === 'sentdeath' && e.v === 'hector')"
   ]
  },
@@ -1086,7 +1086,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "WAIT:10",
+   "WAIT:48",
    "EXPECT:!alive('mayor') && S.f.docPump && S.f.plot_poison === 'done'"
   ]
  },
@@ -1101,7 +1101,7 @@
    "Mayor Fenwick",
    "Stop drinking the Doc's tea",
    "EXPECT:S.f.plot_poison === 'stopped'",
-   "EVAL:S.day = 20; runPlots()",
+   "EVAL:S.day = DAYS(20); runPlots()",
    "EXPECT:alive('mayor') && S.n.doc.op <= -40"
   ]
  },
@@ -1110,7 +1110,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.day = 8",
+   "EVAL:S.day = DAYS(8)",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "EXPECT:knew('plot.route')",
@@ -1118,7 +1118,7 @@
    "Caravan Jeb",
    "Krug's men are coming",
    "EXPECT:S.f.plot_route === 'stopped' && S.f.jebCheap",
-   "EVAL:S.day = 13; runPlots()",
+   "EVAL:S.day = DAYS(13); runPlots()",
    "EXPECT:alive('jeb') && !S.f.routeHit"
   ]
  },
@@ -1133,7 +1133,7 @@
    "Krug",
    "I know which road Jeb takes",
    "EXPECT:S.f.routeSold",
-   "EVAL:S.day = 12; runPlots()",
+   "EVAL:S.day = DAYS(12); runPlots()",
    "EXPECT:!alive('jeb') && S.f.plot_route === 'done'"
   ]
  },
@@ -1142,7 +1142,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "WAIT:9",
+   "WAIT:43",
    "EXPECT:!alive('pig') && S.f.porkDone"
   ]
  },
@@ -1211,7 +1211,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "WAIT:10",
+   "WAIT:48",
    "EXPECT:!alive('mayor') && !document.getElementById('log').innerHTML.includes('Fenwick died')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -1228,7 +1228,7 @@
    "SAY:Junior, with a sack",
    "RAND:0",
    "Go home, Junior",
-   "EXPECT:S.f.plot_pork === 'stopped' && alive('pig') && S.day === 9"
+   "EXPECT:S.f.plot_pork === 'stopped' && alive('pig') && S.day === DAYS(9)"
   ]
  },
  {
@@ -1241,7 +1241,7 @@
    "TRAVEL:Rustwater",
    "Caravan Jeb",
    "ride guard",
-   "EXPECT:S.fight && S.day === 11",
+   "EXPECT:S.fight && S.day === DAYS(11)",
    "FIGHT",
    "EXPECT:S.f.plot_route === 'stopped' && S.f.jebCheap"
   ]
@@ -1258,7 +1258,7 @@
    "RAND:0",
    "Swap the vial",
    "EXPECT:S.f.vialSwapped && S.f.plot_poison === 'stopped'",
-   "EVAL:S.day = 12; runPlots()",
+   "EVAL:S.day = DAYS(12); runPlots()",
    "EXPECT:alive('mayor') && alive('doc')"
   ]
  },
@@ -1422,7 +1422,7 @@
    "Cards with Dice",
    "RAND:99",
    "Deal yourself a better hand",
-   "EXPECT:S.f.banUntil === S.day + 3 && !HUBO.snakeeyes().length",
+   "EXPECT:S.f.banUntil === S.day + DAYS(3) && !HUBO.snakeeyes().length",
    "SAY:not coming in today"
   ]
  },
@@ -1493,7 +1493,7 @@
    "Sweet Nan",
    "I need a loan",
    "EXPECT:S.f.debt === 150",
-   "WAIT:7",
+   "WAIT:34",
    "EXPECT:S.f.debtSold && S.f.collectors === 'krug'",
    "Back",
    "EXPECT:S.fight && S.fight.en.length === 2 && S.fight.en.every(e => e.cap) && !S.f.collectors"
@@ -1510,7 +1510,7 @@
    "I need a loan",
    "EVAL:S.teeth = 200",
    "Here's what I owe",
-   "WAIT:8",
+   "WAIT:38",
    "EXPECT:!S.f.debtSold && !S.f.collectors"
   ]
  },
@@ -1519,7 +1519,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "WAIT:14",
+   "WAIT:67",
    "EXPECT:!alive('tam') && S.f.plot_fightnight === 'done'"
   ]
  },
@@ -1542,7 +1542,7 @@
    "Gus",
    "Your brother Tam is alive",
    "EXPECT:S.n.gus.loc === 'snakeeyes' && S.f.brothers",
-   "EVAL:S.day = 14; runPlots()",
+   "EVAL:S.day = DAYS(14); runPlots()",
    "EXPECT:alive('tam') && S.f.tamWon && S.teeth >= 200"
   ]
  },
@@ -1556,7 +1556,7 @@
    "EVAL:know('plot.fightnight')",
    "Big Tam",
    "Let me fight the Incisor",
-   "EXPECT:S.fight && S.day === 14",
+   "EXPECT:S.fight && S.day === DAYS(14)",
    "FIGHT",
    "EXPECT:S.f.incisorBeat && alive('tam') && S.titles.includes('Killer of the Incisor')"
   ]
@@ -1816,8 +1816,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 12",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(12)",
+   "WAIT:5",
    "EXPECT:!alive('eel') && S.f.eelEaten && S.f.plot_widow === 'done'",
    "Leave (map)",
    "TRAVEL:Mama Lou's",
@@ -1830,11 +1830,11 @@
    "Crawl out of bed",
    "Go",
    "Leave (map)",
-   "EVAL:S.f.raid = 1; S.day = 10",
+   "EVAL:S.f.raid = 1; S.day = DAYS(10)",
    "TRAVEL:The Drowned Mall",
    "SAY:LAST SEEN: MAMA LOU'S",
    "EXPECT:knew('plot.widow')",
-   "EVAL:S.f.raid = 1; S.day = 12",
+   "EVAL:S.f.raid = 1; S.here = 'mall'; S.day = DAYS(13) - tripDays('diner')",
    "Leave (map)",
    "TRAVEL:Mama Lou's",
    "SAY:EEL, TUESDAY ONLY"
@@ -1853,7 +1853,7 @@
    "we go together",
    "FIGHT",
    "EXPECT:!alive('lou') && alive('eel') && S.f.eelKilledLou && S.here === 'diner'",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:alive('eel')"
   ]
  },
@@ -1869,7 +1869,7 @@
    "Lou cooked him",
    "Let her go alone",
    "RAND:0",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('lou') && alive('eel') && S.f.eelKilledLou"
   ]
  },
@@ -1885,7 +1885,7 @@
    "Lou cooked him",
    "Let her go alone",
    "RAND:0.99",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:alive('lou') && !alive('eel') && S.f.eelEaten"
   ]
  },
@@ -1899,7 +1899,7 @@
    "TRAVEL:The Drowned Mall",
    "Eel",
    "Pete told Lou",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:!alive('pete') && !alive('eel') && S.f.eelHanged"
   ]
  },
@@ -1917,7 +1917,7 @@
    "TRAVEL:Rustwater",
    "Pete",
    "She's coming",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:alive('pete') && alive('eel') && S.f.eelDisarmed"
   ]
  },
@@ -1932,7 +1932,7 @@
    "Eel",
    "guard badge",
    "EXPECT:S.f.eelBadge && knew('eel.secret') && S.f.plot_widow === 'stopped' && !has('badge')",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:alive('eel')"
   ]
  },
@@ -1962,7 +1962,7 @@
    "Mama Lou",
    "widow is asking",
    "EXPECT:S.teeth >= 55",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('eel') && S.f.eelSold"
   ]
  },
@@ -1971,8 +1971,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 16",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(16)",
+   "WAIT:5",
    "EXPECT:S.f.docRunOut && S.n.doc.loc === 'gone' && alive('doc') && S.n.vane.loc === 'rustwater' && S.f.vaneRules",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -1984,8 +1984,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.dead.sheriff = 1; S.day = 16",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.dead.sheriff = 1; S.day = DAYS(16)",
+   "WAIT:5",
    "EXPECT:!alive('doc') && S.f.docLynched"
   ]
  },
@@ -1995,7 +1995,7 @@
    "Crawl out of bed",
    "Go",
    "Leave (map)",
-   "EVAL:S.f.raid = 1; S.day = 13",
+   "EVAL:S.f.raid = 1; S.day = DAYS(13)",
    "TRAVEL:The Drowned Mall",
    "SAY:stamped RATCHET",
    "EXPECT:knew('plot.drugwar')"
@@ -2012,8 +2012,8 @@
    "Doc Ratchet",
    "cutting Buzz",
    "EXPECT:S.f.docWarned && S.f.plot_drugwar === 'stopped'",
-   "EVAL:S.f.raid = 1; S.day = 16",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(16)",
+   "WAIT:5",
    "EXPECT:S.n.doc.loc === 'rustwater'"
   ]
  },
@@ -2028,7 +2028,7 @@
    "Dr. Vane",
    "onto Moe's bar",
    "EXPECT:S.teeth >= 140",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.plot_drugwar === 'done' && S.f.docRunOut"
   ]
  },
@@ -2082,7 +2082,7 @@
    "Sprocket",
    "Attack Sprocket",
    "FIGHT",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('sprocket') && S.f.jebUp === 1 && S.n.jeb.rx.some(l => /guns that don't work/.test(l))"
   ]
  },
@@ -2109,7 +2109,7 @@
    "Gums",
    "Attack Gums",
    "FIGHT",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.bess.rx.some(l => /Nobody buys/.test(l))"
   ]
  },
@@ -2123,8 +2123,9 @@
    "EXPECT:!$('map').children.some(b => /The Green/.test(b.innerHTML))",
    "EVAL:learnGreen(); go('map')",
    "SAY:dust storms",
+   "EVAL:globalThis.d0 = S.day + tripDays('green')",
    "TRAVEL:The Green",
-   "EXPECT:S.here === 'skybus' && S.day === 2",
+   "EXPECT:S.here === 'skybus' && S.day === d0",
    "EVAL:go('hub', 'green')",
    "EXPECT:S.here === 'skybus'",
    "EVAL:go('hub', 'vats')",
@@ -2137,25 +2138,28 @@
    "Crawl out of bed",
    "Go",
    "Leave (map)",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 13; go('map')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(13); go('map')",
+   "EVAL:globalThis.d0 = S.day + tripDays('green')",
    "TRAVEL:The Green",
-   "EXPECT:S.here === 'skybus' && S.day === 14"
+   "EXPECT:S.here === 'skybus' && S.day === d0 && S.day < GREEN_DAY"
   ]
  },
  {
-  "name": "Green gate: from day 15 the pass is open, a day each way like any road, and the Warden is at the gate",
+  "name": "Green gate: from day 72 the pass is open, a day a town like any road, and the Warden is at the gate",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Leave (map)",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('map')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); go('map')",
+   "EVAL:globalThis.d0 = S.day + tripDays('green')",
    "TRAVEL:The Green",
-   "EXPECT:S.here === 'green' && S.day === 16 && !S.f.greenIn",
+   "EXPECT:S.here === 'green' && S.day === d0 && !S.f.greenIn",
    "SAY:The Warden",
    "EXPECT:!$('cards').children.some(c => /Gardener|Fern/.test(c.innerHTML))",
    "Leave (map)",
+   "EVAL:globalThis.d1 = S.day + tripDays('rustwater')",
    "TRAVEL:Rustwater",
-   "EXPECT:S.here === 'rustwater' && S.day === 17"
+   "EXPECT:S.here === 'rustwater' && S.day === d1"
   ]
  },
  {
@@ -2195,11 +2199,11 @@
    "EXPECT:!cur.some(o => /All the way/.test(o[0]))",
    "SAY:Ride the caravan east, forever",
    "Back",
-   "EVAL:S.f.raid = 1; S.day = 15; know('jeb.secret')",
+   "EVAL:S.f.raid = 1; S.day = DAYS(15); know('jeb.secret')",
    "Caravan Jeb",
    "RAND:0",
    "All the way, this time",
-   "EXPECT:S.here === 'green' && S.f.greenIn && S.f.jebEast && S.day === 16",
+   "EXPECT:S.here === 'green' && S.f.greenIn && S.f.jebEast && S.day === DAYS(15) + 1",
    "SAY:The Gardener",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -2211,7 +2215,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.f.tractorRuns = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; S.f.tractorRuns = 1; learnGreen(); S.day = DAYS(15); go('hub', 'green')",
    "I can pay. Teeth",
    "SAY:What would we buy, a smile",
    "RAND:0",
@@ -2227,7 +2231,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('warden.secret'); S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('warden.secret'); S.day = DAYS(15); go('hub', 'green')",
    "Corporal Grit",
    "EXPECT:S.f.greenIn && S.n.warden.op < 0"
   ]
@@ -2237,7 +2241,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); go('hub', 'green')",
    "RAND:0",
    "outflow pipe",
    "EXPECT:S.here === 'vats' && S.f.greenIn && S.f.vatsFound",
@@ -2254,7 +2258,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.f.wardenJob = 'done'; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; S.f.wardenJob = 'done'; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; go('hub', 'green')",
    "RAND:0",
    "seed house",
    "EXPECT:S.inv.seeds === 3",
@@ -2266,13 +2270,13 @@
    "EXPECT:knew('hector.dying')",
    "Seeds. Real ones",
    "EXPECT:S.inv.seeds === 2",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.f.harvest && S.f.greenBroken && S.f.greenOut && S.n.fern.loc === 'farm'",
    "EVAL:goHere()",
    "SAY:Green shoots",
    "SAY:Hector's corn",
-   "EVAL:S.f.raid = 1; S.day = 22",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(22)",
+   "WAIT:5",
    "EXPECT:!S.f.farmFailed"
   ]
  },
@@ -2281,8 +2285,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 21",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(21)",
+   "WAIT:5",
    "EXPECT:S.f.farmFailed && S.n.hector.rx.some(l => /sold the tractor/.test(l))"
   ]
  },
@@ -2304,7 +2308,7 @@
    "TRAVEL:Rustwater",
    "Mayor Fenwick",
    "Yours for 150 teeth",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.f.scrapGrows && S.f.juniorGrows && S.f.mayorVeg && !has('seeds') && S.teeth >= 150"
   ]
  },
@@ -2313,7 +2317,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; go('hub', 'green')",
    "The Gardener",
    "Why keep it so small",
    "Your secret is safe",
@@ -2328,7 +2332,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.f.wardenJob = 'done'; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; S.f.wardenJob = 'done'; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; go('hub', 'green')",
    "The Gardener",
    "Your secret is safe",
    "Back",
@@ -2339,7 +2343,7 @@
    "TRAVEL:Hector's Farm",
    "Hector",
    "Seeds. Real ones",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.f.oathBroken && S.f.wardenHunt",
    "Back",
    "ENCOUNTERS",
@@ -2353,7 +2357,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; go('hub', 'green')",
    "REAL",
    "EVAL:globalThis.p0 = chanceOf('gardener.seeds'); know('gardener.secret')",
    "EXPECT:chanceOf('gardener.seeds') >= p0 + 15",
@@ -2368,13 +2372,13 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; know('moss.secret'); learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; know('moss.secret'); learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "Go down to the vats",
    "Moss",
    "RAND:0",
    "Pick the lock",
    "EXPECT:S.f.mossFree && S.n.moss.loc === 'well'",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.f.greenDark",
    "EXPECT:greenLines().some(l => /Two lights in the dark/.test(l))"
   ]
@@ -2384,7 +2388,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "Go down to the vats",
    "Moss",
    "EXPECT:!cur.some(o => /Pick the lock/.test(o[0]))",
@@ -2397,7 +2401,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('moss.secret'); know('gardener.secret'); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('moss.secret'); know('gardener.secret'); S.day = DAYS(15); S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "RAND:0",
    "Stand on the long table",
    "EXPECT:S.f.fernRules && S.f.mossShifts",
@@ -2410,8 +2414,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 20",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(20)",
+   "WAIT:5",
    "EXPECT:!alive('fern') && S.f.plot_gate === 'done'"
   ]
  },
@@ -2420,12 +2424,12 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); know('warden.rule'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); know('warden.rule'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "Fern",
    "hold the lamp",
    "RAND:0",
    "Forty isn't a wall",
-   "EXPECT:S.f.gateOpen && alive('fern') && S.day === 21",
+   "EXPECT:S.f.gateOpen && alive('fern') && S.day === DAYS(21)",
    "SAY:eating with both hands"
   ]
  },
@@ -2434,7 +2438,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "Fern",
    "hold the lamp",
    "Fight the Warden",
@@ -2447,7 +2451,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); know('hector.dying'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); know('hector.dying'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "Fern",
    "RAND:0",
    "open the valley",
@@ -2459,7 +2463,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "The Gardener",
    "Fern is going to open",
    "EXPECT:!alive('fern') && S.f.fernComposted && S.karma < 0"
@@ -2470,11 +2474,11 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('plot.gate'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "The Warden",
    "Don't shoot her",
    "EXPECT:S.f.fernLocked && alive('fern')",
-   "WAIT:5",
+   "WAIT:24",
    "EXPECT:alive('fern')"
   ]
  },
@@ -2483,10 +2487,10 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.dead.warden = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.dead.warden = 1; go('hub', 'green')",
    "EXPECT:S.f.greenIn",
    "EVAL:S.dead.gardener = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.fernRules && S.n.fern.rx.some(l => /count badly/.test(l))"
   ]
  },
@@ -2496,7 +2500,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.dead.moss = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.greenDark && S.n.nigel.rx.length"
   ]
  },
@@ -2505,7 +2509,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.f.tractorRuns = 1; learnGreen(); S.n.gloria.loc = 'east'; S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; S.f.tractorRuns = 1; learnGreen(); S.n.gloria.loc = 'east'; S.day = DAYS(15); go('hub', 'green')",
    "EXPECT:S.n.gloria.loc === 'green'",
    "SAY:tent made from a dress",
    "RAND:0",
@@ -2533,7 +2537,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.n.dice.loc = 'east'; S.f.vaultRobbed = 1; S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.n.dice.loc = 'east'; S.f.vaultRobbed = 1; S.day = DAYS(15); go('hub', 'green')",
    "EXPECT:S.n.dice.loc === 'green'",
    "Dice! Tell them",
    "EXPECT:S.f.greenIn",
@@ -2593,7 +2597,7 @@
    "Junior",
    "EXPECT:knew('pete.secret')",
    "Back",
-   "WAIT:1",
+   "WAIT:5",
    "Junior",
    "EXPECT:knew('fern.secret')"
   ]
@@ -2682,10 +2686,10 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 16",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(16)",
+   "WAIT:5",
    "EXPECT:S.f.docRunOut",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.doc.loc === 'green' && S.f.docEast",
    "EVAL:learnGreen(); S.f.greenIn = 1; go('hub', 'green')",
    "Doc Ratchet",
@@ -2718,7 +2722,7 @@
    "Mama Lou",
    "widow is asking",
    "EXPECT:S.ev.some(e => e.type === 'sold' && e.v === 'eel')",
-   "WAIT:6",
+   "WAIT:29",
    "EXPECT:['pete', 'jeb', 'sprocket'].some(x => S.n[x].k.some(i => S.ev[i].type === 'sold' && S.ev[i].v === 'eel'))"
   ]
  },
@@ -2734,7 +2738,7 @@
    "Seeds. Real ones",
    "EXPECT:S.ev.some(e => e.type === 'helped' && e.v === 'hector')",
    "RAND:0",
-   "WAIT:4",
+   "WAIT:19",
    "RAND:off",
    "EXPECT:S.n.bess.k.some(i => S.ev[i].type === 'helped' && S.ev[i].v === 'hector')"
   ]
@@ -2762,11 +2766,11 @@
   ]
  },
  {
-  "name": "Links: the Mall sits on roads to Mama Lou's and the Sky-Bus, and the pass leaves from the Sky-Bus",
+  "name": "Links: the Mall sits on roads to the Sky-Bus and Chainfield, and the pass leaves from the Sky-Bus",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EXPECT:neighbours('mall').includes('diner') && neighbours('mall').includes('skybus') && neighbours('green').includes('skybus') && neighbours('green').includes('vats')"
+   "EXPECT:neighbours('mall').includes('chainfield') && neighbours('mall').includes('skybus') && neighbours('green').includes('skybus') && neighbours('green').includes('vats')"
   ]
  },
  {
@@ -2780,7 +2784,7 @@
    "Pete",
    "Yourself. Before somebody else does",
    "RAND:0",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.eelForgave && alive('pete') && S.n.pete.loc === 'mall'",
    "EXPECT:linkLines().some(l => /They talk about fish/.test(l))"
   ]
@@ -2796,7 +2800,7 @@
    "Pete",
    "Yourself. Before somebody else does",
    "RAND:0.99",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:!alive('pete') && S.f.eelKilledPete && alive('eel')"
   ]
  },
@@ -2819,7 +2823,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.dead.lou = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.margie.rx.some(l => /meat supplier/.test(l))"
   ]
  },
@@ -2828,8 +2832,8 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; S.day = 21",
-   "WAIT:1",
+   "EVAL:S.f.raid = 1; S.day = DAYS(21)",
+   "WAIT:5",
    "EXPECT:S.f.farmFailed",
    "Leave (map)",
    "TRAVEL:The Drowned Mall",
@@ -2860,7 +2864,7 @@
    "forty healthy people behind one wall",
    "EXPECT:S.teeth >= 175",
    "RAND:0.99",
-   "WAIT:3",
+   "WAIT:14",
    "RAND:off",
    "EXPECT:S.f.greenTaken && !alive('warden') && S.n.gardener.loc === 'pen' && S.n.fern.loc === 'pen'",
    "EVAL:goHere()",
@@ -2882,7 +2886,7 @@
    "Krug",
    "forty healthy people behind one wall",
    "RAND:0",
-   "WAIT:3",
+   "WAIT:14",
    "RAND:off",
    "EXPECT:S.f.greenRaidBeaten && alive('warden') && S.n.gardener.loc === 'green'"
   ]
@@ -2943,7 +2947,7 @@
    "Crawl out of bed",
    "Go",
    "REAL",
-   "EVAL:learnGreen(); S.day = 15; S.f.raid = 1; S.f.greenIn = 1; go('hub', 'green'); globalThis.a = chanceOf('fern.seeds'); globalThis.b = chanceOf('warden.gate')",
+   "EVAL:learnGreen(); S.day = DAYS(15); S.f.raid = 1; S.f.greenIn = 1; go('hub', 'green'); globalThis.a = chanceOf('fern.seeds'); globalThis.b = chanceOf('warden.gate')",
    "Fern",
    "What do you want, Fern",
    "Back",
@@ -2969,7 +2973,7 @@
    "Crawl out of bed",
    "Go",
    "Leave (map)",
-   "EVAL:learnGreen(); S.day = 15; S.f.raid = 1; go('map')",
+   "EVAL:learnGreen(); S.day = DAYS(15); S.f.raid = 1; go('map')",
    "REAL",
    "EVAL:S.stats.twitch = 1; S.stats.luck = 1",
    "RAND:0.1",
@@ -2979,22 +2983,22 @@
   ]
  },
  {
-  "name": "Green: under the glass on day 25, you live through the launch",
+  "name": "Green: under the glass on day 120, you live through the launch",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:learnGreen(); S.f.raid = 1; S.day = 24; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:learnGreen(); S.f.raid = 1; S.day = DAYS(25) - 1; S.f.greenIn = 1; go('hub', 'green')",
    "EVAL:tick(); go('ending')",
    "SAY:the mountains take it",
    "SAY:The Green lives"
   ]
  },
  {
-  "name": "Green: anywhere else on day 25, the launch ends you as before",
+  "name": "Green: anywhere else on day 120, the launch ends you as before",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:learnGreen(); S.f.raid = 1; S.day = 24; S.f.greenIn = 1",
+   "EVAL:learnGreen(); S.f.raid = 1; S.day = DAYS(25) - 1; S.f.greenIn = 1",
    "EVAL:tick(); go('ending')",
    "SAY:The sky turns white"
   ]
@@ -3043,7 +3047,7 @@
    "Back",
    "Mister Pips",
    "It's Dice. She skims",
-   "EXPECT:S.f.pipsJob === 'told' && knew('pips.secret') && S.n.dice.op <= -50 && S.f.vaultDay === S.day + 3",
+   "EXPECT:S.f.pipsJob === 'told' && knew('pips.secret') && S.n.dice.op <= -50 && S.f.vaultDay === S.day + DAYS(3)",
    "SAY:trusts you now"
   ]
  },
@@ -3123,7 +3127,7 @@
    "RAND:0",
    "Win it, for once",
    "EXPECT:S.f.tamFights && knew('tam.secret')",
-   "EVAL:S.f.raid = 1; S.day = 14; runPlots()",
+   "EVAL:S.f.raid = 1; S.day = DAYS(14); runPlots()",
    "EXPECT:alive('tam') && S.f.tamWon"
   ]
  },
@@ -3146,7 +3150,7 @@
    "Big Tam",
    "Don't drink your water",
    "EXPECT:tamWins()",
-   "EVAL:globalThis.p0 = S.n.pips.op; S.f.raid = 1; S.day = 14; runPlots()",
+   "EVAL:globalThis.p0 = S.n.pips.op; S.f.raid = 1; S.day = DAYS(14); runPlots()",
    "EXPECT:S.f.tamWon && S.n.pips.op <= p0 - 40"
   ]
  },
@@ -3186,7 +3190,7 @@
    "Sweet Nan",
    "Any work for a stranger",
    "EVAL:S.f.nanColl = 1; S.f.raid = 1",
-   "WAIT:7",
+   "WAIT:34",
    "EXPECT:S.f.nanJob === 'kept' && S.f.collectors"
   ]
  },
@@ -3243,7 +3247,7 @@
    "TRAVEL:The Drowned Mall",
    "Gums",
    "Tell the King where Rook is",
-   "WAIT:4",
+   "WAIT:19",
    "EXPECT:!alive('rook')"
   ]
  },
@@ -3363,9 +3367,9 @@
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Leave Vane's grey on Moe's bar",
-   "EXPECT:S.f.drugHelped && S.f.drugDay === S.day + 1",
+   "EXPECT:S.f.drugHelped && S.f.drugDay === S.day + DAYS(1)",
    "EVAL:S.f.raid = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.greyHit"
   ]
  },
@@ -3380,7 +3384,7 @@
    "Swap the grey for flour",
    "EXPECT:S.f.vaneFlour && S.f.plot_drugwar === 'stopped'",
    "EVAL:S.f.raid = 1",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.vane.op <= v0 - 50"
   ]
  },
@@ -3437,7 +3441,7 @@
    "It's your sister",
    "EXPECT:S.f.elderJob === 'nan' && knew('elder.secret')",
    "EVAL:globalThis.n0 = S.n.nan.op; S.f.raid = 1",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.nan.op >= n0 + 20 && S.n.nan.rx.some(l => /wrote/.test(l))"
   ]
  },
@@ -3569,7 +3573,7 @@
    "Mayor Fenwick",
    "Any work",
    "EVAL:S.f.raid = 1",
-   "WAIT:7",
+   "WAIT:34",
    "EXPECT:alive('sheriff') && !alive('pete') && S.f.peteSaved"
   ]
  },
@@ -3597,7 +3601,7 @@
    "Your carburettor. Fixed",
    "EXPECT:S.f.tractorRuns && knew('bert.secret')",
    "EVAL:S.f.raid = 1; S.f.kingStopped = 1",
-   "WAIT:22",
+   "WAIT:106",
    "EXPECT:!S.f.farmFailed"
   ]
  },
@@ -3670,7 +3674,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); go('hub', 'green')",
    "The Warden",
    "on the pass you want dealt with",
    "Back",
@@ -3688,14 +3692,14 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); go('hub', 'green')",
    "The Warden",
    "on the pass you want dealt with",
    "Back",
    "Climb the ridge after the Molar scout",
    "Run home",
    "EVAL:globalThis.w0 = S.n.warden.op",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.warden.op <= w0 - 30 && S.n.king.rx.some(l => /dome/.test(l))"
   ]
  },
@@ -3737,7 +3741,7 @@
    "TRAVEL:The Sky-Bus",
    "Mother Ohm",
    "stand with you when they come",
-   "EXPECT:S.day === 9 && S.fight",
+   "EXPECT:S.day === DAYS(9) && S.fight",
    "FIGHT",
    "EXPECT:S.f.planeHeld && S.f.plot_plane === 'stopped' && S.n.ohm.op >= 40"
   ]
@@ -3759,7 +3763,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1",
-   "WAIT:9",
+   "WAIT:43",
    "EXPECT:S.f.plot_plane === 'done' && S.f.planeBurned === 1 && crustP() === 2"
   ]
  },
@@ -3773,7 +3777,7 @@
    "TRAVEL:The Sky-Bus",
    "EVAL:globalThis.t0 = S.teeth",
    "strip the plane while they fight",
-   "EXPECT:S.day === 9 && S.f.plot_plane === 'done' && S.teeth >= t0 + 40"
+   "EXPECT:S.day === DAYS(9) && S.f.plot_plane === 'done' && S.teeth >= t0 + 40"
   ]
  },
  {
@@ -3782,7 +3786,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1; globalThis.w0 = waterCost()",
-   "WAIT:15",
+   "WAIT:72",
    "EXPECT:S.f.pumpBroken && waterCost() >= w0 + 4"
   ]
  },
@@ -3808,7 +3812,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1; S.f.kingStopped = 1; S.f.coil = 9; S.f.plot_pump = 'stopped'; S.f.plot_plane = 'stopped'",
-   "WAIT:18",
+   "WAIT:86",
    "EXPECT:S.f.saintSprocket && S.n.sprocket.loc === 'skybus'",
    "EVAL:S.here = 'skybus'; go('talk', 'sprocket')",
    "SAY:Saint Sprocket",
@@ -3821,7 +3825,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1; S.f.kingStopped = 1; S.f.crust = 9; S.f.plot_plane = 'stopped'",
-   "WAIT:18",
+   "WAIT:86",
    "EXPECT:S.f.benchBurned && S.n.sprocket.loc === 'mall'",
    "EVAL:S.here = 'mall'; go('talk', 'sprocket')",
    "EXPECT:!cur.some(o => o[0].includes('Can you fit something'))"
@@ -3850,7 +3854,7 @@
    "TRAVEL:The Sky-Bus",
    "Mother Ohm",
    "march with you",
-   "EXPECT:S.day === 23 && S.f.siloIn && S.f.coilKing && S.here === 'silo'"
+   "EXPECT:S.day === DAYS(23) && S.f.siloIn && S.f.coilKing && S.here === 'silo'"
   ]
  },
  {
@@ -3862,7 +3866,7 @@
    "Deacon Rind",
    "Here's their road",
    "EXPECT:S.f.toothSold",
-   "WAIT:23",
+   "WAIT:110",
    "EXPECT:!alive('ohm') && S.f.coilMassacre && linkLines().some(l => /Silo road/.test(l))"
   ]
  },
@@ -3942,9 +3946,9 @@
    "Deacon Rind",
    "What does the Crust want",
    "SAY:New in your journal: The Coil's plane",
-   "EXPECT:journalList().find(q => q.k === 'plot_plane').hint === 'Coming on day 9.'",
+   "EXPECT:journalList().find(q => q.k === 'plot_plane').hint === `Coming on day ${DAYS(9)}.`",
    "EVAL:S.f.raid = 1",
-   "WAIT:9",
+   "WAIT:43",
    "EXPECT:journalList().find(q => q.k === 'plot_plane').done === 'It happened.'"
   ]
  },
@@ -3954,7 +3958,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.raid = 1",
-   "WAIT:15",
+   "WAIT:72",
    "EXPECT:!journalList().some(q => q.k === 'plot_fightnight')"
   ]
  },
@@ -4031,7 +4035,7 @@
    "Come with me",
    "EXPECT:following('tam')",
    "EVAL:S.f.raid = 1",
-   "WAIT:14",
+   "WAIT:67",
    "EXPECT:alive('tam') && S.f.plot_fightnight === 'void'"
   ]
  },
@@ -4204,7 +4208,7 @@
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneNo = 2; S.here = 'farm'; go('craneAsks', 'farm')",
    "SAY:Lots of hay",
    "Not now, Crane",
-   "EXPECT:S.f.craneCool === S.day + 2 && S.f.craneNo === 0",
+   "EXPECT:S.f.craneCool === S.day + DAYS(2) && S.f.craneNo === 0",
    "EVAL:go('craneAsks', 'diner')",
    "Heel",
    "SAY:all business"
@@ -4250,7 +4254,7 @@
    "SAY:on the menu by Thursday",
    "join us tonight",
    "EXPECT:S.f.thursday === 'sheriff'",
-   "WAIT:8",
+   "WAIT:38",
    "EXPECT:!alive('sheriff')"
   ]
  },
@@ -4269,7 +4273,7 @@
    "EXPECT:S.f.krugReformed && !alive('krug') && S.f.freed && S.f.krugHow === 'reformed'",
    "EXPECT:linkLines().some(l => /his own pens/.test(l))",
    "EVAL:S.f.raid = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.mayor.rx.some(l => /WALKED OFF/.test(l))"
   ]
  },
@@ -4374,7 +4378,7 @@
    "Go",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.f.craneWith = [['you', 1], ['jeb', 1], ['moe', 2]]; S.f.raid = 1; S.f.kingStopped = 1",
    "RAND:0",
-   "WAIT:8",
+   "WAIT:38",
    "RAND:off",
    "EXPECT:S.f.cranePreg && ['you', 'jeb', 'moe'].includes(S.f.craneDad)",
    "EVAL:S.here = 'rustwater'; go('talk', 'sheriff')",
@@ -4428,7 +4432,7 @@
    "EXPECT:!cur.some(o => /^(Attack|Murder) Sheriff/.test(o[0]))",
    "EVAL:S.here = 'chainfield'; go('talk', 'krug')",
    "EXPECT:!cur.some(o => /Your ex-wife/.test(o[0]))",
-   "WAIT:8",
+   "WAIT:38",
    "EXPECT:alive('sheriff') && S.f.hitDone"
   ]
  },
@@ -4507,7 +4511,7 @@
    "Sweet Nan",
    "Your sister sold her third husband",
    "EXPECT:S.f.nanStops && S.teeth === t0 + 30",
-   "WAIT:5",
+   "WAIT:24",
    "EXPECT:S.n.elder.rx.some(l => /stopped providing/.test(l))",
    "EXPECT:webLines().some(l => /rocking chair/.test(l))"
   ]
@@ -4522,7 +4526,7 @@
    "Nigel",
    "didn't lose your father",
    "EXPECT:S.f.nigelMa",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.elder.rx.some(l => /Glowing/.test(l))",
    "EXPECT:webLines().some(l => /window/.test(l))"
   ]
@@ -4556,7 +4560,7 @@
    "Ma Thistle",
    "Gus pawned your ring",
    "EXPECT:S.f.gusOut",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.gus.loc === 'gone' && S.f.gusGone",
    "EXPECT:webLines().some(l => /became a Molar/.test(l))"
   ]
@@ -4572,7 +4576,7 @@
    "Mama Lou",
    "Old Pell ate",
    "EXPECT:S.f.pellLou && S.f.plot_pork === 'stopped'",
-   "WAIT:10",
+   "WAIT:48",
    "EXPECT:alive('pig') && S.n.pell.rx.some(l => /seasoning/.test(l))"
   ]
  },
@@ -4587,7 +4591,7 @@
    "Caravan Jeb",
    "It's Bess",
    "EXPECT:S.f.bessTold === 'jeb' && S.teeth === t0 + 40",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.f.bessShot && S.n.bess.op <= -40 && S.n.bess.rx.some(l => /Jeb's new guns/.test(l))"
   ]
  },
@@ -4601,9 +4605,9 @@
    "TRAVEL:Rustwater",
    "Sheriff Crane",
    "The raiders hitting",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.bessBounty && S.n.bess.loc === 'gone' && S.n.hector.op <= -40",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.bess.loc === 'wastes'",
    "EXPECT:!cur.some(o => /The raiders hitting/.test(o[0]))"
   ]
@@ -4635,7 +4639,7 @@
    "Hector",
    "Old Teo, in Krug's pens",
    "EXPECT:S.f.teoBought",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.teo.loc === 'farm' && S.f.teoHome",
    "EVAL:goHere()",
    "SAY:Old Teo"
@@ -4666,7 +4670,7 @@
    "Junior",
    "Your cabbage seeds",
    "EXPECT:S.f.juniorEast",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.junior.loc === 'green' && S.n.lou.rx.some(l => /CABBAGE/.test(l))"
   ]
  },
@@ -4675,7 +4679,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('fern.secret'); know('plot.gate'); S.day = 17; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('fern.secret'); know('plot.gate'); S.day = DAYS(17); S.f.greenIn = 1; go('hub', 'green')",
    "The Gardener",
    "Fern leaves seed packets",
    "EXPECT:S.f.fernLocked && S.f.plot_gate === 'stopped' && !PLOTS.gate.live() && S.n.fern.op <= -60"
@@ -4698,7 +4702,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.coilGuards = 1",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.f.shiftSeen && S.n.ohm.rx.some(l => /chains/.test(l))",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4728,7 +4732,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.sneakedGreen = 1",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:!canTry('green.outflow') && S.n.moss.op >= 15 && S.n.warden.rx.some(l => /welded/.test(l))"
   ]
  },
@@ -4738,7 +4742,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.toothSold = 1",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.ohm.op <= -40 && coilFoe()"
   ]
  },
@@ -4748,12 +4752,12 @@
    "Crawl out of bed",
    "Go",
    "EVAL:S.f.toasterSold = 1",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.crumb.op <= -20 && S.n.crumb.rx.some(l => /In pieces/.test(l))"
   ]
  },
  {
-  "name": "Depth: two days before Nan's loan is due, Nan and Moe warn you",
+  "name": "Depth: shortly before Nan's loan is due, Nan and Moe warn you",
   "steps": [
    "Crawl out of bed",
    "Go",
@@ -4761,9 +4765,9 @@
    "TRAVEL:Snake Eyes",
    "Sweet Nan",
    "I need a loan",
-   "EVAL:S.day = S.f.debtDue - 3",
+   "EVAL:S.day = S.f.debtDue - DAYS(2) - 1",
    "WAIT:1",
-   "EXPECT:S.n.nan.rx.some(l => /Two days/.test(l)) && S.n.moe.rx.some(l => /where you sleep/.test(l))"
+   "EXPECT:S.n.nan.rx.some(l => /Not long now/.test(l)) && S.n.moe.rx.some(l => /where you sleep/.test(l))"
   ]
  },
  {
@@ -4771,11 +4775,11 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); know('jeb.secret'); S.day = 15; S.f.greenIn = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); know('jeb.secret'); S.day = DAYS(15); S.f.greenIn = 1; go('hub', 'green')",
    "Fern",
    "Jeb has never been east",
    "EXPECT:S.f.fernEast",
-   "WAIT:2",
+   "WAIT:10",
    "EXPECT:S.n.fern.loc === 'gone' && S.f.fernGone",
    "EXPECT:linkLines().some(l => /find out if the sea/.test(l))"
   ]
@@ -4791,7 +4795,7 @@
    "Dr. Vane",
    "slow poison",
    "EXPECT:S.f.vaneTold",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.plot_poison === 'stopped' && S.f.vaneSaved && S.n.doc.op <= -20"
   ]
  },
@@ -4800,7 +4804,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.raid = 1; learnGreen(); S.day = 15; S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
+   "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "Go down to the vats",
    "Moss",
    "glows like you",
@@ -4827,7 +4831,7 @@
    "Big Tam",
    "Your paper is the King's paper",
    "EXPECT:S.f.tamQuit",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.n.tam.loc === 'scrapwell' && S.f.brothers && !plotOpen('fightnight')"
   ]
  },
@@ -4842,7 +4846,7 @@
    "Eel",
    "Sal's half of the vault",
    "EXPECT:S.f.eelShare && S.teeth === 100",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.eel.loc === 'rustwater' && !S.n.eel.rx.some(l => /emptied the vault/.test(l))"
   ]
  },
@@ -4857,7 +4861,7 @@
    "Bert",
    "takes a cut from the raiders",
    "EXPECT:S.f.bertTold",
-   "WAIT:1",
+   "WAIT:5",
    "EXPECT:S.f.hectorFined && S.n.hector.rx.some(l => /My own son/.test(l))"
   ]
  },
@@ -4867,7 +4871,7 @@
    "Crawl out of bed",
    "Go",
    "EVAL:globalThis.e0 = S.n.eel.op; S.f.mallVault = 1",
-   "WAIT:3",
+   "WAIT:14",
    "EXPECT:S.n.eel.op <= e0 - 30 && S.n.eel.rx.some(l => /emptied the vault/.test(l))"
   ]
  },
@@ -4949,7 +4953,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.day = 13",
+   "EVAL:S.day = DAYS(14) - 1",
    "WAIT:1",
    "EXPECT:S.f.spread_gristmill && S.f.spread_kettle && S.n.hector.rx.some(l => /Rats in the corn/.test(l))"
   ]
@@ -5106,14 +5110,60 @@
   ]
  },
  {
-  "name": "Map: the further from Scrapwell, the harder: the gully is next door, the lost towns go out in order, the Silo is furthest",
+  "name": "Map: the further from Scrapwell by road, the harder: the gully is next door, the lost towns go out in order, the Silo is furthest",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:globalThis.far = k => Math.hypot(LOC[k].x - LOC.scrapwell.x, (LOC[k].y - LOC.scrapwell.y) * 1.25)",
-   "EXPECT:far('gully') < far('gristmill') && far('gristmill') < far('saltpan') && far('saltpan') < far('fanghill') && far('fanghill') < far('kettle')",
-   "EXPECT:Object.keys(LOC).filter(k => !LOC[k].sub && k !== 'silo').every(k => far(k) < far('silo'))",
-   "EXPECT:['gully', 'farm', 'rustwater', 'diner'].every(k => far(k) < far('gristmill'))"
+   "EVAL:S.f.knowSilo = 1; S.f.knowGreen = 1; S.here = 'scrapwell'; globalThis.far = k => route('scrapwell', k).length",
+   "EXPECT:far('gully') === 1 && far('gully') < far('gristmill') && far('gristmill') < far('saltpan') && far('saltpan') < far('fanghill') && far('fanghill') <= far('kettle')",
+   "EXPECT:['farm', 'rustwater', 'diner'].every(k => far(k) === 1) && Object.keys(LOC).filter(k => !LOC[k].sub).every(k => far(k) <= far('silo'))"
+  ]
+ },
+ {
+  "name": "Calendar: the launch comes on day 120, and everything dated stretches with it",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:DAYS(25) === 120 && GREEN_DAY === DAYS(15) && PLOTS.plane.day() === DAYS(9)",
+   "EVAL:S.f.raid = 1; S.day = 118",
+   "WAIT:1",
+   "EXPECT:!S.end",
+   "WAIT:1",
+   "EXPECT:S.end && S.end.type === 'nuke'"
+  ]
+ },
+ {
+  "name": "Roads: a day a town; Scrapwell to Chainfield is three days through Rustwater and Snake Eyes",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:route('scrapwell', 'chainfield').join() === 'rustwater,snakeeyes,chainfield'",
+   "EXPECT:route('scrapwell', 'saltpan').join() === 'farm,gristmill,saltpan'",
+   "EXPECT:route('scrapwell', 'mall').length === 3 && route('scrapwell', 'green').join() === 'diner,skybus,green'",
+   "EXPECT:ROADS.every(([a, b]) => Math.hypot(LOC[a].x - LOC[b].x, (LOC[a].y - LOC[b].y) * 1.25) < (a === 'skybus' && b === 'green' ? 52 : 34))",
+   "Leave (map)",
+   "SAY:3 days",
+   "EVAL:pickEnc = () => null; S.n.moe.rx = []; S.n.dice.rx = []; S.n.pips.rx = []",
+   "TRAVEL:Chainfield",
+   "EXPECT:S.here === 'chainfield' && S.day === 4",
+   "SAY:You pass through Rustwater",
+   "SAY:You pass through Snake Eyes"
+  ]
+ },
+ {
+  "name": "Roads: someone with a word for you stops the trip in their town, and you carry on from the map",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:pickEnc = () => null; rx('moe', '\"Oi. A word.\"')",
+   "Leave (map)",
+   "EVAL:travel('chainfield')",
+   "EXPECT:S.here === 'rustwater' && S.day === 2 && S.trip === 'chainfield'",
+   "SAY:You stop in Rustwater: Moe wants a word",
+   "Leave (map)",
+   "SAY:Carry on to Chainfield (2 days)",
+   "Carry on to Chainfield",
+   "EXPECT:S.here === 'chainfield' && S.day === 4 && !S.trip"
   ]
  }
 ]

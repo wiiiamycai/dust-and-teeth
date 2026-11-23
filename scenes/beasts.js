@@ -284,8 +284,8 @@ const TOWNS = {
     n: 'Gristmill',
     i: '🌾',
     lvl: 3,
-    x: 14,
-    y: 72,
+    x: 12,
+    y: 56,
     lost: 'The grain town. Doors chewed through. Everything that was food is gone, and something is still eating.',
     clear:
       'Gristmill is quiet. The millwheel turns, slowly, for the first time in a year. A family has moved back into the end house.',
@@ -311,7 +311,7 @@ const TOWNS = {
         () => [B('ratQueen'), B('ratling')],
       ],
     ],
-    spreadDay: 12,
+    spreadDay: DAYS(12),
     spread: () => {
       S.f.ratsFarm = 1;
       rx(
@@ -320,14 +320,14 @@ const TOWNS = {
       );
       rx('bert', '"A rat ate my boot. While I was in it."');
     },
-    road: ['farm', 'scrapwell'],
+    road: ['farm', 'saltpan'],
   },
   saltpan: {
     n: 'Saltpan',
     i: '🧂',
     lvl: 4,
-    x: 16,
-    y: 48,
+    x: 14,
+    y: 34,
     lost: 'White salt flats, a pan-works, empty houses. The salt crunches. Then something under it moves.',
     clear:
       'The pans are working again. Two salt-boilers came back from the coast, and the first thing they did was put up a price list.',
@@ -353,19 +353,19 @@ const TOWNS = {
         () => [B('oldShell'), B('saltback')],
       ],
     ],
-    spreadDay: 14,
+    spreadDay: DAYS(14),
     spread: () => {
       S.f.crabsDiner = 1;
       rx('lou', '"Crabs on my road. Big ones. I tried one. Needs salt, honey. Everything needs salt."');
     },
-    road: ['gristmill', 'snakeeyes'],
+    road: ['gristmill', 'fanghill'],
   },
   kettle: {
     n: 'Kettle',
     i: '🗼',
     lvl: 7, // the hardest of the four: reads 'deadly' on the map
-    x: 50,
-    y: 16,
+    x: 44,
+    y: 12,
     lost: 'A dead town round a water tower that still has water in it. The tower hums. The hum has wings.',
     clear:
       'The tower is quiet. Somebody has painted FREE on the tank, in letters ten feet high, and people walk here from Rustwater with buckets.',
@@ -391,20 +391,20 @@ const TOWNS = {
         () => [B('hiveMother'), B('stinger')],
       ],
     ],
-    spreadDay: 10,
+    spreadDay: DAYS(10),
     spread: () => {
       S.f.stingRoad = 1;
       rx('sheriff', '"Stingers on the east road. Two dead this week. Kettle\'s hive is getting bigger."');
       rx('mayor', '"Stingers? On the Kettle road? Terrible. Terrible for Kettle. Water, citizen?"');
     },
-    road: ['snakeeyes', 'chainfield'],
+    road: ['chainfield'],
   },
   fanghill: {
     n: 'Fanghill',
     i: '🦴',
     lvl: 5,
-    x: 22,
-    y: 30,
+    x: 26,
+    y: 12,
     lost: 'A caravan stop the Molars hit last year. They took the people and left the bodies, and the bodies brought the dogs.',
     clear:
       'Fanghill has a well, a fence and a sign again. The caravans stop here on the north road. Somebody buried the bones.',
@@ -430,13 +430,13 @@ const TOWNS = {
         () => [B('boneMother'), B('hound'), B('hound')],
       ],
     ],
-    spreadDay: 12,
+    spreadDay: DAYS(12),
     spread: () => {
       S.f.houndRoad = 1;
       rx('jeb', '"Grave-hounds on the Snake Eyes road now. They took a lizard. A whole lizard."');
       rx('pips', '"Customers keep getting eaten on the way here. Terrible for business."');
     },
-    road: ['snakeeyes', 'farm'],
+    road: ['saltpan'],
   },
 };
 for (const k in TOWNS) {
@@ -444,7 +444,8 @@ for (const k in TOWNS) {
   // never hidden (v9.2, Will: "you want people to want to know and fight the combat zones, and make them want to
   // level up their gear"). The neighbours' jobs still say what's wrong there, and pay for it.
   LOC[k] = { n: T.n, i: T.i, lvl: T.lvl, x: T.x, y: T.y };
-  T.road.forEach(r => ROADS.push([k, r]));
+  // each town's roads double as where it spreads to; a road is only drawn once
+  T.road.forEach(r => ROADS.some(x => x.includes(k) && x.includes(r)) || ROADS.push([k, r]));
 }
 const townStage = k => S.f['town_' + k] || 0; // stages cleared, 0 to 4
 const townClear = k => townStage(k) >= 4;

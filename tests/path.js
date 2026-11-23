@@ -15,7 +15,10 @@ function fightOut(){let n=0;while(/Fight · round/.test(strip(els.head.innerHTML
 // so tests can measure how hidden modifiers change a check.
 let realSkills=false;
 const god=()=>vm.runInContext(realSkills?'if(S){S.hp=S.maxhp=999}':'if(S){S.hp=S.maxhp=999;for(const k in S.skills)S.skills[k]=200;}',ctx);
-function travel(dest){click(dest);// may hit encounter
+// a trip can stop on the way (something on the road, someone with a word for you, a lost town that sees you):
+// carry on, like a player would, until you get there or something else needs you
+function travel(dest){travel1(dest);for(let leg=0;leg<12;leg++){if(vm.runInContext("S&&S.scene==='fight'",ctx))fightOut();if(!vm.runInContext("S&&!S.end&&S.trip&&S.trip!==S.here&&['hub','town','map'].includes(S.scene)",ctx))break;vm.runInContext("go('map')",ctx);click('Carry on to')}}
+function travel1(dest){click(dest);// may hit encounter
  for(let k=0;k<3;k++){const h=strip(els.head.innerHTML);if(/Heading to|A survivor/.test(h)){const b=clickables();const f=b.find(x=>/Fight|Leave him|Pay|Loot him|Leave them|Decline|Buy it|government is gone/.test(strip(x.innerHTML)))||b[0];f.onclick();fightOut();}}}
 const steps=JSON.parse(process.argv[3]);
 for(const s of steps){god();if(process.env.V)console.log('>>',s,'::',screen().slice(0,250));

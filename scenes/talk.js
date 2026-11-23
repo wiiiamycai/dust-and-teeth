@@ -400,7 +400,7 @@ const TALK = {
         },
       ]);
     o.push(newsOpt('elder', '"Nothing happens here. That\'s the point of here."'));
-    if (S.day >= 8 && !f.knowSilo)
+    if (S.day >= DAYS(8) && !f.knowSilo)
       o.push([
         '"You look worried."',
         () => {
@@ -1603,11 +1603,11 @@ function moeWord() {
     return '"Krug went east with a buyer. Half his guards with him. Tonight\'s the night for those pens, if you\'re brave."';
   }
   if (op <= -20) return '"Nothing for you." He keeps wiping the glass.';
-  if (S.day >= 6 && !f.knowSilo && roll(60)) {
+  if (S.day >= DAYS(6) && !f.knowSilo && roll(60)) {
     learnSilo();
     return '"Molars. Raiders in tooth necklaces. They come from an old silo out east, past the plane."';
   }
-  if (S.day >= 8 && !f.raid && !f.knowRaid && !f.kingStopped) {
+  if (S.day >= DAYS(8) && !f.raid && !f.knowRaid && !f.kingStopped) {
     f.knowRaid = 1;
     return '"Molars are sniffing round town, counting our guns. Something\'s coming. Soon."';
   }

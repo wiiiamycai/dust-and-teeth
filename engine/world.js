@@ -11,14 +11,14 @@ function tick() {
 function world() {
   const d = S.day,
     f = S.f;
-  if (alive('pete') && S.n.pete.loc === 'cage' && d >= 6 && alive('lou')) {
+  if (alive('pete') && S.n.pete.loc === 'cage' && d >= DAYS(6) && alive('lou')) {
     S.dead.pete = 1;
     f.peteEaten = 1;
     event('murder', 'pete', { loc: 'diner', secret: true });
   }
   for (const x of ['bess', 'bert']) {
     const n = S.n[x];
-    if (alive(x) && n.loc === 'pen' && alive('krug') && d >= n.st.penDay + 4) {
+    if (alive(x) && n.loc === 'pen' && alive('krug') && d >= n.st.penDay + DAYS(4)) {
       n.loc = 'gone';
       n.st.goneDay = d;
       if (alive('hector') && knows('hector', 'sold', x)) {
@@ -26,7 +26,7 @@ function world() {
         S.n.hector.rx.push(`"Krug sold my ${FAMW.hector[x]} on. Gone. So are you."`);
       }
     }
-    if (x === 'bess' && alive(x) && n.loc === 'gone' && d >= n.st.goneDay + 3) n.loc = 'wastes';
+    if (x === 'bess' && alive(x) && n.loc === 'gone' && d >= n.st.goneDay + DAYS(3)) n.loc = 'wastes';
   }
   if (
     f.hectorKnew &&
@@ -34,7 +34,7 @@ function world() {
     S.n.bess.loc === 'pen' &&
     alive('bert') &&
     S.n.bert.loc === 'farm' &&
-    d >= f.hectorKnew + 1 &&
+    d >= f.hectorKnew + DAYS(1) &&
     alive('krug')
   ) {
     f.bertWent = 1;
@@ -45,7 +45,7 @@ function world() {
       S.n.hector.rx.push(`"Bert went after his sister. Krug took him too. That's on you."`);
     }
   }
-  if (f.mayorJob && !f.mayorPaid && !f.hitDone && alive('sheriff') && alive('mayor') && d >= f.mayorJobDay + 6) {
+  if (f.mayorJob && !f.mayorPaid && !f.hitDone && alive('sheriff') && alive('mayor') && d >= f.mayorJobDay + DAYS(6)) {
     f.hitDone = 1;
     S.dead.sheriff = 1;
     event('murder', 'sheriff', { loc: 'rustwater', secret: true });
@@ -53,23 +53,23 @@ function world() {
   }
   roamGutmaw();
   if (!f.kingStopped) {
-    if (d >= 8 && !f.omen1) {
+    if (d >= DAYS(8) && !f.omen1) {
       f.omen1 = 1;
       bad('The ground shakes. Far to the east, something hums.');
     }
-    if (d >= 12 && !f.raid) {
+    if (d >= DAYS(12) && !f.raid) {
       f.raid = 1;
       raid();
     }
-    if (d >= 17 && !f.omen2) {
+    if (d >= DAYS(17) && !f.omen2) {
       f.omen2 = 1;
       bad('A siren wails from somewhere east. It stops. Then starts again.');
     }
-    if (d >= 22 && !f.omen3) {
+    if (d >= DAYS(22) && !f.omen3) {
       f.omen3 = 1;
       bad('The eastern sky glows green at night. The birds have stopped flying east.');
     }
-    if (d >= 25) S.end = { type: 'nuke' };
+    if (d >= DAYS(25)) S.end = { type: 'nuke' }; // day 120
   }
 }
 function raid() {

@@ -181,3 +181,8 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 - Challenge his ideas when you think he's wrong. He likes being pushed back on. Hold your position unless his argument changes your mind.
 - Number lists of options so he can reply by number.
 - No em dashes, in game text or in replies.
+
+### Roads and time (v9.5)
+
+- Roads join neighbours only, and you go through the towns between: one day a town. Scrapwell is in the middle of the bottom of the map and it gets harder the further out you go.
+- The calendar is 120 days to the launch. Every date in the story is written as `DAYS(n)` (old 25-day calendar times 4.8).

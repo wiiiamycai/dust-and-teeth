@@ -8,7 +8,7 @@
 // counted. The big choice: smuggle seeds to the valley, which ends the Green being the only green, or keep
 // the secret and have a bed behind the wall.
 
-const GREEN_DAY = 15;
+const GREEN_DAY = DAYS(15); // day 72
 const greenOpen = () => !!S.f.knowGreen && S.day >= GREEN_DAY;
 const inGreen = () => S.here === 'green' || S.here === 'vats';
 function learnGreen(how) {
@@ -16,13 +16,19 @@ function learnGreen(how) {
   S.f.knowGreen = how || 1;
   say(
     'The pass east is on your map.' +
-      (S.day < GREEN_DAY ? ' The dust storms over it are a wall until the middle of the month.' : ''),
+      (S.day < GREEN_DAY ? ' The dust storms over it are a wall, and will be for a couple of months yet.' : ''),
   );
 }
-// Travel: the pass is shut by storms until day 15. It's a day like any road, but the slopes come down on people.
+// Travel: the pass is shut by storms until GREEN_DAY. It's a day like any road, but the slopes come down on people.
 const _travelGreen = travel;
 travel = k => {
   if (k === 'green' && !greenOpen()) {
+    // the road to the Sky-Bus first, like any road; the pass itself turns you back
+    if (S.here !== 'skybus') {
+      _travelGreen('skybus');
+      if (S.end || S.here !== 'skybus' || S.trip) return;
+    }
+    S.trip = null;
     if (tick()) return go('ending');
     bad('The pass is a wall of dust. You walk into it for a day and come out where you started, at the Sky-Bus.');
     return go('hub', 'skybus');
@@ -140,7 +146,7 @@ reactions = function () {
   }
   // Without seeds, or Bert's tractor running (scenes/jobs.js), Hector's farm gives up.
   if (
-    S.day >= 22 &&
+    S.day >= DAYS(22) &&
     !(f.seeded && f.seeded.hector) &&
     alive('hector') &&
     !f.farmFailed &&
@@ -734,7 +740,7 @@ HUBO.farm = () => [
 // ---- plot: Fern opens the gate, day 21 ----
 PLOTS.gate = {
   where: 'green',
-  day: () => 21,
+  day: () => DAYS(21),
   live: () =>
     alive('fern') && S.n.fern.loc === 'green' && alive('warden') && !S.f.gateOpen && !S.f.fernRules && !S.f.fernLamp,
   known: () => plotKnown('gate'),
@@ -750,12 +756,12 @@ PLOTS.gate = {
     offstage('fern', 'Fern opened the gate at midnight. The Warden shot her before it was a foot wide.', seen),
   opts: {
     fern: () =>
-      S.day < 21
+      S.day < DAYS(21)
         ? [
             '"I\'ll hold the lamp when you open it." (until day 21)',
             () => {
               S.f.fernLamp = 1; // you're there, so the night is yours, not the plot's
-              if (!waitFor(21)) return go('ending');
+              if (!waitFor(DAYS(21))) return go('ending');
               if (!alive('fern') || !alive('warden')) return goHere();
               go('gatenight');
             },

@@ -528,10 +528,10 @@ world = function () {
     !f.cranePreg &&
     alive('sheriff') &&
     (f.craneWith || []).length >= 3 &&
-    S.day >= f.craneWith[0][1] + 6 &&
+    S.day >= f.craneWith[0][1] + DAYS(6) &&
     roll(35)
   ) {
-    const recent = f.craneWith.filter(([, d]) => S.day - d <= 12),
+    const recent = f.craneWith.filter(([, d]) => S.day - d <= DAYS(12)),
       pool = recent.length ? recent : f.craneWith;
     f.cranePreg = S.day;
     f.craneDad = pick(pool)[0];
@@ -740,7 +740,14 @@ raidOutcome = mod => {
 const _worldHitPreg = world;
 world = function () {
   const f = S.f;
-  if (cranePregnant() && f.mayorJob && !f.mayorPaid && !f.hitDone && alive('mayor') && S.day >= f.mayorJobDay + 6) {
+  if (
+    cranePregnant() &&
+    f.mayorJob &&
+    !f.mayorPaid &&
+    !f.hitDone &&
+    alive('mayor') &&
+    S.day >= f.mayorJobDay + DAYS(6)
+  ) {
     f.hitDone = 1;
     rx(
       'mayor',

@@ -24,7 +24,7 @@ Object.assign(CK, {
 });
 // Dice loses her savings: she tries the vault sooner, alone.
 function diceDesperate(days) {
-  if (!S.f.plot_vault && S.day < 17) S.f.vaultDay = S.day + days;
+  if (!S.f.plot_vault && S.day < DAYS(17)) S.f.vaultDay = S.day + DAYS(days);
 }
 
 // Pips: "Somebody's beating my tables." It's Dice, saving to escape.
@@ -98,7 +98,7 @@ jobs('pips', () => {
       ],
     knew('tam.fix') &&
       plotOpen('fightnight') &&
-      S.day < 14 &&
+      S.day < DAYS(14) &&
       !f.tamFixed &&
       !f.tamFights && [
         '"I\'ll make sure Big Tam goes down on fight night."',
@@ -222,7 +222,7 @@ jobs('opal', () => {
 jobs('tam', () => {
   const f = S.f;
   if (!alive('tam') || S.n.tam.loc !== 'snakeeyes') return [];
-  const night = plotOpen('fightnight') && S.day < 14;
+  const night = plotOpen('fightnight') && S.day < DAYS(14);
   return [
     night &&
       !knew('tam.fix') && [
@@ -301,7 +301,7 @@ jobs('nan', () => {
           later(7, 'nanJobDue');
           says(
             'nan',
-            '"Fenwick, the Mayor of Rustwater. Plays on Thursdays, cries on Fridays. He owes me a hundred. Bring it, keep twenty. Seven days, dear."',
+            '"Fenwick, the Mayor of Rustwater. Plays on Thursdays, cries on Fridays. He owes me a hundred. Bring it, keep twenty. A month, dear."',
           );
           go('talk', 'nan');
         },
@@ -851,7 +851,7 @@ HUBO.rustwater = () => {
           take('grey');
           f.greyRun = 'done';
           f.drugHelped = 1;
-          f.drugDay = S.day + 1;
+          f.drugDay = S.day + DAYS(1);
           karma(-3);
           gain(60);
           bump('vane', 30);
@@ -1328,7 +1328,7 @@ world = function () {
     !f.hitDone &&
     alive('sheriff') &&
     alive('mayor') &&
-    S.day >= f.mayorJobDay + 6
+    S.day >= f.mayorJobDay + DAYS(6)
   ) {
     f.hitDone = 1;
     f.peteSaved = 1;

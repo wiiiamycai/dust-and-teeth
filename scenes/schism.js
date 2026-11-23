@@ -75,7 +75,9 @@ TALK.rind = () => {
         if (plotOpen('plane')) know('plot.plane');
         says(
           'rind',
-          '"The Toaster was silent for two hundred years. That silence IS the sermon. Machines burned the world. The Coil worship the matches." He smiles. "On the ninth we burn their plane. Come and hold a torch."',
+          '"The Toaster was silent for two hundred years. That silence IS the sermon. Machines burned the world. The Coil worship the matches." He smiles. "On day ' +
+            DAYS(9) +
+            ' we burn their plane. Come and hold a torch."',
         );
         go('talk', 'rind');
       },
@@ -233,11 +235,11 @@ function stopSchism() {
 // ---- 1. the plane, day 9: the Crust come to burn the Coil's plane ----
 PLOTS.plane = {
   where: 'skybus',
-  day: () => 9,
+  day: () => DAYS(9),
   live: () => schismOn() && !S.f.planeStand && !S.f.planeLoot,
   known: () => plotKnown('plane'),
   clue: { crumb: 1, ohm: 1, nigel: 1 },
-  clueLine: '"Rind\'s people are soaking rags in lamp oil. They say the Coil\'s plane burns on the ninth."',
+  clueLine: "\"Rind's people are soaking rags in lamp oil. They say the Coil's plane burns on day " + DAYS(9) + '."',
   sign: {
     where: 'scrapwell',
     t: 'Behind the chapel, people in sackcloth soak rags in lamp oil and sing. One of them is drawing a plane, on fire.',
@@ -246,7 +248,7 @@ PLOTS.plane = {
   hit: seen => planeBurns(1, seen),
   opts: {
     ohm: () => [
-      '"The Crust are coming to burn the plane on the ninth."',
+      '"The Crust are coming to burn the plane on day ' + DAYS(9) + '."',
       () => {
         stopPlot('plane');
         S.f.planeHeld = 1;
@@ -263,14 +265,14 @@ PLOTS.plane = {
       },
     ],
     ohm2: () =>
-      S.day < 9
+      S.day < DAYS(9)
         ? [
             '"I\'ll stand with you when they come." (until day 9)',
             () => {
               S.f.planeStand = 1;
-              if (!waitFor(9)) return go('ending');
+              if (!waitFor(DAYS(9))) return go('ending');
               S.here = 'skybus';
-              say('The ninth. Torches on the dunes. The Crust come singing.');
+              say('Burning night. Torches on the dunes. The Crust come singing.');
               fight([spawn('zealot'), spawn('zealot'), spawn('zealot')], {
                 allies: alive('ohm') ? ['ohm'] : [],
                 started: true,
@@ -300,12 +302,12 @@ PLOTS.plane = {
   },
   hub: {
     skybus: () =>
-      S.day < 9
+      S.day < DAYS(9)
         ? [
-            'Come back on the ninth and strip the plane while they fight (until day 9)',
+            `Come back on day ${DAYS(9)} and strip the plane while they fight`,
             () => {
               S.f.planeLoot = 1;
-              if (!waitFor(9)) return go('ending');
+              if (!waitFor(DAYS(9))) return go('ending');
               S.here = 'skybus';
               S.f.plot_plane = 'done';
               planeBurns(1, true);
@@ -349,7 +351,7 @@ WIN.planeHeld = () => {
 // ---- 2. the pump, day 15: the Crust break Rustwater's pump ----
 PLOTS.pump = {
   where: 'rustwater',
-  day: () => 15,
+  day: () => DAYS(15),
   live: () => crustOn(),
   known: () => plotKnown('pump'),
   clue: { moe: 1, jeb: 1, rind: 1, sheriff: 1 },
@@ -425,7 +427,7 @@ function pumpBreaks(seen) {
 // ---- 3. the saint, day 18: the Coil come for Sprocket, the Crust for her bench ----
 PLOTS.saint = {
   where: 'mall',
-  day: () => 18,
+  day: () => DAYS(18),
   live: () => schismOn() && alive('sprocket') && S.n.sprocket.loc === 'mall',
   known: () => plotKnown('saint'),
   clue: { eel: 1, gums: 1, margie: 1, ohm: 1, rind: 1 },
@@ -539,7 +541,7 @@ TALK.sprocket = () => {
 // ---- 4. the Big Tooth, day 23: the Coil march to kneel to the King's missile ----
 PLOTS.tooth = {
   where: 'skybus',
-  day: () => 23,
+  day: () => DAYS(23),
   live: () => coilOn() && alive('king') && !S.f.kingStopped && !S.f.toothMarch,
   known: () => plotKnown('tooth'),
   clue: { gums: 1, rook: 1, ohm: 1, rind: 1 },
@@ -568,12 +570,12 @@ PLOTS.tooth = {
         go('talk', 'ohm');
       }),
     ohm2: () =>
-      S.day < 23
+      S.day < DAYS(23)
         ? [
             '"I\'ll march with you." (until day 23)',
             () => {
               S.f.toothMarch = 1;
-              if (!waitFor(23)) return go('ending');
+              if (!waitFor(DAYS(23))) return go('ending');
               learnSilo();
               if (crustOn() && crustP() > coilP()) {
                 S.here = 'silo';
@@ -599,7 +601,7 @@ PLOTS.tooth = {
         gain(40);
         karma(-2);
         bump('rind', 25);
-        later(Math.max(1, 23 - S.day), 'toothAmbush');
+        later(Math.max(1, (DAYS(23) - S.day) / TIME), 'toothAmbush');
         says(
           'rind',
           '"Every rock on that road will be a deacon." He pays you 40 teeth and starts sharpening something.',
@@ -669,7 +671,7 @@ HUBO.silo = () => {
 const _pickEncSchism = pickEnc;
 pickEnc = dest => {
   const e = _pickEncSchism(dest);
-  if (e || S.day < 3 || S.f.schismPeace || !roll(18)) return e;
+  if (e || S.day < DAYS(3) || S.f.schismPeace || !roll(18)) return e;
   const sides = [crustOn() ? 'crust' : null, coilOn() ? 'coil' : null].filter(Boolean);
   return sides.length ? pick(sides) : null;
 };

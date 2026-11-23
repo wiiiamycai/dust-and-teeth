@@ -97,7 +97,7 @@ const PLOTS = {
   // Lou wants Bacon Prime. Junior goes over the fence on day 9.
   pork: {
     where: 'scrapwell',
-    day: () => 9,
+    day: () => DAYS(9),
     live: () => alive('pig') && alive('lou') && !S.f.styWatch,
     known: () => plotKnown('pork'),
     clue: { lou: 1, junior: 1, hector: 1 },
@@ -140,12 +140,12 @@ const PLOTS = {
     },
     hub: {
       scrapwell: () =>
-        S.day < 9 && alive('junior')
+        S.day < DAYS(9) && alive('junior')
           ? [
               'Sit up by the sty and wait for whoever comes (until day 9)',
               () => {
                 S.f.styWatch = 1;
-                if (waitFor(9)) go('sty');
+                if (waitFor(DAYS(9))) go('sty');
                 else go('ending');
               },
             ]
@@ -155,7 +155,7 @@ const PLOTS = {
   // Doc is poisoning the Mayor, a little every day, for the pump.
   poison: {
     where: 'rustwater',
-    day: () => S.f.poisonDay || 10,
+    day: () => S.f.poisonDay || DAYS(10),
     live: () => alive('doc') && alive('mayor'),
     known: () => knew('doc.secret') || plotKnown('poison'),
     clue: { gloria: 1, opal: 1 },
@@ -195,7 +195,7 @@ const PLOTS = {
               '"Need a hand with the Mayor\'s tea?"',
               () => {
                 S.f.poisonHelped = 1;
-                S.f.poisonDay = S.day + 1;
+                S.f.poisonDay = S.day + DAYS(1);
                 know('plot.poison');
                 karma(-2);
                 gain(80);
@@ -242,7 +242,7 @@ const PLOTS = {
   // Krug wants Jeb's road east. His men hit the caravan on day 11, the day before the Molars come.
   route: {
     where: 'rustwater',
-    day: () => 11,
+    day: () => DAYS(11),
     live: () => alive('krug') && alive('jeb') && S.n.jeb.loc !== 'party' && !S.f.rideGuard,
     known: () => plotKnown('route'),
     clue: { moe: 1, teo: 1, pete: 1 },
@@ -281,12 +281,12 @@ const PLOTS = {
         },
       ],
       jeb2: () =>
-        S.day < 11
+        S.day < DAYS(11)
           ? [
               '"I\'ll ride guard when they come." (until day 11)',
               () => {
                 S.f.rideGuard = 1;
-                if (!waitFor(11)) return go('ending');
+                if (!waitFor(DAYS(11))) return go('ending');
                 say("Night on the east road. Jeb's lanterns, then other lanterns. Krug's men.");
                 fight([spawn('slaver'), spawn('slaver'), spawn('tracker')], {
                   allies: ['jeb', 'pete'],
@@ -327,7 +327,7 @@ const PLOTS = {
   // Gloria has been skimming. Opal counts properly on day 16.
   skim: {
     where: 'rustwater',
-    day: () => 16,
+    day: () => DAYS(16),
     live: () => alive('gloria') && alive('opal') && S.n.gloria.loc === 'rustwater',
     known: () => knew('gloria.secret') || plotKnown('skim'),
     clue: { jeb: 1, moe: 1 },
@@ -397,7 +397,7 @@ const PLOTS = {
   // Junior grows cabbages in secret. Lou finds them on day 18.
   cabbage: {
     where: 'diner',
-    day: () => 18,
+    day: () => DAYS(18),
     live: () => alive('junior') && alive('lou') && S.n.junior.loc === 'diner',
     known: () => knew('junior.secret') || plotKnown('cabbage'),
     clue: { crumb: 1, bess: 1 },
@@ -673,7 +673,7 @@ function plotText(loc) {
   for (const k in PLOTS) {
     const P = PLOTS[k],
       st = S.f['plot_' + k];
-    if (!st && P.sign && P.sign.where === loc && S.day >= P.day() - 4 && P.live()) {
+    if (!st && P.sign && P.sign.where === loc && S.day >= P.day() - DAYS(4) && P.live()) {
       know('plot.' + k);
       t += '\n\n' + P.sign.t;
     }
@@ -728,7 +728,7 @@ function webOpts(id) {
   const o = [];
   for (const k in PLOTS) {
     const P = PLOTS[k];
-    if (P.clue && P.clue[id] && plotOpen(k) && !P.known() && S.day >= P.day() - 5 && S.n[id].op >= 0) {
+    if (P.clue && P.clue[id] && plotOpen(k) && !P.known() && S.day >= P.day() - DAYS(5) && S.n[id].op >= 0) {
       know('plot.' + k);
       quote(`${NPC[id].n}: ${P.clueLine}`);
     }

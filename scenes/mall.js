@@ -468,7 +468,7 @@ const eelCanBlameLou = () =>
   knew('pete.secret') || knew('lou.polish') || knew('sal.jeb') || knew('sal.lou') || !!S.f.kitchen || !!S.f.jebPaid;
 PLOTS.widow = {
   where: 'mall',
-  day: () => S.f.widowDay || 13,
+  day: () => S.f.widowDay || DAYS(13),
   live: () => alive('eel') && S.n.eel.loc === 'mall' && alive('lou') && S.n.lou.loc === 'diner',
   known: () => plotKnown('widow'),
   clue: { pete: 1, jeb: 1, sprocket: 1 },
@@ -555,7 +555,7 @@ PLOTS.widow = {
             '"Sal\'s widow is asking questions about your stew."',
             () => {
               S.f.eelSold = 1;
-              S.f.widowDay = S.day + 1;
+              S.f.widowDay = S.day + DAYS(1);
               event('sold', 'eel', { wit: ['lou'] });
               know('plot.widow');
               karma(-3);
@@ -641,7 +641,7 @@ LATER.eelHunt = who => {
 // Dr. Vane bags grey poison with RATCHET on it. On day 17 it hits Rustwater and the town turns on Doc.
 PLOTS.drugwar = {
   where: 'rustwater',
-  day: () => S.f.drugDay || 17,
+  day: () => S.f.drugDay || DAYS(17),
   live: () => alive('vane') && S.n.vane.loc === 'mall' && alive('doc') && S.n.doc.loc === 'rustwater',
   known: () => plotKnown('drugwar'),
   clue: { doc: 1, gums: 1, moe: 1 },
@@ -695,7 +695,7 @@ PLOTS.drugwar = {
             '"I can get your bags onto Moe\'s bar."',
             () => {
               S.f.drugHelped = 1;
-              S.f.drugDay = S.day + 1;
+              S.f.drugDay = S.day + DAYS(1);
               know('plot.drugwar');
               karma(-3);
               gain(120);

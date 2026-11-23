@@ -11,7 +11,7 @@ const GOOD = ['tfixed', 'pump', 'hanged', 'rescued', 'freed', 'helped'];
 const goodHeard = id => S.n[id].k.map(evById).filter(e => e && !e.secret && GOOD.includes(e.type)).length;
 const liarTo = id => S.n[id].k.some(i => S.ev[i] && S.ev[i].type === 'lied');
 function later(days, key, arg) {
-  S.later.push({ day: S.day + days, key, arg: arg === undefined ? null : arg });
+  S.later.push({ day: S.day + Math.max(1, DAYS(days)), key, arg: arg === undefined ? null : arg });
 }
 const LATER = {
   // Crane tells Rustwater you're alright. Coming from her, that counts.

@@ -14,7 +14,7 @@ function casinoBet(label, sizes, play) {
   return sizes.filter(b => S.teeth >= b).map(b => [`${label} (${b} teeth)`, () => play(b)]);
 }
 function throwOut(days, line) {
-  S.f.banUntil = S.day + days;
+  S.f.banUntil = S.day + DAYS(days);
   bad(line || 'Rook picks you up by the collar and puts you outside. Gently. Like rubbish.');
   go('hub', 'snakeeyes');
 }
@@ -311,11 +311,11 @@ TALK.nan = () => {
       '"I need a loan." (100 teeth now, 150 back within 7 days)',
       () => {
         f.debt = 150;
-        f.debtDue = S.day + 7;
+        f.debtDue = S.day + DAYS(7);
         gain(100);
         later(7, 'nanDue');
         quote(
-          'Nan counts out 100 teeth with fingers like twigs. "Seven days, dear. After that it isn\'t me who comes. It\'s much worse than me."',
+          'Nan counts out 100 teeth with fingers like twigs. "A month, dear. After that it isn\'t me who comes. It\'s much worse than me."',
         );
         go('talk', 'nan');
       },
@@ -452,7 +452,7 @@ const tamWins = () =>
   (!S.f.tamFixed || !!S.f.tamWarned) && !!(S.f.gusCame || S.f.incisorDrugged || S.f.tamFights || S.f.tamWarned);
 PLOTS.fightnight = {
   where: 'snakeeyes',
-  day: () => 14,
+  day: () => DAYS(14),
   live: () => alive('tam') && S.n.tam.loc === 'snakeeyes' && !S.f.tamSub,
   known: () => plotKnown('fightnight'),
   clue: { pips: 1, rook: 1, nan: 1 },
@@ -498,12 +498,12 @@ PLOTS.fightnight = {
           ]
         : null,
     tam: () =>
-      S.day < 14
+      S.day < DAYS(14)
         ? [
             '"Let me fight the Incisor in your place." (until day 14)',
             () => {
               S.f.tamSub = 1;
-              if (!waitFor(14)) return go('ending');
+              if (!waitFor(DAYS(14))) return go('ending');
               say('Fight night. The crowd wanted Tam. They get you. The Incisor does not care who it kills.');
               fight([mkE('The Incisor', '🦷', 7, { wep: 'sledge', arm: 'plate', teeth: 0 })], {
                 close: true,
@@ -518,7 +518,7 @@ PLOTS.fightnight = {
   },
   hub: {
     snakeeyes: () =>
-      S.day < 14
+      S.day < DAYS(14)
         ? chkOpt('incisor.drug', null, "Slip a dead mole-rat into the Incisor's water bucket", () => {
             if (attempt('incisor.drug')) {
               S.f.incisorDrugged = 1;
@@ -545,7 +545,7 @@ WIN.incisor = () => {
 // Marigold's escape, day 20: Dice robs the vault and runs, with you or without you.
 PLOTS.vault = {
   where: 'snakeeyes',
-  day: () => S.f.vaultDay || 20, // sooner if you cost Dice her savings
+  day: () => S.f.vaultDay || DAYS(20), // sooner if you cost Dice her savings
   live: () => alive('dice') && alive('pips') && S.n.dice.loc === 'snakeeyes',
   known: () => plotKnown('vault'),
   clue: { rook: 1, teo: 1 },

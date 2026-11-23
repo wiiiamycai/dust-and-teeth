@@ -812,7 +812,7 @@ SC.craneAsks = loc => {
           bump('sheriff', -3);
           if (S.f.craneNo >= 3) {
             S.f.craneNo = 0;
-            S.f.craneCool = S.day + 2;
+            S.f.craneCool = S.day + DAYS(2);
             quote(
               "Crane: \"Fine. FINE. I'll wait. I'm very good at waiting. I'll be thinking about it the whole time.\"",
             );

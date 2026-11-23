@@ -36,7 +36,7 @@ function canTry(key, arg) {
   if (!r) return true;
   if (r.lock === 'once') return false;
   if (r.lock === 'retry') return r.n < (r.max || 3);
-  if (r.lock === 'week' && S.day - r.day >= 7) return true;
+  if (r.lock === 'week' && S.day - r.day >= DAYS(7)) return true;
   // The baseline is taken the first time we look after the failure, so the failure's own
   // fallout (an opinion drop, say) doesn't count as "something changed".
   if (r.op == null) {

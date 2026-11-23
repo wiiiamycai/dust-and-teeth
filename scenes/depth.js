@@ -141,15 +141,15 @@ function depthDaily() {
   for (const [k, wait, fn] of DX) {
     if (!f[k] || f['dx_' + k]) continue;
     if (f['dxDay_' + k] == null) f['dxDay_' + k] = S.day;
-    if (S.day - f['dxDay_' + k] >= wait - 1) {
+    if (S.day - f['dxDay_' + k] >= DAYS(wait) - 1) {
       // the day it's noticed counts as day one
       f['dx_' + k] = 1;
       fn();
     }
   }
   // Nan's loan: two days before it's due, the valley warns you.
-  if (f.debt && f.debtDue && S.day === f.debtDue - 2) {
-    rx('nan', '"Two days, dear. I do so hate the part that comes after."');
+  if (f.debt && f.debtDue && S.day === f.debtDue - DAYS(2)) {
+    rx('nan', '"Not long now, dear. I do so hate the part that comes after."');
     rx('moe', '"Nan\'s collectors were in. Asking where you sleep. I said I didn\'t know. For now."');
   }
 }
@@ -211,7 +211,9 @@ linkLines = () => {
     );
   if (f.ateBacon) L.push("You ate Bacon Prime at Mama Lou's, with the gravy. Pell never forgave you. It was worth it.");
   if (f.planeHeld)
-    L.push('The Crust came for the plane on the ninth and found the Coil waiting, singing. Nobody burned.');
+    L.push(
+      'The Crust came for the plane on the night of the burning and found the Coil waiting, singing. Nobody burned.',
+    );
   if (f.toasterSold) L.push('Doc sold the Holy Toaster one part at a time. Each part came with a blessing, extra.');
   if (f.coilGuards && !f.shiftFreed)
     L.push("The Coil guarded Fenwick's pump for years. They prayed to it at every change of shift.");

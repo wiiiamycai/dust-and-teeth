@@ -85,7 +85,7 @@ const knows = (id, type, v) =>
   });
 function spread() {
   for (const ev of S.ev) {
-    if (S.day - ev.day > 14) continue;
+    if (S.day - ev.day > DAYS(14)) continue;
     for (const id of IDS) {
       if (!alive(id) || NPC[id].animal || S.n[id].k.includes(ev.id)) continue;
       const loc = S.n[id].loc;

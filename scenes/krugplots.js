@@ -105,7 +105,7 @@ TALK.sheriff = () => {
     r.o.push(
       chkOpt('crane.krug', null, '"Krug sells people. I can prove it."', () => {
         if (attempt('crane.krug')) {
-          f.craneRaid = S.day + 3;
+          f.craneRaid = S.day + DAYS(3);
           go('raidask');
         } else {
           quote('Crane: "Proof, I said. Not a story about proof."');

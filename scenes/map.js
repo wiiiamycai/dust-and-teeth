@@ -17,7 +17,7 @@ function drawMap(mp) {
       b.className = 'node' + (S.here === k ? ' here' : '');
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
-      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc === k && 'tremors', S.here === k && 'you') || '&nbsp;'}</span>`;
+      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc === k && 'tremors', S.here === k ? 'you' : (d => `${d} day${d > 1 ? 's' : ''}`)(tripDays(k))) || '&nbsp;'}</span>`;
       b.onclick = () => travel(k);
       mp.appendChild(b);
     });
@@ -31,15 +31,78 @@ SC.map = () => {
     title: 'The Wasteland',
     icon: '🏜️',
     sub: `Day ${S.day}`,
-    text: 'Click a place on the map. Each trip takes a day.',
+    text: 'Tap a place. The road goes through the towns between, and each one is a day.',
     map: true,
-    opts: [corpseOpt(), charOpt()],
+    opts: [
+      S.trip && S.trip !== S.here && LOC[S.trip] && onMap(S.trip)
+        ? [
+            `Carry on to ${LOC[S.trip].n} (${(d => `${d} day${d > 1 ? 's' : ''}`)(tripDays(S.trip))})`,
+            () => travel(S.trip),
+          ]
+        : null,
+      corpseOpt(),
+      charOpt(),
+    ],
   });
 };
+// ---- travel by road, a day a town (v9.5) ----
+// The shortest road from where you are, through the places you know. Every leg is a day and may bring something
+// on the road. You pass through the towns between, unless one of them has something for you, and then you stop.
+function route(from, to) {
+  if (!LOC[from] || LOC[from].sub) from = (LOC[from] && LOC[from].up) || 'scrapwell';
+  if (from === to) return [to];
+  const ok = k => LOC[k] && !LOC[k].sub && (onMap(k) || k === to),
+    prev = { [from]: null },
+    q = [from];
+  while (q.length) {
+    const c = q.shift();
+    if (c === to) break;
+    for (const n of neighbours(c)) if (ok(n) && !(n in prev)) (prev[n] = c), q.push(n);
+  }
+  if (!(to in prev)) return [to]; // no known road: you strike out across the sand, one long day
+  const path = [];
+  for (let c = to; c !== from; c = prev[c]) path.unshift(c);
+  return path;
+}
+const tripDays = k => route(S.here, k).length;
+// a reason to stop on the way: somebody there has something to say to you
+function stopWhy(k) {
+  const who = IDS.find(id => alive(id) && S.n[id].loc === k && S.n[id].rx.length);
+  return who ? `${npcName(who)} wants a word.` : null;
+}
+function passLine(k) {
+  const here = IDS.filter(id => alive(id) && S.n[id].loc === k && NPC[id].g);
+  const bit = here.length
+    ? pick([`${npcName(pick(here))} waves.`, `${npcName(pick(here))} watches you go by.`, `Nobody stops you.`])
+    : pick(['Nobody stops you.', 'You fill your water and keep going.']);
+  return `Day ${S.day}. You pass through ${LOC[k].n}. ${bit}`;
+}
 function travel(k) {
-  if (tick()) return go('ending');
-  const e = pickEnc(k);
-  if (e) return go('enc', e, k);
+  S.trip = k; // where you're going, until you get there: a trip cut short can carry on from the map
+  const path = route(S.here, k);
+  for (let i = 0; i < path.length; i++) {
+    const at = path[i];
+    if (tick()) return go('ending');
+    const e = pickEnc(at);
+    if (e) {
+      if (i === path.length - 1) S.trip = null;
+      return go('enc', e, at); // whatever happens on the road, you come out at the end of that leg
+    }
+    if (i === path.length - 1) break;
+    // passing a lost town that hasn't been cleared: sometimes it notices you
+    if (typeof TOWNS !== 'undefined' && TOWNS[at] && !townClear(at) && !S.crater[at] && roll(30)) {
+      say(`Day ${S.day}. You try to skirt ${LOC[at].n}. Something in it has seen you.`);
+      S.here = at;
+      return fight(TOWNS[at].stages[0][2](), { win: 'town', args: [at], back: ['map'] });
+    }
+    const why = !S.crater[at] && stopWhy(at);
+    if (why) {
+      say(`Day ${S.day}. You stop in ${LOC[at].n}: ${why}`);
+      return go('hub', at);
+    }
+    say(passLine(at));
+  }
+  S.trip = null;
   say(
     pick([
       'You walk. The sun tries to kill you. Not today.',
@@ -75,7 +138,7 @@ function pickEnc(dest) {
     ['cow', far ? 1 : 2],
     ['cult', 1],
   ];
-  if (S.day >= 4 && !f.kingStopped) pool.push(['molars', far ? 4 : 2]);
+  if (S.day >= DAYS(4) && !f.kingStopped) pool.push(['molars', far ? 4 : 2]);
   let r = Math.random() * pool.reduce((a, p) => a + p[1], 0);
   for (const [k, w] of pool) if ((r -= w) < 0) return k;
   return pool[0][0];
@@ -185,7 +248,7 @@ const ENC = {
   molars: d => {
     const en = molarCrew;
     return {
-      t: `Raiders in necklaces of teeth.${S.day >= 17 ? ' Three of them now. The King is recruiting.' : S.day >= 12 ? ' These ones have done this before.' : ''} "Tooth tax. One of yours."`,
+      t: `Raiders in necklaces of teeth.${S.day >= DAYS(17) ? ' Three of them now. The King is recruiting.' : S.day >= DAYS(12) ? ' These ones have done this before.' : ''} "Tooth tax. One of yours."`,
       o: [
         ['Fight', () => fight(en(), { win: 'molars', args: [d], back: ['hub', d] }), 'danger'],
         [
@@ -413,7 +476,7 @@ const ENC = {
   }),
   queen: d => {
     S.f.queenMet = 1;
-    const lv = clamp(4 + Math.floor((S.day - (S.n.bess.st.goneDay || S.day)) / 2), 4, 9);
+    const lv = clamp(4 + Math.floor((S.day - (S.n.bess.st.goneDay || S.day)) / DAYS(2)), 4, 9);
     S.n.bess.lvl = lv;
     const en = () => [
       foe('bess'),

@@ -33,8 +33,8 @@ const notoriety = () => S.kills + Math.max(0, -S.karma);
 // The King's army grows with the story, never with you.
 const molarCrew = () => [
   spawn('molar'),
-  S.day >= 12 ? spawn('molarVet') : spawn('molar', { arm: roll(30) ? 'spikes' : null }),
-  ...(S.day >= 17 ? [spawn('molar')] : []),
+  S.day >= DAYS(12) ? spawn('molarVet') : spawn('molar', { arm: roll(30) ? 'spikes' : null }),
+  ...(S.day >= DAYS(17) ? [spawn('molar')] : []),
   ...(S.f.kingFed ? [spawn('molar')] : []), // you fed him Chainfield's people
 ];
 const bountyCrew = () =>
