@@ -380,9 +380,22 @@ const TALK = {
       o.push([
         D('"I\'m going past the fence."', '"Me go past fence."'),
         () => {
+          // the early gear (v8.5, Will: "a story driven moment to get a gun and some armour early on")
           f.elderGift = 1;
           give('gutglue', 2);
-          quote('Ma Thistle: "Good. Don\'t die near the well." (+2 Gut Glue)');
+          give('ammo', 8);
+          const gun = !S.weapons.includes('zipgun'),
+            coat = !S.armors.includes('jacket');
+          if (gun) S.weapons.push('zipgun');
+          if (coat) S.armors.push('jacket');
+          if (coat && A[S.armor].dr < 2) S.armor = 'jacket';
+          if (gun && W[S.weapon].d[1] < W.zipgun.d[1]) S.weapon = 'zipgun';
+          quote(
+            'Ma Thistle looks you up and down. "Past the fence. In that." She goes inside, and you hear a trunk open. ' +
+              'She comes back with a zip gun, a box of bullets and a leather jacket that smells of somebody else. ' +
+              '"My third husband\'s. He won\'t be needing them. I sold him." She pushes glue into your hand too. ' +
+              `"Don't die near the well." (${[gun && 'Zip Gun', '8 bullets', coat && 'Leather Jacket', '2 Gut Glue'].filter(Boolean).join(', ')}, equipped)`,
+          );
           go('talk', 'elder');
         },
       ]);

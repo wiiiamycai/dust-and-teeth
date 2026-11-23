@@ -5024,5 +5024,54 @@
    "EVAL:fight([spawn('hound')], { close: true, back: ['map'] }); globalThis.r0 = runP(); S.fight.en[0].lame = true",
    "EXPECT:runP() >= Math.min(95, r0 + 30)"
   ]
+ },
+ {
+  "name": "Early gear: tell Ma Thistle you're going past the fence and she gives you her third husband's zip gun and jacket",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Ma Thistle",
+   "going past the fence",
+   "EXPECT:S.weapons.includes('zipgun') && S.armors.includes('jacket') && S.armor === 'jacket' && S.weapon === 'zipgun' && S.inv.ammo >= 8",
+   "SAY:I sold him",
+   "EXPECT:!cur.some(o => o && /past the fence/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Rattle Gully: always known, hunt beasts for teeth, three hunts a day",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:!LOC.gully.hidden && ROADS.some(r => r.includes('gully') && r.includes('scrapwell'))",
+   "EVAL:go('town', 'gully')",
+   "SAY:3 hunts left today",
+   "EVAL:globalThis.t0 = S.teeth; for (let i = 0; i < 3; i++) { go('town', 'gully'); cur.find(o => o && /Hunt/.test(o[0]))[1](); S.fight.en.forEach(e => (e.hp = 0)); enemy(); }",
+   "EVAL:go('town', 'gully')",
+   "SAY:Come back tomorrow",
+   "EVAL:S.f.gullyN = 0; go('town', 'gully')",
+   "Hunt in the rocks",
+   "EVAL:S.fight.en.forEach(e => (e.hp = 0)); enemy()",
+   "EXPECT:!S.fight && S.teeth > t0"
+  ]
+ },
+ {
+  "name": "Combat: the harder the fight, the lower the chance to run",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:fight([spawn('gullyRat')], { back: ['map'] }); globalThis.r1 = runP(); S.fight = null",
+   "EVAL:fight([spawn('hound'), spawn('hound')], { back: ['map'] }); globalThis.r2 = runP(); S.fight = null",
+   "EVAL:fight([spawn('hiveMother'), spawn('stinger')], { back: ['map'] }); globalThis.r3 = runP(); S.fight.en[0].hp = 1; globalThis.r4 = runP()",
+   "EXPECT:r1 > r2 && r2 > r3 && r4 > r3",
+   "SAY:Run ("
+  ]
+ },
+ {
+  "name": "Lost towns: every town has a second boss guarding its third stage",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:Object.values(TOWNS).every(T => T.stages[2][2]().some(e => e.boss) && T.stages[3][2]().some(e => e.boss))"
+  ]
  }
 ]

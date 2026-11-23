@@ -172,9 +172,14 @@ function teleFor(e) {
     : { w: `${e.n} winds up a huge swing.`, h: 'big swing', x: 2, acc: 10 };
 }
 const dodgeP = () => clamp(35 + ptw() * 5 + S.stats.luck, 15, 90);
+// Running (Will: "the harder the fight, the lower the percentage to run"): every living enemy costs you
+// two points a level, scaled by how much of it is left, and a boss costs fifteen more. One hurt rat is easy
+// to leave; the Hive Mother is not.
+const threat = live =>
+  Math.max(0, live.reduce((t, e) => t + e.lvl * 2 * (0.5 + (0.5 * e.hp) / e.max) + (e.boss ? 15 : 0), 0) - 2);
 const runP = () => {
   const live = S.fight.en.filter(e => e.hp > 0);
-  return clamp(fleeP() + (live.length && live.every(e => e.lame) ? 30 : 0), 5, 95);
+  return clamp(Math.round(fleeP() - threat(live) + (live.length && live.every(e => e.lame) ? 30 : 0)), 5, 95);
 };
 const winding = () => S.fight.en.some(e => e.hp > 0 && e.tele);
 const pct = n => ` (${n}%)`;

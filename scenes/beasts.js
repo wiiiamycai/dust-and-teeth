@@ -196,6 +196,82 @@ Object.assign(ENEMY, {
     ],
   },
 });
+// ---- the second bosses (v8.5, Will: "each of them should have a couple of bosses") ----
+// Each town has a boss guarding the third stage, halfway between its pack and its queen.
+Object.assign(ENEMY, {
+  gnawer: {
+    n: 'Old Gnawer',
+    kind: 'swarm',
+    venom: 1,
+    i: '🐀',
+    lvl: 3,
+    teeth: 0,
+    hpm: 0.9,
+    d: [3, 6],
+    beast: 1,
+    rage: 1,
+    boss: 1,
+    loot: { meat: 2 },
+    moves: [
+      mv('Old Gnawer grinds its teeth together. They are as long as your fingers.', 'gnaw', 2, 10),
+      mv('Old Gnawer squeals, and the black water boils with rats.', 'rat call', 1.5, 20),
+    ],
+  },
+  pincer: {
+    n: 'The Pincer',
+    kind: 'shell',
+    i: '🦀',
+    lvl: 4,
+    teeth: 0,
+    hpm: 1.7,
+    d: [4, 8],
+    dr: 6,
+    beast: 1,
+    rage: 1,
+    boss: 1,
+    loot: { meat: 2 },
+    moves: [
+      mv('The Pincer opens its one huge claw, wide enough for your waist.', 'the big claw', 2.5, 10),
+      mv('The Pincer rattles its shell and shoves forward.', 'shove', 1.5, 20),
+    ],
+  },
+  droneLord: {
+    n: 'The Drone Lord',
+    kind: 'swarm',
+    venom: 1,
+    i: '🐝',
+    lvl: 8,
+    teeth: 0,
+    hpm: 1.5,
+    d: [11, 16],
+    dr: 3,
+    beast: 1,
+    rage: 1,
+    boss: 1,
+    moves: [
+      mv('The Drone Lord climbs straight up, then folds its wings.', 'stoop', 2.5, 15),
+      mv('The Drone Lord hums, and every stinger on the ladder turns to look at you.', 'call the drones', 1.5, 25),
+    ],
+  },
+  oneEye: {
+    n: 'One-Eye',
+    kind: 'flesh',
+    i: '🐺',
+    lvl: 6,
+    teeth: 0,
+    hpm: 1.4,
+    d: [10, 15],
+    dr: 1,
+    beast: 1,
+    rage: 1,
+    boss: 1,
+    loot: { meat: 1 },
+    moves: [
+      mv('One-Eye turns its head to put its good eye on you, and goes very quiet.', 'the long bite', 2.5, 15),
+      mv('One-Eye barks once. The pit goes silent, then everything in it runs at you.', 'pack call', 1.5, 25),
+    ],
+  },
+});
 ITEMS.flare = 'Road flare';
 ITEMS.molotov = 'Molotov';
 // The Old Shell's carapace, cut to fit a man. Very hard, very heavy.
@@ -227,8 +303,8 @@ const TOWNS = {
       ],
       [
         'Wade down the mill race',
-        'Black water, and things the size of dogs swimming in it.',
-        () => [B('bloater'), B('bloater'), B('ratling')],
+        'Black water, things the size of dogs swimming in it, and on the sluice gate something old and grey, chewing a cartwheel. Old Gnawer.',
+        () => [B('gnawer'), B('ratling')],
       ],
       [
         'Climb into the mill, to the nest',
@@ -268,7 +344,11 @@ const TOWNS = {
         'A saltback is wedged in the boiling shed, and it does not want to share.',
         () => [B('saltback'), B('crawler'), B('crawler')],
       ],
-      ['Along the drying racks', 'Two of them, back to back, clicking.', () => [B('saltback'), B('saltback')]],
+      [
+        'Along the drying racks',
+        'A saltback with one claw grown huge, as big as a wheelbarrow, and it has cut the racks to pieces. The Pincer.',
+        () => [B('pincer'), B('crawler')],
+      ],
       [
         'Out to the deep pan',
         'The deep pan is not a pan. It is a back. The Old Shell.',
@@ -303,7 +383,11 @@ const TOWNS = {
         'Wax on every wall. A drone in the doorway.',
         () => [B('stinger'), B('stinger'), B('drone')],
       ],
-      ['Up the tower ladder', 'Halfway up, the ladder is a nest.', () => [B('drone'), B('stinger'), B('stinger')]],
+      [
+        'Up the tower ladder',
+        'Halfway up, the ladder is a nest, and something the size of a dog sits on top of it. The Drone Lord.',
+        () => [B('droneLord'), B('stinger')],
+      ],
       [
         'Into the tank, to the hive',
         'The tank is one huge hive. In the middle of it, the Hive Mother.',
@@ -339,7 +423,11 @@ const TOWNS = {
         'The pack lives here now. They are not afraid of you.',
         () => [B('hound'), B('hound'), B('alpha')],
       ],
-      ['Round the bone pits', 'Two alphas, and a lot of old bones.', () => [B('alpha'), B('alpha')]],
+      [
+        'Round the bone pits',
+        'A lot of old bones, and lying on them a scarred alpha with one eye gone white. One-Eye.',
+        () => [B('oneEye'), B('hound'), B('hound')],
+      ],
       [
         'Into the long barn, to the den',
         'Something grey and enormous gets up off a bed of ribs. Old Mother Bone.',
@@ -405,7 +493,7 @@ WIN.townStage = (k, n) => {
   go('town', k);
 };
 const _hubTowns = SC.hub;
-SC.hub = loc => (TOWNS[loc] ? go('town', loc) : _hubTowns(loc));
+SC.hub = loc => (TOWNS[loc] || loc === 'gully' ? go('town', loc) : _hubTowns(loc));
 
 // ---- what clearing a town changes ----
 const TOWN_DONE = {
@@ -703,4 +791,108 @@ linkLines = () => {
       'Fanghill is a caravan stop again. The bones are buried. The dogs are gone. Jeb has a lizard named after you.',
     );
   return L;
+};
+
+// ---- Rattle Gully: the low ground for hunting teeth (v8.5) ----
+// Will: "add a low level one so you can kill monsters for teeth". Always known, an hour from Scrapwell, never
+// cleared: small beasts that sell, three hunts a day before the gully goes quiet.
+Object.assign(ENEMY, {
+  dustLizard: {
+    n: 'Dust lizard',
+    kind: 'flesh',
+    i: '🦎',
+    lvl: 1,
+    teeth: 2,
+    hpm: 0.4,
+    d: [1, 3],
+    beast: 1,
+    flee: 1,
+    moves: [mv('The dust lizard puffs out its frill and hisses.', 'frill snap', 2, 10)],
+  },
+  gullyRat: {
+    n: 'Gully rat',
+    kind: 'swarm',
+    i: '🐀',
+    lvl: 1,
+    teeth: 1,
+    hpm: 0.3,
+    d: [1, 3],
+    beast: 1,
+    pack: 1,
+    flee: 1,
+    moves: [mv('A gully rat crouches, tail lashing, ready to go for your ankle.', 'ankle bite', 2, 10)],
+  },
+  picker: {
+    n: 'Bone-picker',
+    kind: 'flesh',
+    i: '🦅',
+    lvl: 2,
+    teeth: 3,
+    hpm: 0.5,
+    d: [2, 4],
+    beast: 1,
+    flee: 1,
+    moves: [mv('The bone-picker climbs, turns, and folds its wings to dive.', 'dive', 2, 15)],
+  },
+  bigMo: {
+    n: 'Big Mo',
+    kind: 'flesh',
+    i: '🦎',
+    lvl: 2,
+    teeth: 8,
+    hpm: 1,
+    d: [2, 5],
+    beast: 1,
+    rage: 1,
+    boss: 1,
+    loot: { meat: 1 },
+    moves: [mv('Big Mo, the lizard as big as a dog, opens a mouth full of old teeth.', 'big bite', 2, 10)],
+  },
+});
+LOC.gully = { n: 'Rattle Gully', i: '🦎', lvl: 1, x: 27, y: 60 };
+ROADS.push(['gully', 'scrapwell']);
+const GULLY_HUNTS = 3;
+const gullyLeft = () => (S.f.gullyDay === S.day ? GULLY_HUNTS - (S.f.gullyN || 0) : GULLY_HUNTS);
+function gullyPack() {
+  const t = () => ({ teeth: R(1, 3) });
+  if (roll(12)) return [spawn('bigMo')];
+  return pick([
+    () => [spawn('dustLizard', t()), spawn('dustLizard', t())],
+    () => [spawn('gullyRat'), spawn('gullyRat'), spawn('gullyRat')],
+    () => [spawn('picker', { teeth: R(2, 4) })],
+    () => [spawn('dustLizard', t()), spawn('gullyRat')],
+    () => [spawn('picker', { teeth: R(2, 4) }), spawn('gullyRat')],
+  ])();
+}
+const _townGully = SC.town;
+SC.town = k => {
+  if (k !== 'gully') return _townGully(k);
+  S.here = 'gully';
+  const left = gullyLeft();
+  show({
+    title: 'Rattle Gully',
+    icon: '🦎',
+    sub: `${cap(placeWord(1))} · Day ${S.day}`,
+    text:
+      'A dry gully an hour out of Scrapwell. Lizards sun themselves on the rocks, rats live in the holes, and bone-pickers circle over all of it. Hides and teeth sell, and Scrapwell kids come here to learn which end of a pipe to hold.' +
+      (left > 0
+        ? `\n\nSomething moves between the rocks. (${left} hunt${left > 1 ? 's' : ''} left today)`
+        : '\n\nThe gully has gone quiet. Everything left is hiding. Come back tomorrow.'),
+    opts: [
+      left > 0 && [
+        'Hunt in the rocks',
+        () => {
+          if (S.f.gullyDay !== S.day) {
+            S.f.gullyDay = S.day;
+            S.f.gullyN = 0;
+          }
+          S.f.gullyN++;
+          fight(gullyPack(), { win: 'town', args: ['gully'], back: ['town', 'gully'] });
+        },
+        'danger',
+      ],
+      ['Leave (map)', () => go('map')],
+      charOpt(),
+    ],
+  });
 };

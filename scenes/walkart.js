@@ -610,6 +610,7 @@ const VSTYLE = {
   },
 };
 ['gristmill', 'saltpan', 'kettle', 'fanghill'].forEach(k => (VSTYLE[k] = VSTYLE.ruin));
+VSTYLE.gully = VSTYLE.scrapwell; // the hunters' lean-to
 const PROPS = {
   scrapwell: 'bkuk',
   rustwater: 'qlbu',

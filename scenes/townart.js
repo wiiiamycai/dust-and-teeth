@@ -202,6 +202,34 @@ const TOWNART = {
     TA.r(g, 14, 9, 6, 2, '#e8f8f4');
     TA.r(g, 24, 6, 1, 18, 'rgba(255,255,255,0.4)');
   },
+  gully: g => {
+    // a dry gully: two rock walls, a lean-to, a skull on a post and a lizard on a rock
+    TA.shadow(g, 2, 27, 44);
+    for (const [x, y, w, h] of [
+      [1, 10, 14, 17],
+      [33, 8, 14, 19],
+    ]) {
+      TA.box(g, x, y, w, h, GP.rock, GP.rockHi);
+      TA.r(g, x + 2, y + 5, w - 4, 2, GP.rockLo);
+      TA.r(g, x + 3, y + 11, w - 6, 2, GP.rockLo);
+    }
+    TA.r(g, 16, 22, 16, 5, GP.sandLo);
+    // the hunters' lean-to
+    TA.box(g, 17, 12, 13, 3, '#8a8a80', '#b0b0a4');
+    TA.r(g, 18, 15, 1, 8, GP.wood);
+    TA.r(g, 28, 15, 1, 8, GP.wood);
+    TA.r(g, 20, 17, 6, 4, '#a87a4a');
+    // a skull on a post
+    TA.r(g, 12, 3, 1, 8, GP.wood);
+    TA.box(g, 10, 1, 5, 4, '#e8e0d0');
+    TA.r(g, 11, 2, 1, 1, GP.ink);
+    TA.r(g, 13, 2, 1, 1, GP.ink);
+    // the lizard sunning itself
+    TA.r(g, 36, 6, 8, 2, '#7a9a3a');
+    TA.r(g, 43, 5, 2, 2, '#7a9a3a');
+    TA.r(g, 33, 7, 3, 1, '#7a9a3a');
+    TA.r(g, 44, 5, 1, 1, GP.ink);
+  },
   gristmill: g => {
     // a windmill with its sails, and grain sacks
     TA.shadow(g, 14, 27, 20);

@@ -382,6 +382,7 @@ const THEME = {
   well: { fill: 's', deco: '#', n: 12 },
   vats: { fill: 's', deco: '~', n: 6 },
   gristmill: { fill: ',', deco: 'x', n: 8 },
+  gully: { fill: '.', deco: 'x', n: 14 },
   saltpan: { fill: '.', deco: '~', n: 6 },
   kettle: { fill: '.', deco: 'x', n: 6 },
   fanghill: { fill: '.', deco: 'T', n: 8 },
@@ -1095,7 +1096,7 @@ const walkSay = t => walkMsg(t);
 const _hubWalk = SC.hub;
 SC.hub = loc => {
   if (!walkOn() || S.crater[loc] || !LOC[loc]) return _hubWalk(loc);
-  if (typeof TOWNS !== 'undefined' && TOWNS[loc]) return go('town', loc); // the lost towns have their own screen
+  if ((typeof TOWNS !== 'undefined' && TOWNS[loc]) || loc === 'gully') return go('town', loc); // the lost towns have their own screen
   let v = null;
   const _show = show;
   show = x => {
