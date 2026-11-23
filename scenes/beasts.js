@@ -281,12 +281,12 @@ A.shell = { n: 'Saltback Shell', dr: 5, v: 120, tw: -2 };
 const B = k => spawn(k);
 const TOWNS = {
   gristmill: {
+    gear: 'Built for starter gear: a pipe or a zip gun, and a leather jacket.',
     n: 'Gristmill',
     i: '🌾',
     lvl: 3,
-    x: 12,
-    y: 36,
-    hidden: 'knowGrist',
+    x: 10,
+    y: 50,
     lost: 'The grain town. Doors chewed through. Everything that was food is gone, and something is still eating.',
     clear:
       'Gristmill is quiet. The millwheel turns, slowly, for the first time in a year. A family has moved back into the end house.',
@@ -324,12 +324,12 @@ const TOWNS = {
     road: ['farm', 'scrapwell'],
   },
   saltpan: {
+    gear: 'Built for a heavy weapon. The shells laugh at blades and bullets: bring a sledge or a shotgun.',
     n: 'Saltpan',
     i: '🧂',
     lvl: 4,
-    x: 18,
-    y: 94,
-    hidden: 'knowSalt',
+    x: 17,
+    y: 88,
     lost: 'White salt flats, a pan-works, empty houses. The salt crunches. Then something under it moves.',
     clear:
       'The pans are working again. Two salt-boilers came back from the coast, and the first thing they did was put up a price list.',
@@ -363,12 +363,12 @@ const TOWNS = {
     road: ['diner', 'scrapwell'],
   },
   kettle: {
+    gear: 'Built for pre-war gear, or a grave. Spread shot and fire tear a swarm up.',
     n: 'Kettle',
     i: '🗼',
-    lvl: 5,
-    x: 72,
-    y: 52,
-    hidden: 'knowKettle',
+    lvl: 7, // the hardest of the four: reads 'deadly' on the map
+    x: 82,
+    y: 44,
     lost: 'A dead town round a water tower that still has water in it. The tower hums. The hum has wings.',
     clear:
       'The tower is quiet. Somebody has painted FREE on the tank, in letters ten feet high, and people walk here from Rustwater with buckets.',
@@ -403,12 +403,12 @@ const TOWNS = {
     road: ['rustwater', 'skybus'],
   },
   fanghill: {
+    gear: 'Built for real armour. The packs hit hard and fast: plate or a riot suit, and a blade.',
     n: 'Fanghill',
     i: '🦴',
     lvl: 5,
-    x: 30,
-    y: 10,
-    hidden: 'knowFang',
+    x: 14,
+    y: 12,
     lost: 'A caravan stop the Molars hit last year. They took the people and left the bodies, and the bodies brought the dogs.',
     clear:
       'Fanghill has a well, a fence and a sign again. The caravans stop here on the north road. Somebody buried the bones.',
@@ -445,7 +445,9 @@ const TOWNS = {
 };
 for (const k in TOWNS) {
   const T = TOWNS[k];
-  LOC[k] = { n: T.n, i: T.i, lvl: T.lvl, x: T.x, y: T.y, hidden: T.hidden };
+  // never hidden (v9.2, Will: "you want people to want to know and fight the combat zones, and make them want to
+  // level up their gear"). The neighbours' jobs still say what's wrong there, and pay for it.
+  LOC[k] = { n: T.n, i: T.i, lvl: T.lvl, x: T.x, y: T.y };
   T.road.forEach(r => ROADS.push([k, r]));
 }
 const townStage = k => S.f['town_' + k] || 0; // stages cleared, 0 to 4
@@ -468,7 +470,9 @@ SC.town = k => {
     title: T.n,
     icon: T.i,
     sub: `${townClear(k) ? 'cleared' : cap(placeWord(T.lvl))} · Day ${S.day}`,
-    text: townClear(k) ? T.clear : `${T.lost}${n ? `\n\nYou've cleared ${n} of the way in. ` : '\n\n'}${st[1]}`,
+    text: townClear(k)
+      ? T.clear
+      : `${T.lost}\n\n${T.gear} Two bosses inside.${n ? `\n\nYou've cleared ${n} of the way in. ` : '\n\n'}${st[1]}`,
     opts: [
       !townClear(k) && [
         st[0],

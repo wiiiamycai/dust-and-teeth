@@ -5091,5 +5091,18 @@
    "EVAL:hud()",
    "EXPECT:document.getElementById('hud').innerHTML.includes('bar xp')"
   ]
+ },
+ {
+  "name": "Towns: all four lost towns are on the map from the start, and each says what gear it wants",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EXPECT:['gristmill', 'saltpan', 'kettle', 'fanghill'].every(k => onMap(k) && !LOC[k].hidden)",
+   "EXPECT:placeWord(LOC.kettle.lvl) === 'deadly' && placeWord(LOC.gristmill.lvl) === 'rough'",
+   "Leave (map)",
+   "TRAVEL:Gristmill",
+   "SAY:Built for starter gear",
+   "SAY:Two bosses inside"
+  ]
  }
 ]

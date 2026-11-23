@@ -96,7 +96,7 @@ Keep the current combat loop (hit, aim for eyes, aim for groin, Gut Glue, Buzz, 
 
 - Every enemy type has a fixed strength that never changes with the player's level or progress.
 - Danger is mixed everywhere: near home is mostly weak, but strong things can appear anywhere at any time.
-- Four lost towns (`scenes/beasts.js`): Gristmill (rad-rats, starter gear), Saltpan (saltbacks, heavy weapons), Fanghill (grave-hounds, armour and blades) and Kettle (stingers, pre-war gear). Found through a neighbour, cleared in three stages and a boss, and clearing changes the neighbours. Left alone, they spread onto the roads.
+- Four lost towns (`scenes/beasts.js`): Gristmill (rad-rats, starter gear), Saltpan (saltbacks, heavy weapons), Fanghill (grave-hounds, armour and blades) and Kettle (stingers, pre-war gear). On the map from the start (v9.2), each saying what gear it's built for; a neighbour pays to have it cleared. Cleared in two stages, a boss, then the final boss, and clearing changes the neighbours. Left alone, they spread onto the roads.
 - Add at least one roaming apex monster, the **Gutmaw**: huge burrowing beast with a big health bar and heavy attacks. Early game the only options are run, hide or distract it (throw meat, sacrifice something). Late game it can be killed and it should feel earned.
 - Descriptions make danger readable ("It's the size of a car. The ground shakes when it moves.") so the player can choose to back off.
 - The world worsens only through story (the Dentist King's army grows over time) and notoriety (hunters are stronger because the player made bigger enemies).
