@@ -12,7 +12,7 @@ let VW = 15,
 const walkSize = () => {
   const w = (typeof window !== 'undefined' && window.innerWidth) || 390,
     h = (typeof window !== 'undefined' && window.innerHeight) || 844;
-  VW = w < h ? 11 : 17;
+  VW = w < h ? 13 : 19; // a little zoomed out (v7.9), so a place fits on about one screen
   VH = Math.max(7, Math.round((VW * h) / w));
 };
 const WALK_KEY = 'dust_teeth_walk';
@@ -327,54 +327,51 @@ const THEME = {
 };
 const optLabel = o => o[0].split(' (')[0].split(',')[0].replace(/^"|"$/g, '').slice(0, 15);
 function genMap(loc, opts, ids) {
+  // compact (v7.9, Will: "condense the world size but not the content"): one street up the middle, buildings
+  // two to a row either side of it, people along the street. About one phone screen.
   const T = THEME[loc] || { fill: '.', deco: 'x', n: 5 };
   const sub = LOC[loc] && LOC[loc].sub;
   // in the well or the vats, the way back up is the exit, not a building
   const acts = opts.filter(o => o && !/^Back to walking/.test(o[0]) && !(sub && /^Climb|back up/i.test(o[0])));
-  const perRow = 4,
-    houseRows = Math.max(1, Math.ceil(acts.length / perRow));
-  const W = 22,
-    H = Math.max(16, 7 + houseRows * 6);
+  const rowsB = Math.max(1, Math.ceil(acts.length / 2)),
+    W = 15,
+    H = Math.max(12, 3 + rowsB * 4 + Math.ceil(ids.length / 4) * 2 + 2);
   const g = [];
   for (let y = 0; y < H; y++) g.push([...(y === 0 || y === H - 1 ? '#'.repeat(W) : '#' + T.fill.repeat(W - 2) + '#')]);
   const set = (x, y, c) => {
     if (y > 0 && y < H - 1 && x > 0 && x < W - 1) g[y][x] = c;
   };
-  // a seeded scatter of the place's look, kept off the middle
+  const mx = 7;
+  // a seeded scatter of the place's look, kept off the street and the buildings
   let seed = [...loc].reduce((a, c) => a * 31 + c.charCodeAt(0), 7);
   const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
-  for (let i = 0; i < T.n; i++) {
+  for (let i = 0; i < Math.min(T.n, 6); i++) {
     const x = 1 + Math.floor(rnd() * (W - 2)),
-      y = 1 + Math.floor(rnd() * (H - 2));
-    if (Math.abs(x - W / 2) > 2) set(x, y, T.deco);
+      y = 3 + rowsB * 4 + Math.floor(rnd() * Math.max(1, H - 5 - rowsB * 4));
+    if (Math.abs(x - mx) > 2) set(x, y, T.deco === '~' ? 'x' : T.deco);
   }
-  if (T.lake) for (let x = 1; x < W - 1; x++) for (const y of [1, H - 3]) if (Math.abs(x - W / 2) > 1) set(x, y, '~');
-  // the main street, from the exit at the bottom to the top
-  const mx = Math.floor(W / 2);
-  for (let y = 2; y < H - 1; y++) set(mx, y, '=');
+  for (let y = 1; y < H - 1; y++) set(mx, y, '=');
   g[H - 1][mx] = 'E';
-  // buildings: a row of up to four, each a roof, a wall with a door, and a path to the street
   const use = {},
     boards = [];
   acts.forEach((o, i) => {
-    const row = Math.floor(i / perRow),
-      col = i % perRow,
-      bx = [2, 6, 13, 17][col],
-      by = 2 + row * 6;
+    const row = Math.floor(i / 2),
+      left = i % 2 === 0,
+      bx = left ? 2 : 10,
+      by = 1 + row * 4;
     for (let dx = 0; dx < 3; dx++) {
       set(bx + dx, by, 'H');
       set(bx + dx, by + 1, dx === 1 ? 'D' : 'h');
     }
-    for (let dx = Math.min(bx + 1, mx); dx <= Math.max(bx + 1, mx); dx++) set(dx, by + 3, '=');
-    set(bx + 1, by + 2, '=');
+    for (let x = Math.min(bx + 1, mx); x <= Math.max(bx + 1, mx); x++) set(x, by + 2, '=');
     use[`${bx + 1},${by + 1}`] = { opt: o[0] };
     boards.push({ x: bx + 1, y: by, t: optLabel(o) });
   });
-  // people: along the cross paths, either side of the street
-  const spots = {};
-  const free = [];
-  for (let y = 4; y < H - 2; y += 3)
-    for (const x of [mx - 2, mx + 2, mx - 5, mx + 5, mx - 8, mx + 8]) free.push([x, y]);
+  // people: along the street, either side, below the buildings
+  const spots = {},
+    free = [];
+  for (let y = 3 + rowsB * 4; y < H - 1; y += 2) for (const x of [mx - 2, mx + 2, mx - 4, mx + 4]) free.push([x, y]);
+  for (let y = 4; y < 3 + rowsB * 4; y += 4) for (const x of [mx - 2, mx + 2]) free.push([x, y]);
   ids.forEach(id => {
     const s = free.find(([x, y]) => g[y] && TILEDEF[g[y][x]] && TILEDEF[g[y][x]].walk);
     if (!s) return;
@@ -386,6 +383,9 @@ function genMap(loc, opts, ids) {
 SC.walk = (loc, ids, opts, text) => {
   const M = walkMap(loc, opts, ids);
   S.wk = S.wk || {};
+  // a spot saved on an older, bigger map may now be off the map or inside a wall: start at the way in
+  const st = S.wk.loc === loc && TILEDEF[(M.rows[S.wk.y] || '')[S.wk.x]];
+  if (S.wk.loc === loc && !(st && st.walk)) S.wk.loc = null;
   if (S.wk.loc !== loc) {
     let sp = M.spawn;
     if (M.valley) {

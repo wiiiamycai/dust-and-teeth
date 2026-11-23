@@ -607,3 +607,7 @@ Will: "balance the weapons as well and leveling, balance everything". Measured w
 281. **Name boards on hand-drawn maps too:** whatever on the map does something today gets a board over it, named from what it does.
 282. **The well and the vats lead back up:** walking out of their exit takes you to the place above, not out into the valley, and their way up is no longer a building.
 283. **No more getting trapped outside a town** (Will got stuck at the Drowned Mall: up walked him back in, every other way was water). Every way in on the valley map has a small dirt square round it, joined to the road, and the Mall's lake never fills within two tiles of it. `tests/walk.js` now walks the valley the way you do (from where you come out of a place, never through another place's way in); run on the old map it found the Mall and Saltpan traps. Version 7.8.
+
+## A smaller world, the same content (v7.9)
+
+284. **Condensed** (Will: "some of these places feel way too big for what they are", "condense the world size but not the content"). All seven hand-drawn places are redrawn at 14 to 17 tiles wide, about one phone screen, with every building, object and person kept. Built maps are one street up the middle with buildings two to a row either side, sized to what's there. The valley is 56 x 46 instead of 84 x 70, so a trip is a short walk (still a day). The view is a little zoomed out, 13 tiles across instead of 11. A spot saved on an older, bigger map that is now off the map or in a wall starts you at the way in.
