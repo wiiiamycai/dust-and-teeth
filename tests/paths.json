@@ -4434,17 +4434,15 @@
   ]
  },
  {
-  "name": "Crane's baby: while she carries, nothing harms her; no murder, no sale, no Thursday, no hired Molar",
+  "name": "Crane's baby: carrying no longer protects her (Will, v9.14): she can be attacked, murdered, and the Thursday special still lands",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; S.f.mayorJob = 1; S.f.mayorJobDay = 1; S.f.raid = 1; S.f.kingStopped = 1; S.f.thursday = 'sheriff'; later(1, 'thursday', 'sheriff')",
+   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; S.f.raid = 1; S.f.kingStopped = 1; S.f.thursday = 'sheriff'; later(1, 'thursday', 'sheriff')",
    "EVAL:go('talk', 'sheriff')",
-   "EXPECT:!cur.some(o => /^(Attack|Murder) Sheriff/.test(o[0]))",
-   "EVAL:S.here = 'chainfield'; go('talk', 'krug')",
-   "EXPECT:!cur.some(o => /Your ex-wife/.test(o[0]))",
-   "WAIT:38",
-   "EXPECT:alive('sheriff') && S.f.hitDone"
+   "EXPECT:cur.some(o => /^Attack Sheriff/.test(o[0])) && cur.some(o => /^Murder Sheriff/.test(o[0]))",
+   "WAIT:10",
+   "EXPECT:!alive('sheriff')"
   ]
  },
  {
