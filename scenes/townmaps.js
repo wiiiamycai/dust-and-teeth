@@ -1,7 +1,7 @@
 'use strict';
 // ================= THE WALKING TOWNS: what goes where in each of the 10 stops (v9.23) =================
 // Each town is painted once with the town kit (scenes/townkit.js), in the style of the approved mock-ups.
-//   rows: the ground, one letter a tile (24 pixels):  . sand  , scrub  = road  ; field  ~ water  # rock  g grass  s snow
+//   rows: the ground, one letter a tile (24 pixels):  . sand  , scrub  = road  ; field  ~ water (blocks)  # concrete  g grass  s salt
 //   paint(): the buildings and props, in pixels. Each door() is noted in the order it is painted.
 //   doors: what each door does, in that order: a pattern for one of the place's own options (the first that
 //          matches), or words to say. null: a door that stays shut.
@@ -606,5 +606,158 @@ TOWNMAP.snakeeyes = {
     [16, 288 + 130, 100, 52, /The pit/i],
     [146, 288 + 122, 76, 16, /rat races/i],
     [200, 288 + 72, 28, 12, /Cards/i],
+  ],
+};
+// ---- the Old Airport: the Sky-Bus crashed on the sand to the north, the Drowned Mall on its flooded car park ----
+TOWNMAP.mall = {
+  rows: [
+    ',,,.......',
+    '..........',
+    '..........',
+    '..........',
+    '..........',
+    '...,,.....',
+    '..........',
+    '..........',
+    '==========',
+    '==,,......',
+    '==,,......',
+    '==,,......',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '######~~~~',
+    '#####~~~~~',
+    '#####~~~~~',
+    '#####~~~~~',
+    '####~~~~~~',
+    '####~~~~~~',
+  ],
+  spawn: [1, 22],
+  exits: [
+    [0, 23],
+    [1, 23],
+  ],
+  areas: [['skybus', 0, 0, 9, 11]],
+  doors: [],
+  spots: { ohm: [6, 2], margie: [3, 15], vane: [8, 15], sprocket: [2, 18], gums: [3, 19], eel: [5, 17] },
+  extra: [
+    [7, 3],
+    [1, 5],
+    [8, 7],
+    [3, 10],
+    [0, 15],
+    [6, 16],
+    [1, 20],
+    [2, 21],
+  ],
+  paint(K) {
+    const { building, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      S = 288;
+    // ---- the Sky-Bus: the dead plane, broken across the sand ----
+    shadow(10, 58, 230, 12);
+    M().rect(30, 12, 180, 44).oval(30, 34, 22, 22).paint(g(), R('#d8d8d0'), { t: 0.85, hi: 1, ink: INK });
+    K.solid(8, 12, 202, 44);
+    r(10, 40, 200, 4, '#a83a30');
+    for (let xx = 40; xx < 206; xx += 12)
+      if (xx < 104 || xx > 136) M().rect(xx, 22, 6, 8).paint(g(), R('#4a5a6a'), { ink: INK });
+    M().rect(104, 22, 32, 34).paint(g(), R('#5a5a58'), { hi: 1, ink: INK });
+    r(108, 26, 24, 30, '#1a1814');
+    M()
+      .rows(208, 0, ['oooooooo', '.ooooooo', '..oooooo', '...ooooo', '....oooo', '....oooo', '....oooo'])
+      .paint(g(), R('#c8c8c0'), { hi: 1, ink: INK });
+    M()
+      .rows(60, 60, [
+        'oooooooooooooooooooooooo',
+        '.ooooooooooooooooooooo..',
+        '...ooooooooooooooooo....',
+        '......oooooooooooo......',
+      ])
+      .paint(g(), R('#b8b8b0'), { hi: 1, ink: INK });
+    // Coil banners, an antenna, mole holes
+    [150, 186].forEach(x => {
+      M().rect(x, 70, 2, 30).paint(g(), R('#6a6a70'), { ink: INK });
+      M()
+        .rect(x + 2, 70, 14, 10)
+        .paint(g(), R('#4a6a9a'), { hi: 1, ink: INK });
+      PX.rows(g(), x + 5, 72, ['.a.', 'aaa', '.a.', 'a.a'], { a: '#e8c040' });
+    });
+    PX.line(g(), 30, 0, 36, 12, '#6a6a70');
+    r(28, 0, 4, 1, '#a8e07c');
+    [
+      [64, 150],
+      [180, 140],
+      [120, 172],
+    ].forEach(([x, y]) => {
+      M().oval(x, y, 8, 4).paint(g(), R('#8a6a48'), { hi: 1, ink: INK });
+      M().oval(x, y, 4, 2).paint(g(), R('#2a1a10'), { line: false });
+    });
+    P.rock(96, 116);
+    P.junk(196, 104);
+    // ---- the Drowned Mall: ValuMart, half under water ----
+    building(28, S + top - 2, 208, 16, 42, '#7a7a78', '#a8b4b4', { flat: 1, bricks: 1 });
+    const sw = K.textW('VALUMART') + 10;
+    M()
+      .rect(132 - (sw >> 1), S + top + 2, sw, 11)
+      .paint(g(), R('#f0ece0'), { ink: INK });
+    K.text(132 - (sw >> 1) + 5, S + top + 5, 'VALUMART', '#c82a2a');
+    M()
+      .rect(100, S + top + 26, 40, 30)
+      .paint(g(), R('#6a9aa8'), { hi: 1, ink: INK });
+    r(119, S + top + 26, 2, 30, INK);
+    r(104, S + top + 30, 4, 10, '#c8e8f0');
+    win(44, S + top + 30, 0);
+    win(70, S + top + 30, 0);
+    win(172, S + top + 30, 1);
+    M()
+      .rows(204, S + top + 22, ['.oo.', 'oooo', '.oo.'])
+      .paint(g(), R('#40a040'), { ink: INK });
+    win(202, S + top + 30, 1);
+    // Sprocket's checkout bench, Gums's tarp stall, a car going under
+    M()
+      .rect(10, S + bot + 14, 52, 14)
+      .paint(g(), R('#8a8a84'), { hi: 1, ink: INK });
+    r(14, S + bot + 16, 20, 4, '#3a4a4a');
+    r(16, S + bot + 17, 6, 2, '#6aff8a');
+    M()
+      .rect(70, S + bot + 2, 50, 6)
+      .paint(g(), R('#3a6a9a'), { hi: 1, ink: INK });
+    [72, 116].forEach(x =>
+      M()
+        .rect(x, S + bot + 8, 3, 22)
+        .paint(g(), R('#6a5a4a'), { ink: INK }),
+    );
+    M()
+      .rect(74, S + bot + 22, 42, 10)
+      .paint(g(), R('#7a5a3a'), { hi: 1, ink: INK });
+    [80, 92, 104].forEach(x => r(x, S + bot + 20, 6, 3, '#e8e0d0'));
+    M()
+      .rect(176, S + bot + 10, 40, 16)
+      .oval(196, S + bot + 10, 14, 6)
+      .paint(g(), R('#a8343a'), { hi: 1, ink: INK });
+    r(186, S + bot + 6, 20, 4, '#9ac0c8');
+    P.barrel(214, S + 70);
+    P.crate(220, S + 96);
+  },
+  things: [
+    [104, 22, 32, 34, /Coil|pray|radio|plane|Ohm/i],
+    [56, 146, 16, 8, /rad-moles/i],
+    [172, 136, 16, 8, /rad-moles/i],
+    [112, 168, 16, 8, /rad-moles/i],
+    [100, 288 + 32, 40, 30, /Value Meal|food court|Margie|associate/i],
+    [10, 288 + 142, 52, 14, /Sprocket|fit|mod|scope|barrel|plate/i],
+    [70, 288 + 130, 50, 32, /Gums|parts|sell|buy/i],
+    [176, 288 + 134, 40, 22, /Dive|vault/i],
   ],
 };

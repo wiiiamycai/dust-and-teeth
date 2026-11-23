@@ -16,12 +16,12 @@ function townBuild(t) {
   const W = P.W,
     H = P.H,
     inside = (px, py, rects) => rects.some(([x, y, w, h]) => px >= x && px < x + w && py >= y && py < y + h);
-  // a tile is solid when its middle is under something solid, or it's water or rock
+  // a tile is solid when its middle is under something solid, or it's water
   const g = [];
   for (let y = 0; y < H; y++) {
     const row = [];
     for (let x = 0; x < W; x++)
-      row.push(inside(x * T + 12, y * T + 12, P.solid) || '~#'.includes(townTileAt(D, x, y)) ? 'h' : '.');
+      row.push(inside(x * T + 12, y * T + 12, P.solid) || townTileAt(D, x, y) === '~' ? 'h' : '.');
     g.push(row);
   }
   const use = {};
