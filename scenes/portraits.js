@@ -1054,3 +1054,503 @@ PORTRAIT.rind = (g, PX, o) => {
     );
   PX.mask().oval(53, 46, 4, 4).paint(g, S, { hi: 1 });
 };
+
+// ================= Rustwater =================
+// Moe: a big barman with a black beard, wiping the same dirty glass he's wiped for thirty years
+PORTRAIT.moe = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  const S = PX.ramp('#b07a5a'),
+    H = PX.ramp('#2a1e14'),
+    C = PX.ramp('#8a7a5c'),
+    A = PX.ramp('#c8bca0'),
+    Gl = PX.ramp('#8ab0a8'),
+    Rg = PX.ramp('#a09078');
+  PX.torso(g, C, 42, 12, 52, 0, 63);
+  PX.mask().trap(46, 63, 20, 44, 16, 48).paint(g, A, { t: 0.72 });
+  PX.line(g, 20, 46, 18, 40, A.d);
+  PX.line(g, 44, 46, 46, 40, A.d);
+  PX.dots(41, 8, (x, y) => PX.p(g, 20 + (x % 24), 50 + (y % 12), A.d));
+  PX.mask().rect(23, 36, 18, 9).paint(g, S, { t: 0.6 });
+  // a big round head, bald on top, jowls
+  PX.ear(g, 17, 27, S, 4);
+  PX.ear(g, 47, 27, S, 4);
+  PX.head(g, 32, 26, 14, 14, S, 30, 0.4);
+  PX.p(g, 26, 15, S.h);
+  PX.p(g, 27, 14, S.h);
+  PX.p(g, 28, 14, S.h);
+  PX.mask()
+    .spans(20, [
+      [17, 20],
+      [17, 20],
+      [17, 20],
+      [17, 19],
+      [17, 19],
+    ])
+    .paint(g, H);
+  PX.mask()
+    .spans(20, [
+      [44, 47],
+      [44, 47],
+      [44, 47],
+      [45, 47],
+      [45, 47],
+    ])
+    .paint(g, H);
+  // a big black beard, a moustache over it
+  PX.mask()
+    .spans(30, [
+      [18, 21],
+      [18, 23],
+      [18, 46],
+      [18, 46],
+      [18, 46],
+      [19, 45],
+      [19, 45],
+      [20, 44],
+      [21, 43],
+      [22, 42],
+      [24, 40],
+      [26, 38],
+      [29, 35],
+    ])
+    .rect(42, 30, 5, 3)
+    .paint(g, H, { hi: 1 });
+  PX.rows(
+    g,
+    21,
+    34,
+    ['.a..a..a...a..a..a..a', 'a..a..a..a...a..a..a.', '..a...a..a..a...a....', '....a...a...a..a.....'],
+    { a: H.l },
+  );
+  PX.mask().rows(24, 31, ['..ooooooooooooo..', 'ooooooooooooooooo', 'ooo...........ooo']).paint(g, H, { hi: 1 });
+  PX.mouth(g, 32, 34, ['.oooooo.'], S, '#1a0e08');
+  // small, patient eyes, one brow up
+  PX.brows(g, 24, 21, 11, 'flat', H.m);
+  PX.r(g, 35, 20, 4, 1, H.m);
+  PX.eyes(g, o, 25, 24, 11, { w: 4, skin: S, iris: '#3a2a1a', bag: 1 });
+  PX.nose(g, 32, 25, 'broad', S);
+  PX.r(g, 21, 29, 3, 1, '#c87a6a');
+  PX.r(g, 41, 29, 3, 1, '#c87a6a');
+  // the glass and the rag, wiping
+  PX.mask().rect(10, 46, 9, 12).paint(g, Gl, { hi: 1, t: 0.7 });
+  PX.r(g, 11, 48, 2, 8, '#d8f0e8');
+  PX.r(g, 11, 54, 7, 3, '#8a7a4a');
+  PX.mask().oval(12, 58, 6, 4).paint(g, S, { hi: 1 });
+  PX.mask().rows(16, 44, ['.ooo', 'ooooo', 'oooooo', 'ooooo.', '.ooo.', 'oo...', 'o....']).paint(g, Rg);
+  PX.mask().oval(19, 46, 4, 3).paint(g, S, { hi: 1 });
+};
+
+// Mayor Fenwick: soft man, hard top hat, desk made from a fridge. Sells the town its own water.
+PORTRAIT.mayor = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  const S = PX.ramp('#d0a088'),
+    H = PX.ramp('#8a8478'),
+    C = PX.ramp('#3a3040'),
+    Hat = PX.ramp('#2a2430'),
+    Sh = PX.ramp('#c8c0b0'),
+    Au = PX.ramp('#c8a040');
+  // a fat man in a good coat, a chain across his belly
+  PX.torso(g, C, 42, 12, 52, 0, 63);
+  PX.mask().trap(42, 63, 26, 38, 24, 40).paint(g, Sh);
+  PX.mask()
+    .rows(28, 43, ['ooooooooo', '.ooooooo.', '..ooooo..', '...ooo...', '....o....'])
+    .paint(g, PX.ramp('#7a2a2a'));
+  PX.mask().line(12, 58, 30, 56, 1).line(34, 56, 52, 58, 1).paint(g, Au, { line: false });
+  PX.mask().oval(32, 56, 2, 2).paint(g, Au, { hi: 1 });
+  PX.r(g, 24, 50, 2, 1, Au.l);
+  // soft round face, jowls over the collar
+  PX.ear(g, 18, 30, S);
+  PX.ear(g, 46, 30, S);
+  PX.mask().oval(32, 30, 14, 13).oval(32, 39, 12, 5).paint(g, S, { t: 0.7, hi: 1 });
+  PX.r(g, 22, 38, 3, 1, S.d);
+  PX.r(g, 39, 38, 3, 1, S.d);
+  PX.r(g, 26, 42, 12, 1, S.d);
+  // grey hair, slicked flat at the sides, and the hard top hat
+  PX.mask()
+    .spans(22, [
+      [18, 21],
+      [18, 21],
+      [18, 21],
+      [19, 21],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.mask()
+    .spans(22, [
+      [43, 46],
+      [43, 46],
+      [43, 46],
+      [43, 45],
+    ])
+    .paint(g, H);
+  PX.mask().rect(22, 2, 20, 18).paint(g, Hat, { hi: 1, t: 0.72 });
+  PX.r(g, 23, 15, 18, 2, '#6a2a2a');
+  PX.mask().rows(15, 19, ['.oooooooooooooooooooooooooooooooooo.', 'oooooooooooooooooooooooooooooooooo']).paint(g, Hat);
+  // small eyes buried in pleasant fat, a little smile
+  PX.brows(g, 24, 25, 11, 'raised', H.d);
+  PX.eyes(g, o, 25, 28, 11, { w: 3, skin: S, iris: '#3a3a5a', lid: 1 });
+  PX.nose(g, 32, 29, 'button', S);
+  PX.r(g, 21, 33, 3, 1, '#e08a7a');
+  PX.r(g, 41, 33, 3, 1, '#e08a7a');
+  PX.mouth(g, 32, 35, 'smirk', S, '#7a3a34');
+  PX.mouth(g, 33, 34, ['......d'], S);
+  // a thin moustache
+  PX.rows(g, 28, 33, ['aaa..aaa'], { a: H.d });
+};
+
+// Sheriff Crane: has shot a lot of people, regrets maybe two. Hat, vest, the star. Krug's ex-wife, Ruth.
+PORTRAIT.sheriff = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  const S = PX.ramp('#b88866'),
+    H = PX.ramp('#5a3a22'),
+    C = PX.ramp('#8a7a5c'),
+    V = PX.ramp('#6a5034'),
+    Hat = PX.ramp('#7a6040'),
+    St = PX.ramp('#d8b040'),
+    Mt = PX.ramp('#6a6a70'),
+    Wd = PX.ramp('#6a4a2a');
+  // the rifle over her shoulder, behind
+  PX.mask().line(46, 63, 58, 20, 2).paint(g, Wd);
+  PX.mask().line(57, 24, 61, 8, 1).paint(g, Mt, { line: false });
+  // shirt, a leather vest, the star
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.mask().trap(46, 63, 14, 26, 6, 26).paint(g, V);
+  PX.mask().trap(46, 63, 38, 50, 38, 58).paint(g, V);
+  PX.mask().rows(15, 50, ['..o..', '.ooo.', 'ooooo', '.ooo.', 'o...o']).paint(g, St, { hi: 1 });
+  PX.mask().rect(27, 38, 10, 8).paint(g, S, { t: 0.55 });
+  PX.line(g, 28, 45, 32, 49, C.d);
+  PX.line(g, 36, 45, 32, 49, C.d);
+  // hair pulled back under the hat, a braid on her shoulder
+  PX.mask().oval(32, 26, 12, 12).paint(g, H, { hi: 1 });
+  PX.mask().line(41, 34, 44, 46, 3).paint(g, H, { hi: 1 });
+  PX.rows(g, 42, 37, ['a', '.a', 'a.', '.a', 'a.', '.a', 'a'], { a: H.d });
+  // a lean, hard face: high cheekbones, set jaw
+  PX.head(g, 32, 27, 10, 12, S, 30, 0.8);
+  PX.rows(g, 24, 30, ['l..........l', 'd..........d', '.d........d.'], { l: S.l, d: S.d });
+  // a narrow look, flat mouth
+  PX.brows(g, 25, 23, 10, ['aaaa.', '....a'], H.d);
+  PX.eyes(g, o, 26, 25, 9, { w: 4, skin: S, iris: '#5a6a4a', lash: 1, lid: 1 });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 33, ['.ooooo.', '..ddd..'], S, '#6a3a30');
+  // a scar across her chin
+  PX.p(g, 34, 36, S.l);
+  PX.p(g, 35, 37, S.l);
+  // the hat, brim tipped low
+  PX.mask().oval(32, 15, 9, 5).paint(g, Hat, { hi: 1 });
+  PX.r(g, 24, 16, 17, 2, PX.ramp('#4a3424').m);
+  PX.mask()
+    .rows(14, 18, [
+      'oooooooooooooooooooooooooooooooooooo',
+      '.oooooooooooooooooooooooooooooooooo.',
+      '...oooooooooooooooooooooooooooooo...',
+    ])
+    .paint(g, Hat);
+  PX.r(g, 30, 11, 4, 1, Hat.d);
+};
+
+// Doc Ratchet: his degree is a cereal box with DOCTOR on it. Goggles up, a dirty coat, a syringe ready.
+PORTRAIT.doc = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  const S = PX.ramp('#c09878'),
+    H = PX.ramp('#6a6a60'),
+    C = PX.ramp('#b8b0a0'),
+    Sh = PX.ramp('#5a6a6a'),
+    Gg = PX.ramp('#7a6a4a'),
+    Gl = PX.ramp('#8ac8c0');
+  PX.torso(g, C, 43, 16, 48, 2, 62);
+  PX.mask().trap(43, 63, 26, 38, 26, 38).paint(g, Sh);
+  PX.line(g, 26, 43, 31, 63, C.o);
+  PX.line(g, 38, 43, 33, 63, C.o);
+  // stains, a pen, and a syringe in the pocket
+  PX.dots(19, 6, (x, y) => PX.p(g, 6 + (x % 18), 50 + (y % 12), '#8a5a3a'));
+  PX.p(g, 45, 52, '#7a3a2a');
+  PX.p(g, 46, 53, '#7a3a2a');
+  PX.mask().rect(40, 52, 8, 1).paint(g, C, { line: false });
+  PX.r(g, 40, 52, 8, 1, C.d);
+  PX.rows(g, 41, 46, ['.m', '.m', 'gg', 'gg', 'gg', 'xx'], { m: '#a8a8b0', g: '#a8e07c', x: '#6a6a70' });
+  PX.mask().rect(27, 37, 10, 7).paint(g, S, { t: 0.55 });
+  // a thin, pointed, clever face, wild grey hair
+  PX.ear(g, 21, 28, S);
+  PX.ear(g, 43, 28, S);
+  PX.mask().oval(32, 18, 13, 7).rect(19, 18, 3, 8).rect(43, 18, 3, 8).paint(g, H, { hi: 1 });
+  PX.rows(g, 17, 10, ['.a.....a.....a..a...a.', 'a.a..a..a..a..a..a.a..', '...a..a..a..a.....a..a'], { a: H.d });
+  PX.head(g, 32, 27, 10, 12, S, 28, 1);
+  PX.mask()
+    .spans(15, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  // the goggles, pushed up on his forehead
+  PX.r(g, 21, 19, 22, 1, Gg.o);
+  PX.mask().oval(27, 19, 3, 2).paint(g, Gg, { hi: 1 });
+  PX.mask().oval(37, 19, 3, 2).paint(g, Gg, { hi: 1 });
+  PX.mask().oval(27, 19, 1, 1).paint(g, Gl, { line: false, hi: 1 });
+  PX.mask().oval(37, 19, 1, 1).paint(g, Gl, { line: false, hi: 1 });
+  // eager eyes, one bigger than the other, a crooked grin
+  PX.brows(g, 25, 23, 10, 'raised', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#5a7a3a', tall: 1, bag: 1 });
+  PX.nose(g, 32, 27, 'hook', S);
+  PX.mouth(g, 32, 33, ['o.......', '.oooooo.', '..wxwxo.'], S, '#4a2a24', '#d8c890');
+  PX.r(g, 30, 38, 4, 1, S.d);
+  PX.rows(g, 28, 37, ['a.a.a.a'], { a: H.d });
+};
+
+// Madame Opal: runs the Velvet Rad. Warm smile, shotgun under the counter. A rose, a black bun, red silk.
+PORTRAIT.opal = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  PX.r(g, 0, 0, 64, 64, 'rgba(120,30,50,0.28)');
+  const S = PX.ramp('#c89878'),
+    H = PX.ramp('#1e1612'),
+    C = PX.ramp('#7a2a34'),
+    Pl = PX.ramp('#e8e0d0'),
+    Rs = PX.ramp('#c83040'),
+    Lf = PX.ramp('#4a6a3a');
+  // a red silk dress off the shoulder, a fur stole
+  PX.mask().trap(44, 63, 20, 44, 6, 58).paint(g, S, { t: 0.7 });
+  PX.mask().trap(50, 63, 14, 50, 8, 56).paint(g, C, { hi: 1 });
+  PX.rows(g, 22, 52, ['d.d.d.d.d.d.d.d.d.d'], { d: C.d });
+  const Fx = PX.ramp('#9a6a44');
+  PX.mask().oval(12, 49, 10, 5).oval(52, 49, 10, 5).paint(g, Fx, { hi: 1 });
+  PX.dots(29, 30, (x, y) => PX.p(g, x < 32 ? 4 + (x % 16) : 44 + (x % 16), 46 + (y % 6), y % 2 ? Fx.l : Fx.d));
+  // a string of pearls
+  [
+    [25, 46],
+    [27, 47],
+    [29, 48],
+    [31, 48],
+    [33, 48],
+    [35, 47],
+    [37, 46],
+    [32, 49],
+  ].forEach(([x, y]) => PX.p(g, x, y, Pl.l));
+  PX.mask().rect(28, 37, 8, 8).paint(g, S, { t: 0.55 });
+  // the black hair and its bun
+  PX.mask().oval(32, 25, 12, 13).oval(43, 15, 6, 5).paint(g, H, { hi: 1 });
+  PX.r(g, 40, 13, 6, 1, H.l);
+  // an oval face, a beauty mark, red lips
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(15, [
+      [25, 40],
+      [23, 41],
+      [22, 42],
+      [22, 30],
+      [22, 27],
+      [22, 25],
+      [22, 24],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.brows(g, 25, 23, 10, 'arch', H.m);
+  PX.eyes(g, o, 26, 25, 9, { w: 4, skin: S, iris: '#3a2a1a', lash: 1, lid: 1 });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 32, ['.rr.rr.', 'rrrrrrr', '.rrrrr.'], S, '#000', '#000');
+  PX.rows(g, 29, 32, ['.aa.aa.', 'aaaaaaa', '.bbbbb.'], { a: '#a8202c', b: '#d8404a' });
+  PX.p(g, 37, 30, '#2a1410');
+  PX.r(g, 24, 30, 2, 1, '#d88070');
+  PX.r(g, 38, 30, 2, 1, '#d88070');
+  // the rose in her hand, at her lips
+  PX.line(g, 48, 63, 44, 40, Lf.d);
+  PX.mask().rows(44, 47, ['..ooo', 'ooooo', 'oooo.']).paint(g, Lf, { line: false });
+  PX.mask().oval(44, 37, 3, 3).paint(g, Rs, { hi: 1 });
+  PX.rows(g, 43, 36, ['.a.', 'a.a', '.a.'], { a: Rs.d });
+  PX.mask().oval(47, 50, 4, 3).paint(g, S, { hi: 1 });
+};
+
+// Gloria: works for Opal. Laughs like a cement mixer, counts teeth faster than anyone alive. Big blonde hair.
+PORTRAIT.gloria = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  PX.r(g, 0, 0, 64, 64, 'rgba(140,40,80,0.22)');
+  const S = PX.ramp('#d0a080'),
+    H = PX.ramp('#d8b060'),
+    C = PX.ramp('#b06a7a'),
+    Th = PX.ramp('#e8dcc0');
+  // big, big hair
+  PX.mask().oval(32, 24, 19, 17).oval(18, 36, 7, 9).oval(46, 36, 7, 9).paint(g, H, { hi: 1 });
+  PX.rows(g, 15, 12, ['..a....a.....a....a...a..', 'a...a....a.....a....a....', '...a..a...a...a..a.....a.'], {
+    a: H.d,
+  });
+  // a pink top with a feather boa
+  PX.mask().trap(44, 63, 18, 46, 4, 60).paint(g, S, { t: 0.7 });
+  PX.mask().trap(52, 63, 12, 52, 6, 58).paint(g, C, { hi: 1 });
+  PX.mask()
+    .oval(14, 48, 7, 4)
+    .oval(22, 51, 5, 3)
+    .oval(50, 48, 7, 4)
+    .oval(42, 51, 5, 3)
+    .paint(g, PX.ramp('#d870a0'), { hi: 1 });
+  PX.mask().rect(28, 38, 8, 7).paint(g, S, { t: 0.55 });
+  // a round face, head thrown back laughing
+  PX.head(g, 32, 28, 11, 12, S, 32, 1);
+  PX.mask()
+    .spans(16, [
+      [24, 40],
+      [22, 42],
+      [21, 43],
+      [21, 28],
+      [21, 25],
+      [21, 23],
+    ])
+    .rect(37, 18, 6, 2)
+    .paint(g, H, { hi: 1 });
+  PX.brows(g, 24, 22, 11, 'raised', H.d);
+  // eyes squeezed shut with laughing, or wide open, counting
+  if (o.shut || (o.mood || 0) >= 0) {
+    PX.rows(g, 25, 25, ['.aa.', 'a..a'], { a: S.o });
+    PX.rows(g, 35, 25, ['.aa.', 'a..a'], { a: S.o });
+    PX.p(g, 24, 25, S.o);
+    PX.p(g, 39, 25, S.o);
+  } else PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#4a6a8a', lash: 1 });
+  PX.nose(g, 32, 27, 'button', S);
+  PX.r(g, 23, 30, 3, 1, '#e07a7a');
+  PX.r(g, 39, 30, 3, 1, '#e07a7a');
+  // the cement-mixer laugh
+  PX.mouth(g, 32, 32, ['oooooooo', 'owwwwwwo', 'orrrrrro', 'orrrrrro', '.oooooo.'], S, '#b02a3a', '#f0e8d8');
+  PX.r(g, 30, 35, 4, 1, '#c84a5a');
+  // a fistful of teeth
+  PX.mask().oval(52, 58, 5, 4).paint(g, S, { hi: 1 });
+  [
+    [49, 54],
+    [52, 53],
+    [55, 54],
+    [51, 55],
+    [54, 55],
+  ].forEach(([x, y]) => PX.mask().rect(x, y, 2, 2).paint(g, Th, { line: false, hi: 1 }));
+};
+
+// Caravan Jeb: six pack-lizards and a cart. Heading east, past the mountains. A drinker. A good shot.
+PORTRAIT.jeb = (g, PX, o) => {
+  PX.bg(g, 'rustwater');
+  const S = PX.ramp('#a87050'),
+    H = PX.ramp('#5a3a22'),
+    C = PX.ramp('#7a6a4a'),
+    V = PX.ramp('#5e4a34'),
+    Hat = PX.ramp('#8a6a48'),
+    Bk = PX.ramp('#6a5030'),
+    Lz = PX.ramp('#7a9a4a'),
+    Sc = PX.ramp('#a8442a');
+  // the pack frame behind his shoulders
+  PX.mask().rect(10, 34, 8, 30).rect(46, 34, 8, 30).paint(g, Bk, { hi: 1 });
+  PX.mask().rect(9, 30, 2, 34).rect(53, 30, 2, 34).paint(g, PX.ramp('#5a4a3a'));
+  PX.torso(g, V, 43, 16, 48, 2, 62);
+  PX.mask().trap(43, 63, 24, 40, 22, 42).paint(g, C);
+  PX.mask()
+    .rows(22, 41, [
+      'ooo...........ooo',
+      'oooo.........oooo',
+      '.oooo.......oooo.',
+      '..oooooooooooooo.',
+      '....ooooooooo....',
+    ])
+    .paint(g, Sc, { hi: 1 });
+  PX.mask().rect(27, 36, 10, 6).paint(g, S, { t: 0.55 });
+  // a long, sun-cooked face, stubble
+  PX.ear(g, 21, 27, S);
+  PX.ear(g, 43, 27, S);
+  PX.head(g, 32, 26, 10, 13, S, 30, 0.9);
+  PX.mask()
+    .spans(16, [
+      [23, 41],
+      [22, 42],
+      [22, 42],
+      [22, 24],
+      [22, 23],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.dots(23, 40, (x, y) => {
+    const xx = 24 + (x % 17),
+      yy = 31 + (y % 8);
+    if (Math.abs(xx - 32) < 9 - (yy - 31) * 0.9) PX.p(g, xx, yy, S.d);
+  });
+  // squinting at the horizon, crow's feet, a gap-toothed grin
+  PX.brows(g, 24, 22, 11, 'flat', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#4a7a9a', lid: 1 });
+  PX.rows(g, 23, 25, ['a', '.', 'a'], { a: S.d });
+  PX.rows(g, 40, 25, ['a', '.', 'a'], { a: S.d });
+  PX.nose(g, 32, 27, 'long', S);
+  PX.mouth(g, 32, 34, ['o......o', '.owwrwo.', '..oooo..'], S, '#3a1a14', '#e0d0a8');
+  PX.r(g, 22, 29, 2, 1, '#c86a5a');
+  PX.r(g, 40, 29, 2, 1, '#c86a5a');
+  // a wide sweat-stained hat
+  PX.mask().oval(32, 14, 10, 5).paint(g, Hat, { hi: 1 });
+  PX.r(g, 23, 15, 19, 2, '#4a3a2a');
+  PX.mask()
+    .rows(12, 17, [
+      '....oooooooooooooooooooooooooooooooo....',
+      'oooooooooooooooooooooooooooooooooooooooo',
+      '.ooo..............................ooo..',
+    ])
+    .paint(g, Hat);
+  PX.r(g, 28, 11, 8, 1, Hat.d);
+  // a pack-lizard looking over his shoulder
+  PX.mask().oval(52, 28, 7, 4).rect(46, 30, 6, 6).paint(g, Lz, { hi: 1 });
+  PX.p(g, 54, 27, '#1a1a0a');
+  PX.p(g, 55, 26, '#e8d860');
+  PX.r(g, 56, 31, 3, 1, Lz.o);
+  PX.rows(g, 47, 25, ['a.a.a'], { a: Lz.d });
+};
+
+// Pete: a caravan guard in Mama Lou's cage, waiting to be Tuesday's lunch. Hollow, filthy, holding a pot lid.
+PORTRAIT.pete = (g, PX, o) => {
+  PX.bg(g, 'cage');
+  const S = PX.ramp('#a88466'),
+    H = PX.ramp('#5a3a22'),
+    C = PX.ramp('#6a5a44'),
+    Mt = PX.ramp('#8a8a88');
+  PX.torso(g, C, 44, 16, 48, 4, 60);
+  PX.rows(g, 10, 50, ['a...a...', '.a.a....', '..a..a..', 'a....a..'], { a: C.d });
+  PX.rows(g, 40, 54, ['.a..a', 'a..a.', '.a..a'], { a: C.l });
+  PX.mask().rect(27, 37, 10, 8).paint(g, S, { t: 0.55 });
+  PX.r(g, 29, 40, 1, 4, S.d);
+  // a gaunt, hungry face, a ragged beard, matted hair
+  PX.ear(g, 21, 27, S);
+  PX.ear(g, 43, 27, S);
+  PX.mask().oval(32, 20, 13, 9).rect(19, 20, 4, 12).rect(42, 20, 4, 12).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 26, 10, 12, S, 30, 0.8);
+  PX.mask()
+    .spans(15, [
+      [24, 40],
+      [22, 42],
+      [21, 43],
+      [21, 30],
+      [21, 26],
+      [21, 24],
+      [21, 23],
+    ])
+    .rect(36, 18, 7, 2)
+    .rect(39, 20, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.mask()
+    .spans(31, [
+      [22, 25],
+      [22, 26],
+      [22, 42],
+      [23, 41],
+      [24, 40],
+      [25, 39],
+      [27, 37],
+      [29, 35],
+      [31, 33],
+    ])
+    .rect(38, 31, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 24, 33, ['a.a..a..a..a.a.', '.a..a..a..a..a.', '..a...a...a....'], { a: H.l });
+  // terrified eyes, sunken cheeks
+  PX.brows(g, 24, 22, 11, 'sad', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#5a4a3a', tall: 1, white: '#f0e8d8', bag: 1 });
+  PX.rows(g, 24, 30, ['d.........d', 'd.........d'], { d: S.d });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 32, ['.oooo.', 'orrrro', '.oooo.'], S, '#2a1410');
+  PX.p(g, 25, 23, '#3a2a1a');
+  PX.p(g, 40, 30, '#3a2a1a');
+  // the pot lid, his only shield
+  PX.mask().oval(14, 56, 10, 9).paint(g, Mt, { hi: 1, t: 0.66 });
+  PX.mask().oval(14, 56, 6, 5).paint(g, Mt, { line: false, t: 0.6 });
+  PX.mask().rect(12, 54, 4, 2).paint(g, PX.ramp('#3a3a3a'));
+  PX.p(g, 10, 51, Mt.h);
+  // bars in front of him, left and right
+  [3, 59].forEach(x => {
+    PX.r(g, x, 0, 3, 64, '#2a2420');
+    PX.r(g, x, 0, 1, 64, '#6a6058');
+  });
+};
