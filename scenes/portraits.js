@@ -1554,3 +1554,474 @@ PORTRAIT.pete = (g, PX, o) => {
     PX.r(g, x, 0, 1, 64, '#6a6058');
   });
 };
+
+// ================= Hector's farm =================
+// Hector: a hard old farmer with a shotgun and two grown children he won't let go of
+PORTRAIT.hector = (g, PX, o) => {
+  PX.bg(g, 'farm');
+  const S = PX.ramp('#a87656'),
+    H = PX.ramp('#6a6a60'),
+    C = PX.ramp('#8a6a4a'),
+    D = PX.ramp('#4a5e74'),
+    Cap = PX.ramp('#8a3a26'),
+    Mt = PX.ramp('#5a5a60'),
+    Wd = PX.ramp('#7a4a2a');
+  PX.torso(g, C, 43, 16, 48, 2, 62);
+  // overalls with their straps
+  PX.mask().trap(50, 63, 20, 44, 18, 46).paint(g, D, { hi: 1 });
+  PX.mask().rect(20, 43, 4, 8).rect(40, 43, 4, 8).paint(g, D);
+  PX.mask().rect(21, 49, 2, 2).rect(41, 49, 2, 2).paint(g, PX.ramp('#c8a040'), { line: false, hi: 1 });
+  PX.mask().rect(27, 36, 10, 8).paint(g, S, { t: 0.55 });
+  // a square, lined face, a grey moustache like a broom
+  PX.ear(g, 20, 27, S);
+  PX.ear(g, 44, 27, S);
+  PX.head(g, 32, 26, 11, 12, S, 31, 0.6);
+  PX.mask()
+    .spans(20, [
+      [20, 22],
+      [20, 22],
+      [20, 22],
+      [20, 22],
+    ])
+    .paint(g, H);
+  PX.mask()
+    .spans(20, [
+      [42, 44],
+      [42, 44],
+      [42, 44],
+      [42, 44],
+    ])
+    .paint(g, H);
+  PX.r(g, 26, 20, 12, 1, S.d);
+  PX.brows(g, 24, 22, 11, 'angry', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#4a5a6a', lid: 1, bag: 1 });
+  PX.nose(g, 32, 26, 'broad', S);
+  PX.mask()
+    .rows(25, 31, ['..ooooooooooo..', '.ooooooooooooo.', 'ooooo.....ooooo', 'ooo.........ooo'])
+    .paint(g, H, { hi: 1 });
+  PX.mouth(g, 32, 34, ['ooooo'], S, '#3a1a14');
+  PX.r(g, 23, 30, 1, 5, S.d);
+  PX.r(g, 40, 30, 1, 5, S.d);
+  PX.r(g, 28, 37, 8, 1, S.d);
+  // a red cap with a short bill
+  PX.mask().oval(32, 16, 11, 6).rect(21, 16, 23, 3).paint(g, Cap, { hi: 1 });
+  PX.mask().rows(19, 18, ['.ooooooooooooooooooooooooo.', 'oooooooooooooooooooooooooo']).paint(g, PX.ramp('#6a2a1a'));
+  // the shotgun across his chest
+  PX.mask().line(4, 62, 56, 44, 3).paint(g, Wd, { hi: 1 });
+  PX.mask().line(30, 54, 60, 42, 2).line(30, 52, 60, 40, 2).paint(g, Mt, { hi: 1 });
+  PX.mask().oval(22, 57, 4, 3).oval(46, 49, 4, 3).paint(g, S, { hi: 1 });
+};
+
+// Bess: 29, has been "about to leave" for eleven years. Sharpening a hoe that doesn't need it.
+PORTRAIT.bess = (g, PX, o) => {
+  PX.bg(g, 'farm');
+  const S = PX.ramp('#c8966e'),
+    H = PX.ramp('#8a4a24'),
+    C = PX.ramp('#6a7a4a'),
+    St = PX.ramp('#d8bc6a'),
+    Mt = PX.ramp('#9a9aa0'),
+    Wd = PX.ramp('#8a5a30');
+  // the hoe, held upright beside her
+  PX.mask().rect(50, 4, 3, 60).paint(g, Wd, { hi: 1 });
+  PX.mask().rows(44, 2, ['ooooooooooooo', 'ooooooooooooo', '.ooooooooooo.', '..ooooooooo..']).paint(g, Mt, { hi: 1 });
+  PX.r(g, 45, 3, 11, 1, Mt.h);
+  // a work shirt, sleeves rolled
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.mask().rows(27, 44, ['o........o', '.o......o.', '..o....o..', '...oooo...']).paint(g, S, { line: false });
+  PX.line(g, 26, 44, 31, 50, C.o);
+  PX.line(g, 38, 44, 33, 50, C.o);
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // red-brown hair in a long plait, freckles
+  PX.mask().oval(32, 25, 12, 12).line(22, 30, 18, 52, 3).paint(g, H, { hi: 1 });
+  PX.rows(g, 18, 36, ['.a', 'a.', '.a', 'a.', '.a', 'a.', '.a', 'a.', '.a', 'a.', '.a', 'a.', '.a'], { a: H.d });
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(17, [
+      [25, 40],
+      [23, 41],
+      [22, 42],
+      [22, 34],
+      [22, 28],
+      [22, 25],
+      [22, 24],
+    ])
+    .paint(g, H, { hi: 1 });
+  // eyes on the road out, a set mouth
+  PX.brows(g, 25, 22, 10, 'flat', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#5a8a5a', lash: 1, look: 1 });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 33, ['ooooooo', '.ddddd.'], S, '#8a4038');
+  [
+    [25, 29],
+    [27, 30],
+    [24, 31],
+    [38, 29],
+    [40, 30],
+    [37, 31],
+    [30, 30],
+    [34, 30],
+  ].forEach(([x, y]) => PX.p(g, x, y, '#a86a4a'));
+  // a straw hat pushed back
+  PX.mask().oval(32, 15, 9, 4).paint(g, St, { hi: 1 });
+  PX.mask()
+    .rows(15, 16, [
+      '....oooooooooooooooooooooooooo....',
+      'oooooooooooooooooooooooooooooooooo',
+      '.oooo........................oooo.',
+    ])
+    .paint(g, St);
+  PX.r(g, 24, 17, 17, 1, '#8a3a2a');
+  PX.rows(g, 25, 12, ['.a.a.a.a.a.a.a.'], { a: St.d });
+  // a whetstone in her hand at the blade
+  PX.mask().oval(52, 30, 4, 3).paint(g, S, { hi: 1 });
+  PX.mask().rect(54, 26, 5, 3).paint(g, PX.ramp('#6a6a6a'));
+};
+
+// Bert: 31, Bess's brother, big and gentle. Has read the same tractor magazine every night of his adult life.
+PORTRAIT.bert = (g, PX, o) => {
+  PX.bg(g, 'farm');
+  const S = PX.ramp('#c89070'),
+    H = PX.ramp('#8a4a24'),
+    C = PX.ramp('#8a6a4a'),
+    D = PX.ramp('#4a5e74'),
+    Cap = PX.ramp('#6a6a50'),
+    Pp = PX.ramp('#d8c8a0');
+  PX.torso(g, C, 42, 10, 54, 0, 63);
+  PX.mask().trap(48, 63, 16, 48, 14, 50).paint(g, D, { hi: 1 });
+  PX.mask().rect(17, 42, 5, 8).rect(42, 42, 5, 8).paint(g, D);
+  PX.mask().rect(24, 35, 16, 9).paint(g, S, { t: 0.6 });
+  // a broad, open, freckled face, a little lost
+  PX.ear(g, 18, 27, S, 4);
+  PX.ear(g, 46, 27, S, 4);
+  PX.head(g, 32, 26, 13, 13, S, 30, 0.5);
+  PX.mask()
+    .spans(20, [
+      [19, 22],
+      [19, 22],
+      [19, 21],
+      [19, 21],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.mask()
+    .spans(20, [
+      [42, 45],
+      [42, 45],
+      [43, 45],
+      [43, 45],
+    ])
+    .paint(g, H);
+  PX.brows(g, 24, 22, 12, 'raised', H.m);
+  PX.eyes(g, o, 25, 25, 11, { w: 4, skin: S, iris: '#6a8aa0', tall: 1 });
+  PX.nose(g, 32, 27, 'button', S);
+  [
+    [23, 30],
+    [25, 31],
+    [40, 30],
+    [42, 31],
+    [29, 30],
+    [35, 30],
+  ].forEach(([x, y]) => PX.p(g, x, y, '#a86a4a'));
+  PX.mouth(g, 32, 33, ['o......o', '.oooooo.'], S, '#7a3a30');
+  PX.r(g, 30, 37, 5, 1, S.d);
+  // a farm cap
+  PX.mask().oval(32, 16, 12, 6).rect(20, 16, 25, 3).paint(g, Cap, { hi: 1 });
+  PX.mask()
+    .rows(17, 18, ['.ooooooooooooooooooooooooooooo.', 'ooooooooooooooooooooooooooooooo'])
+    .paint(g, PX.ramp('#4a4a38'));
+  PX.mask().oval(32, 12, 3, 2).paint(g, PX.ramp('#c8a040'), { line: false, hi: 1 });
+  // the tractor magazine, held up with love
+  PX.mask().rect(36, 44, 22, 18).paint(g, Pp, { t: 0.85, hi: 1 });
+  PX.r(g, 38, 46, 18, 3, '#a83a2a');
+  PX.rows(g, 39, 46, ['a.a.aa.aa.aa.a.a', '.a..a.a.a..a..a.', 'a.a.aa.aa.aa.a.a'], { a: '#f0e0c0' });
+  PX.rows(
+    g,
+    39,
+    51,
+    [
+      '.....oooo......',
+      '....oddddo.....',
+      'oooodddddoooo..',
+      'oddddddddddddo.',
+      '.ooo.....ooo...',
+      'oxxxo...oxxxo..',
+      '.ooo.....ooo...',
+    ],
+    { o: '#2a2a1a', d: '#c87a2a', x: '#4a4a4a' },
+  );
+  PX.r(g, 37, 45, 1, 16, Pp.d);
+  PX.mask().oval(36, 56, 4, 4).oval(58, 52, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// ================= Mama Lou's =================
+// Mama Lou: built like a fridge. "Sit down, honey. You look delicious. Hungry! You look hungry."
+PORTRAIT.lou = (g, PX, o) => {
+  PX.bg(g, 'diner');
+  const S = PX.ramp('#c89474'),
+    H = PX.ramp('#6a5a50'),
+    C = PX.ramp('#7a5a6a'),
+    A = PX.ramp('#c8bca0'),
+    Mt = PX.ramp('#9a9aa0');
+  PX.torso(g, C, 40, 8, 56, 0, 63);
+  PX.mask().trap(44, 63, 14, 50, 10, 54).paint(g, A, { t: 0.74 });
+  PX.mask().line(14, 44, 22, 40, 1).line(50, 44, 42, 40, 1).paint(g, A, { line: false });
+  // blood on the apron, wiped, not hidden
+  PX.rows(
+    g,
+    18,
+    48,
+    [
+      '..aa......a......',
+      '.aaaa....aa.....a',
+      '..aa......a....aa',
+      '...........a.....',
+      '.......a......a..',
+      '......aa.........',
+    ],
+    { a: '#8a2a24' },
+  );
+  PX.mask().rect(22, 35, 20, 8).paint(g, S, { t: 0.6 });
+  // a wide face, a big bun, a kind smile you shouldn't trust
+  PX.mask().oval(32, 12, 8, 6).paint(g, H, { hi: 1 });
+  PX.r(g, 27, 11, 10, 1, H.d);
+  PX.mask().oval(32, 24, 15, 11).paint(g, H, { hi: 1 });
+  PX.ear(g, 17, 28, S, 3);
+  PX.ear(g, 47, 28, S, 3);
+  PX.mask().oval(32, 28, 14, 12).oval(32, 38, 11, 4).paint(g, S, { t: 0.7, hi: 1 });
+  PX.mask()
+    .spans(16, [
+      [24, 40],
+      [21, 43],
+      [19, 45],
+      [18, 28],
+      [18, 23],
+      [18, 21],
+    ])
+    .rect(37, 19, 8, 1)
+    .paint(g, H, { hi: 1 });
+  PX.brows(g, 23, 22, 13, 'arch', H.d);
+  PX.eyes(g, o, 24, 25, 12, { w: 4, skin: S, iris: '#4a3020', lash: 1 });
+  if (!o.shut) {
+    PX.r(g, 24, 27, 4, 1, S.d);
+    PX.r(g, 36, 27, 4, 1, S.d);
+  }
+  PX.nose(g, 32, 27, 'button', S);
+  PX.r(g, 20, 30, 4, 2, '#d8706a');
+  PX.r(g, 40, 30, 4, 2, '#d8706a');
+  PX.mouth(g, 32, 32, ['o..........o', '.oooooooooo.', '..wwwwwwww..', '...oooooo...'], S, '#8a2a3a', '#f0e8d8');
+  PX.r(g, 27, 39, 10, 1, S.d);
+  PX.p(g, 37, 28, '#3a2010');
+  // the ladle
+  PX.mask().rect(52, 22, 2, 34).paint(g, Mt, { hi: 1 });
+  PX.mask().oval(53, 18, 5, 4).paint(g, Mt, { hi: 1 });
+  PX.r(g, 49, 17, 9, 1, '#8a3a2a');
+  PX.mask().oval(53, 52, 5, 4).paint(g, S, { hi: 1 });
+};
+
+// Junior: 44, Lou's son, built like a bigger fridge. He grunts and keeps chopping.
+PORTRAIT.junior = (g, PX, o) => {
+  PX.bg(g, 'diner');
+  const S = PX.ramp('#c89474'),
+    H = PX.ramp('#c8a060'),
+    C = PX.ramp('#9a8c74'),
+    A = PX.ramp('#c8bca0'),
+    Mt = PX.ramp('#a0a0a8'),
+    Wd = PX.ramp('#5a3a24');
+  // shoulders that fill the door
+  PX.torso(g, C, 36, 4, 60, 0, 63);
+  PX.mask().oval(8, 42, 9, 7).oval(56, 42, 9, 7).paint(g, S, { hi: 1 });
+  PX.mask().trap(44, 63, 18, 46, 14, 50).paint(g, A, { t: 0.74 });
+  PX.rows(g, 22, 50, ['.aa.....a...', 'aaaa...aaa..', '.aa.....a..a', '.......a....'], { a: '#8a2a24' });
+  PX.mask().rect(22, 32, 20, 9).paint(g, S, { t: 0.62 });
+  // a small head on a huge neck: low brow, buzzed hair
+  PX.ear(g, 22, 24, S);
+  PX.ear(g, 42, 24, S);
+  PX.head(g, 32, 23, 10, 11, S, 26, 0.3);
+  PX.mask()
+    .spans(12, [
+      [26, 38],
+      [24, 40],
+      [23, 41],
+      [22, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.dots(5, 12, (x, y) => PX.p(g, 24 + (x % 17), 12 + (y % 4), H.d));
+  PX.mask().rect(24, 18, 16, 2).paint(g, S, { line: false, t: 1 });
+  PX.r(g, 24, 19, 16, 1, S.d);
+  PX.eyes(g, o, 26, 20, 8, { w: 3, skin: S, iris: '#3a3020', lid: 1 });
+  PX.nose(g, 32, 22, 'flat', S);
+  PX.mouth(g, 32, 28, ['ooooooo', '.......'], S, '#5a2a24');
+  PX.r(g, 27, 30, 10, 1, S.d);
+  // a cleaver in one fist
+  PX.mask().rect(50, 44, 3, 12).paint(g, Wd, { hi: 1 });
+  PX.mask()
+    .rows(44, 22, [
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      'oooooooooooo',
+      '.ooooooooooo',
+      '.......ooooo',
+      '.......ooo..',
+      '.......ooo..',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+      '.......oooo.',
+    ])
+    .paint(g, Mt, { hi: 1 });
+  PX.r(g, 45, 22, 11, 1, Mt.h);
+  PX.rows(g, 46, 26, ['aa.a', '.a..'], { a: '#8a2a24' });
+  PX.mask().oval(52, 50, 5, 5).paint(g, S, { hi: 1 });
+  PX.rows(g, 48, 49, ['.d.d.d', '......', '.d.d.d'], { d: S.d });
+};
+
+// ================= Chainfield =================
+// Krug: huge, polite, immaculate records. "Everything has a price. Mostly people."
+PORTRAIT.krug = (g, PX, o) => {
+  PX.bg(g, 'chainfield');
+  const S = PX.ramp('#b08a68'),
+    H = PX.ramp('#2a1e14'),
+    C = PX.ramp('#5a3a24'),
+    D = PX.ramp('#3e3428'),
+    Mt = PX.ramp('#8a8a8a'),
+    Pp = PX.ramp('#d8ccb0');
+  PX.torso(g, C, 40, 6, 58, 0, 63);
+  // spiked pauldrons
+  PX.mask().oval(10, 44, 10, 6).paint(g, D, { hi: 1 });
+  PX.mask().oval(54, 44, 10, 6).paint(g, D, { hi: 1 });
+  [
+    [4, 36],
+    [10, 34],
+    [16, 36],
+    [48, 36],
+    [54, 34],
+    [60, 36],
+  ].forEach(([x, y]) =>
+    PX.mask()
+      .rows(x - 1, y, ['.o.', '.o.', 'ooo', 'ooo'])
+      .paint(g, Mt, { hi: 1 }),
+  );
+  // chains across his chest
+  for (let i = 0; i < 12; i++) {
+    PX.mask()
+      .oval(14 + i * 3, 50 + Math.round(Math.sin(i / 3.6) * 4), 1, 1)
+      .paint(g, Mt, { hi: 1 });
+  }
+  PX.mask().rect(24, 34, 16, 8).paint(g, S, { t: 0.6 });
+  // a big bald head, a neat pointed beard, little round spectacles
+  PX.ear(g, 18, 26, S, 3);
+  PX.ear(g, 46, 26, S, 3);
+  PX.head(g, 32, 24, 13, 13, S, 28, 0.5);
+  PX.p(g, 26, 13, S.h);
+  PX.p(g, 27, 13, S.h);
+  PX.p(g, 25, 14, S.h);
+  PX.mask()
+    .spans(29, [
+      [21, 23],
+      [21, 24],
+      [22, 42],
+      [22, 42],
+      [23, 41],
+      [25, 39],
+      [27, 37],
+      [28, 36],
+      [29, 35],
+      [30, 34],
+      [31, 33],
+    ])
+    .rect(40, 29, 3, 2)
+    .paint(g, H, { hi: 1 });
+  PX.mask()
+    .spans(29, [[27, 37]])
+    .paint(g, H, { line: false, flat: true });
+  PX.mouth(g, 32, 32, ['o.....o', '.ooooo.'], S, '#4a2a20');
+  PX.mask()
+    .spans(30, [[28, 36]])
+    .paint(g, S, { line: false, t: 1 });
+  PX.mouth(g, 32, 30, ['oooooooo', 'o.wwww.o'], S, '#1a0e08', '#e0d4b0');
+  PX.brows(g, 23, 20, 12, 'flat', H.m);
+  PX.eyes(g, o, 24, 22, 12, { w: 4, skin: S, iris: '#3a2a20' });
+  PX.rows(
+    g,
+    22,
+    21,
+    ['.oooooo.....oooooo.', 'o......o...o......o', 'o......ooooo......o', 'o......o...o......o', '.oooooo.....oooooo.'],
+    { o: '#c8a040' },
+  );
+  PX.p(g, 24, 22, 'rgba(255,255,255,0.5)');
+  PX.p(g, 36, 22, 'rgba(255,255,255,0.5)');
+  PX.nose(g, 32, 25, 'broad', S);
+  // his ledger
+  PX.mask().rect(44, 50, 16, 13).paint(g, PX.ramp('#3a2a2a'), { hi: 1 });
+  PX.mask().rect(46, 50, 13, 12).paint(g, Pp, { t: 0.9 });
+  [52, 54, 56, 58].forEach(y => PX.r(g, 47, y, 10, 1, Pp.d));
+  PX.mask().oval(46, 58, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// Old Teo: a slave in Krug's pens. Named all the trolleys. Free one day, broke, smiling anyway.
+PORTRAIT.teo = (g, PX, o) => {
+  PX.bg(g, 'chainfield');
+  const S = PX.ramp('#a07a5a'),
+    H = PX.ramp('#d8d0c0'),
+    C = PX.ramp('#6a5e4a'),
+    Mt = PX.ramp('#6a6a6a');
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.rows(g, 10, 50, ['a.......a', '.a.....a.', '..a...a..'], { a: C.d });
+  PX.rows(g, 44, 52, ['.a.', 'a.a', '...', 'a..'], { a: C.l });
+  PX.mask().rect(27, 37, 10, 8).paint(g, S, { t: 0.55 });
+  // the iron collar, and its broken chain
+  PX.mask().rect(25, 41, 14, 3).paint(g, Mt, { hi: 1 });
+  PX.mask().oval(32, 45, 1, 1).oval(31, 48, 1, 1).oval(32, 51, 1, 1).paint(g, Mt, { hi: 1 });
+  // a thin old face, a white beard, wisps of hair
+  PX.ear(g, 21, 27, S, 4);
+  PX.ear(g, 43, 27, S, 4);
+  PX.head(g, 32, 26, 10, 12, S, 30, 0.7);
+  PX.rows(g, 22, 14, ['..a...a....a..a', '.a.a.a..a.a.a..', 'a.......a......', '.a.....a.....a.', 'a.............a'], {
+    a: H.m,
+  });
+  PX.r(g, 27, 19, 10, 1, S.d);
+  PX.r(g, 28, 21, 8, 1, S.d);
+  PX.mask()
+    .spans(31, [
+      [23, 26],
+      [23, 27],
+      [23, 41],
+      [24, 40],
+      [25, 39],
+      [26, 38],
+      [27, 37],
+      [28, 36],
+      [29, 35],
+      [30, 34],
+    ])
+    .rect(37, 31, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 25, 34, ['.a..a..a..a..', 'a..a..a..a..a', '..a..a...a...'], { a: H.d });
+  PX.mask()
+    .spans(32, [[28, 36]])
+    .paint(g, H, { line: false, flat: true });
+  // a toothless, delighted smile, eyes crinkled
+  PX.mouth(g, 32, 33, ['o.......o', '.orrrrro.', '..ooooo..'], S, '#3a1a14');
+  PX.brows(g, 24, 22, 11, 'raised', H.m);
+  if (o.shut) PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S });
+  else {
+    PX.rows(g, 25, 25, ['.aa.', 'a..a'], { a: S.o });
+    PX.rows(g, 35, 25, ['.aa.', 'a..a'], { a: S.o });
+  }
+  PX.rows(g, 22, 25, ['a', '.a', 'a'], { a: S.d });
+  PX.rows(g, 40, 25, ['.a', 'a', '.a'], { a: S.d });
+  PX.nose(g, 32, 27, 'long', S);
+  // his cane
+  PX.mask().rect(52, 30, 3, 34).paint(g, PX.ramp('#7a5434'), { hi: 1 });
+  PX.mask().oval(53, 44, 4, 4).paint(g, S, { hi: 1 });
+};
