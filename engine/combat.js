@@ -749,6 +749,9 @@ function kill(id, how, loud) {
       event('murder', id, { wit: [w] });
     } else event('murder', id, { secret: true });
   }
+  // remember it was you, for the ending (scenes/epitaphs.js): the id of the gossip event about it
+  const ev = S.ev[S.ev.length - 1];
+  (S.f.byYou || (S.f.byYou = {}))[id] = ev && ev.v === id ? ev.id : -1;
 }
 function quiet(id) {
   if (attempt('murder', id)) {

@@ -74,7 +74,7 @@ SC.ending = () => {
           hat: 'Nigel lived under his hat, eating chickens only on Tuesdays.',
           lied: 'Nigel kept eating a chicken a week. Gus blamed foxes. There are no foxes.',
           moved: "Nigel lived happily in the Sky-Bus, doing dead men's teeth.",
-          dead: 'Nobody missed Nigel. The chickens held no service.',
+          dead: null, // his death has its own slide now (scenes/epitaphs.js)
         }[f.nigel],
       );
     if (f.pigFate === 'stew') L.push('Bacon Prime was Thursday\'s special. "Aristocratic, with notes of grief."');
