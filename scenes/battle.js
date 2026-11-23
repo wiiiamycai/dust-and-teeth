@@ -10,9 +10,22 @@ let BM = 'main', // which menu is open: main, fight or bag
   BK = null; // the live battle screen
 const BW = 240,
   BH = 150;
+// people (anyone with a name in the cast) are always drawn as people, whatever their icon: Jeb is no lizard
 const kindOf = e =>
-  ({ '🐀': 'rat', '🦀': 'crab', '🐺': 'hound', '🐕': 'hound', '🐝': 'bee', '🪱': 'worm', '🐍': 'worm' })[e.i] ||
-  (e.beast ? 'rat' : 'man');
+  e.npc
+    ? 'man'
+    : {
+        '🐀': 'rat',
+        '🦀': 'crab',
+        '🐺': 'hound',
+        '🐕': 'hound',
+        '🐝': 'bee',
+        '🪱': 'worm',
+        '🐍': 'worm',
+        '🐄': 'cow',
+        '🦎': 'lizard',
+        '🦅': 'bird',
+      }[e.i] || (e.beast ? 'rat' : 'man');
 // ---- beasts, drawn in code: outlined, shaded, facing you ----
 function drawBeast(g, kind, cx, by, s, hurt) {
   const R = (x, y, w, h, c) => {
@@ -87,6 +100,67 @@ function drawBeast(g, kind, cx, by, s, hurt) {
     R(1, -27, 2, 2, '#e03a2a');
     R(-1, -10, 2, 5, ink);
     R(-1, -6, 1, 2, '#f8f4e0');
+  } else if (kind === 'cow') {
+    // the two-headed cow: a white body with black patches, four legs, and two heads that disagree
+    R(-17, -22, 34, 15, ink);
+    R(-16, -21, 32, 13, tint('#f0ece0'));
+    R(-16, -21, 32, 2, tint('#ffffff'));
+    R(-11, -19, 8, 6, tint('#2a2420'));
+    R(4, -15, 9, 5, tint('#2a2420'));
+    R(-2, -21, 5, 3, tint('#2a2420'));
+    R(-10, -10, 5, 3, tint('#e8b0b0')); // the udder
+    for (const x of [-15, -9, 6, 12]) {
+      R(x, -8, 4, 8, ink);
+      R(x + 1, -8, 2, 7, tint('#e8e4d8'));
+      R(x, -1, 4, 1, ink);
+    }
+    // two heads, leaning apart
+    for (const [hx, hy] of [
+      [-21, -30],
+      [7, -31],
+    ]) {
+      R(hx, hy, 14, 12, ink);
+      R(hx + 1, hy + 1, 12, 10, tint('#f0ece0'));
+      R(hx + 1, hy + 6, 12, 5, tint('#e8b0a0')); // muzzle
+      R(hx + 3, hy + 8, 2, 2, ink);
+      R(hx + 9, hy + 8, 2, 2, ink);
+      R(hx + 3, hy + 3, 2, 2, ink);
+      R(hx + 9, hy + 3, 2, 2, ink);
+      R(hx - 2, hy - 2, 4, 3, ink); // horns
+      R(hx + 12, hy - 2, 4, 3, ink);
+      R(hx - 1, hy - 1, 2, 1, tint('#e8dcc0'));
+      R(hx + 13, hy - 1, 2, 1, tint('#e8dcc0'));
+    }
+    R(17, -20, 2, 9, ink); // tail
+  } else if (kind === 'lizard') {
+    R(-16, -12, 30, 10, ink);
+    R(-15, -11, 28, 8, tint('#8aa04a'));
+    R(-15, -11, 28, 2, tint('#aac06a'));
+    for (let x = -12; x < 10; x += 5) R(x, -9, 2, 2, tint('#5a7a2a'));
+    R(-24, -14, 11, 9, ink); // head
+    R(-23, -13, 9, 7, tint('#9ab05a'));
+    R(-21, -11, 2, 2, '#e8c020');
+    R(-23, -8, 6, 1, ink);
+    R(-17, -17, 6, 5, ink); // the frill
+    R(-16, -16, 4, 3, tint('#d8703a'));
+    R(13, -8, 10, 3, ink); // tail
+    R(22, -6, 6, 2, ink);
+    for (const x of [-12, -4, 4, 10]) R(x, -3, 3, 3, ink);
+  } else if (kind === 'bird') {
+    // a bone-picker, wings up
+    R(-24, -30, 16, 6, ink);
+    R(8, -30, 16, 6, ink);
+    R(-23, -29, 14, 4, tint('#4a3a30'));
+    R(9, -29, 14, 4, tint('#4a3a30'));
+    R(-8, -28, 16, 18, ink);
+    R(-7, -27, 14, 16, tint('#5a4a3a'));
+    R(-5, -36, 10, 9, ink); // bald head
+    R(-4, -35, 8, 7, tint('#d89a8a'));
+    R(-3, -33, 2, 2, ink);
+    R(1, -33, 2, 2, ink);
+    R(-1, -30, 3, 4, tint('#e8c060'));
+    R(-5, -10, 3, 8, ink);
+    R(2, -10, 3, 8, ink);
   } else if (kind === 'worm') {
     R(-16, -34, 32, 34, ink);
     R(-15, -33, 30, 32, tint('#a87060'));
