@@ -207,7 +207,7 @@ SC.restart = () => {
     if (e.target && e.target.closest && e.target.closest('#rstb')) restartAsk();
   });
 })();
-// The ☰ on the status bar: journal, character panel, sound, a new life, the walking switch. On a phone they
+// The ☰ on the status bar: journal, character panel, sound, a new life, and a new life. On a phone they
 // live here, so every other screen fits in one, pinned.
 function togglePanel(on) {
   const b = document.body;

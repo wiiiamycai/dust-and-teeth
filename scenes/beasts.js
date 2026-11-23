@@ -849,7 +849,7 @@ Object.assign(ENEMY, {
     moves: [mv('Big Mo, the lizard as big as a dog, opens a mouth full of old teeth.', 'big bite', 2, 10)],
   },
 });
-LOC.gully = { n: 'Rattle Gully', i: '🦎', lvl: 1, x: 27, y: 60 };
+LOC.gully = { n: 'Rattle Gully', i: '🦎', lvl: 1, x: 31, y: 56 };
 ROADS.push(['gully', 'scrapwell']);
 const GULLY_HUNTS = 3;
 const gullyLeft = () => (S.f.gullyDay === S.day ? GULLY_HUNTS - (S.f.gullyN || 0) : GULLY_HUNTS);

@@ -1393,3 +1393,16 @@ body.inbattle #opts {
     0 0 0 3px #1a120a,
     0 0 16px rgba(255, 150, 0, 0.22);
 }
+
+/* v9.0, text again: on a phone the travel map is taller, so the places don't sit on each other */
+@media (max-width: 600px) {
+  #map {
+    aspect-ratio: 4/5;
+    max-height: 50vh;
+  }
+  #text {
+    min-height: 3em; /* the pinned column never squeezes the words away */
+    flex-shrink: 0;
+    max-height: 40vh;
+  }
+}

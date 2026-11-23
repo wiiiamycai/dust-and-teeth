@@ -6,7 +6,7 @@ const LOC = {
   diner: { n: "Mama Lou's", i: '🍲', lvl: 5, x: 37, y: 86 },
   rustwater: { n: 'Rustwater', i: '🚰', lvl: 2, x: 55, y: 58 },
   chainfield: { n: 'Chainfield', i: '⛓️', lvl: 6, x: 70, y: 24 },
-  skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 84, y: 76 },
+  skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 86, y: 70 },
   silo: { n: 'Silo 9', i: '☢️', lvl: 9, x: 91, y: 14, hidden: 1 },
   snakeeyes: { n: 'Snake Eyes', i: '🎲', lvl: 4, x: 48, y: 10 },
   mall: { n: 'The Drowned Mall', i: '🏬', lvl: 4, x: 61, y: 90 },

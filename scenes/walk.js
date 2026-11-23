@@ -17,7 +17,9 @@ const walkSize = () => {
 };
 const WALK_KEY = 'dust_teeth_walk';
 // Walking is the only mode wherever the game can draw (Will, v7.4). No canvas (the headless tests): text.
-const walkOn = () => canDraw();
+// v9.0 (Will: "forget about all the 2D thing, turn it back into text based"): walking is off. The engine stays,
+// unused, in case it ever comes back; every screen is the text screen again.
+const walkOn = () => false;
 // ---- palette and tiles, drawn once ----
 const WPAL = {
   sand: '#e8d4a0',
