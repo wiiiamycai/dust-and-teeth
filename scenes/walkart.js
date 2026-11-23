@@ -379,6 +379,29 @@ function drawWalkerGBA(g, ox, oy, look, dir, step) {
     P(9, 6, 1, 2, GP.ink);
     P(7, 9, 2, 1, dark(look.skin));
   }
+  // Scrapwell coveralls: patched knees, a dust scarf, a scrap shoulder plate, and the tooth on the back
+  if (look.me) {
+    if (dir === 'u' || dir === 'd') {
+      P(5, 19, 2, 2, look.patch);
+      P(9, 19, 2, 2, look.patch);
+    } else P(dir === 'l' ? 6 + lx : 9 + rx, 19, 1, 2, look.patch);
+    P(4, 10, 8, 2, look.scarf);
+    P(4, 10, 8, 1, lite(look.scarf));
+    if (dir !== 'l') {
+      P(11, 10, 3, 3, GP.ink);
+      P(12, 11, 2, 1, look.plate);
+    }
+    if (dir === 'u') {
+      // the tooth, stitched on the back
+      P(6, 12, 4, 3, '#fbf8ec');
+      P(6, 15, 1, 1, '#fbf8ec');
+      P(9, 15, 1, 1, '#fbf8ec');
+      P(7, 12, 2, 1, '#e8e0c8');
+    } else if (dir === 'd') {
+      P(9, 12, 2, 2, '#fbf8ec'); // a small tooth badge on the chest
+    }
+    if (dir === 'd') P(4, 11, 8, 1, look.scarf); // the scarf hangs at the front
+  }
   if (look.hat) {
     P(1, 1, 14, 2, GP.ink);
     P(2, 1, 12, 1, look.hat);

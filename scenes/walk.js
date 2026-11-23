@@ -173,6 +173,8 @@ const TILEDEF = {
   // the valley's own tiles: a place you can walk into, and its houses
   O: { walk: 1, town: 1, draw: (g, x, y, n) => fill(g, WPAL.path, n, WPAL.path2, 6) },
   o: {
+    walk: 1,
+    town: 1, // the whole picture of a place is a way in, from any side (v8.2)
     draw: (g, x, y, n) => {
       fill(g, WPAL.sand, n, WPAL.sand2, 5);
       px(g, 2, 3, WPAL.roof, 12, 5);
@@ -193,7 +195,20 @@ function fill(g, c, n, c2, k) {
 // ---- people, 16 x 16, four ways, two steps. Colours from their portrait (SNPC in data/sprites.js) ----
 function walkerLook(id) {
   const p = (id && typeof SNPC !== 'undefined' && SNPC[id] && SNPC[id].pal) || {};
-  if (!id) return { hair: '#4a3420', shirt: '#7a6a4a', legs: '#4a4038', skin: '#d8a878', hat: '#6a5038' };
+  // You: Scrapwell coveralls, our vault suit. Rust-orange, patched at the knees, a red dust scarf, a scrap-metal
+  // shoulder plate, and Scrapwell's white tooth stitched on the back.
+  if (!id)
+    return {
+      hair: '#4a3420',
+      shirt: '#c0642a',
+      legs: '#a8541e',
+      skin: '#d8a878',
+      hat: '#6a5038',
+      me: 1,
+      scarf: '#c8302a',
+      patch: '#d8b888',
+      plate: '#9aa0a8',
+    };
   if (NPC[id] && NPC[id].animal) return { beast: 1, body: p.c || '#d89a90', skin: p.s || '#e8b0a8' };
   return { hair: p.h || '#3a2a1c', shirt: p.c || '#6a5a7a', legs: p.d || '#4a4034', skin: p.s || '#c8986c' };
 }
@@ -301,7 +316,7 @@ function valleyRows() {
   const keep = new Set();
   for (let y = 0; y < VALLEY_H; y++)
     for (let x = 0; x < VALLEY_W; x++)
-      if (g[y][x] === '=' || g[y][x] === 'O')
+      if (g[y][x] === '=' || g[y][x] === 'O' || g[y][x] === 'o')
         for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) keep.add(x + dx + ',' + (y + dy));
   for (let y = 0; y < VALLEY_H; y++)
     for (let x = 0; x < VALLEY_W; x++) {
@@ -314,8 +329,15 @@ function valleyRows() {
     }
   return g.map(r => r.join(''));
 }
+// which place a tile of the valley belongs to: its way in, or any tile of its 3 x 2 picture
 const valleyTown = (x, y) =>
-  Object.keys(LOC).find(k => !LOC[k].sub && onMap(k) && vx(LOC[k]) === x && vy(LOC[k]) + 1 === y);
+  Object.keys(LOC).find(
+    k =>
+      !LOC[k].sub &&
+      onMap(k) &&
+      Math.abs(vx(LOC[k]) - x) <= 1 &&
+      ((vy(LOC[k]) + 1 === y && vx(LOC[k]) === x) || (y >= vy(LOC[k]) - 1 && y <= vy(LOC[k]))),
+  );
 // ---- the walking state, kept in the save ----
 let WK = null; // the live screen: canvas, map, people, timers
 function walkMap(loc, opts, ids) {
@@ -720,7 +742,16 @@ function walkDraw(now) {
   }
   // in the valley, a name board for the place you're standing at, like a route sign
   if (WK.M.valley && !WK.moving) {
-    const t = valleyTown(S.wk.x, S.wk.y - 1) || valleyTown(S.wk.x, S.wk.y);
+    // the name board, for the place you're standing next to
+    const t = [
+      [0, -1],
+      [0, 1],
+      [-1, 0],
+      [1, 0],
+      [0, 0],
+    ]
+      .map(([dx, dy]) => valleyTown(S.wk.x + dx, S.wk.y + dy))
+      .find(Boolean);
     if (t) {
       const name = LOC[t].n.toUpperCase();
       g.font = 'bold 8px monospace';

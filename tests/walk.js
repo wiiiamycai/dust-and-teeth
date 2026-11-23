@@ -49,7 +49,7 @@ const r = vm.runInContext(`(() => {
   const outOf = ([k, x, y]) => [x, y + 1];
   const [sx, sy] = outOf(ins[0]);
   const seen = new Set([sx + ',' + sy]), q = [[sx, sy]];
-  while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = x + dx, ny = y + dy, key = nx + ',' + ny; if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen.has(key) || !walk(V[ny][nx]) || V[ny][nx] === 'O') continue; seen.add(key); q.push([nx, ny]); } }
+  while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = x + dx, ny = y + dy, key = nx + ',' + ny; if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen.has(key) || !walk(V[ny][nx]) || V[ny][nx] === 'O' || V[ny][nx] === 'o') continue; seen.add(key); q.push([nx, ny]); } }
   ins.forEach(i => { const [x, y] = outOf(i); if (!seen.has(x + ',' + y)) out.push('valley (' + tag + '): coming out of ' + i[0] + ' you cannot walk anywhere else'); });
   };
   check('start');
