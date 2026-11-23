@@ -353,7 +353,19 @@ const valleyTown = (x, y) =>
 let WK = null; // the live screen: canvas, map, people, timers
 function walkMap(loc, opts, ids) {
   if (loc === 'valley') return { rows: valleyRows(), use: {}, spots: {}, valley: 1 };
-  return MAPS[loc] || genMap(loc, opts || [], ids || []);
+  const M = MAPS[loc] || genMap(loc, opts || [], ids || []);
+  if (M.decorated || typeof decorate !== 'function') return M;
+  // things against the walls: never where somebody stands, where you come in, or in front of something you use
+  const free = new Set([M.spawn.join(',')]);
+  Object.values(M.spots || {}).forEach(s => free.add(s.join(',')));
+  M.rows.forEach((row, y) => [...row].forEach((c, x) => c === 'p' && free.add(x + ',' + y)));
+  Object.keys(M.use || {}).forEach(k => {
+    if (k.includes(',')) {
+      const [x, y] = k.split(',').map(Number);
+      free.add(x + ',' + (y + 1));
+    }
+  });
+  return { ...M, rows: decorate(M.rows, loc, free), decorated: 1 };
 }
 // ---- a map for every place without a hand-drawn one ----
 // Built from what's actually there: each thing you can do is a building with a door and a name board over it,
@@ -486,15 +498,75 @@ function walkMount(loc, M, ids) {
   big.width = W * TILE;
   big.height = H * TILE;
   const bg = big.getContext('2d');
+  // each building (a joined block of roof, wall and door) gets its own number, so its own variant of the style
+  const block = {},
+    blocks = [];
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++) {
+      if (!'HhD'.includes(rows[y][x]) || block[x + ',' + y] != null) continue;
+      const id = blocks.length,
+        q = [[x, y]],
+        cells = [];
+      block[x + ',' + y] = id;
+      while (q.length) {
+        const [cx, cy] = q.shift();
+        cells.push([cx, cy]);
+        for (const [dx, dy] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ]) {
+          const nx = cx + dx,
+            ny = cy + dy;
+          if ('HhD'.includes((rows[ny] || '')[nx] || '#') && block[nx + ',' + ny] == null) {
+            block[nx + ',' + ny] = id;
+            q.push([nx, ny]);
+          }
+        }
+      }
+      blocks.push(cells);
+    }
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       const t = TILEDEF[rows[y][x]] || TILEDEF['.'];
       const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
+      if (block[x + ',' + y] != null && typeof villageStyle === 'function')
+        BPAINT = villageStyle(loc, block[x + ',' + y]);
       bg.save();
       bg.translate(x * TILE, y * TILE);
       t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
       bg.restore();
     }
+  // chimneys on some roofs (they smoke), and a flag over the biggest building
+  const fx = { smoke: [], flag: null };
+  const SMOKY = ['scrapwell', 'rustwater', 'farm', 'diner', 'saltpan', 'green', 'chainfield'];
+  blocks.forEach((cells, i) => {
+    const roofs = cells.filter(([cx, cy]) => rows[cy][cx] === 'H');
+    if (!roofs.length) return;
+    const top = Math.min(...roofs.map(c => c[1])),
+      right = Math.max(...roofs.filter(c => c[1] === top).map(c => c[0]));
+    if (SMOKY.includes(loc) && i % 2 === 0) {
+      const px = right * TILE + 8,
+        py = top * TILE + 2;
+      bg.fillStyle = GP.ink;
+      bg.fillRect(px - 1, py - 6, 7, 9);
+      bg.fillStyle = '#9a5a3a';
+      bg.fillRect(px, py - 5, 5, 7);
+      bg.fillStyle = '#b87050';
+      bg.fillRect(px, py - 5, 5, 1);
+      fx.smoke.push([px + 2, py - 6]);
+    }
+  });
+  if (blocks.length) {
+    const bigB = blocks.reduce((a, b) => (b.length > a.length ? b : a));
+    const roofs = bigB.filter(([cx, cy]) => rows[cy][cx] === 'H');
+    if (roofs.length) {
+      const top = Math.min(...roofs.map(c => c[1])),
+        xs = roofs.filter(c => c[1] === top).map(c => c[0]);
+      fx.flag = [Math.round(((Math.min(...xs) + Math.max(...xs)) / 2) * TILE + 4), top * TILE];
+    }
+  }
   // water moves: its tiles are redrawn on the big map every half second (v8.3)
   const wet = [];
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (rows[y][x] === '~') wet.push([x, y]);
@@ -529,6 +601,7 @@ function walkMount(loc, M, ids) {
     loc,
     M,
     rows,
+    fx,
     W,
     H,
     cv,
@@ -740,6 +813,42 @@ function walkDraw(now) {
   g.fillStyle = GP.ink;
   g.fillRect(0, 0, SW, SH);
   g.drawImage(big, Math.round(-cx), Math.round(-cy)); // the whole map, shifted; the canvas clips it
+  // chimney smoke drifting up, and the flag over the biggest building, moving in the wind
+  if (WK.fx) {
+    for (const [sx, sy] of WK.fx.smoke)
+      for (let i = 0; i < 3; i++) {
+        const t = (((now / 1600 + i / 3 + sx * 0.01) % 1) + 1) % 1;
+        g.fillStyle = `rgba(230,224,214,${0.55 * (1 - t)})`;
+        g.beginPath();
+        g.arc(
+          Math.round(sx + Math.sin(t * 6 + i) * 3 + t * 6 - cx),
+          Math.round(sy - t * 22 - cy),
+          2 + t * 4,
+          0,
+          Math.PI * 2,
+        );
+        g.fill();
+      }
+    if (WK.fx.flag) {
+      const X = WK.fx.flag[0] - cx,
+        Y = WK.fx.flag[1] - cy;
+      g.fillStyle = GP.ink;
+      g.fillRect(Math.round(X), Math.round(Y - 18), 1, 19);
+      const FC = {
+        rustwater: '#3a8a8a',
+        snakeeyes: '#d8a020',
+        farm: '#c04a30',
+        scrapwell: '#c0642a',
+        diner: '#c8302a',
+        mall: '#4a6a8a',
+        chainfield: '#5a4a3a',
+        green: '#4a9a3a',
+      };
+      g.fillStyle = FC[WK.loc] || '#c0642a';
+      for (let i = 0; i < 9; i++)
+        g.fillRect(Math.round(X + 1 + i), Math.round(Y - 18 + Math.sin(now / 220 + i * 0.7) * 1.5), 1, 6);
+    }
+  }
   // name boards over the buildings of a generated place
   for (const bd of [...(WK.M.boards || []), ...(WK.boards || [])]) {
     g.font = 'bold 7px monospace';

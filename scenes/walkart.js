@@ -234,15 +234,51 @@ const GTILE = {
     speck(g, n, GP.mudLo, 7);
     R1(g, ((n * 3) % 10) + 2, ((n * 7) % 10) + 3, 3, 2, GP.mudLo);
   },
-  // roofs: shingle rows, a ridge where the roof starts, and an eave that overhangs the wall below
+  // roofs: each village has its own (BPAINT, set per building while the map is painted, v8.4)
   roof: (g, n, at, t, chapel) => {
-    const [b, hi, lo] = chapel ? [GP.chap, GP.chapHi, GP.chapLo] : [GP.roof, GP.roofHi, GP.roofLo];
+    const st = chapel ? null : BPAINT;
+    const [b, hi, lo] = chapel ? [GP.chap, GP.chapHi, GP.chapLo] : st.roof;
     const me = chapel ? 'C' : 'H';
+    const kind = chapel ? 'tiles' : st.roofKind;
     R1(g, 0, 0, 16, 16, b);
-    for (let y = 0; y < 16; y += 4) {
-      R1(g, 0, y + 3, 16, 1, lo);
-      for (let x = (y / 4) % 2 ? 2 : 0; x < 16; x += 4) R1(g, x, y, 1, 3, lo);
-      R1(g, 0, y, 16, 1, hi);
+    if (kind === 'tin') {
+      // corrugated tin: ridges, and rust coming through
+      for (let x = 0; x < 16; x += 2) R1(g, x, 0, 1, 16, x % 4 ? hi : lo);
+      if (n % 3 === 0) R1(g, ((n * 3) % 10) + 2, ((n * 5) % 10) + 3, 4, 3, '#a0542a');
+      if (n % 4 === 1) R1(g, ((n * 7) % 10) + 1, ((n * 3) % 8) + 2, 3, 2, '#8a8a80');
+    } else if (kind === 'tarp') {
+      // a canvas tarp, sagging between ropes
+      for (let y = 4; y < 16; y += 6) R1(g, 0, y, 16, 1, lo);
+      R1(g, 3, 0, 1, 16, lo);
+      R1(g, 11, 0, 1, 16, lo);
+      if (n % 3 === 0) R1(g, 6, 7, 3, 3, hi);
+    } else if (kind === 'slab') {
+      // a flat concrete roof with a vent
+      speck(g, n, lo, 6);
+      if (n % 4 === 0) {
+        R1(g, 5, 5, 6, 5, GP.ink);
+        R1(g, 6, 6, 4, 3, '#6a6a68');
+      }
+    } else if (kind === 'glass') {
+      // greenhouse panes
+      for (let x = 0; x < 16; x += 5) R1(g, x, 0, 1, 16, lo);
+      for (let y = 0; y < 16; y += 5) R1(g, 0, y, 16, 1, lo);
+      R1(g, 2, 2, 2, 2, '#f0fff8');
+    } else if (kind === 'neon') {
+      // a dark casino roof with a string of lights
+      for (let y = 0; y < 16; y += 4) R1(g, 0, y + 3, 16, 1, lo);
+      for (let x = 1; x < 16; x += 4) R1(g, x, 1, 2, 2, (x + n) % 8 < 4 ? '#f8e060' : '#f05a8a');
+    } else {
+      // clay tiles (and, on a ruin, holes in them)
+      for (let y = 0; y < 16; y += 4) {
+        R1(g, 0, y + 3, 16, 1, lo);
+        for (let x = (y / 4) % 2 ? 2 : 0; x < 16; x += 4) R1(g, x, y, 1, 3, lo);
+        R1(g, 0, y, 16, 1, hi);
+      }
+      if (kind === 'ruin' && n % 2 === 0) {
+        R1(g, ((n * 3) % 9) + 2, ((n * 5) % 8) + 3, 5, 4, GP.ink);
+        R1(g, ((n * 3) % 9) + 3, ((n * 5) % 8) + 4, 3, 2, '#3a2a1c');
+      }
     }
     if (at(0, -1) !== me) {
       R1(g, 0, 0, 16, 2, GP.ink);
@@ -256,8 +292,31 @@ const GTILE = {
     }
   },
   wall: (g, n, at, t, chapel) => {
-    R1(g, 0, 0, 16, 16, GP.wall);
-    for (let y = 2; y < 16; y += 5) R1(g, 0, y, 16, 1, GP.wallLo);
+    const st = chapel ? { wall: [GP.wall, GP.wallLo], wallKind: 'adobe', win: 'frame' } : BPAINT;
+    const [wb, wl] = st.wall;
+    R1(g, 0, 0, 16, 16, wb);
+    if (st.wallKind === 'plank') for (let x = 1; x < 16; x += 4) R1(g, x, 0, 1, 16, wl);
+    else if (st.wallKind === 'scrap') {
+      R1(g, 0, 0, 7, 8, wl);
+      R1(g, 9, 6, 7, 10, shadeHex(wb, 0.15));
+      R1(g, 3, 9, 5, 7, shadeHex(wl, -0.1));
+      for (const [x, y] of [
+        [1, 1],
+        [14, 7],
+        [4, 14],
+      ])
+        R1(g, x, y, 1, 1, GP.ink); // rivets
+    } else if (st.wallKind === 'concrete') {
+      for (let y = 4; y < 16; y += 6) R1(g, 0, y, 16, 1, wl);
+      R1(g, 8, 0, 1, 16, wl);
+    } else if (st.wallKind === 'chrome') {
+      R1(g, 0, 9, 16, 3, '#c8302a');
+      R1(g, 0, 9, 16, 1, '#e05a4a');
+    } else if (st.wallKind === 'ruin') {
+      for (let y = 2; y < 16; y += 5) R1(g, 0, y, 16, 1, wl);
+      R1(g, ((n * 3) % 10) + 2, 2, 1, 6, GP.ink);
+      R1(g, ((n * 3) % 10) + 3, 7, 1, 4, GP.ink);
+    } else for (let y = 2; y < 16; y += 5) R1(g, 0, y, 16, 1, wl);
     R1(g, 0, 0, 16, 3, GP.shade); // the eave's shadow
     if (!'hcD'.includes(at(-1, 0))) R1(g, 0, 0, 2, 16, GP.ink);
     if (!'hcD'.includes(at(1, 0))) R1(g, 14, 0, 2, 16, GP.ink);
@@ -268,21 +327,41 @@ const GTILE = {
       R1(g, 6, 5, 4, 8, GP.chapHi);
       R1(g, 7, 4, 2, 1, GP.chapHi);
       R1(g, 6, 9, 4, 1, GP.ink);
-    } else {
-      // a framed window with a sill
+    } else if (st.win === 'boarded') {
+      R1(g, 3, 4, 10, 8, GP.ink);
+      R1(g, 4, 5, 8, 6, '#3a2a1c');
+      R1(g, 3, 6, 10, 2, GP.wood);
+      R1(g, 3, 9, 10, 2, GP.woodLo);
+    } else if (st.win === 'neon') {
+      R1(g, 3, 4, 10, 8, GP.ink);
+      R1(g, 4, 5, 8, 6, n % 2 ? '#f8e060' : '#f0a040');
+      R1(g, 4, 5, 8, 1, '#fff8c0');
+    } else if (st.win === 'shop') {
+      R1(g, 1, 3, 14, 10, GP.ink);
+      R1(g, 2, 4, 12, 8, '#7aa8c8');
+      R1(g, 2, 4, 5, 3, GP.glassHi);
+    } else if (st.win === 'round') {
+      R1(g, 5, 4, 6, 6, GP.ink);
+      R1(g, 6, 5, 4, 4, GP.glass);
+      R1(g, 6, 5, 2, 2, GP.glassHi);
+    } else if (!(n % 5 === 0 && st.win === 'few')) {
+      // a framed window with a sill, and sometimes a shutter
       R1(g, 3, 4, 10, 8, GP.ink);
       R1(g, 4, 5, 8, 6, GP.glass);
       R1(g, 4, 5, 3, 2, GP.glassHi);
       R1(g, 7, 5, 1, 6, GP.ink);
       R1(g, 2, 12, 12, 1, GP.woodLo);
+      if (n % 3 === 0) R1(g, 1, 4, 2, 8, st.door || GP.wood);
     }
   },
   door: (g, n, at) => {
-    R1(g, 0, 0, 16, 16, GP.wall);
+    const st = BPAINT;
+    R1(g, 0, 0, 16, 16, st.wall[0]);
+    if (st.wallKind === 'chrome') R1(g, 0, 9, 16, 3, '#c8302a');
     R1(g, 0, 0, 16, 3, GP.shade);
     R1(g, 2, 2, 12, 14, GP.ink);
-    R1(g, 3, 3, 10, 13, GP.wood);
-    R1(g, 3, 3, 10, 1, GP.woodHi);
+    R1(g, 3, 3, 10, 13, st.door || GP.wood);
+    R1(g, 3, 3, 10, 1, shadeHex(st.door || GP.wood, 0.25));
     R1(g, 7, 3, 1, 13, GP.woodLo);
     R1(g, 10, 9, 2, 2, GP.white);
     R1(g, 1, 15, 14, 1, GP.rockLo); // the step
@@ -323,6 +402,49 @@ const GTILE = {
     R1(g, 4, 5, 8, 1, GP.white);
     R1(g, 4, 7, 5, 1, GP.white);
   },
+  barrel: (g, n, at) => {
+    sandBase(g, n);
+    R1(g, 3, 14, 10, 2, GP.shade);
+    R1(g, 4, 3, 8, 12, GP.ink);
+    R1(g, 5, 4, 6, 10, '#8a5a30');
+    R1(g, 5, 4, 2, 10, '#a87040');
+    R1(g, 4, 6, 8, 1, '#5a5a58');
+    R1(g, 4, 11, 8, 1, '#5a5a58');
+  },
+  crate: (g, n, at) => {
+    sandBase(g, n);
+    R1(g, 2, 14, 12, 2, GP.shade);
+    R1(g, 2, 4, 12, 11, GP.ink);
+    R1(g, 3, 5, 10, 9, '#b08050');
+    R1(g, 3, 5, 10, 1, '#c89a64');
+    R1(g, 3, 9, 10, 1, '#7a5030');
+    R1(g, 7, 5, 1, 9, '#7a5030');
+  },
+  lamp: (g, n, at) => {
+    sandBase(g, n);
+    R1(g, 6, 14, 5, 2, GP.shade);
+    R1(g, 7, 3, 2, 12, GP.ink);
+    R1(g, 5, 1, 6, 3, GP.ink);
+    R1(g, 6, 2, 4, 1, '#f8e070');
+  },
+  trough: (g, n, at) => {
+    sandBase(g, n);
+    R1(g, 1, 13, 14, 2, GP.shade);
+    R1(g, 1, 7, 14, 7, GP.ink);
+    R1(g, 2, 8, 12, 5, '#8a6038');
+    R1(g, 2, 8, 12, 2, GP.water);
+    R1(g, 3, 8, 4, 1, GP.waterHi);
+  },
+  pot: (g, n, at) => {
+    sandBase(g, n);
+    R1(g, 4, 14, 8, 2, GP.shade);
+    R1(g, 4, 10, 8, 5, GP.ink);
+    R1(g, 5, 11, 6, 3, '#c0642a');
+    R1(g, 7, 3, 3, 8, GP.ink);
+    R1(g, 8, 4, 1, 7, '#5a9a3a');
+    R1(g, 5, 6, 2, 1, GP.ink);
+    R1(g, 5, 5, 1, 2, '#5a9a3a');
+  },
   house: (g, n, at) => {
     sandBase(g, n);
     R1(g, 1, 14, 14, 2, GP.shade);
@@ -357,12 +479,175 @@ const GMAP = {
   P: 'pump',
   S: 'sign',
   o: 'sand',
+  b: 'barrel',
+  k: 'crate',
+  l: 'lamp',
+  q: 'trough',
+  u: 'pot',
 };
+for (const k of 'bklqu') TILEDEF[k] = TILEDEF[k] || {}; // props: they block, like walls
 for (const k in GMAP) {
   if (!TILEDEF[k]) continue;
   const f = GTILE[GMAP[k]],
     chapel = k === 'C' || k === 'c';
   TILEDEF[k].draw = (g, x, y, n, at, t) => f(g, n, at || (() => '.'), t, chapel);
+}
+// ---- each village's buildings (v8.4, Will: "the houses in the villages should also be unique") ----
+// roof: a list of [base, light, dark] to pick from per building; wall: [base, line]; door colour; window kind.
+const VSTYLE = {
+  scrapwell: {
+    roofKind: 'tin',
+    roof: [
+      ['#9a9a90', '#b8b8b0', '#6a6a64'],
+      ['#8a7a6a', '#a89888', '#5a4a3c'],
+      ['#a08a70', '#c0a888', '#6a5a48'],
+    ],
+    wallKind: 'plank',
+    wall: [
+      ['#c8a878', '#a8885a'],
+      ['#b8986a', '#98784a'],
+    ],
+    door: ['#6a4a2a', '#4a6a4a'],
+    win: 'few',
+  },
+  rustwater: {
+    roofKind: 'tiles',
+    roof: [
+      ['#c4583a', '#e07a52', '#8a3826'],
+      ['#3a8a8a', '#5aaaaa', '#2a6060'],
+      ['#c8962a', '#e0b04a', '#8a6418'],
+      ['#8a4a6a', '#aa6a8a', '#5a2a48'],
+    ],
+    wallKind: 'adobe',
+    wall: [
+      ['#e8cfa4', '#c0a078'],
+      ['#e0bc90', '#b89468'],
+      ['#f0dcb8', '#c8b08a'],
+    ],
+    door: ['#946234', '#2a6a8a', '#8a2a2a'],
+    win: 'frame',
+  },
+  farm: {
+    roofKind: 'tiles',
+    roof: [['#8a5a3a', '#aa7a4a', '#5a3a24']],
+    wallKind: 'plank',
+    wall: [
+      ['#c04a30', '#902e1c'],
+      ['#d8b888', '#b09060'],
+    ],
+    door: ['#f0e0c0'],
+    win: 'frame',
+  },
+  diner: {
+    roofKind: 'slab',
+    roof: [['#c8d4e8', '#e4ecf4', '#9aa8c0']],
+    wallKind: 'chrome',
+    wall: [['#f4f0e8', '#c8c0b0']],
+    door: ['#c8302a'],
+    win: 'shop',
+  },
+  chainfield: {
+    roofKind: 'tarp',
+    roof: [
+      ['#7a8a5a', '#9aaa7a', '#4a5a3a'],
+      ['#9a8a6a', '#b8a888', '#6a5a40'],
+    ],
+    wallKind: 'scrap',
+    wall: [['#8a8a88', '#6a6a68']],
+    door: ['#5a4a3a'],
+    win: 'boarded',
+  },
+  snakeeyes: {
+    roofKind: 'neon',
+    roof: [['#3a2a4a', '#5a4a6a', '#1a1028']],
+    wallKind: 'adobe',
+    wall: [['#7a3a6a', '#5a2a4a']],
+    door: ['#d8a020'],
+    win: 'neon',
+  },
+  mall: {
+    roofKind: 'slab',
+    roof: [['#a8a8a0', '#c8c8c0', '#7a7a74']],
+    wallKind: 'concrete',
+    wall: [['#b8b0a0', '#8a8478']],
+    door: ['#4a6a8a'],
+    win: 'shop',
+  },
+  green: {
+    roofKind: 'glass',
+    roof: [['#a8dcc8', '#d8f4e8', '#6aa890']],
+    wallKind: 'plank',
+    wall: [['#c8b890', '#a89870']],
+    door: ['#4a8a3a'],
+    win: 'round',
+  },
+  skybus: {
+    roofKind: 'slab',
+    roof: [['#d8d8d0', '#f0f0e8', '#a8a8a0']],
+    wallKind: 'concrete',
+    wall: [['#d0d0c8', '#a8a8a0']],
+    door: ['#8a3a2a'],
+    win: 'round',
+  },
+  silo: {
+    roofKind: 'slab',
+    roof: [['#8a8a84', '#a8a8a0', '#5a5a56']],
+    wallKind: 'concrete',
+    wall: [['#9a9a92', '#6a6a64']],
+    door: ['#d8c020'],
+    win: 'boarded',
+  },
+  ruin: {
+    roofKind: 'ruin',
+    roof: [
+      ['#8a5a44', '#a87a5a', '#5a3a2a'],
+      ['#7a7a70', '#9a9a90', '#4a4a44'],
+    ],
+    wallKind: 'ruin',
+    wall: [['#b8a890', '#8a7a64']],
+    door: ['#4a3a2a'],
+    win: 'boarded',
+  },
+};
+['gristmill', 'saltpan', 'kettle', 'fanghill'].forEach(k => (VSTYLE[k] = VSTYLE.ruin));
+const PROPS = {
+  scrapwell: 'bkuk',
+  rustwater: 'qlbu',
+  farm: 'kbk',
+  diner: 'bkl',
+  chainfield: 'kbk',
+  snakeeyes: 'llb',
+  mall: 'kl',
+  green: 'uu',
+  skybus: 'kb',
+  ruin: 'kb',
+};
+// the style for one building (by its number in the place), and the one in use while a building is painted
+function villageStyle(loc, i) {
+  const V = VSTYLE[loc] || VSTYLE.rustwater,
+    pickOf = a => a[i % a.length];
+  return {
+    roofKind: V.roofKind,
+    roof: pickOf(V.roof),
+    wallKind: V.wallKind,
+    wall: pickOf(V.wall),
+    door: pickOf(V.door),
+    win: V.win,
+  };
+}
+let BPAINT = villageStyle('rustwater', 0);
+// Things against the walls of a place: on the ground right below a wall, never below a door, never where somebody
+// stands or where you come in. They block, like walls do.
+function decorate(rows, loc, keepFree) {
+  const set = PROPS[loc] || (VSTYLE[loc] === VSTYLE.ruin ? PROPS.ruin : 'kb');
+  const g = rows.map(r => [...r]);
+  for (let y = 1; y < g.length - 1; y++)
+    for (let x = 1; x < g[0].length - 1; x++) {
+      if (g[y][x] !== '.' || g[y - 1][x] !== 'h' || keepFree.has(x + ',' + y)) continue;
+      const h = (x * 37 + y * 101 + loc.length * 7) % 100;
+      if (h < 45) g[y][x] = set[h % set.length];
+    }
+  return g.map(r => r.join(''));
 }
 // ---- people: 16 wide and 24 tall, outlined, shaded, three steps ----
 function drawWalkerGBA(g, ox, oy, look, dir, step) {

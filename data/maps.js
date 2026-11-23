@@ -20,7 +20,7 @@ const MAPS = {
       '#.......=..W..p.#',
       '#.ffff..=.......#',
       '#.fssf..=====...#',
-      '#.fssf.p....=...#',
+      '#.fss..p....=...#', // a gate in the sty, so you can reach Bacon Prime
       '#.ffff.....HHH..#',
       '#...p.......hDh.#',
       '#..x....=....=..#',

@@ -23,18 +23,20 @@ const r = vm.runInContext(`(() => {
   }
   // every place without a hand-drawn map gets one built: you can reach every door and every person from the way in
   for (const k of Object.keys(LOC)) {
-    if (MAPS[k]) continue;
+    const hand = !!MAPS[k];
     const opts = Array.from({ length: 7 }, (_, i) => ['Option number ' + i + ' (10 teeth)', () => 0]);
     const ids = IDS.filter(id => NPC[id].loc === k || NPC[id].home === k);
-    const M = genMap(k, opts, ids), R = M.rows, W = R[0].length, H = R.length;
+    // the map as you walk it: with the barrels, crates and lamps against the walls
+    const M = walkMap(k, opts, ids), R = M.rows, W = R[0].length, H = R.length;
     R.forEach((row, y) => { if (row.length !== W) out.push(k + ' (built): ragged row ' + y); });
     const seen = new Set([M.spawn.join(',')]), q = [M.spawn];
     while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = x + dx, ny = y + dy, key = nx + ',' + ny; if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen.has(key) || !walk(R[ny][nx])) continue; seen.add(key); q.push([nx, ny]); } }
     const near = (x, y) => [[0,1],[0,-1],[1,0],[-1,0]].some(([dx, dy]) => seen.has((x + dx) + ',' + (y + dy)));
-    Object.keys(M.use).forEach(c => { const [x, y] = c.split(',').map(Number); if (!near(x, y)) out.push(k + ' (built): a door you cannot reach at ' + c); });
-    if (Object.keys(M.use).length !== opts.length) out.push(k + ' (built): ' + Object.keys(M.use).length + ' doors for ' + opts.length + ' things to do');
+    const usePos = c => (c.includes(',') ? [c.split(',').map(Number)] : R.flatMap((row, y) => [...row].map((ch, x) => (ch === c ? [x, y] : null)).filter(Boolean)));
+    Object.keys(M.use).forEach(c => usePos(c).forEach(([x, y]) => { if (!near(x, y)) out.push(k + (hand ? '' : ' (built)') + ': something to use you cannot reach at ' + x + ',' + y); }));
+    if (!hand && Object.keys(M.use).length !== opts.length) out.push(k + ' (built): ' + Object.keys(M.use).length + ' doors for ' + opts.length + ' things to do');
     for (const id in M.spots) { const [x, y] = M.spots[id]; if (!seen.has(x + ',' + y) && !near(x, y)) out.push(k + ' (built): cannot reach ' + id); }
-    ids.forEach(id => { if (!M.spots[id]) out.push(k + ' (built): no room for ' + id); });
+    if (!hand) ids.forEach(id => { if (!M.spots[id]) out.push(k + ' (built): no room for ' + id); });
     if (!R.some(r => r.includes('E'))) out.push(k + ' (built): no exit');
   }
   // the valley, at the start (only the places you know) and with everything found: every place has a way in,
