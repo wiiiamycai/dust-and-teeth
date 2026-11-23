@@ -6,8 +6,8 @@
 // Talking, shops and everything else open as the usual screen; Back returns you to where you stood.
 // No canvas (the headless tests), or the footer switch set to text: everything plays as text, exactly as before.
 const TILE = 16,
-  VW = 10,
-  VH = 9; // the screen is 10 x 9 tiles, like the handheld
+  VW = 15,
+  VH = 10; // the screen is 15 x 10 tiles, 240 x 160, like the GBA
 const WALK_KEY = 'dust_teeth_walk';
 const walkOn = () => {
   try {
@@ -320,7 +320,7 @@ function walkMount(loc, M, ids) {
   const vw = $('view');
   vw.hidden = false;
   vw.innerHTML =
-    '<div class="walk"><div class="scr"><canvas id="wcv" width="160" height="144"></canvas><div id="wmsg" class="wmsg" hidden></div></div>' +
+    '<div class="walk"><div class="scr"><canvas id="wcv" width="240" height="160"></canvas><div id="wmsg" class="wmsg" hidden></div></div>' +
     '<div class="ctl"><div class="pad"><button data-k="u" class="pu">▲</button><button data-k="l" class="pl">◀</button><button data-k="r" class="pr">▶</button><button data-k="d" class="pd">▼</button></div>' +
     '<div class="ab"><button data-k="b" class="kb">B</button><button data-k="a" class="ka">A</button></div></div></div>';
   const cv = $('wcv');
@@ -335,9 +335,10 @@ function walkMount(loc, M, ids) {
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       const t = TILEDEF[rows[y][x]] || TILEDEF['.'];
+      const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
       bg.save();
       bg.translate(x * TILE, y * TILE);
-      t.draw(bg, x, y, (x * 73 + y * 151) % 97);
+      t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
       bg.restore();
     }
   // people stand on their own spots, or on the free p spots in order
@@ -495,24 +496,36 @@ function walkDraw(now) {
   const fx = WK.moving ? WK.from[0] + (S.wk.x - WK.from[0]) * k : S.wk.x,
     fy = WK.moving ? WK.from[1] + (S.wk.y - WK.from[1]) * k : S.wk.y;
   // the camera keeps you in the middle, and stops at the edges of the map
-  const cx = clamp(fx * TILE - 4.5 * TILE, 0, Math.max(0, W * TILE - VW * TILE)),
-    cy = clamp(fy * TILE - 4 * TILE, 0, Math.max(0, H * TILE - VH * TILE));
-  g.fillStyle = WPAL.ink;
-  g.fillRect(0, 0, 160, 144);
-  g.drawImage(big, Math.round(cx), Math.round(cy), 160, 144, 0, 0, 160, 144);
-  for (const q of WK.ppl) drawWalker(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, 0);
-  const step = WK.moving ? Math.floor(now / (STEP_MS / 2)) % 2 : 0;
-  drawWalker(g, Math.round(fx * TILE - cx), Math.round(fy * TILE - cy), WK.me, S.wk.d, step);
+  const SW = VW * TILE,
+    SH = VH * TILE;
+  const cx = clamp(fx * TILE - 7 * TILE, 0, Math.max(0, W * TILE - SW)),
+    cy = clamp(fy * TILE - 4.5 * TILE, 0, Math.max(0, H * TILE - SH));
+  g.fillStyle = GP.ink;
+  g.fillRect(0, 0, SW, SH);
+  g.drawImage(big, Math.round(cx), Math.round(cy), SW, SH, 0, 0, SW, SH);
+  // people are taller than a tile, so the ones further down the screen are drawn last
+  const step = WK.moving ? 1 + (Math.floor(now / (STEP_MS / 2)) % 2) : 0;
+  const all = [
+    ...WK.ppl.map(q => ({ x: q.x, y: q.y, look: q.look, d: q.d, s: 0 })),
+    { x: fx, y: fy, look: WK.me, d: S.wk.d, s: step },
+  ].sort((a, b) => a.y - b.y);
+  for (const q of all) drawWalkerGBA(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, q.s);
   WK.sy = fy * TILE - cy; // where you are on screen, so a message never covers you
-  // in the valley, the name of the place you're standing at
+  // in the valley, a name board for the place you're standing at, like a route sign
   if (WK.M.valley && !WK.moving) {
     const t = valleyTown(S.wk.x, S.wk.y - 1) || valleyTown(S.wk.x, S.wk.y);
     if (t) {
-      g.fillStyle = WPAL.white;
-      g.fillRect(0, 0, 160, 12);
-      g.fillStyle = WPAL.ink;
-      g.font = '8px monospace';
-      g.fillText(LOC[t].n.toUpperCase(), 4, 9);
+      const name = LOC[t].n.toUpperCase();
+      g.font = 'bold 8px monospace';
+      const w = Math.ceil(g.measureText(name).width) + 12;
+      g.fillStyle = GP.ink;
+      g.fillRect(2, 2, w + 4, 15);
+      g.fillStyle = GP.white;
+      g.fillRect(4, 4, w, 11);
+      g.fillStyle = GP.wood;
+      g.fillRect(4, 13, w, 2);
+      g.fillStyle = GP.ink;
+      g.fillText(name, 10, 12);
     }
   }
 }
@@ -579,7 +592,7 @@ function walkMsg(t) {
   m.hidden = !t;
   m.textContent = t || '';
   // the box sits at the bottom, like the handheld, unless you're standing down there
-  const low = WK && WK.sy != null ? WK.sy > 72 : true;
+  const low = WK && WK.sy != null ? WK.sy > 80 : true;
   m.style.top = low ? '3px' : 'auto';
   m.style.bottom = low ? 'auto' : '3px';
 }

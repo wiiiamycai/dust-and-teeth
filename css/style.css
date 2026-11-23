@@ -610,7 +610,7 @@ body::before {
 }
 .walk canvas {
   width: 100%;
-  aspect-ratio: 160 / 144;
+  aspect-ratio: 240 / 160;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   display: block;
@@ -620,18 +620,37 @@ body::before {
 }
 .walk .scr {
   position: relative;
+  z-index: 21; /* above the CRT scanlines: a GBA screen is clean */
 }
 .walk .wmsg {
+  /* a GBA-style text box: white, rounded, a double border, and a little arrow */
   position: absolute;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  background: #f8f4e0;
-  color: #28201c;
-  border: 3px solid #28201c;
-  padding: 6px 8px;
-  font-size: 14px;
-  line-height: 1.3;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  background: #fbf8ec;
+  color: #2a1e18;
+  border: 3px solid #5a6a8a;
+  outline: 2px solid #2a1e18;
+  border-radius: 8px;
+  padding: 8px 26px 8px 10px;
+  font-size: 15px;
+  line-height: 1.35;
+  box-shadow: inset 0 0 0 2px #c8d4e8;
+}
+.walk .wmsg::after {
+  content: '▼';
+  position: absolute;
+  right: 9px;
+  bottom: 6px;
+  font-size: 10px;
+  color: #c4583a;
+  animation: wblink 0.9s steps(2) infinite;
+}
+@keyframes wblink {
+  50% {
+    opacity: 0;
+  }
 }
 .walk .pad,
 .walk .ab {
@@ -766,7 +785,7 @@ body.walking #head .sub {
   font-size: 11px;
 }
 .walk canvas {
-  width: min(100%, calc((100dvh - 270px) * 160 / 144));
+  width: min(100%, calc((100dvh - 270px) * 240 / 160));
   min-width: 240px;
   margin: 0 auto;
 }
