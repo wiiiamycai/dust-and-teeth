@@ -1507,3 +1507,19 @@ body.inbattle #opts {
     display: none;
   }
 }
+
+/* ---- the dust (Will, v9.16): all the art at half saturation, so the wasteland looks tired, not happy. The amber
+   text and buttons stay as they are: they are the things you can act on, and they must stay readable. ---- */
+canvas,
+#head .portrait {
+  filter: saturate(0.5);
+}
+#view canvas.art {
+  filter: saturate(0.5) drop-shadow(0 0 10px rgba(255, 150, 0, 0.1));
+}
+#head .ic {
+  filter: sepia(0.6) saturate(0.8);
+}
+.card .ci {
+  filter: sepia(0.5) saturate(0.75);
+}
