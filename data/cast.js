@@ -972,7 +972,7 @@ const SECRETS = {
     tell: ['bert', 'gus'],
     pay: 40,
     short: 'about the raiders',
-    t: "Bess leads the raiders who hit Jeb's caravan every month. Polite ones. She says thank you.",
+    t: "Bess, Hector's daughter, leads the raiders who hit Jeb's caravan every month. Polite ones. She says thank you.",
   },
   bert: {
     tell: ['bess', 'nigel'],

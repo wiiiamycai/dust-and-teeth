@@ -101,7 +101,7 @@ const PLOTS = {
     live: () => alive('pig') && alive('lou') && !S.f.styWatch,
     known: () => plotKnown('pork'),
     clue: { lou: 1, junior: 1, hector: 1 },
-    clueLine: '"Thursday is pork at the diner, they say. Pedigree pork. You know whose pig is pedigree."',
+    clueLine: '"Mama Lou says Thursday is pork at the diner. Pedigree pork. You know whose pig is pedigree."',
     sign: {
       where: 'diner',
       t: 'Lou writes PEDIGREE PORK on the specials board, admires it, then rubs it out. "Not yet, sweetie."',

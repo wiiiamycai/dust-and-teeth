@@ -2,6 +2,7 @@
 // ================= TALK =================
 SC.talk = id => {
   if (!alive(id)) return goHere();
+  heardOf(id); // met
   const n = S.n[id],
     d = NPC[id];
   while (n.rx.length) quote(`${d.n}: ${n.rx.shift()}`);

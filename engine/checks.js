@@ -28,7 +28,65 @@ const lockKey = (key, arg, s) => s.group || (arg != null ? key + ':' + arg : key
 const knew = f => !!S.know[f];
 function know(f) {
   if (!S.know[f]) S.know[f] = S.day;
+  const who = f.split('.')[0];
+  if (typeof NPC !== 'undefined' && NPC[who]) heardOf(who); // knowing something about someone means you know of them
+  // and a secret names the people in it: knowing it, you know of them too
+  if (f.endsWith('.secret') && typeof SECRETS !== 'undefined' && SECRETS[who] && typeof hearIn === 'function')
+    hearIn(SECRETS[who].t);
 }
+// ---- who you know of (v9.6, Will: "some dialogue should not be happening: I have no idea who Lou is, and I'm
+// telling Old Pell Lou is coming") ----
+// You know of someone once you've met them, or once their name has been said to you (in what's said, not on a map
+// or a sign: "Mama Lou's" the place tells you nothing about Mama Lou). An option that names somebody you've never
+// heard of isn't there: you can't warn anyone about a person you don't know exists.
+const NAME_TITLES = [
+  'Mama',
+  'Sheriff',
+  'Mayor',
+  'Caravan',
+  'Old',
+  'Brother',
+  'Big',
+  'Sweet',
+  'Queen',
+  'Dr.',
+  'Mister',
+  'Deacon',
+  'Mother',
+  'The',
+  'the',
+  'Madame',
+  'Glower',
+  'Dentist',
+];
+let NAME_RE = null;
+function nameRe() {
+  if (NAME_RE) return NAME_RE;
+  NAME_RE = IDS.filter(id => !NPC[id].animal || id === 'pig' || id === 'nigel').map(id => {
+    const words = NPC[id].n.split(/\s+/).filter(w => !NAME_TITLES.includes(w) && w.length > 2);
+    const alt = [NPC[id].n, ...words].map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    return [id, new RegExp(`\\b(${alt.join('|')})\\b`)];
+  });
+  return NAME_RE;
+}
+function heardOf(id) {
+  if (!S) return;
+  S.heard = S.heard || {};
+  S.heard[id] = 1;
+}
+const WELL_KNOWN = ['king']; // everyone in the valley knows of the Dentist King
+const knowsOf = id => !S || !S.heard || !!S.heard[id] || WELL_KNOWN.includes(id);
+// everyone named in a bit of text, with place names taken out first
+function namesIn(t) {
+  let s = String(t || '');
+  for (const k in LOC) s = s.replace(new RegExp(LOC[k].n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), ' ');
+  return nameRe()
+    .filter(([, re]) => re.test(s))
+    .map(([id]) => id);
+}
+const hearIn = t => namesIn(t).forEach(heardOf);
+// only things you'd say out loud (a quoted line): a shop's "Hector's tractor" is a label, not you talking
+const mentionsStranger = label => /^"/.test(label) && namesIn(label).some(id => !knowsOf(id));
 const factsAbout = who => Object.keys(S.know).filter(k => !who || k.startsWith(who + '.')).length;
 function canTry(key, arg) {
   const s = spec(key, arg),
@@ -162,5 +220,19 @@ function migrate(s) {
   IDS.forEach(id => {
     if (s.n[id]) s.n[id].ch = s.n[id].ch || 0;
   });
+  // who you know of (v9.6): a save from before can't say, so a good guess: home, and anyone you've dealt with
+  if (!s.heard) {
+    s.heard = {};
+    IDS.forEach(id => {
+      const n = s.n[id];
+      if (
+        NPC[id].loc === 'scrapwell' ||
+        n.op !== (NPC[id].op || 0) ||
+        n.k.length ||
+        Object.keys(s.know).some(k => k.startsWith(id + '.'))
+      )
+        s.heard[id] = 1;
+    });
+  }
   return s;
 }

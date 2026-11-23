@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v9.6 (23 Nov 2026)';
+const VERSION = 'v9.7 (23 Nov 2026)';
 // The calendar (v9.5, Will: "set the nuke day to say 120 days instead of 25"). Every date and every wait in the
 // story goes through DAYS: the old 25-day calendar, stretched 4.8 times, now that each town on a road is a day.
 const TIME = 4.8;
@@ -81,6 +81,11 @@ function show(v) {
     cueQ.forEach(t => pend.push(['m', t]));
     cueQ = [];
   }
+  if (S && typeof hearIn === 'function') {
+    pend.forEach(([, t]) => hearIn(t));
+    hearIn(v.text);
+    (v.cards || []).forEach(c => hearIn(c.name)); // the people in front of you
+  }
   $('log').innerHTML = pend
     .slice(-9)
     .map(([c, t]) => `<p class="${c}">${esc(t)}</p>`)
@@ -118,6 +123,7 @@ function show(v) {
 }
 function drawOpts(list) {
   cur = (list || []).filter(Boolean);
+  if (S && typeof mentionsStranger === 'function') cur = cur.filter(o => !mentionsStranger(o[0]));
   const o = $('opts');
   o.innerHTML = '';
   cur.forEach((op, i) => {

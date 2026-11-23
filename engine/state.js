@@ -51,6 +51,7 @@ function newGame() {
     crater: {},
     tried: {},
     know: {},
+    heard: {}, // people you know of (engine/checks.js)
     talks: 0,
     later: [],
     c: {},

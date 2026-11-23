@@ -852,6 +852,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('krug') // met before, in a real game",
    "EVAL:give('krugbook'); S.n.bess.loc = 'pen'; S.n.bess.st.penDay = S.day; go('throne')",
    "Krug has been selling you dying men",
    "EXPECT:S.f.molarsSent && !has('krugbook')",
@@ -1127,6 +1128,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('jeb') // met before, in a real game",
    "EVAL:know('plot.route'); S.n.krug.op = 0",
    "Leave (map)",
    "TRAVEL:Chainfield",
@@ -2022,6 +2024,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('moe') // met before, in a real game",
    "Leave (map)",
    "TRAVEL:The Drowned Mall",
    "EVAL:know('plot.drugwar'); goHere()",
@@ -2537,6 +2540,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('dice') // met before, in a real game",
    "EVAL:S.f.raid = 1; learnGreen(); S.n.dice.loc = 'east'; S.f.vaultRobbed = 1; S.day = DAYS(15); go('hub', 'green')",
    "EXPECT:S.n.dice.loc === 'green'",
    "Dice! Tell them",
@@ -2778,6 +2782,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('eel') // met before, in a real game",
    "Leave (map)",
    "EVAL:know('pete.secret'); S.n.pete.loc = 'rustwater'; S.f.eelBadge = 1; S.f.plot_widow = 'stopped'",
    "TRAVEL:Rustwater",
@@ -2794,6 +2799,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('eel') // met before, in a real game",
    "Leave (map)",
    "EVAL:know('pete.secret'); S.n.pete.loc = 'rustwater'",
    "TRAVEL:Rustwater",
@@ -3468,13 +3474,15 @@
   ]
  },
  {
-  "name": "Jobs, Pell: his worry opens the pork plot, and saving the pig pays",
+  "name": "Jobs, Pell: his worry opens the pork plot; once you know it's Lou, warning him saves the pig, and it pays",
   "steps": [
    "Crawl out of bed",
    "Go",
    "Old Pell",
    "Anything wrong, Pell",
    "EXPECT:plotKnown('pork')",
+   "EXPECT:!cur.some(o => /Lou's coming/.test(o[0]))",
+   "EVAL:hearIn(PLOTS.pork.clueLine); go('talk', 'pell')",
    "Lou's coming for Bacon Prime",
    "EXPECT:S.f.plot_pork === 'stopped'",
    "Bacon Prime is safe",
@@ -4600,6 +4608,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('jeb') // met before, in a real game",
    "EVAL:know('bess.secret')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4804,6 +4813,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:heardOf('nigel') // met before, in a real game",
    "EVAL:S.f.raid = 1; learnGreen(); S.day = DAYS(15); S.f.greenIn = 1; S.f.vatsFound = 1; go('hub', 'green')",
    "Go down to the vats",
    "Moss",
@@ -5041,7 +5051,7 @@
    "Look for a weak spot",
    "EXPECT:S.fight.en[0].weakSpot && S.fight.en[0].hp === h0 && !cur.some(o => /weak spot \\(/.test(o[0])) && cur.some(o => /: weak spot$/.test(o[0]))",
    "Hit Grave-hound",
-   "EXPECT:S.fight.log.some(l => /Right in the weak spot \\(150%\\)/.test(l)) && S.fight.en[0].hp < h0",
+   "EXPECT:S.fight.log.some(l => /Right in the weak spot\\./.test(l)) && S.fight.en[0].hp < h0",
    "RAND:off"
   ]
  },
@@ -5179,6 +5189,20 @@
    "SAY:Carry on to Chainfield (2 days)",
    "Carry on to Chainfield",
    "EXPECT:S.here === 'chainfield' && S.day === 4 && !S.trip"
+  ]
+ },
+ {
+  "name": "Talk: you can't bring up someone you've never met or heard of; once their name is said to you, you can",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.day = DAYS(9) - 3; know('plot.pork'); S.here = 'scrapwell'; go('talk', 'pell')",
+   "EXPECT:!knowsOf('lou') && !cur.some(o => /Lou's coming/.test(o[0]))",
+   "EXPECT:!knowsOf('moe') && mentionsStranger('\"Gus pawned your ring to Moe. For drink.\"') && !mentionsStranger('Mama Lou\\'s')",
+   "EVAL:say('Hector: \"Mama Lou says Thursday is pork at the diner.\"'); go('talk', 'pell')",
+   "EXPECT:knowsOf('lou') && cur.some(o => /Lou's coming/.test(o[0]))",
+   "EVAL:go('map')",
+   "EXPECT:!knowsOf('moe')"
   ]
  }
 ]

@@ -471,7 +471,7 @@ function atk(mod) {
     if (t.weakSpot) {
       const x = weakX();
       d = Math.round(d * x);
-      F.log.push(`Right in the weak spot (${Math.round(x * 100)}%).`);
+      F.log.push(x >= 1.8 ? 'Deep in the weak spot. That one went all the way in.' : 'Right in the weak spot.'); // words, not numbers (pillar 4)
     }
     const m = matchOf(t, dtype(S.weapon));
     if (m !== 1) {
