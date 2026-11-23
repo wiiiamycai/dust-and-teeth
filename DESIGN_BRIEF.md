@@ -74,7 +74,7 @@ The v2 gossip engine already works (events, witnesses, spread over days through 
 - Show skills as words, not numbers ("Speech: Clumsy / Decent / Smooth / Silver"), unless the player has Keen Eye.
 - An experience bar (v8.8) fills towards the next perk, by doing what earns it, and shows the count ("Eagle Eye 6/10"). Still no levels.
 - Perks are earned from actions, not chosen. Examples: Silver Tongue after many successful talk-downs, Bloody Hands after many melee kills, Messy Eater after eating enough corpses, Iron Gut after surviving addiction.
-- **Keen Eye perk:** earned after surviving enough fights and landing enough aimed shots. Without it, enemies are described in words only ("big", "wounded", "barely standing") with no level, HP number or stats. With it, the player sees health bars, strength, armour and what they carry. This replaces the level numbers currently shown on cards.
+- **Keen Eye perk:** earned after surviving enough fights and landing enough aimed shots. Without it, nothing says how strong anyone or anywhere is (v9.3: no danger words on places, people or enemies; you find out by fighting), and a fight says only how hurt they are ("wounded", "barely standing"). With it, the player sees health bars, strength, armour and what they carry. This replaces the level numbers currently shown on cards.
 
 ## 7. Combat (v3)
 
@@ -96,7 +96,7 @@ Keep the current combat loop (hit, aim for eyes, aim for groin, Gut Glue, Buzz, 
 
 - Every enemy type has a fixed strength that never changes with the player's level or progress.
 - Danger is mixed everywhere: near home is mostly weak, but strong things can appear anywhere at any time.
-- Four lost towns (`scenes/beasts.js`): Gristmill (rad-rats, starter gear), Saltpan (saltbacks, heavy weapons), Fanghill (grave-hounds, armour and blades) and Kettle (stingers, pre-war gear). On the map from the start (v9.2), each saying what gear it's built for; a neighbour pays to have it cleared. Cleared in two stages, a boss, then the final boss, and clearing changes the neighbours. Left alone, they spread onto the roads.
+- Four lost towns (`scenes/beasts.js`): Gristmill (rad-rats, starter gear), Saltpan (saltbacks, heavy weapons), Fanghill (grave-hounds, armour and blades) and Kettle (stingers, pre-war gear). On the map from the start (v9.2), with nothing saying how hard they are (v9.3); a neighbour pays to have it cleared. Cleared in two stages, a boss, then the final boss, and clearing changes the neighbours. Left alone, they spread onto the roads.
 - Add at least one roaming apex monster, the **Gutmaw**: huge burrowing beast with a big health bar and heavy attacks. Early game the only options are run, hide or distract it (throw meat, sacrifice something). Late game it can be killed and it should feel earned.
 - Descriptions make danger readable ("It's the size of a car. The ground shakes when it moves.") so the player can choose to back off.
 - The world worsens only through story (the Dentist King's army grows over time) and notoriety (hunters are stronger because the player made bigger enemies).

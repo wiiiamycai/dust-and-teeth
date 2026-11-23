@@ -281,7 +281,6 @@ A.shell = { n: 'Saltback Shell', dr: 5, v: 120, tw: -2 };
 const B = k => spawn(k);
 const TOWNS = {
   gristmill: {
-    gear: 'Built for starter gear: a pipe or a zip gun, and a leather jacket.',
     n: 'Gristmill',
     i: '🌾',
     lvl: 3,
@@ -324,7 +323,6 @@ const TOWNS = {
     road: ['farm', 'scrapwell'],
   },
   saltpan: {
-    gear: 'Built for a heavy weapon. The shells laugh at blades and bullets: bring a sledge or a shotgun.',
     n: 'Saltpan',
     i: '🧂',
     lvl: 4,
@@ -363,7 +361,6 @@ const TOWNS = {
     road: ['diner', 'scrapwell'],
   },
   kettle: {
-    gear: 'Built for pre-war gear, or a grave. Spread shot and fire tear a swarm up.',
     n: 'Kettle',
     i: '🗼',
     lvl: 7, // the hardest of the four: reads 'deadly' on the map
@@ -403,7 +400,6 @@ const TOWNS = {
     road: ['rustwater', 'skybus'],
   },
   fanghill: {
-    gear: 'Built for real armour. The packs hit hard and fast: plate or a riot suit, and a blade.',
     n: 'Fanghill',
     i: '🦴',
     lvl: 5,
@@ -469,10 +465,8 @@ SC.town = k => {
   show({
     title: T.n,
     icon: T.i,
-    sub: `${townClear(k) ? 'cleared' : cap(placeWord(T.lvl))} · Day ${S.day}`,
-    text: townClear(k)
-      ? T.clear
-      : `${T.lost}\n\n${T.gear} Two bosses inside.${n ? `\n\nYou've cleared ${n} of the way in. ` : '\n\n'}${st[1]}`,
+    sub: subJoin(townClear(k) && 'cleared', `Day ${S.day}`),
+    text: townClear(k) ? T.clear : `${T.lost}${n ? `\n\nYou've cleared ${n} of the way in. ` : '\n\n'}${st[1]}`,
     opts: [
       !townClear(k) && [
         st[0],
@@ -876,7 +870,7 @@ SC.town = k => {
   show({
     title: 'Rattle Gully',
     icon: '🦎',
-    sub: `${cap(placeWord(1))} · Day ${S.day}`,
+    sub: `Day ${S.day}`,
     text:
       'A dry gully an hour out of Scrapwell. Lizards sun themselves on the rocks, rats live in the holes, and bone-pickers circle over all of it. Hides and teeth sell, and Scrapwell kids come here to learn which end of a pipe to hold.' +
       (left > 0

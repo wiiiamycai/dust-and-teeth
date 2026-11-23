@@ -17,7 +17,7 @@ function drawMap(mp) {
       b.className = 'node' + (S.here === k ? ' here' : '');
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
-      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${c ? 'crater' : k === 'green' && S.day < GREEN_DAY ? 'dust storms' : placeWord(L.lvl)}${!S.f.gutDead && S.f.gutLoc === k ? ' · tremors' : ''}${S.here === k ? ' · you' : ''}</span>`;
+      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc === k && 'tremors', S.here === k && 'you') || '&nbsp;'}</span>`;
       b.onclick = () => travel(k);
       mp.appendChild(b);
     });

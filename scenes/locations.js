@@ -5,7 +5,7 @@ function card(x) {
   return {
     icon: NPC[x].i,
     name: NPC[x].n,
-    sub: `${sizeUp(n.lvl)} · ${mood(n.op)}${n.loc === 'pen' ? ' · in chains' : ''}`,
+    sub: subJoin(sizeUp(n.lvl), mood(n.op), n.loc === 'pen' && 'in chains'),
     bang: n.rx.length > 0,
     on: () => (x === 'king' ? go('throne') : go('talk', x)),
   };
@@ -349,7 +349,7 @@ SC.hub = loc => {
     ids,
     title: L.n,
     icon: L.i,
-    sub: `${cap(placeWord(L.lvl))} · Day ${S.day}`,
+    sub: `Day ${S.day}`,
     text:
       HUBT[loc]() +
       (!S.f.gutDead && S.f.gutLoc === loc

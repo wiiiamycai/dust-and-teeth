@@ -382,13 +382,13 @@
   ]
  },
  {
-  "name": "Growth: without Keen Eye, enemies are words and no health bar; with it you see everything",
+  "name": "Growth: without Keen Eye, no danger words and no health bar, only how hurt they are; with it you see everything",
   "steps": [
    "Crawl out of bed",
    "Go",
    "EVAL:fight([mkE('Raider', 'R', 4, { arm: 'spikes' })], {})",
    "EXPECT:!document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
-   "SAY:can handle themselves",
+   "EXPECT:!/harmless|can handle themselves|dangerous|deadly/.test(document.getElementById('cards').innerHTML)",
    "SAY:unhurt",
    "EVAL:S.perks.push('keen'); go('fight')",
    "EXPECT:document.getElementById('cards').children.some(c => c.innerHTML.includes('bar hp'))",
@@ -5093,16 +5093,16 @@
   ]
  },
  {
-  "name": "Towns: all four lost towns are on the map from the start, and each says what gear it wants",
+  "name": "Towns: all four lost towns are on the map from the start, and no place says how dangerous it is",
   "steps": [
    "Crawl out of bed",
    "Go",
    "EXPECT:['gristmill', 'saltpan', 'kettle', 'fanghill'].every(k => onMap(k) && !LOC[k].hidden)",
-   "EXPECT:placeWord(LOC.kettle.lvl) === 'deadly' && placeWord(LOC.gristmill.lvl) === 'rough'",
    "Leave (map)",
+   "EXPECT:!/quiet|rough|dangerous|deadly|hell/.test(document.getElementById('map').innerHTML)",
    "TRAVEL:Gristmill",
-   "SAY:Built for starter gear",
-   "SAY:Two bosses inside"
+   "SAY:chewed through",
+   "EXPECT:!/Rough|Dangerous|Deadly|Built for/.test(document.getElementById('head').innerHTML + document.getElementById('text').innerHTML)"
   ]
  }
 ]

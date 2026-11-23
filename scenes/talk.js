@@ -20,7 +20,7 @@ SC.talk = id => {
     show({
       title: d.n,
       icon: d.i,
-      sub: `${sizeUp(n.lvl)} · ${mood(n.op)}`,
+      sub: subJoin(sizeUp(n.lvl), mood(n.op)),
       text: `${d.n} won't talk to you.`,
       opts: [atk, qk, back],
     });
@@ -31,7 +31,7 @@ SC.talk = id => {
   show({
     title: d.n,
     icon: d.i,
-    sub: `${sizeUp(n.lvl)} · ${mood(n.op)}${lover(id) ? ' · yours' : ''}`,
+    sub: subJoin(sizeUp(n.lvl), mood(n.op), lover(id) && 'yours'),
     text: r.t,
     opts: [...r.o, ...webOpts(id), ...romanceOpts(id), atk, qk, back],
   });

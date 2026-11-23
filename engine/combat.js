@@ -259,7 +259,9 @@ SC.fight = () => {
     sub:
       (kn
         ? `Lv ${e.lvl} · armour ${e.dr}${e.hp <= 0 ? (e.fled ? ' · fled' : ' · dead') : ''}${e.wep || e.arm || e.loot ? ' · has ' + [e.wep && W[e.wep].n, e.arm && A[e.arm].n, ...Object.keys(e.loot || {}).map(k => ITEMS[k])].filter(Boolean).join(', ') : ''}`
-        : `${dangerWord(e.lvl)} · ${e.fled ? 'fled' : condWord(e.hp, e.max)}`) +
+        : e.fled
+          ? 'fled'
+          : condWord(e.hp, e.max)) +
       (e.hp > 0
         ? (e.tele ? ' · winding up' : '') +
           (e.lame ? ' · limping' : '') +

@@ -1,7 +1,7 @@
 // The offline app (v7.0): keeps a copy of every file, so the game opens instantly from the home screen and works
 // with no signal. The page itself is always fetched fresh when there is signal, and every script carries ?v= of
 // its version, so a new build arrives on its own.
-const CACHE = 'dust-teeth-v9.2';
+const CACHE = 'dust-teeth-v9.3';
 self.addEventListener('install', e => {
   e.waitUntil(
     (async () => {

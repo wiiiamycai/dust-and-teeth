@@ -136,7 +136,10 @@ const condWord = (hp, max) =>
           : hp >= max * 0.25
             ? 'badly hurt'
             : 'barely standing';
-const sizeUp = l => (keen() ? `Lv ${l}` : dangerWord(l));
+// No danger words (v9.3, Will: "don't even bother with the difficulty labels, let the player find out
+// themselves"): without Keen Eye you learn how strong someone is by fighting them.
+const sizeUp = l => (keen() ? `Lv ${l}` : '');
+const subJoin = (...a) => a.filter(Boolean).join(' · ');
 // --- after a fight. Your body never gets tougher: only better armour does that. ---
 function survived() {
   count('fights');
