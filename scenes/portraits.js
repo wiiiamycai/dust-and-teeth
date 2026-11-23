@@ -2575,3 +2575,404 @@ PORTRAIT.gums = (g, PX, o) => {
   PX.r(g, 29, 35, 6, 1, S.d);
   PX.r(g, 29, 36, 6, 1, S.l);
 };
+
+// ================= The Green =================
+// The Gardener: an old man with soil in every line of his hands. Talks to the tomatoes before he talks to you.
+PORTRAIT.gardener = (g, PX, o) => {
+  PX.bg(g, 'green');
+  const S = PX.ramp('#b48a6a'),
+    H = PX.ramp('#d8d0c0'),
+    C = PX.ramp('#5e6a3a'),
+    St = PX.ramp('#c8ac60'),
+    Tm = PX.ramp('#c8402a'),
+    Lf = PX.ramp('#4a7a34'),
+    Mt = PX.ramp('#8a8a80');
+  PX.torso(g, C, 44, 16, 48, 4, 60);
+  PX.rows(g, 10, 52, ['a.a.a', '.a.a.', 'a.a.a'], { a: C.d });
+  PX.mask().rect(27, 38, 10, 7).paint(g, S, { t: 0.55 });
+  // a gentle old face, a long white beard
+  PX.ear(g, 21, 28, S, 4);
+  PX.ear(g, 43, 28, S, 4);
+  PX.head(g, 32, 27, 10, 12, S, 31, 0.6);
+  PX.mask()
+    .spans(31, [
+      [22, 25],
+      [22, 26],
+      [22, 42],
+      [22, 42],
+      [23, 41],
+      [24, 40],
+      [25, 39],
+      [26, 38],
+      [27, 37],
+      [28, 36],
+      [29, 35],
+      [30, 34],
+      [31, 33],
+      [31, 33],
+    ])
+    .rect(38, 31, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 24, 34, ['.a..a..a..a..a.', 'a..a..a..a..a..', '..a..a..a...a..', '.a...a...a.....'], { a: H.d });
+  PX.mask()
+    .spans(32, [[27, 37]])
+    .paint(g, H, { line: false, flat: true });
+  PX.mouth(g, 32, 33, ['o.....o', '.ooooo.'], S, '#5a3a30');
+  PX.brows(g, 24, 23, 11, 'sad', H.m);
+  PX.eyes(g, o, 25, 26, 10, { w: 4, skin: S, iris: '#4a6a3a', lid: 1, bag: 1 });
+  PX.nose(g, 32, 28, 'bulb', S);
+  PX.r(g, 23, 30, 3, 1, '#c87a6a');
+  PX.r(g, 39, 30, 3, 1, '#c87a6a');
+  // a battered straw hat
+  PX.mask().oval(32, 16, 9, 5).paint(g, St, { hi: 1 });
+  PX.mask()
+    .rows(14, 18, [
+      '...oooooooooooooooooooooooooooooo...',
+      'oooooooooooooooooooooooooooooooooooo',
+      '.oo.ooo..........................oo.',
+    ])
+    .paint(g, St);
+  PX.r(g, 24, 19, 17, 1, Lf.d);
+  PX.rows(g, 26, 13, ['.a.a.a.a.a.a.'], { a: St.d });
+  PX.p(g, 36, 12, St.o);
+  // a tomato in a soil-black hand, the trowel in the other
+  PX.mask().oval(14, 52, 6, 5).paint(g, Tm, { hi: 1 });
+  PX.rows(g, 12, 46, ['a.a.a', '.aaa.'], { a: Lf.m });
+  PX.mask().oval(14, 58, 6, 4).paint(g, S, { hi: 1 });
+  PX.rows(g, 9, 57, ['d.d.d.d.d', '.d.d.d.d.'], { d: '#3a2a1a' });
+  PX.mask().rows(49, 40, ['.ooo.', 'ooooo', 'ooooo', 'ooooo', '.ooo.', '..o..']).paint(g, Mt, { hi: 1 });
+  PX.mask().rect(50, 46, 3, 10).paint(g, PX.ramp('#7a5434'));
+  PX.mask().oval(51, 57, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// The Warden: car-door plate, a Molar repeater, a face like a shut gate. "Name. Use. Reason. In that order."
+PORTRAIT.warden = (g, PX, o) => {
+  PX.bg(g, 'green');
+  const S = PX.ramp('#a87a5a'),
+    H = PX.ramp('#2a1e14'),
+    C = PX.ramp('#4a4a3a'),
+    Pl = PX.ramp('#5a7a8a'),
+    Cap = PX.ramp('#3a3a30'),
+    Mt = PX.ramp('#5a5a60'),
+    Wd = PX.ramp('#5a3a24');
+  PX.torso(g, C, 43, 16, 48, 2, 62);
+  // a car door for a breastplate: paint, rust, the window crank
+  PX.mask().trap(44, 63, 18, 46, 14, 50).paint(g, Pl, { hi: 1 });
+  PX.r(g, 18, 46, 28, 1, Pl.d);
+  PX.dots(43, 14, (x, y) => PX.p(g, 16 + (x % 32), 48 + (y % 14), '#8a4a2a'));
+  PX.mask().rect(38, 52, 6, 2).paint(g, PX.ramp('#aaaaaa'), { hi: 1 });
+  PX.mask().oval(39, 53, 1, 1).paint(g, PX.ramp('#aaaaaa'));
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // a hard, square face, hair cropped under a cap
+  PX.ear(g, 21, 27, S);
+  PX.ear(g, 43, 27, S);
+  PX.head(g, 32, 27, 10, 12, S, 32, 0.6);
+  PX.mask()
+    .spans(19, [
+      [22, 24],
+      [22, 24],
+      [22, 24],
+      [22, 23],
+    ])
+    .paint(g, H);
+  PX.mask()
+    .spans(19, [
+      [40, 42],
+      [40, 42],
+      [40, 42],
+      [41, 42],
+    ])
+    .paint(g, H);
+  PX.brows(g, 25, 23, 10, 'flat', H.m);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#3a4a3a', lid: 1, lash: 1 });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 33, ['ooooooo'], S, '#4a2a24');
+  PX.r(g, 28, 36, 8, 1, S.d);
+  PX.r(g, 23, 30, 1, 4, S.d);
+  PX.r(g, 41, 30, 1, 4, S.d);
+  // a scar through the brow
+  PX.line(g, 37, 21, 39, 27, S.l);
+  // a military cap, peak pulled straight
+  PX.mask().oval(32, 16, 11, 5).rect(21, 16, 23, 3).paint(g, Cap, { hi: 1 });
+  PX.mask().rows(20, 19, ['oooooooooooooooooooooooooo', '.oooooooooooooooooooooooo.']).paint(g, PX.ramp('#22221c'));
+  // the repeater, up, and her hands on it
+  PX.mask().line(46, 63, 58, 6, 3).paint(g, Wd, { hi: 1 });
+  PX.mask().line(53, 30, 59, 2, 2).paint(g, Mt, { hi: 1 });
+  PX.mask().rect(53, 30, 5, 6).paint(g, Mt, { hi: 1 });
+  PX.mask().oval(51, 46, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// Moss: skin the colour of pond water, grey eyes, a chain from his ankle to the biggest vat. Stirs it and smiles.
+PORTRAIT.moss = (g, PX, o) => {
+  PX.bg(g, 'vats');
+  const S = PX.ramp('#7a9a64'),
+    H = PX.ramp('#3e5a32'),
+    C = PX.ramp('#4a5a40'),
+    Wd = PX.ramp('#6a5a3a'),
+    Mt = PX.ramp('#6a6a60');
+  PX.oval(g, 32, 30, 26, 26, 'rgba(0,0,0,0.35)');
+  for (let r = 24; r > 12; r -= 4) PX.oval(g, 32, 26, r, r - 2, `rgba(168,224,124,${0.05 + (24 - r) * 0.012})`);
+  // the paddle, over his shoulder
+  PX.mask().line(46, 63, 58, 14, 2).paint(g, Wd, { hi: 1 });
+  PX.mask()
+    .rows(54, 2, ['.oooo.', 'oooooo', 'oooooo', 'oooooo', 'oooooo', 'oooooo', '.oooo.', '..oo..'])
+    .paint(g, Wd, { hi: 1 });
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.rows(g, 8, 52, ['a..a...a', '.a..a.a.', 'a....a..'], { a: C.d });
+  PX.mask().rect(27, 37, 10, 8).paint(g, S, { t: 0.55 });
+  // the chain, its links climbing out of the frame
+  for (let i = 0; i < 5; i++)
+    PX.mask()
+      .oval(14 + (i % 2), 62 - i * 3, 1, 1)
+      .paint(g, Mt, { hi: 1 });
+  // a soft, damp, peaceful face, hair like weed
+  PX.ear(g, 21, 27, S);
+  PX.ear(g, 43, 27, S);
+  PX.mask().oval(32, 23, 12, 10).rect(20, 23, 3, 10).rect(42, 23, 3, 10).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 12, S, 31, 0.9, { ink: '#14220e' });
+  PX.mask()
+    .spans(15, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+      [22, 30],
+      [33, 42],
+      [22, 25],
+      [40, 42],
+    ])
+    .rect(22, 22, 2, 4)
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 22, 15, ['.a..a..a..a..a..a.', 'a..a..a..a..a..a..'], { a: H.l });
+  PX.p(g, 26, 31, S.l);
+  PX.p(g, 38, 30, S.l);
+  PX.p(g, 30, 20, '#a8e07c');
+  PX.p(g, 35, 19, '#a8e07c');
+  // calm grey eyes, a free smile
+  PX.brows(g, 25, 23, 10, 'raised', H.d);
+  PX.eyes(g, o, 25, 25, 10, {
+    w: 4,
+    skin: S,
+    iris: '#8a9a9a',
+    pupil: '#2a3a3a',
+    white: '#d8e8c8',
+    lid: 1,
+    ink: '#14220e',
+  });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 33, ['o.....o', '.ooooo.'], S, '#2a3a1e');
+};
+
+// Fern: dirt to the elbows, a sunburnt nose, and the only person in the Green who looks at the gate like it's a door
+PORTRAIT.fern = (g, PX, o) => {
+  PX.bg(g, 'green');
+  const S = PX.ramp('#c89a72'),
+    H = PX.ramp('#8a5a2a'),
+    C = PX.ramp('#5e7a3e'),
+    A = PX.ramp('#b8a880'),
+    Sf = PX.ramp('#e8c030'),
+    Lf = PX.ramp('#4a7a34');
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.mask().trap(48, 63, 22, 42, 20, 44).paint(g, A, { hi: 1 });
+  PX.dots(47, 12, (x, y) => PX.p(g, 22 + (x % 22), 50 + (y % 14), A.d));
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // hair in two bunches, flyaway
+  PX.mask().oval(32, 25, 12, 12).oval(18, 30, 4, 5).oval(46, 30, 4, 5).paint(g, H, { hi: 1 });
+  PX.p(g, 15, 27, H.m);
+  PX.p(g, 49, 27, H.m);
+  PX.mask().rect(19, 26, 2, 2).rect(44, 26, 2, 2).paint(g, PX.ramp('#c83a3a'));
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(15, [
+      [25, 39],
+      [23, 41],
+      [22, 42],
+      [22, 28],
+      [31, 33],
+      [22, 24],
+      [40, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  // wide, eager eyes, a sunburnt nose, an open grin
+  PX.brows(g, 25, 22, 10, 'raised', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#6a8a3a', lash: 1, tall: 1 });
+  PX.nose(g, 32, 28, ['.l', 'rr', 'o.'], { l: '#e8907a', d: '#c8604a', o: S.o, m: S.m, h: S.h });
+  PX.r(g, 29, 29, 2, 1, '#e07a6a');
+  PX.r(g, 33, 29, 2, 1, '#e07a6a');
+  PX.mouth(g, 32, 32, ['ooooooo', 'owwwwwo', '.orrro.', '..ooo..'], S, '#8a3a30', '#f0e8d8');
+  PX.p(g, 24, 33, '#5a3a20');
+  PX.p(g, 25, 34, '#5a3a20');
+  // dirt-black arms holding up a sunflower
+  PX.mask().line(50, 63, 50, 30, 1).paint(g, Lf, { hi: 1 });
+  PX.mask().rows(51, 40, ['.oo', 'ooo', 'oo.']).paint(g, Lf, { line: false });
+  PX.mask().oval(50, 22, 7, 7).paint(g, Sf, { hi: 1 });
+  PX.mask().oval(50, 22, 3, 3).paint(g, PX.ramp('#5a3a1a'), { hi: 1 });
+  PX.dots(59, 10, (x, y) => PX.p(g, 48 + (x % 5), 20 + (y % 5), '#3a2a10'));
+  PX.mask().oval(50, 52, 4, 4).paint(g, PX.ramp('#6a4a30'), { hi: 1 });
+};
+
+// ================= The Sky-Bus =================
+// Mother Ohm: alone in the last seat of the dead plane, headset on, listening to the Voice. Prays to wires, kindly.
+PORTRAIT.ohm = (g, PX, o) => {
+  PX.bg(g, 'skybus');
+  const S = PX.ramp('#b89478'),
+    H = PX.ramp('#8c8a80'),
+    C = PX.ramp('#4a5e74'),
+    Gg = PX.ramp('#5a5040'),
+    Gl = PX.ramp('#e8a040'),
+    Wr = PX.ramp('#c86a2a'),
+    Mt = PX.ramp('#7a7a80');
+  // the seat back behind her
+  PX.mask()
+    .rect(12, 8, 40, 56)
+    .cut((x, y) => (x < 14 || x > 49) && y < 10)
+    .paint(g, PX.ramp('#3a4a6a'), { hi: 1 });
+  PX.r(g, 16, 10, 32, 1, '#5a6a8a');
+  // a blue robe hung with wire and fuses
+  PX.torso(g, C, 44, 16, 48, 4, 60, { hi: 1 });
+  PX.line(g, 18, 46, 46, 56, Wr.m);
+  PX.line(g, 46, 46, 18, 58, PX.ramp('#4a8aa0').m);
+  [
+    [24, 49],
+    [38, 52],
+    [30, 55],
+  ].forEach(([x, y]) => PX.mask().rect(x, y, 3, 2).paint(g, PX.ramp('#c8b040'), { hi: 1 }));
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // long grey hair, a serene face
+  PX.mask().oval(32, 26, 13, 13).rect(19, 26, 5, 18).rect(40, 26, 5, 18).paint(g, H, { hi: 1 });
+  PX.rows(g, 20, 30, ['a', '.', 'a', '.', 'a', '.', 'a'], { a: H.d });
+  PX.rows(g, 43, 30, ['a', '.', 'a', '.', 'a', '.', 'a'], { a: H.d });
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(16, [
+      [25, 39],
+      [23, 41],
+      [22, 42],
+      [22, 31],
+      [22, 26],
+      [22, 24],
+    ])
+    .rect(37, 19, 6, 2)
+    .paint(g, H, { hi: 1 });
+  PX.brows(g, 25, 23, 10, 'flat', H.d);
+  // eyes half closed, listening
+  PX.eyes(g, o, 25, 26, 10, { w: 4, skin: S, iris: '#5a7a9a', lid: 1, lash: 1 });
+  if (!o.shut) {
+    PX.r(g, 25, 26, 4, 1, S.d);
+    PX.r(g, 35, 26, 4, 1, S.d);
+    PX.r(g, 25, 27, 4, 1, S.o);
+    PX.r(g, 35, 27, 4, 1, S.o);
+    PX.p(g, 27, 27, '#5a7a9a');
+    PX.p(g, 37, 27, '#5a7a9a');
+  }
+  PX.nose(g, 32, 28, 'small', S);
+  PX.mouth(g, 32, 33, ['o...o', '.ooo.'], S, '#7a4a44');
+  // the headset, and goggles pushed up into the grey
+  PX.mask()
+    .rows(19, 12, [
+      '.....oooooooooooooooo.....',
+      '...oo................oo...',
+      '..o....................o..',
+      '.o......................o.',
+    ])
+    .paint(g, Mt, { line: false, flat: true });
+  PX.mask().rect(18, 24, 4, 7).paint(g, PX.ramp('#3a3a40'), { hi: 1 });
+  PX.mask().rect(42, 24, 4, 7).paint(g, PX.ramp('#3a3a40'), { hi: 1 });
+  PX.mask().line(21, 30, 26, 35, 1).paint(g, Mt, { line: false, flat: true });
+  PX.mask().oval(27, 35, 1, 1).paint(g, PX.ramp('#2a2a2a'));
+  PX.r(g, 22, 18, 20, 1, Gg.o);
+  PX.mask().oval(28, 18, 3, 2).oval(36, 18, 3, 2).paint(g, Gg, { hi: 1 });
+  PX.mask().oval(28, 18, 1, 1).oval(36, 18, 1, 1).paint(g, Gl, { line: false, hi: 1 });
+  // a little light on the headset, on
+  PX.p(g, 44, 26, '#a8e07c');
+};
+
+// ================= Silo 9 =================
+// The Dentist King: a crown of teeth, a robe the colour of a gum, a drill, and a missile. Collects teeth. And people.
+PORTRAIT.king = (g, PX, o) => {
+  PX.bg(g, 'silo');
+  const S = PX.ramp('#c09070'),
+    H = PX.ramp('#3a2a1c'),
+    C = PX.ramp('#7a1e2a'),
+    Fr = PX.ramp('#d8ccb0'),
+    Th = PX.ramp('#f0e8d0'),
+    Au = PX.ramp('#d8b040'),
+    Mt = PX.ramp('#a8a8b0');
+  // red light behind him
+  PX.oval(g, 32, 28, 24, 22, 'rgba(232,64,48,0.12)');
+  // a robe of gum-red, a high collar
+  PX.torso(g, C, 42, 12, 52, 0, 63, { hi: 1 });
+  PX.mask()
+    .rows(12, 36, [
+      'ooo..................................ooo',
+      'oooo................................oooo',
+      'ooooo..............................ooooo',
+      '.ooooo............................ooooo.',
+      '..ooooo..........................ooooo..',
+      '...oooooo......................oooooo...',
+      '....ooooooo..................ooooooo....',
+    ])
+    .paint(g, C, { hi: 1 });
+  // a necklace of big molars
+  for (let i = 0; i < 9; i++) {
+    const x = 20 + i * 3,
+      y = 46 + Math.round(Math.sin((i / 8) * Math.PI) * 6);
+    PX.mask().rows(x, y, ['ooo', 'ooo', 'o.o']).paint(g, Th, { line: false, hi: 1 });
+    PX.p(g, x + 2, y + 1, Th.d);
+  }
+  PX.mask().rect(27, 36, 10, 8).paint(g, S, { t: 0.55 });
+  // a long, proud face, a dentist's head mirror, oiled hair
+  PX.ear(g, 21, 28, S);
+  PX.ear(g, 43, 28, S);
+  PX.mask().oval(32, 23, 12, 10).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 12, S, 30, 0.8);
+  PX.mask()
+    .spans(16, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+      [22, 27],
+      [37, 42],
+      [22, 24],
+      [40, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  // eyes that have already decided, a perfect smile, a gold tooth in the middle
+  PX.brows(g, 24, 22, 11, 'angry', H.o);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#7a2a2a', lid: 1 });
+  if (!o.shut) {
+    PX.p(g, 26, 26, '#ff6040');
+    PX.p(g, 36, 26, '#ff6040');
+  }
+  PX.nose(g, 32, 27, 'long', S);
+  PX.mouth(g, 32, 33, ['oooooooooooo', 'owwwwwwwwwwo', '.oooooooooo.'], S, '#3a1014', '#f8f4e8');
+  PX.rows(g, 27, 34, ['.o.o.o.o.o.'], { o: '#c8c0a8' });
+  PX.p(g, 32, 34, Au.l);
+  PX.rows(g, 26, 31, ['aaa.....aaa'], { a: H.m });
+  PX.p(g, 32, 37, H.m);
+  PX.p(g, 32, 38, H.m);
+  // the crown: gold, set with teeth
+  PX.mask()
+    .rows(20, 10, [
+      'o....o.....o.....o....o',
+      'oo..ooo...ooo...ooo..oo',
+      'ooooooooooooooooooooooo',
+      'ooooooooooooooooooooooo',
+      'ooooooooooooooooooooooo',
+    ])
+    .paint(g, Au, { hi: 1 });
+  [22, 27, 32, 37, 42].forEach(x =>
+    PX.mask()
+      .rows(x - 1, 9, ['ooo', 'o.o'])
+      .paint(g, Fr, { line: false }),
+  );
+  PX.r(g, 20, 15, 23, 1, Au.d);
+  // the drill, raised, still wet
+  PX.mask().rect(46, 40, 10, 9).paint(g, Mt, { hi: 1 });
+  PX.mask().rect(49, 49, 4, 14).paint(g, PX.ramp('#3a3a3a'), { hi: 1 });
+  PX.mask()
+    .rows(49, 30, ['.oo.', '.oo.', 'oooo', 'oooo', 'oooo', '.oo.', '.oo.', '.oo.', '..o.', '..o.'])
+    .paint(g, Mt, { hi: 1 });
+  PX.p(g, 51, 30, '#c83030');
+  PX.p(g, 51, 31, '#c83030');
+  PX.mask().oval(51, 56, 5, 4).paint(g, S, { hi: 1 });
+};
