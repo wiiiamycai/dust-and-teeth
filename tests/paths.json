@@ -5216,5 +5216,16 @@
    "SAY:Bullets x8",
    "EXPECT:!/Zip Gun \\(\\d+ bullets/.test(document.getElementById('text').innerHTML)"
   ]
+ },
+ {
+  "name": "Secrets: someone who trusts you with their secret can't then be blackmailed with it; overheard, they can",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:confide('gus'); go('talk', 'gus')",
+   "EXPECT:knew('gus.secret') && !cur.some(o => /^\"I know /.test(o[0]))",
+   "EVAL:know('crumb.secret'); go('talk', 'crumb')",
+   "EXPECT:cur.some(o => /^\"I know /.test(o[0]))"
+  ]
  }
 ]

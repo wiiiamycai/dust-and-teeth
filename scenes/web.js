@@ -31,6 +31,7 @@ function confide(id, n) {
   bump(id, n == null ? 20 : n);
   if (!alive(id) || !SECRETS[id] || knew(id + '.secret')) return;
   know(id + '.secret');
+  S.f['confided_' + id] = 1; // they told you themselves: nothing to hold over them (v9.11)
   say(`${NPC[id].n} trusts you now, and tells you the thing nobody says. ${SECRETS[id].t}`);
 }
 SC.secret = id => {
@@ -734,7 +735,9 @@ function webOpts(id) {
     }
   }
   const sc = SECRETS[id];
-  if (sc && sc.short && knew(id + '.secret') && !S.f['sec_' + id])
+  // you can't blackmail someone with the secret they trusted you with: they know you know (Will: "they tell you their
+  // secret, and then the option to bribe them"). Overheard or told by someone else, you still can.
+  if (sc && sc.short && knew(id + '.secret') && !S.f['sec_' + id] && !S.f['confided_' + id])
     o.push([`"I know ${sc.short}."`, () => go('secret', id)]);
   for (const k in PLOTS) {
     const P = PLOTS[k];
