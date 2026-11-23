@@ -34,9 +34,20 @@ function townBuild(t) {
     use[tx + ',' + ty] = D.doors && i < D.doors.length ? D.doors[i] : null;
   });
   (D.things || []).forEach(([x, y, w, h, u]) => {
+    let n = 0;
     for (let ty = 0; ty < H; ty++)
       for (let tx = 0; tx < W; tx++)
-        if (inside(tx * T + 12, ty * T + 12, [[x, y, w, h]]) && !use[tx + ',' + ty]) use[tx + ',' + ty] = u;
+        if (inside(tx * T + 12, ty * T + 12, [[x, y, w, h]])) {
+          n++;
+          if (!use[tx + ',' + ty]) use[tx + ',' + ty] = u;
+        }
+    // something smaller than a tile still takes the tile it sits on
+    if (!n) {
+      const tx = Math.floor((x + w / 2) / T),
+        ty = Math.floor((y + h / 2) / T);
+      if (g[ty] && g[ty][tx] === '.') g[ty][tx] = 'h';
+      use[tx + ',' + ty] = u;
+    }
   });
   (D.exits || []).forEach(([x, y]) => g[y] && (g[y][x] = 'E'));
   const area = (x, y) => {

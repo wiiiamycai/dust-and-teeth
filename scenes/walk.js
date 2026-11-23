@@ -1127,7 +1127,15 @@ const walkSay = t => walkMsg(t);
 const _hubWalk = SC.hub;
 SC.hub = loc => {
   // v9.23: only the towns drawn with the kit are walked; the rest stay text screens until theirs is drawn
-  if (!walkOn() || S.crater[loc] || !LOC[loc] || typeof TOWNMAP === 'undefined' || !TOWNMAP[townOf(loc)])
+  // and a place inside one (the well, the vat room) is its own text screen
+  if (
+    !walkOn() ||
+    S.crater[loc] ||
+    !LOC[loc] ||
+    LOC[loc].sub ||
+    typeof TOWNMAP === 'undefined' ||
+    !TOWNMAP[townOf(loc)]
+  )
     return _hubWalk(loc);
   if ((typeof TOWNS !== 'undefined' && TOWNS[loc]) || loc === 'gully') return go('town', loc); // the lost towns have their own screen
   let v = null;

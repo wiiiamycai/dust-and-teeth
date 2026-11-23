@@ -328,3 +328,113 @@ TOWNMAP.rustwater = {
     [258, 294, 54, 50, /kitchen|Pete/i],
   ],
 };
+// ---- Scrapwell: home. The village, the well in the middle of it, and Rattle Gully on the rocks to the east ----
+TOWNMAP.scrapwell = {
+  rows: [
+    ',,,,,,,,,,,,,,',
+    '..........,,,,',
+    '..........,,,,',
+    '===========,,,',
+    '===========,,,',
+    '..........,,,,',
+    '..........,,,,',
+    '..........,,,,',
+    '===========,,,',
+    ',,..==..,,,,,,',
+    ',,..==..,,,,,,',
+    ',,,.==.,,,,,,',
+  ],
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  areas: [['gully', 11, 0, 13, 11]],
+  doors: [null, /chapel|Crumb|pray|sermon/i, null, /shack|sleep|retire/i],
+  spots: { elder: [0, 2], crumb: [4, 2], pell: [7, 2], gus: [6, 4], rind: [0, 7], pig: [8, 6] },
+  extra: [
+    [2, 2],
+    [9, 2],
+    [3, 7],
+    [6, 6],
+    [1, 9],
+    [8, 9],
+    [10, 6],
+  ],
+  paint(K) {
+    const { building, door, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128;
+    building(4, top + 4, 62, 16, 30, '#8a9090', '#8a6a48', { tin: 1, rust: 1, planks: 1 });
+    door(29, top + 30, '#5a3a20');
+    win(10, top + 26, 1);
+    building(87, top, 66, 18, 32, '#a87050', '#cca070', { adobe: 1, flat: 1 });
+    door(114, top + 30, '#4a3020');
+    win(94, top + 26, 1);
+    win(134, top + 26, 1);
+    M()
+      .rect(110, top - 4, 20, 10)
+      .paint(g(), R('#cca070'), { hi: 1, ink: INK });
+    M()
+      .rect(114, top - 2, 12, 6)
+      .paint(g(), R('#b8c4cc'), { hi: 1, ink: INK });
+    building(172, top + 4, 62, 16, 30, '#9a9a90', '#7a5a3a', { tin: 1, rust: 1, planks: 1 });
+    door(197, top + 30, '#5a3a20');
+    win(216, top + 26, 0);
+    // the well, in the middle of everything
+    shadow(96, 112, 52, 8);
+    M().oval(120, 100, 22, 10).paint(g(), R('#8a8478'), { hi: 1, ink: INK });
+    M().oval(120, 98, 15, 6).paint(g(), R('#2a2420'), { line: false });
+    M().oval(120, 99, 10, 3).paint(g(), R('#3a5a2a'), { line: false });
+    [100, 138].forEach(x => M().rect(x, 72, 4, 28).paint(g(), R('#6a4a2e'), { hi: 1, ink: INK }));
+    M().rect(98, 70, 46, 4).paint(g(), R('#7a5434'), { hi: 1, ink: INK });
+    r(119, 74, 1, 20, '#c8b890');
+    M().rect(116, 92, 8, 5).paint(g(), R('#6a5a3a'), { ink: INK });
+    // your shack, the pig pen (a gap in the top rail), the Crust's fire
+    building(90, bot + 6, 60, 16, 30, '#8a8a84', '#9a7a54', { tin: 1, planks: 1 });
+    door(114, bot + 32, '#4a3424');
+    win(96, bot + 26, 0);
+    P.fence(172, bot + 4, 4);
+    P.vfence(172, bot + 4, 4);
+    P.vfence(234, bot + 16, 3);
+    P.fence(172, bot + 44, 6);
+    P.fire(28, bot + 24);
+    P.junk(48, bot + 30);
+    P.junk(2, 40);
+    P.barrel(72, 42);
+    P.skull(150, 70);
+    // Rattle Gully: redder, stonier ground, a dry wash in the rocks, bones, and things that bite
+    for (let y = 0; y < 288; y++)
+      for (let x = 262; x < 336; x++) {
+        const k = K.hash(x >> 1, y >> 1, 3);
+        if (k < 0.5 - (x - 262) / 40) continue;
+        K.p(x, y, k < 0.8 ? 'rgba(130,80,50,0.25)' : 'rgba(90,60,40,0.35)');
+      }
+    for (let y = 0; y < 288; y++) {
+      const x = 286 + Math.round(Math.sin(y / 17) * 6);
+      r(x, y, 10, 1, '#9a7a54');
+      r(x + 2, y, 6, 1, '#7a5e40');
+    }
+    P.rock(262, 20, 1);
+    P.rock(300, 110, 0.9);
+    P.rock(256, 196, 1.1);
+    P.rock(306, 236, 0.8);
+    P.rock(318, 8, 0.7);
+    P.rock(312, 60, 0.6);
+    P.rock(268, 262, 0.7);
+    P.rock(316, 160, 0.7);
+    P.skull(276, 160);
+    PX.rows(g(), 300, 180, ['o...o', '.ooo.', 'o...o'], { o: '#e4dccc' });
+  },
+  things: [
+    [96, 70, 50, 42, /well/i],
+    [262, 20, 22, 14, /Hunt|rocks/i],
+    [300, 110, 20, 13, /Hunt|rocks/i],
+    [256, 196, 24, 15, /Hunt|rocks/i],
+  ],
+};

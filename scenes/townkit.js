@@ -295,10 +295,11 @@ const TK = (() => {
       r(x + 7, y + 1, 1, 13, '#7a5a30');
     },
     rock: (x, y, s = 1) => {
-      shadow(x + 2, y + 12 * s, 22 * s, 5);
+      const q = v => Math.round(v);
+      shadow(x + 2, q(y + 12 * s), q(22 * s), 5);
       PX.mask()
-        .oval(x + 12 * s, y + 8 * s, 11 * s, 7 * s)
-        .oval(x + 5 * s, y + 10 * s, 5 * s, 4 * s)
+        .oval(q(x + 12 * s), q(y + 8 * s), q(11 * s), q(7 * s))
+        .oval(q(x + 5 * s), q(y + 10 * s), q(5 * s), q(4 * s))
         .paint(g, R('#9a8a74'), { t: 0.66, hi: 1, ink: INK });
     },
     cactus: (x, y) => {
