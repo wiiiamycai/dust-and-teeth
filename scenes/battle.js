@@ -295,7 +295,25 @@ function battleDraw() {
   g.scale(3, 3);
   drawWalkerGBA(g, 0, 8, walkerLook(null), 'u', 0);
   g.restore();
-  infoBox(g, BW - 112, BH - 26, 108, `You · ${W[S.weapon].n}`, S.hp / S.maxhp, false, `${S.hp}/${S.maxhp}`);
+  // you: health, and under it the blue bar to your next perk, in one box
+  const pb = perkBar(),
+    py = pb ? BH - 37 : BH - 26;
+  infoBox(g, BW - 112, py, 108, `You · ${W[S.weapon].n}`, S.hp / S.maxhp, false, `${S.hp}/${S.maxhp}`);
+  if (pb) {
+    g.fillStyle = GP.ink;
+    g.fillRect(BW - 113, py + 18, 110, 15);
+    g.fillStyle = '#fbf8ec';
+    g.fillRect(BW - 112, py + 18, 108, 14);
+    g.fillStyle = '#5a6a8a';
+    g.fillRect(BW - 112, py + 18, 2, 14);
+    g.fillStyle = '#2a3a5a';
+    g.font = 'bold 6px monospace';
+    g.fillText('★ ' + pb.txt, BW - 107, py + 25);
+    g.fillStyle = '#3a3028';
+    g.fillRect(BW - 107, py + 27, 98, 3);
+    g.fillStyle = '#3a8ae0';
+    g.fillRect(BW - 107, py + 27, Math.round(98 * pb.frac), 3);
+  }
 }
 function battleStop() {
   if (BK && BK.raf) cancelAnimationFrame(BK.raf);

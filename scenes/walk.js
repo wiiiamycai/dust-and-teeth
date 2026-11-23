@@ -474,12 +474,17 @@ function walkMount(loc, M, ids) {
   const vw = $('view');
   vw.hidden = false;
   const L = LOC[loc],
-    hp = clamp((S.hp * 100) / S.maxhp, 0, 100);
+    hp = clamp((S.hp * 100) / S.maxhp, 0, 100),
+    pb = perkBar();
   // the full screen: the map, a slim bar over the top, the message box, and the ring under your thumb
   vw.innerHTML =
     `<div class="walk"><canvas id="wcv" width="${VW * TILE}" height="${VH * TILE}"></canvas>` +
     `<div class="whud"><div class="wl"><b>${esc(M.valley ? 'The Wasteland' : L.n)}</b><span>🦷 ${S.teeth} · Day ${S.day}</span></div>` +
-    `<div class="whp"><i style="width:${hp}%"></i></div><button class="wmenu">Menu</button></div>` +
+    `<div class="wbars"><div class="whp"><i style="width:${hp}%"></i></div>` +
+    (pb
+      ? `<div class="wxp"><i style="width:${Math.round(pb.frac * 100)}%"></i></div><span class="wxl">★ ${esc(pb.txt)}</span>`
+      : '') +
+    '</div><button class="wmenu">Menu</button></div>' +
     '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div>' +
     '<div class="wab"><button class="wb" data-k="b">B</button><button class="wa" data-k="a">A</button></div></div>';
   vw.querySelector('.wmenu').addEventListener('pointerdown', e => {

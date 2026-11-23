@@ -317,11 +317,12 @@
   ]
  },
  {
-  "name": "Growth: no levels, no XP bar, no skill points",
+  "name": "Growth: no levels and no skill points; the experience bar fills towards a perk",
   "steps": [
    "Crawl out of bed",
    "Go",
    "EXPECT:!/Lv |XP|Level up/.test(document.getElementById('hud').innerHTML)",
+   "EXPECT:document.getElementById('hud').innerHTML.includes('bar xp')",
    "Character",
    "EXPECT:!/skill points|PERK:|Level/.test(document.getElementById('text').innerHTML + document.getElementById('head').innerHTML + cur.map(o => o[0]).join())"
   ]
@@ -377,7 +378,7 @@
    "RAND:0",
    "crashed plane",
    "EXPECT:perk('tongue')",
-   "SAY:Perk: Silver Tongue"
+   "SAY:NEW PERK: Silver Tongue"
   ]
  },
  {
@@ -5072,6 +5073,23 @@
    "Crawl out of bed",
    "Go",
    "EXPECT:Object.values(TOWNS).every(T => T.stages[2][2]().some(e => e.boss) && T.stages[3][2]().some(e => e.boss))"
+  ]
+ },
+ {
+  "name": "Growth: the experience bar follows what you do, and fills to the perk",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:for (let i = 0; i < 4; i++) count('aimHit')",
+   "EXPECT:perkBar().p === 'eagle' && perkBar().txt === 'Eagle Eye 4/10' && Math.abs(perkBar().frac - 0.4) < 0.01",
+   "EVAL:count('meleeKill')",
+   "EXPECT:perkBar().p === 'hands' && perkBar().txt === 'Bloody Hands 1/10'",
+   "EVAL:for (let i = 0; i < 6; i++) count('aimHit')",
+   "EXPECT:perk('eagle') && perkBar().p !== 'eagle'",
+   "Character",
+   "SAY:NEW PERK: Eagle Eye",
+   "EVAL:hud()",
+   "EXPECT:document.getElementById('hud').innerHTML.includes('bar xp')"
   ]
  }
 ]

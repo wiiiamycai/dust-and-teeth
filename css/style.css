@@ -1349,3 +1349,36 @@ body.inbattle #view {
 body.inbattle #opts {
   max-height: 34vh;
 }
+
+/* the experience bar: blue, under health, filling towards your next perk (v8.8) */
+.walk .wbars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.walk .wbars .whp {
+  flex: none;
+}
+.walk .wxp {
+  height: 5px;
+  background: #000;
+  border: 1px solid rgba(120, 170, 255, 0.45);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.walk .wxp i {
+  display: block;
+  height: 100%;
+  background: #4a9af0;
+}
+.walk .wxl {
+  font-size: 10px;
+  color: #a8ccff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  padding-bottom: 1px;
+}

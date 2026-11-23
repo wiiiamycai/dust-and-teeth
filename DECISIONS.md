@@ -649,3 +649,7 @@ Will: "balance the weapons as well and leveling, balance everything". Measured w
 ## The cow is a cow (v8.7)
 
 301. **The two-headed cow looked like a man** (Will). The battle screen drew anything that wasn't marked a beast as a person. It now has its own art: a white cow with black patches and two heads leaning apart. Rattle Gully's dust lizard (with its frill) and the bone-picker (bald, wings up) get their own too, instead of borrowing the rat. Anyone in the cast is always drawn as a person whatever their icon, so Caravan Jeb's lizard icon doesn't turn him into one.
+
+## The experience bar fills towards a perk (v8.8)
+
+302. **An experience bar, still no levels** (Will: "there should be an experience bar as well"; offered real per-skill levels or a bar to the next perk, he chose the perk bar). A blue bar under your health on the walking screen, the battle screen and the status bar, labelled with the perk and the count, e.g. "★ Eagle Eye 6/10". It follows what you did last (land an aimed shot and it shows Eagle Eye; a melee kill and it shows Bloody Hands), or else the perk you're nearest. When it fills: "★ NEW PERK: Eagle Eye!" with what it does. The story perks (Iron Gut, Tax Exempt, Butcher's Pal) stay surprises with no bar. Section 6 of the brief still holds: one average man, no levels, no points.

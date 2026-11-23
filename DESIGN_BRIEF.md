@@ -72,6 +72,7 @@ The v2 gossip engine already works (events, witnesses, spread over days through 
 - Skills improve by use: melee by melee fighting, guns by shooting, speech by successful (and failed) conversations, sneak by sneaking, steal by stealing, science by fixing things. Diminishing returns as skills get higher.
 - Stats change only through story events: Doc's Brain Juice, selling a kidney, addiction, the Smiling Few cult, injuries, and so on.
 - Show skills as words, not numbers ("Speech: Clumsy / Decent / Smooth / Silver"), unless the player has Keen Eye.
+- An experience bar (v8.8) fills towards the next perk, by doing what earns it, and shows the count ("Eagle Eye 6/10"). Still no levels.
 - Perks are earned from actions, not chosen. Examples: Silver Tongue after many successful talk-downs, Bloody Hands after many melee kills, Messy Eater after eating enough corpses, Iron Gut after surviving addiction.
 - **Keen Eye perk:** earned after surviving enough fights and landing enough aimed shots. Without it, enemies are described in words only ("big", "wounded", "barely standing") with no level, HP number or stats. With it, the player sees health bars, strength, armour and what they carry. This replaces the level numbers currently shown on cards.
 

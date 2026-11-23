@@ -67,15 +67,57 @@ const EARNED = {
   tax: 'The government is gone. You checked. You owe nothing to anyone.',
   butcher: 'Lou and Krug have started calling you a regular.',
 };
+// --- the experience bar (v8.8, Will: "there should be an experience bar as well") ---
+// Still no levels: the bar fills towards a perk, by doing the thing that earns it. It follows whatever you did
+// last (land an aimed shot and it shows Eagle Eye), or the perk you're closest to. The story perks (Iron Gut,
+// Tax Exempt, Butcher's Pal) come as surprises and have no bar.
+const PERK_GOAL = {
+  hands: { k: 'meleeKill', n: 10, w: 'melee kills' },
+  eagle: { k: 'aimHit', n: 10, w: 'aimed hits' },
+  keen: { k: 'fights', n: 8, w: 'fights', and: { k: 'aimHit', n: 6 } },
+  lucky: { k: 'crit', n: 8, w: 'critical hits' },
+  tongue: { k: 'talkWin', n: 8, w: 'talk-downs' },
+  fingers: { k: 'stealWin', n: 8, w: 'clean steals' },
+  reader: { k: 'talks', n: 15, w: 'conversations' },
+  hombre: { k: 'kills', n: 15, w: 'kills' },
+  skin: { k: 'dmgTaken', n: 150, w: 'damage taken' },
+  wind: { k: 'close', n: 3, w: 'near-deaths' },
+  eater: { k: 'eat', n: 5, w: 'strange meals' },
+};
+const goalHave = k => (k === 'talks' ? S.talks || 0 : k === 'kills' ? S.kills : S.c[k] || 0);
+const goalFrac = p => {
+  const G = PERK_GOAL[p],
+    a = Math.min(1, goalHave(G.k) / G.n);
+  return G.and ? (a + Math.min(1, goalHave(G.and.k) / G.and.n)) / 2 : a;
+};
+// which perk the bar shows: the one you just worked at, else the nearest
+function perkBar() {
+  if (!S) return null;
+  const open = Object.keys(PERK_GOAL).filter(p => !S.perks.includes(p));
+  if (!open.length) return null;
+  const p = open.includes(S.pfocus) ? S.pfocus : open.reduce((a, b) => (goalFrac(b) > goalFrac(a) ? b : a));
+  const G = PERK_GOAL[p];
+  return {
+    p,
+    n: PERKS[p].n,
+    frac: goalFrac(p),
+    txt: `${PERKS[p].n} ${Math.min(G.n, Math.floor(goalHave(G.k)))}/${G.n}`,
+  };
+}
 function count(k, n) {
   S.c[k] = (S.c[k] || 0) + (n === undefined ? 1 : n);
+  const p = Object.keys(PERK_GOAL).find(
+    q => !S.perks.includes(q) && (PERK_GOAL[q].k === k || (PERK_GOAL[q].and || {}).k === k),
+  );
+  if (p) S.pfocus = p;
   checkPerks();
 }
 function checkPerks() {
   for (const p in PERK_RULES)
     if (!S.perks.includes(p) && PERK_RULES[p](S.c)) {
       S.perks.push(p);
-      say(`${EARNED[p]} (Perk: ${PERKS[p].n})`);
+      if (S.pfocus === p) S.pfocus = null;
+      say(`★ NEW PERK: ${PERKS[p].n}! ${EARNED[p]} (${PERKS[p].d})`);
     }
 }
 // --- reading danger without Keen Eye ---
