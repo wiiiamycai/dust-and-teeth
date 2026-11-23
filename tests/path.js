@@ -10,7 +10,7 @@ const strip=h=>h.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,
 const clickables=()=>[...els.opts.children,...els.cards.children.filter(c=>c.onclick),...(els.map&&!els.map.hidden?els.map.children:[])];
 const screen=()=>strip(els.head.innerHTML)+' | '+strip(els.log.innerHTML)+' | '+strip(els.text.innerHTML);
 function click(sub){const b=clickables();const i=b.findIndex(x=>strip(x.innerHTML).includes(sub));if(i<0){console.log('MISSING:',sub,'\n SCREEN:',screen(),'\n HAVE:',b.map(x=>strip(x.innerHTML)).join(' | '));process.exit(1)}b[i].onclick()}
-function fightOut(){let n=0;while(/Fight · round/.test(strip(els.head.innerHTML))&&n++<80){const b=clickables().map(x=>strip(x.innerHTML));click(b.some(t=>t.includes('Close in'))?'Close in':b.some(t=>/.Shoot /.test(t))?'Shoot ':b.some(t=>/.Hit /.test(t))?'Hit ':'Use your fists')}}
+function fightOut(){let n=0;while(/Fight · round/.test(strip(els.head.innerHTML))&&n++<80){const b=clickables().map(x=>strip(x.innerHTML));click(b.some(t=>/.Shoot /.test(t))?'Shoot ':b.some(t=>/.Hit /.test(t))?'Hit ':'Use your fists')}}
 // God mode tops up HP and maxes skills before every step. REAL keeps the HP top-up but leaves skills alone,
 // so tests can measure how hidden modifiers change a check.
 let realSkills=false;

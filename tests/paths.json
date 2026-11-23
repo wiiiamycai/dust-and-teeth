@@ -460,18 +460,16 @@
   ]
  },
  {
-  "name": "Combat: on the road melee has to close in first, and you take a free round",
+  "name": "Combat: on the road a blade closes the gap and strikes in one move; no turn spent closing in",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:fight([mkE('Rat', 'R', 3)], {})",
+   "EVAL:fight([mkE('Rat', 'R', 3, { hpm: 9 })], {})",
    "SAY:at range",
-   "EXPECT:!cur.some(o => o[0].startsWith('Hit '))",
+   "EXPECT:!cur.some(o => /^Close in/.test(o[0])) && cur.some(o => o[0].startsWith('Hit '))",
    "RAND:0",
-   "Close in",
-   "EXPECT:S.fight.close && S.fight.round === 2",
-   "SAY:Rat hits you",
-   "SAY:Hit Rat"
+   "Hit Rat",
+   "EXPECT:S.fight.close && S.fight.round === 2 && S.fight.log.some(l => /You hit Rat/.test(l))"
   ]
  },
  {

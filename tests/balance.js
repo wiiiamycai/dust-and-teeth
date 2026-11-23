@@ -25,7 +25,7 @@ vm.runInContext(`
     let rounds = 0;
     while (S && S.fight && !S.end && rounds < 60) {
       rounds++;
-      if (!isGun(S.weapon) && !S.fight.close) closeIn(); else atk(0, null);
+      atk(0);
     }
     return { won: !!S && !S.end, hp: S && !S.end ? S.hp : 0, rounds };
   }

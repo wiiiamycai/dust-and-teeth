@@ -104,7 +104,7 @@ const fleeP = () => clamp(ptw() * 7 + S.stats.luck * 2, 5, 90);
 // ---- melee vs guns ----
 // Guns: strong at range, cost bullets, and LOUD. Gunfire is heard next door and gossip about it moves faster.
 // Melee: no ammo, quiet (kill with nobody around and nobody knows), easy to land up close, can knock a man
-// down. But a fight on the road starts at range, and closing in costs you a round of free hits.
+// down. A fight on the road starts at range; a blade closes the gap with its first swing (v9.9).
 const isGun = w => W[w].t === 'guns';
 const ammo = () => S.inv.ammo || 0;
 // Out of shots? Self-charging guns (the plasma rifle) never are.
@@ -224,7 +224,6 @@ function fight(en, o) {
     log: [],
     // You start up close if you picked the fight with someone in front of you, or were jumped indoors.
     close: !!(o.close || o.started),
-    charge: false,
     loud: false,
     pit: !!o.pit,
   };
@@ -272,7 +271,6 @@ SC.fight = () => {
   });
   const o = [];
   if (dry(S.weapon)) o.push(null);
-  else if (!gun && !F.close) o.push([`Close in with your ${w.n}`, () => closeIn(), 'danger']);
   else {
     // Two choices (v9.6, Will: "remove all the options to shoot things in the leg. One standard attack with a miss
     // chance, and one with a chance to find a weakness, at 30%"). Found, every hit after it does 150 to 200%.
@@ -418,13 +416,6 @@ function penned() {
   );
   go('hub', 'rustwater');
 }
-function closeIn() {
-  const F = S.fight;
-  F.log = [pick(['You charge.', 'You run at them, yelling.', 'You close the gap, head down.'])];
-  F.close = true;
-  F.charge = true;
-  enemy();
-}
 // ---- the weak spot ----
 const weakP = () => (perk('eagle') ? 45 : 30);
 const weakX = () => R(150, 200) / 100; // rolled fresh on every hit
@@ -451,6 +442,11 @@ function atk(mod) {
     t = F.en[F.t],
     w = W[S.weapon];
   F.log = [];
+  // a blade at range: you close the gap and strike in the same move (v9.9, Will: "drop close in as well")
+  if (w.t !== 'guns' && !F.close) {
+    F.close = true;
+    F.log.push(pick(['You charge.', 'You run at them, yelling.', 'You close the gap, head down.']));
+  }
   if (w.t === 'guns') {
     if (!w.free) take('ammo');
     if (!F.loud) F.log.push('BANG. That will be heard for miles.');
@@ -567,7 +563,6 @@ function enemy() {
       HIT_BASE -
       2 +
       (e.skill - ptw() * 3 - 17) / 4 +
-      (F.charge ? 20 : 0) +
       (heavy ? heavy.acc || 0 : 0) +
       (pack && e.pack ? 10 : 0) +
       (e.raged ? 15 : 0) -
@@ -621,7 +616,6 @@ function enemy() {
   // Everything left ran away: the fight is over, and you're still standing.
   if (F.en.every(e => e.hp <= 0)) return win();
   F.stun = [];
-  F.charge = false;
   F.round++;
   go('fight');
 }
