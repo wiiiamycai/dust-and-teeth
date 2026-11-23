@@ -296,6 +296,22 @@ function valleyRows() {
     set(x + 1, y + 1, '=');
     set(x, y + 3, '=');
   }
+  // Routes (v8.1, Will: "where it is pointless to roam, just lock it, or add paths to places that mean something"):
+  // the roads and a strip of scrub along each side are walkable; everything else is rock and dead trees.
+  const keep = new Set();
+  for (let y = 0; y < VALLEY_H; y++)
+    for (let x = 0; x < VALLEY_W; x++)
+      if (g[y][x] === '=' || g[y][x] === 'O')
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) keep.add(x + dx + ',' + (y + dy));
+  for (let y = 0; y < VALLEY_H; y++)
+    for (let x = 0; x < VALLEY_W; x++) {
+      const c = g[y][x];
+      if (c === '=' || c === 'O' || c === 'o' || c === '~') continue;
+      const h = (x * 928371 + y * 1237) % 101;
+      if (keep.has(x + ',' + y)) {
+        if (!TILEDEF[c] || !TILEDEF[c].walk) g[y][x] = h < 60 ? ',' : '.'; // the verge: scrub and sand
+      } else g[y][x] = h < 16 ? 'T' : '#';
+    }
   return g.map(r => r.join(''));
 }
 const valleyTown = (x, y) =>
