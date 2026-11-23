@@ -277,6 +277,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:globalThis.m = S.n.moe.op",
    "EVAL:learn('sheriff', event('hanged', 'mayor', { loc: 'rustwater', wit: [] }))",
    "EXPECT:S.later.length === 1 && S.n.moe.op === m",
@@ -635,6 +636,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Sheriff Crane",
@@ -670,6 +672,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.lovers.sheriff = { day: 1 }; event('murder', 'pell', { secret: true }); S.dead.pell = 1",
    "EVAL:becomeLover('gloria'); learn('sheriff', S.ev[S.ev.length - 1])",
    "EXPECT:!lover('sheriff') && S.f.craneSuspect && S.n.sheriff.op <= -20",
@@ -714,6 +717,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.lovers.opal = { day: 1 }; S.lovers.gloria = { day: 1 }",
    "EVAL:becomeLover('sheriff'); learn('opal', S.ev[S.ev.length - 1]); learn('gloria', S.ev[S.ev.length - 1])",
    "EXPECT:lover('opal') && lover('gloria') && !S.f.catfight && !S.f.thursday"
@@ -765,6 +769,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('krug.witness')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -783,6 +788,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('krug.witness')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -801,6 +807,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('krug.witness')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -825,6 +832,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('krug.witness')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -906,6 +914,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.krugHow = 'molars'; S.dead.krug = 1; S.f.craneHow = 'ambushed'; S.dead.sheriff = 1; S.end = { type: 'retired' }; go('ending')",
    "EXPECT:(() => { let seen = document.getElementById('text').innerHTML; for (let i = 0; i < 20 && !/This life is over/.test(document.getElementById('text').innerHTML); i++) { cur[0][1](); seen += document.getElementById('text').innerHTML } return seen.includes('The Molars burned Chainfield') && seen.includes('somebody sold her into') && !seen.includes('Without Krug') })()"
   ]
@@ -1004,6 +1013,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.molesDead = 1",
    "Leave (map)",
    "TRAVEL:The Sky-Bus",
@@ -1069,6 +1079,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EXPECT:relOf('mayor', 'krug') === 'friend' && relOf('elder', 'nigel') === 'family' && relOf('jeb', 'krug') === 'enemy' && relOf('moe', 'sheriff') === 'friend' && BONDS.length >= 60"
   ]
  },
@@ -1207,6 +1218,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.n.krug.op = 50; spillSecret('krug'); spillSecret('krug')",
    "EXPECT:['elder', 'moe', 'mayor', 'sheriff', 'opal'].filter(x => knew(x + '.secret')).length === 1"
   ]
@@ -1272,6 +1284,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('doc.secret')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -1899,6 +1912,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "EVAL:know('pete.secret'); know('plot.widow'); S.n.pete.loc = 'rustwater'",
    "TRAVEL:The Drowned Mall",
@@ -1913,6 +1927,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "EVAL:know('pete.secret'); know('plot.widow'); S.n.pete.loc = 'rustwater'",
    "TRAVEL:The Drowned Mall",
@@ -1976,6 +1991,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.raid = 1; S.day = DAYS(16)",
    "WAIT:5",
    "EXPECT:S.f.docRunOut && S.n.doc.loc === 'gone' && alive('doc') && S.n.vane.loc === 'rustwater' && S.f.vaneRules",
@@ -1989,6 +2005,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.raid = 1; S.dead.sheriff = 1; S.day = DAYS(16)",
    "WAIT:5",
    "EXPECT:!alive('doc') && S.f.docLynched"
@@ -2070,6 +2087,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "EVAL:know('plot.drugwar')",
    "TRAVEL:Rustwater",
@@ -3566,6 +3584,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.n.pete.loc = 'rustwater'; learn('sheriff', event('rescued', 'pete', { wit: [] })); learn('sheriff', event('helped', 'gus', { wit: [] }))",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -3806,6 +3825,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('plot.pump')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4072,6 +4092,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.f.raid = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4101,6 +4122,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Sheriff Crane",
@@ -4118,6 +4140,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.gusPaid = 1",
    "EVAL:S.spouse = 'bess'; S.n.bess.loc = 'party'",
    "Gus",
@@ -4159,6 +4182,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.f.raid = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4178,6 +4202,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.day++; S.here = 'rustwater'; go('talk', 'sheriff')",
    "I'm not going anywhere",
    "EXPECT:S.f.craneLeash === 'no' && lover('sheriff')",
@@ -4190,6 +4215,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.day++; S.here = 'rustwater'; go('talk', 'sheriff')",
    "Laugh",
    "EXPECT:S.f.craneLeash === 'laughed' && !lover('sheriff') && S.f.craneSuspect"
@@ -4200,6 +4226,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'",
    "RAND:0",
    "Leave (map)",
@@ -4216,6 +4243,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneNo = 2; S.here = 'farm'; go('craneAsks', 'farm')",
    "SAY:Lots of hay",
    "Not now, Crane",
@@ -4230,6 +4258,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'no'; S.n.sheriff.loc = 'party'",
    "RAND:0",
    "Leave (map)",
@@ -4242,6 +4271,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.here = 'rustwater'; S.f.craneCool = 99; go('talk', 'sheriff')",
    "inviting someone else",
    "EXPECT:S.f.craneOpen && knew('crane.krug')",
@@ -4257,6 +4287,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.f.craneOpen = 1; S.n.sheriff.loc = 'party'; S.f.raid = 1; S.f.craneCool = 99",
    "Leave (map)",
    "TRAVEL:Mama Lou's",
@@ -4274,6 +4305,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); know('crane.krug'); know('krug.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
    "Leave (map)",
    "TRAVEL:Chainfield",
@@ -4293,6 +4325,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); know('crane.krug'); S.f.craneLeash = 'yes'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
    "Leave (map)",
    "TRAVEL:Chainfield",
@@ -4307,6 +4340,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); know('krug.rota'); S.n.sheriff.loc = 'party'; S.f.craneCool = 99",
    "Leave (map)",
    "TRAVEL:Chainfield",
@@ -4326,6 +4360,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.n.sheriff.loc = 'party'; S.f.craneCool = 99; globalThis.c0 = S.n.sheriff.op",
    "Leave (map)",
    "TRAVEL:Chainfield",
@@ -4340,6 +4375,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneCool = 99; S.teeth = 10; S.f.raid = 1; S.here = 'rustwater'; go('talk', 'sheriff')",
    "Crane, I'm broke",
    "SAY:Your call, and mine",
@@ -4353,6 +4389,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.teeth = 10; S.here = 'rustwater'; go('talk', 'sheriff')",
    "Crane, I'm broke",
    "Not that. Never that",
@@ -4364,6 +4401,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneOffered = 1; S.f.craneNights = 5; S.f.craneCool = 99; S.here = 'rustwater'; go('talk', 'sheriff')",
    "Another night at the Rad",
    "SAY:Tell me I can stop",
@@ -4376,6 +4414,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.n.sheriff.op = 60; S.f.craneOffered = 1; S.f.craneCool = 99; S.here = 'rustwater'; go('talk', 'sheriff'); S.n.sheriff.op = 10",
    "The Rad, then",
    "SAY:Not any more",
@@ -4387,6 +4426,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); know('sheriff.secret'); S.f.craneLeash = 'yes'; S.f.craneWith = [['you', 1], ['jeb', 1], ['moe', 2]]; S.f.raid = 1; S.f.kingStopped = 1",
    "RAND:0",
    "WAIT:38",
@@ -4403,7 +4443,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.f.dadQuest = 1; S.f.craneDad = 'jeb'; S.f.craneSuspects = ['you', 'jeb', 'moe']; S.teeth = 200",
+   "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.f.dadQuest = 1; S.f.craneDad = 'jeb'; S.f.craneSuspects = ['you', 'jeb', 'moe']; S.teeth = 200; S.f.craneSellNo = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Doc Ratchet",
@@ -4426,6 +4466,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.f.dadQuest = 1; S.f.craneDad = 'gus'; S.f.craneSuspects = ['you', 'gus', 'pips']",
    "Gus",
    "Could it be yours",
@@ -4438,6 +4479,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.f.cranePreg = 1; S.f.pregTold = 1; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; S.f.raid = 1; S.f.kingStopped = 1; S.f.thursday = 'sheriff'; later(1, 'thursday', 'sheriff')",
    "EVAL:go('talk', 'sheriff')",
    "EXPECT:cur.some(o => /^Attack Sheriff/.test(o[0])) && cur.some(o => /^Murder Sheriff/.test(o[0]))",
@@ -4450,6 +4492,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.spouse = 'sheriff'; S.n.sheriff.loc = 'party'; S.f.craneCool = 99; goHere()",
    "Talk to Sheriff Crane (with you)",
    "SAY:Your wife, the Sheriff"
@@ -4460,6 +4503,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:becomeLover('sheriff'); S.spouse = 'sheriff'; S.f.spouseWho = 'sheriff'; S.n.sheriff.loc = 'party'; S.f.cranePreg = 1; S.f.pregTold = 1; S.dead.sheriff = 1; S.spouse = null; S.f.spouseFate = 'gutmaw'",
    "EXPECT:linkLines().some(l => /shoved her into its mouth, badge, baby and all/.test(l))"
   ]
@@ -4479,6 +4523,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:know('moe.secret')",
    "Leave (map)",
    "TRAVEL:Rustwater",
@@ -4609,6 +4654,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:heardOf('jeb') // met before, in a real game",
    "EVAL:know('bess.secret')",
    "Leave (map)",
@@ -4711,6 +4757,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "EVAL:S.f.coilGuards = 1",
    "WAIT:14",
    "EXPECT:S.f.shiftSeen && S.n.ohm.rx.some(l => /chains/.test(l))",
@@ -4941,6 +4988,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Sheriff Crane",
@@ -5248,11 +5296,40 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:S.f.craneSellNo = 1",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "EVAL:S.f.cranePreg = S.day; S.f.pregTold = 1",
    "Sheriff Crane",
    "EXPECT:cur.some(o => /^Attack Sheriff Crane/.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Crane's trade: she asks first, a yes earns teeth and goes in her log, and the ending says you whored out your wife",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:becomeLover('sheriff'); S.spouse = 'sheriff'; S.f.spouseWho = 'sheriff'; S.f.cranePreg = S.day; S.f.pregTold = 1; globalThis.t0 = S.teeth; go('craneSell', 'rustwater')",
+   "EXPECT:cur.some(o => /Not ever/.test(o[0]))",
+   "Go on. Bring back the teeth",
+   "EXPECT:S.f.craneSold === 1 && S.teeth > t0 && S.f.craneWith.length >= 2",
+   "EXPECT:linkLines().some(l => l.startsWith('You whored out your wife.'))"
+  ]
+ },
+ {
+  "name": "Crane's trade: say no for good and she never asks again; with no man around she never asks",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:becomeLover('sheriff'); go('craneSell', 'rustwater')",
+   "Not ever",
+   "EXPECT:S.f.craneSellNo && !craneSells('rustwater')",
+   "EVAL:S.f.craneSellNo = 0",
+   "EXPECT:craneSells('rustwater') && !craneSells('nowhere')"
   ]
  }
 ]

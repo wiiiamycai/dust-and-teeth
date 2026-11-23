@@ -424,8 +424,7 @@ TALK.sheriff = () => {
     !f.craneRadNo &&
     f.craneRadDay !== S.day &&
     radOpen() &&
-    S.here === 'rustwater' &&
-    !cranePregnant()
+    S.here === 'rustwater'
   )
     r.o.push([
       f.craneNights ? '"Another night at the Rad?"' : '"The Rad, then. If you\'re sure."',
@@ -707,16 +706,88 @@ LATER.dadLie = () => {
   rx('sheriff', `"I found out whose it really is. You lied to me about my own child. Of everything, that."`);
 };
 
-// ---- 7. Will dropped the rule that nothing harms her while she carries (v9.14). She can be killed, sold or
-// served like anyone else. Only her own choice stays: she won't ride on Chainfield while she's carrying. ----
-const _raidPreg = raidOutcome;
-raidOutcome = mod => {
-  if (cranePregnant()) {
-    S.f.raidDone = 1;
-    rx('sheriff', '"I was going to ride on Chainfield. I\'m not riding anywhere now. Krug can wait nine months."');
-    return;
+// ---- 7. Will dropped the pregnancy rule entirely (v9.14, v9.15): nothing about carrying protects her or stops her. ----
+
+// ---- 8. her own trade (Will, v9.15) ----
+// Crane is hungry, and she knows what she's worth. Whenever she's with you anywhere there are men, three times in ten she picks
+// out a man and asks if she can have him, for money, half to you. It's her idea, every time, and she asks first.
+// Say no for good and she never asks again, and means it. Every yes goes in her log, and on the ending slides.
+// any place with a man in it will do
+const sellMen = loc =>
+  IDS.filter(
+    x => alive(x) && !NPC[x].animal && NPC[x].g !== 'f' && x !== 'sheriff' && !following(x) && S.n[x].loc === loc,
+  );
+const craneSells = loc =>
+  lover('sheriff') &&
+  !S.f.craneSuspect &&
+  !S.f.craneSellNo &&
+  S.n.sheriff.loc !== 'pen' &&
+  (following('sheriff') || S.n.sheriff.loc === loc) &&
+  sellMen(loc).length > 0;
+const _hubSell = SC.hub;
+SC.hub = loc => {
+  if (craneSells(loc) && S.f.craneSellDay !== S.day && !S.fight && roll(30)) {
+    S.f.craneSellDay = S.day;
+    S.f.craneAskDay = S.day; // one proposition a day is plenty
+    S.here = loc;
+    return go('craneSell', loc);
   }
-  return _raidPreg(mod);
+  return _hubSell(loc);
+};
+SC.craneSell = loc => {
+  const f = S.f,
+    man = pick(sellMen(loc)),
+    who = NPC[man].n,
+    n = f.craneSold || 0;
+  show({
+    title: 'Sheriff Crane',
+    icon: '⭐',
+    text: n
+      ? `Crane has that look again. She nods at ${who}. "Him. Tonight. Same as before: he pays, I enjoy it, you get half." She waits for you. She always waits for you.`
+      : `Crane watches ${who} the way she watches a wanted poster. "Him. Tonight. He'd pay, and I'd enjoy it, and you'd get half. I've been wanting to for a while." She looks at you. "Only if you say yes. Say no and I won't, and I won't ask again."`,
+    opts: [
+      [
+        '"Go on. Bring back the teeth."',
+        () => {
+          const t = R(35, 70);
+          f.craneSold = n + 1;
+          f.craneSoldTowns = [...new Set([...(f.craneSoldTowns || []), loc])];
+          craneWith(man);
+          (f.craneSoldTo = f.craneSoldTo || []).push(man);
+          say(`Crane goes off with ${who}, humming. ` + pick(FADE));
+          gain(t);
+          say(
+            `In the morning she drops ${t} teeth in your lap and kisses the top of your head. She looks very well rested.`,
+          );
+          if (roll(50)) rx(man, '"About the Sheriff. I won\'t tell anyone. She told me to tell everyone."');
+          if (f.craneSold === 2 && alive('moe'))
+            rx(
+              'moe',
+              '"The Sheriff\'s been seen going off with men. For money. And you hold the purse. The whole bar knows."',
+            );
+          if (f.craneSold === 4) bump('sheriff', -5);
+          goHere();
+        },
+        'danger',
+      ],
+      [
+        '"Not tonight."',
+        () => {
+          say('Crane shrugs. "Your loss. His too." She takes your arm instead.');
+          goHere();
+        },
+      ],
+      [
+        '"No. I don\'t want you to. Not ever."',
+        () => {
+          f.craneSellNo = 1;
+          bump('sheriff', 5);
+          says('sheriff', '"...All right. Then I won\'t." She means it. She never asks again.');
+          goHere();
+        },
+      ],
+    ],
+  });
 };
 // ---- the journal ----
 QUESTS.dad = Q(
@@ -759,6 +830,13 @@ const _linkLinesBaby = linkLines;
 linkLines = () => {
   const L = _linkLinesBaby(),
     f = S.f;
+  if (f.craneSold) {
+    const wife = S.spouse === 'sheriff' || f.spouseWho === 'sheriff',
+      towns = (f.craneSoldTowns || []).length;
+    L.push(
+      `You whored out ${wife ? 'your wife' : 'the woman who loved you'}. Crane went with ${f.craneSold} m${f.craneSold === 1 ? 'an' : 'en'} in ${towns} place${towns === 1 ? '' : 's'}, and you kept half. She enjoyed every one, and said so. The valley called you her pimp, and you answered to it.`,
+    );
+  }
   if (f.craneNights)
     L.push(
       f.craneStopped
