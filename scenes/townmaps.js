@@ -761,3 +761,255 @@ TOWNMAP.mall = {
     [176, 288 + 134, 40, 22, /Dive|vault/i],
   ],
 };
+
+// ---- the Green: the glasshouse, the beds and the wall. Outside the wall you only meet who is at the gate ----
+TOWNMAP.green = {
+  rows: [
+    'gggggggggg',
+    'gggggggggg',
+    'gggggggggg',
+    'gggg==gggg',
+    'gggg==gggg',
+    'gggg==gggg',
+    'gggg==gggg',
+    'gggg==gggg',
+    '..........',
+    ',,..==..,,',
+    ',,..==..,,',
+    ',,,.==.,,,',
+  ],
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  doors: [/glasshouse|seed house|Gardener|seed/i],
+  spots: { gardener: [4, 3], fern: [7, 4], warden: [3, 8] },
+  extra: [
+    [6, 5],
+    [2, 5],
+    [8, 6],
+    [1, 9],
+    [7, 9],
+    [8, 8],
+  ],
+  // who you can see: inside the wall only once you're let in
+  who: id => S.f.greenIn || NPC[id].gate || S.n[id].st.gate || S.n[id].loc !== 'green',
+  // the gate is shut until you're in: knocking is the place's own choices (pay, or the pipe round the side)
+  live(rows, use) {
+    if (S.f.greenIn) return;
+    rows[7][4] = rows[7][5] = 'h';
+    use['4,7'] = use['5,7'] = 'menu';
+  },
+  paint(K) {
+    const { door, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6;
+    // the glasshouse
+    shadow(40, 62, 170, 10);
+    M()
+      .rect(36, top + 14, 168, 44)
+      .paint(
+        g(),
+        {
+          o: '#2a3a3a',
+          d: 'rgba(120,180,190,0.55)',
+          m: 'rgba(160,210,220,0.55)',
+          l: 'rgba(200,235,240,0.6)',
+          h: '#f0fafa',
+        },
+        { hi: 1, ink: '#3a4a4a' },
+      );
+    for (let xx = 36; xx < 204; xx += 14) r(xx, top + 14, 1, 44, '#4a5a5a');
+    r(36, top + 34, 168, 1, '#4a5a5a');
+    M()
+      .oval(120, top + 14, 84, 12)
+      .cut((x, y) => y > top + 14)
+      .paint(
+        g(),
+        {
+          o: '#2a3a3a',
+          d: 'rgba(120,180,190,0.55)',
+          m: 'rgba(170,220,230,0.6)',
+          l: 'rgba(210,240,245,0.65)',
+          h: '#f0fafa',
+        },
+        { hi: 1, ink: '#3a4a4a' },
+      );
+    door(114, top + 38, '#4a6a3a');
+    // beds of tomatoes, sunflowers, the wall and its great gate
+    [
+      [8, 76],
+      [150, 76],
+    ].forEach(([x, y]) => {
+      M().rect(x, y, 80, 30).paint(g(), R('#6a4a30'), { hi: 1, ink: INK });
+      for (let yy = y + 6; yy < y + 28; yy += 8)
+        for (let xx = x + 6; xx < x + 78; xx += 10) {
+          PX.rows(g(), xx, yy, ['.g.', 'grg', '.g.'], { g: '#4a8a2a', r: '#e04030' });
+        }
+    });
+    [196, 206, 216].forEach((x, i) => {
+      r(x + 2, 120 - i * 2, 1, 14, '#4a7a2a');
+      M()
+        .oval(x + 2, 118 - i * 2, 4, 4)
+        .paint(g(), R('#e8c030'), { hi: 1, ink: INK });
+      p(x + 2, 118 - i * 2, '#5a3a1a');
+    });
+    M().rect(0, 176, 96, 18).rect(144, 176, 96, 18).paint(g(), R('#8a8478'), { hi: 1, ink: INK });
+    for (let xx = 0; xx < 240; xx += 12) r(xx, 184, 1, 10, '#6a6458');
+    M().rect(96, 172, 6, 22).rect(138, 172, 6, 22).paint(g(), R('#7a7468'), { hi: 1, ink: INK });
+    K.solid(36, top + 14, 168, 44);
+    K.solid(8, 76, 80, 30);
+    K.solid(150, 76, 80, 30);
+    K.solid(0, 176, 96, 18);
+    K.solid(144, 176, 96, 18);
+    // the outflow pipe, round the side of the wall
+    M().rect(206, 186, 16, 10).paint(g(), R('#6a6a60'), { hi: 1, ink: INK });
+    M().oval(214, 196, 5, 3).paint(g(), R('#3a4a3a'), { line: false });
+  },
+  things: [[206, 182, 16, 14, /outflow|pipe/i]],
+};
+// ---- Silo 9: the hatch over the Big Tooth, Molar tents, red lamps. Guards on the gate until you're in ----
+TOWNMAP.silo = {
+  rows: [
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '==========',
+    '....==....',
+    '....==....',
+    '....==....',
+  ],
+  pal: { road: ['#6a5a50', '#5a4a40', '#7a6a60', '#3a2a22', '#2a1a14', '#8a7a70'] },
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  doors: [],
+  spots: { king: [5, 2] },
+  extra: [
+    [3, 2],
+    [8, 3],
+    [1, 5],
+    [8, 5],
+    [3, 7],
+    [6, 7],
+  ],
+  who: id => S.f.siloIn || S.n[id].loc !== 'silo',
+  // the gate across the road until you're in: two Molars with rifles, and the place's own choices
+  live(rows, use) {
+    if (S.f.siloIn) return;
+    for (let x = 0; x < 10; x++) rows[8][x] = 'h';
+    use['4,8'] = use['5,8'] = 'menu';
+  },
+  paint(K) {
+    const { props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g;
+    // the hatch over the Big Tooth: flush with the concrete, so no shadow. Set into the ground, its inner top edge
+    // is in shade and its inner bottom edge catches the light.
+    const ring = PX.mask().oval(120, 92, 64, 30);
+    ring.each((x, y) => p(x, y, ((x >> 2) + (y >> 2)) % 2 ? '#d8b030' : '#2a2420'));
+    PX.mask()
+      .oval(120, 92, 64, 30)
+      .cut((x, y) => (x - 120) ** 2 / (63 * 63) + (y - 92) ** 2 / (29 * 29) < 1)
+      .each((x, y) => p(x, y, '#4a4640'));
+    const doors = PX.mask().oval(120, 92, 52, 23);
+    doors.each((x, y) => p(x, y, '#6a6e74'));
+    doors.each((x, y) => {
+      const k = (x - 120) ** 2 / (52 * 52) + (y - 92) ** 2 / (23 * 23);
+      if (k > 0.82) p(x, y, y < 92 ? '#34363a' : '#9a9ea4');
+    });
+    for (let yy = 76; yy < 108; yy += 6) r(76, yy, 88, 1, 'rgba(40,40,44,0.35)');
+    r(119, 69, 2, 47, '#2a2a2e');
+    r(121, 69, 1, 47, '#8a8e94');
+    [
+      [96, 92],
+      [144, 92],
+    ].forEach(([x, y]) => {
+      M().oval(x, y, 6, 4).paint(g(), R('#8a8e94'), { hi: 1, ink: '#3a3c40' });
+      r(x - 3, y, 7, 1, '#4a4c50');
+    });
+    // Molar tents, a lamp
+    // Molar tents: A-frames of patched canvas, pegged down, their shadow right under them
+    [
+      [14, 146],
+      [174, 146],
+    ].forEach(([x, y]) => {
+      shadow(x - 4, y + 30, 60, 8);
+      const C = R('#8a4a38'),
+        tent = PX.mask();
+      for (let j = 0; j <= 30; j++) {
+        const half = Math.round(4 + j * 0.8);
+        tent.rect(x + 26 - half, y + j, half * 2, 1);
+      }
+      tent.paint(g(), C, { t: 0.55, hi: 1, ink: INK });
+      PX.line(g(), x + 26, y, x + 26, y + 30, C.d);
+      M()
+        .rows(x + 21, y + 14, [
+          '....oo....',
+          '...oooo...',
+          '..oooooo..',
+          '.oooooooo.',
+          '.oooooooo.',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+          'oooooooooo',
+        ])
+        .paint(g(), R('#2a1814'), { line: false, flat: true });
+      M()
+        .rect(x + 6, y + 12, 6, 5)
+        .paint(g(), R('#a8805a'), { ink: INK });
+      PX.line(g(), x + 2, y + 31, x - 6, y + 34, '#c8b890');
+      PX.line(g(), x + 50, y + 31, x + 58, y + 34, '#c8b890');
+      [x - 7, x + 58].forEach(px => {
+        r(px, y + 33, 2, 3, '#5a4030');
+      });
+      r(x + 25, y - 4, 2, 5, '#5a4a40');
+      r(x + 27, y - 4, 6, 3, '#c82a2a');
+    });
+    [20, 214].forEach(x => {
+      M().rect(x, 14, 4, 40).paint(g(), R('#4a4a50'), { ink: INK });
+      M()
+        .oval(x + 2, 12, 5, 3)
+        .paint(g(), R('#ff6040'), { hi: 1, ink: INK });
+    });
+    P.barrel(40, 50);
+    P.barrel(56, 46);
+    P.crate(180, 48);
+    P.skull(150, 130);
+    P.skull(80, 134);
+    K.solid(56, 62, 128, 60);
+    K.solid(14, 146, 52, 32);
+    K.solid(174, 146, 52, 32);
+    K.solid(20, 14, 4, 40);
+    K.solid(214, 14, 4, 40);
+    g().fillStyle = 'rgba(120,20,10,0.14)';
+    g().fillRect(0, 0, 240, 288);
+  },
+  things: [[56, 62, 128, 60, /hatch|launch|Tooth|key|sabotage|King/i]],
+};

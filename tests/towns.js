@@ -21,10 +21,21 @@ const path = require('path');
   const fails = await pg.evaluate(() => {
     const out = [];
     newGame();
+    // a shut gate is knocked on from the road: it must be reachable
+    for (const t in TOWNMAP) {
+      const M = townLive(townBuild(t));
+      for (const k in M.use)
+        if (M.use[k] === 'menu') {
+          const [x, y] = k.split(',').map(Number);
+          if (!['.', 'E'].includes((M.rows[y + 1] || '')[x])) out.push(`${t}: the shut gate at ${k} can't be knocked on`);
+        }
+    }
+    // the rest with every gate open (let into the Green, past the Silo's guards)
+    S.f.greenIn = S.f.siloIn = 1;
     for (const t in TOWNMAP) {
       let M;
       try {
-        M = townBuild(t);
+        M = townLive(townBuild(t));
       } catch (e) {
         out.push(t + ': ' + e.message);
         continue;

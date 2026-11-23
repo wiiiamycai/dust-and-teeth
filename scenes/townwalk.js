@@ -69,6 +69,14 @@ function townBuild(t) {
     D,
   });
 }
+// The town as it is today: a shut gate is solid, and knocking on it is the place's own choices
+function townLive(M) {
+  if (!M.D.live) return M;
+  const rows = M.rows.map(r => [...r]),
+    use = { ...M.use };
+  M.D.live(rows, use);
+  return { ...M, rows: rows.map(r => r.join('')), use };
+}
 // Everyone in the town's districts, each at their own spot (or the next free one), facing you.
 function townPeople(M) {
   const places = Object.keys(LOC).filter(k => !LOC[k].sub && townOf(k) === M.town),
@@ -76,7 +84,7 @@ function townPeople(M) {
     out = [];
   const ok = s => s && M.rows[s[1]] && M.rows[s[1]][s[0]] === '.' && !used.has(s.join(','));
   const extra = [...(M.D.extra || [])];
-  IDS.filter(id => alive(id) && places.includes(S.n[id].loc)).forEach(id => {
+  IDS.filter(id => alive(id) && places.includes(S.n[id].loc) && (!M.D.who || M.D.who(id))).forEach(id => {
     let s = M.spots[id];
     if (!ok(s)) s = extra.find(ok);
     if (!s) return;
@@ -170,6 +178,13 @@ function townUse() {
   const k = x + ',' + y;
   if (!(k in M.use)) return;
   const u = M.use[k];
+  if (u === 'menu') {
+    // the place's own screen, with all its choices (the gate: pay, bribe, fight, or another way in)
+    WK.held = null;
+    document.body.classList.add('walkmenu');
+    $('wrap').scrollTop = 0;
+    return;
+  }
   if (typeof u === 'string') return walkSay(u);
   if (!(u instanceof RegExp)) return walkSay(pick(['The door is shut. Somebody inside says "No."', 'Nobody answers.']));
   townIn(M.area(x, y + 1), () => {

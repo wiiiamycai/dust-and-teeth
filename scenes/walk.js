@@ -355,7 +355,7 @@ const valleyTown = (x, y) =>
 let WK = null; // the live screen: canvas, map, people, timers
 function walkMap(loc, opts, ids) {
   if (loc === 'valley') return { rows: valleyRows(), use: {}, spots: {}, valley: 1 };
-  if (typeof townBuild === 'function' && TOWNMAP[townOf(loc)] && canDraw()) return townBuild(townOf(loc));
+  if (typeof townBuild === 'function' && TOWNMAP[townOf(loc)] && canDraw()) return townLive(townBuild(townOf(loc)));
   const M = MAPS[loc] || genMap(loc, opts || [], ids || []);
   if (M.decorated || typeof decorate !== 'function') return M;
   // things against the walls: never where somebody stands, where you come in, or in front of something you use
