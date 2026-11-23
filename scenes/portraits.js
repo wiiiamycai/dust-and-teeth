@@ -2297,3 +2297,281 @@ PORTRAIT.rook = (g, PX, o) => {
   // the King's tooth, tattooed small on his neck
   PX.rows(g, 25, 35, ['ooo', 'o.o'], { o: '#3a4a6a' });
 };
+
+// ================= The Drowned Mall =================
+// Queen Margie: a paper hat, a MANAGER badge, and a staff handbook two hundred years old, held like a bible
+PORTRAIT.margie = (g, PX, o) => {
+  PX.bg(g, 'mall');
+  const S = PX.ramp('#c8a07c'),
+    H = PX.ramp('#8a5a3a'),
+    C = PX.ramp('#9a3a30'),
+    Pp = PX.ramp('#e0d8c8'),
+    Bk = PX.ramp('#a82a2a'),
+    Bd = PX.ramp('#d8b040');
+  // the ValuMart uniform: a red polo with a collar
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.mask().rows(24, 43, ['oooooo....oooooo', '.ooooo....ooooo.', '..oooo....oooo..']).paint(g, C, { hi: 1 });
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // the MANAGER badge
+  PX.mask().rect(38, 49, 12, 5).paint(g, Bd, { hi: 1 });
+  PX.r(g, 40, 51, 8, 1, Bd.o);
+  // permed hair under a paper hat
+  PX.mask().oval(32, 25, 14, 12).paint(g, H, { hi: 1 });
+  PX.dots(37, 50, (x, y) => {
+    const dx = x - 32,
+      dy = (y % 24) + 13 - 25;
+    if (dx * dx + dy * dy * 1.36 < 180 && (x + y) % 2) PX.p(g, x, (y % 24) + 13, H.l);
+  });
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(16, [
+      [25, 39],
+      [23, 41],
+      [22, 42],
+      [22, 26],
+      [38, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.mask()
+    .rows(20, 10, [
+      '.....oooooooooooooo.....',
+      '...oooooooooooooooooo...',
+      '.oooooooooooooooooooooo.',
+      'oooooooooooooooooooooooo',
+      'oooooooooooooooooooooooo',
+    ])
+    .paint(g, Pp, { hi: 1, t: 0.8 });
+  PX.r(g, 21, 13, 22, 1, '#c83a2a');
+  PX.rows(g, 27, 11, ['a.aa.a.aa.'], { a: '#c83a2a' });
+  // a customer-service smile that has not slipped in thirty years
+  PX.brows(g, 25, 22, 10, 'raised', H.d);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#5a4a3a', lash: 1, tall: 1 });
+  PX.nose(g, 32, 28, 'button', S);
+  PX.mouth(g, 32, 32, ['o.........o', '.ooooooooo.', '..wwwwwww..', '...ooooo...'], S, '#8a2a2a', '#f0ecd8');
+  PX.r(g, 23, 31, 2, 1, '#e08a7a');
+  PX.r(g, 39, 31, 2, 1, '#e08a7a');
+  // the handbook, clutched to her heart
+  PX.mask().rect(12, 46, 17, 16).paint(g, Bk, { hi: 1 });
+  PX.r(g, 13, 47, 2, 14, Bk.d);
+  PX.mask().rect(17, 50, 9, 3).paint(g, Bd, { line: false });
+  PX.r(g, 17, 55, 9, 1, Bd.d);
+  PX.r(g, 28, 47, 1, 14, Pp.m);
+  PX.mask().oval(28, 56, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// Sprocket: goggles, burn scars, and a bench made from a pre-war checkout. "I fit it, you live longer. Probably."
+PORTRAIT.sprocket = (g, PX, o) => {
+  PX.bg(g, 'mall');
+  const S = PX.ramp('#b88a6a'),
+    H = PX.ramp('#2a1e14'),
+    C = PX.ramp('#5a5a50'),
+    A = PX.ramp('#6a4a30'),
+    Gg = PX.ramp('#4a4a40'),
+    Gl = PX.ramp('#8ab0b0'),
+    Mt = PX.ramp('#9a9aa0');
+  PX.torso(g, C, 44, 18, 46, 4, 60);
+  PX.mask().trap(46, 63, 22, 42, 18, 46).paint(g, A, { hi: 1 });
+  PX.line(g, 22, 46, 26, 40, A.o);
+  PX.line(g, 42, 46, 38, 40, A.o);
+  PX.rows(g, 24, 50, ['.mm.......', 'm..m....mm', '.mm.....mm'], { m: Mt.m });
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  // hair tied up in a rag, a face with a burn down one side
+  PX.mask().oval(32, 24, 12, 12).paint(g, H, { hi: 1 });
+  PX.mask().oval(32, 16, 11, 5).paint(g, PX.ramp('#a83a2a'), { hi: 1 });
+  PX.mask().rows(42, 12, ['oo', 'ooo', '.oo']).paint(g, PX.ramp('#a83a2a'));
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(19, [
+      [23, 41],
+      [22, 42],
+      [22, 26],
+      [22, 24],
+    ])
+    .paint(g, H, { hi: 1 });
+  // the burn: shiny, pink, puckered
+  PX.mask()
+    .rows(34, 28, ['..aa..', '.aaaa.', 'aaaaaa', 'aaaaa.', '.aaa..', '..a...'])
+    .paint(g, { o: '#8a4a40', d: '#b0645a', m: '#d0847a', l: '#e8a49a', h: '#f0c0b8' }, { line: false, hi: 1 });
+  // goggles down over her eyes, the glass reflecting the shop
+  PX.r(g, 21, 25, 22, 2, Gg.o);
+  PX.mask().oval(27, 26, 4, 3).oval(37, 26, 4, 3).paint(g, Gg, { hi: 1 });
+  PX.mask().oval(27, 26, 2, 2).oval(37, 26, 2, 2).paint(g, Gl, { line: false, hi: 1 });
+  if (!o.shut) {
+    PX.p(g, 27, 26, '#2a3a3a');
+    PX.p(g, 37, 26, '#2a3a3a');
+  }
+  PX.p(g, 25, 25, '#e8f8f8');
+  PX.p(g, 35, 25, '#e8f8f8');
+  PX.nose(g, 32, 29, 'small', S);
+  PX.mouth(g, 32, 33, ['......o', 'oooooo.'], S, '#7a3a30');
+  PX.p(g, 26, 35, '#3a3030');
+  PX.p(g, 27, 36, '#3a3030');
+  // the wrench
+  PX.mask().line(48, 63, 56, 36, 3).paint(g, Mt, { hi: 1 });
+  PX.mask().rows(52, 30, ['oo...oo', 'oo...oo', 'ooo.ooo', '.ooooo.', '..ooo..']).paint(g, Mt, { hi: 1 });
+  PX.mask().oval(52, 52, 4, 4).paint(g, S, { hi: 1 });
+};
+
+// Eel: a wetsuit cut from car tyres, a dive knife, lungs like a bellows. Still looking for Sal.
+PORTRAIT.eel = (g, PX, o) => {
+  PX.bg(g, 'mall');
+  const S = PX.ramp('#b08a6a'),
+    H = PX.ramp('#1e2a2a'),
+    C = PX.ramp('#2e3232'),
+    Gg = PX.ramp('#3a4a4a'),
+    Gl = PX.ramp('#5a9a9a'),
+    Mt = PX.ramp('#a8b0b0');
+  // the tyre wetsuit, tread and all, up to the throat
+  PX.torso(g, C, 40, 18, 46, 4, 60, { hi: 1 });
+  for (let y = 44; y < 64; y += 3)
+    for (let x = 6 + (y % 2) * 2; x < 58; x += 5) PX.rows(g, x, y, ['aa', '.a'], { a: C.d });
+  PX.line(g, 32, 42, 32, 63, '#5a5a50');
+  PX.mask().rect(27, 36, 10, 7).paint(g, C, { t: 0.55 });
+  // wet hair slicked flat, drips
+  PX.mask().oval(32, 25, 12, 12).rect(20, 25, 4, 14).rect(40, 25, 4, 14).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(16, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+      [22, 25],
+      [40, 42],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 24, 16, ['.h..h....h..h'], { h: H.h });
+  [
+    [21, 41],
+    [43, 39],
+    [22, 44],
+  ].forEach(([x, y]) => PX.p(g, x, y, '#8ad0d8'));
+  // dive goggles pushed up, hard eyes, a straight mouth
+  PX.r(g, 20, 19, 24, 1, Gg.o);
+  PX.mask().oval(27, 19, 4, 2).oval(37, 19, 4, 2).paint(g, Gg, { hi: 1 });
+  PX.mask().oval(27, 19, 2, 1).oval(37, 19, 2, 1).paint(g, Gl, { line: false, hi: 1 });
+  PX.brows(g, 25, 23, 10, 'angry', H.m);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#3a6a6a', lash: 1 });
+  PX.nose(g, 32, 27, 'small', S);
+  PX.mouth(g, 32, 33, ['ooooo'], S, '#6a3a34');
+  PX.p(g, 41, 28, '#8ad0d8');
+  // the dive knife, held point up
+  PX.mask()
+    .rows(49, 26, ['..o..', '.ooo.', '.ooo.', '.ooo.', '.ooo.', '.ooo.', '.ooo.', '.ooo.', '.ooo.', '.ooo.', 'ooooo'])
+    .paint(g, Mt, { hi: 1 });
+  PX.mask().rect(50, 37, 3, 8).paint(g, PX.ramp('#3a3030'));
+  PX.mask().oval(51, 46, 4, 4).paint(g, S, { hi: 1 });
+  // the drawing of Sal, folded in her belt
+  PX.mask().rect(10, 54, 9, 7).paint(g, PX.ramp('#d8ccb0'), { t: 0.85 });
+  PX.rows(g, 12, 55, ['.aa.', 'a..a', '.aa.', 'aaaa'], { a: '#5a4a3a' });
+};
+
+// Dr. Vane: clean coat, dirty fingernails, a smile with too many teeth. Cuts Ratchet's prices in half.
+PORTRAIT.vane = (g, PX, o) => {
+  PX.bg(g, 'mall');
+  PX.r(g, 0, 0, 64, 64, 'rgba(160,200,160,0.08)');
+  const S = PX.ramp('#c8b098'),
+    H = PX.ramp('#1a1a1a'),
+    C = PX.ramp('#d0ccc0'),
+    Sh = PX.ramp('#3a3a3a'),
+    Gl = PX.ramp('#9ab8a8'),
+    Pw = PX.ramp('#8a8a80');
+  PX.torso(g, C, 43, 16, 48, 2, 62, { hi: 1 });
+  PX.mask().trap(43, 63, 26, 38, 26, 38).paint(g, Sh);
+  PX.mask().rows(29, 43, ['ooooooo', '.ooooo.', '..ooo..', '...o...']).paint(g, PX.ramp('#5a7a6a'), { flat: true });
+  PX.line(g, 26, 43, 31, 63, C.d);
+  PX.line(g, 38, 43, 33, 63, C.d);
+  PX.mask().rect(28, 37, 8, 6).paint(g, S, { t: 0.55 });
+  // black hair combed flat and shining, a long pale face
+  PX.ear(g, 21, 28, S);
+  PX.ear(g, 43, 28, S);
+  PX.mask().oval(32, 21, 12, 8).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 13, S, 30, 0.9);
+  PX.mask()
+    .spans(14, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+      [22, 36],
+      [22, 30],
+      [22, 26],
+      [22, 24],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.line(g, 26, 15, 36, 15, '#5a5a6a');
+  // pleased eyes, and that smile
+  PX.brows(g, 25, 22, 10, 'arch', H.m);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#6a8a6a', lid: 1 });
+  PX.nose(g, 32, 27, 'long', S);
+  PX.mouth(
+    g,
+    32,
+    33,
+    ['o............o', '.oooooooooooo.', '.owwwwwwwwwwo.', '..oooooooooo..'],
+    S,
+    '#5a2a2a',
+    '#f0f0e0',
+  );
+  PX.rows(g, 27, 35, ['o.o.o.o.o.o'], { o: '#b8b8a8' });
+  PX.rows(g, 24, 31, ['d..............d', '.d............d.'], { d: S.d });
+  // a flask of grey powder, held up to the light, by dirty fingers
+  PX.mask()
+    .rows(46, 34, ['...oo...', '...oo...', '..oooo..', '.oooooo.', 'oooooooo', 'oooooooo', 'oooooooo', '.oooooo.'])
+    .paint(g, Gl, { hi: 1 });
+  PX.mask().rect(47, 39, 6, 3).paint(g, Pw, { line: false });
+  PX.r(g, 49, 33, 2, 1, '#6a4a3a');
+  PX.mask().oval(50, 45, 4, 3).paint(g, S, { hi: 1 });
+  [
+    [47, 43],
+    [50, 43],
+    [53, 43],
+  ].forEach(([x, y]) => PX.p(g, x, y, '#4a3a2a'));
+};
+
+// Gums: an old Molar with no teeth left at all, so every word comes out soft. "Everything's for shale. Sale."
+PORTRAIT.gums = (g, PX, o) => {
+  PX.bg(g, 'mall');
+  const S = PX.ramp('#a88060'),
+    H = PX.ramp('#6a6050'),
+    C = PX.ramp('#4a2a24'),
+    Mt = PX.ramp('#8a8a8a'),
+    Th = PX.ramp('#e0d4b0'),
+    Wd = PX.ramp('#5a3a24');
+  // the long gun on his back
+  PX.mask().line(8, 60, 30, 6, 2).paint(g, Wd);
+  PX.mask().line(26, 16, 34, -2, 1).paint(g, Mt, { line: false });
+  // Molar leathers, shoulder spikes
+  PX.torso(g, C, 43, 16, 48, 2, 62, { hi: 1 });
+  [
+    [14, 42],
+    [19, 40],
+    [45, 40],
+    [50, 42],
+  ].forEach(([x, y]) =>
+    PX.mask()
+      .rows(x - 1, y - 3, ['.o.', '.o.', 'ooo'])
+      .paint(g, Mt, { hi: 1 }),
+  );
+  PX.mask().rect(27, 37, 10, 7).paint(g, S, { t: 0.55 });
+  // the necklace of other people's teeth
+  for (let i = 0; i < 11; i++) {
+    const x = 22 + i * 2,
+      y = 44 + Math.round(Math.sin((i / 10) * Math.PI) * 5);
+    PX.mask().rect(x, y, 1, 2).paint(g, Th, { line: false, hi: 1 });
+  }
+  PX.line(g, 22, 43, 42, 43, '#3a2a1a');
+  // a collapsed old face, cheeks fallen in where the teeth were
+  PX.ear(g, 21, 26, S, 3);
+  PX.ear(g, 43, 26, S, 3);
+  PX.head(g, 32, 25, 10, 11, S, 29, 0.6);
+  PX.rows(g, 22, 13, ['..a..a...a..a....', '.a..a...a...a..a.', 'a............a..a', '.a..............a'], { a: H.m });
+  PX.r(g, 27, 18, 10, 1, S.d);
+  PX.brows(g, 24, 21, 11, 'sad', H.d);
+  PX.eyes(g, o, 25, 24, 10, { w: 4, skin: S, iris: '#6a5a4a', bag: 1 });
+  PX.nose(g, 32, 25, 'hook', S);
+  PX.rows(g, 24, 29, ['dd........dd', '.d........d.'], { d: S.d });
+  // the gummy grin: all gum, not one tooth
+  PX.mouth(g, 32, 31, ['oooooooo', 'oggggggo', 'orrrrrro', '.oooooo.'], S, '#3a1414');
+  PX.rows(g, 29, 32, ['gggggg'], { g: '#d8707a' });
+  PX.r(g, 29, 35, 6, 1, S.d);
+  PX.r(g, 29, 36, 6, 1, S.l);
+};
