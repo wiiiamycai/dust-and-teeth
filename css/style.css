@@ -1495,3 +1495,15 @@ body.inbattle #opts {
     display: none; /* the 1 to 9 are keyboard keys: nothing to press on a phone */
   }
 }
+
+/* ---- on a PC (Will, v9.12): the whole frame fits the window, rivets and all, with no scrollbar. Its 14px margins
+   no longer push it off the bottom, and a long screen still scrolls with the wheel. ---- */
+@media (min-width: 561px) and (pointer: fine) {
+  #wrap {
+    height: calc(100dvh - 28px);
+    scrollbar-width: none;
+  }
+  #wrap::-webkit-scrollbar {
+    display: none;
+  }
+}
