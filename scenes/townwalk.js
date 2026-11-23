@@ -83,6 +83,16 @@ function townPeople(M) {
     used.add(s.join(','));
     out.push({ id, x: s[0], y: s[1], d: 'd', home: s, dist: S.n[id].loc, look: walkerLook(id) });
   });
+  // the people held somewhere in town (Krug's pens), each on a spot inside it
+  for (const at in M.D.held || {}) {
+    const spots = M.D.held[at].filter(ok);
+    IDS.filter(id => alive(id) && S.n[id].loc === at).forEach(id => {
+      const s = spots.shift();
+      if (!s) return;
+      used.add(s.join(','));
+      out.push({ id, x: s[0], y: s[1], d: 'd', home: s, dist: M.D.heldIn || M.town, look: walkerLook(id) });
+    });
+  }
   // someone locked up (Pete, in Lou's cage): drawn behind the bars, and you deal with the cage, not them
   for (const [id, at, s] of M.D.caged || [])
     if (alive(id) && S.n[id].loc === at)

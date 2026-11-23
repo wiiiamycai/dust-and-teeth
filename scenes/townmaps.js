@@ -438,3 +438,173 @@ TOWNMAP.scrapwell = {
     [256, 196, 24, 15, /Hunt|rocks/i],
   ],
 };
+// ---- the North Road: Krug's pens at Chainfield to the north, Snake Eyes to the south, a track between ----
+TOWNMAP.snakeeyes = {
+  rows: [
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    '==========',
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    '........==',
+    '........==',
+    '........==',
+    ',,,,,,,,,=',
+    '.........=',
+    '.........=',
+    '==========',
+    '==========',
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    ',,..==..,,',
+    ',,..==..,,',
+    ',,,.==.,,,',
+  ],
+  spawn: [4, 22],
+  exits: [
+    [4, 23],
+    [5, 23],
+  ],
+  areas: [['chainfield', 0, 0, 9, 11]],
+  // Krug's door, then the casino's
+  doors: [/Krug|buy|sell|auction|price/i, /Bones/i],
+  spots: { krug: [4, 2], teo: [2, 4], rook: [4, 15], pips: [6, 15], dice: [8, 16], tam: [5, 18], nan: [7, 18] },
+  // the people in the pens stand inside the wire
+  heldIn: 'chainfield',
+  held: {
+    pen: [
+      [1, 6],
+      [2, 6],
+      [3, 6],
+      [4, 6],
+      [5, 6],
+      [7, 6],
+    ],
+  },
+  extra: [
+    [7, 2],
+    [8, 4],
+    [1, 8],
+    [8, 8],
+    [1, 16],
+    [9, 16],
+    [2, 20],
+    [8, 21],
+  ],
+  paint(K) {
+    const { building, door, win, sign, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      S = 288; // where Snake Eyes starts, in pixels
+    // ---- Chainfield: rusty ground, Krug's hall, a watchtower, the pens ----
+    g().fillStyle = 'rgba(150,80,40,0.12)';
+    g().fillRect(0, 0, 240, S);
+    building(62, top, 116, 20, 32, '#5a4a3a', '#8a6a48', { planks: 1 });
+    door(114, top + 32, '#3a2a1a');
+    win(74, top + 26, 1);
+    win(152, top + 26, 0);
+    sign(120, top + 8, 'KRUG', '#2a1e14', '#e8d8b0');
+    [12, 40].forEach(x => M().rect(x, 14, 4, 46).paint(g(), R('#6a4a2e'), { hi: 1, ink: INK }));
+    M().rect(6, 6, 42, 14).paint(g(), R('#7a5a38'), { hi: 1, ink: INK });
+    M().rect(2, 0, 50, 6).paint(g(), R('#5a4030'), { hi: 1, ink: INK });
+    K.solid(2, 0, 50, 60);
+    // the pens: chain-link on posts, a gap where the gate hangs open, trolleys and bones inside
+    P.chain(8, bot - 6, 88, 12);
+    P.chain(144, bot - 6, 46, 12);
+    P.chain(8, bot + 46, 182, 12);
+    K.solid(4, bot - 6, 8, 64);
+    K.solid(186, bot - 6, 8, 64);
+    PX.line(g(), 8, bot - 2, 8, bot + 54, '#5a5a60');
+    PX.line(g(), 189, bot - 2, 189, bot + 54, '#5a5a60');
+    M()
+      .rect(98, bot - 14, 4, 20)
+      .paint(g(), R('#5a5a60'), { hi: 1, ink: INK });
+    PX.line(g(), 102, bot - 10, 118, bot - 22, '#6a6a70');
+    P.trolley(30, bot + 30);
+    P.trolley(160, bot + 30);
+    P.skull(110, bot + 40);
+    P.barrel(200, 40);
+    P.crate(186, 46);
+    // ---- Snake Eyes: the casino in purple and neon, the fight pit, the rat track, Nan's bench, Dice's table ----
+    g().fillStyle = 'rgba(40,20,90,0.16)';
+    g().fillRect(0, S, 240, 288);
+    building(14, S + top, 202, 22, 38, '#3a2448', '#6a2a3a', { tiles: 1, bricks: 1 });
+    door(112, S + top + 40, '#e8b040', 16);
+    [30, 62, 160, 182].forEach(x => win(x, S + top + 32, 1));
+    const sw = K.textW('SNAKE EYES') + 10;
+    M()
+      .rect(120 - (sw >> 1), S + top + 6, sw, 13)
+      .paint(g(), R('#1a1020'), { ink: INK });
+    K.text(120 - (sw >> 1) + 5, S + top + 10, 'SNAKE EYES', '#ff70b0');
+    [
+      [100, S + top + 28],
+      [132, S + top + 28],
+    ].forEach(([x, y]) => {
+      M().rect(x, y, 6, 6).paint(g(), R('#f0f0e8'), { ink: INK });
+      p(x + 2, y + 2, INK);
+      p(x + 4, y + 4, INK);
+    });
+    const px0 = 16,
+      py0 = S + bot + 2;
+    M().rect(px0, py0, 100, 52).paint(g(), R('#c8a878'), { line: false });
+    r(px0, py0, 100, 3, '#8a2a2a');
+    r(px0, py0 + 50, 100, 3, '#8a2a2a');
+    r(px0, py0, 3, 52, '#8a2a2a');
+    r(px0 + 97, py0, 3, 52, '#8a2a2a');
+    [
+      [px0, py0],
+      [px0 + 96, py0],
+      [px0, py0 + 48],
+      [px0 + 96, py0 + 48],
+    ].forEach(([x, y]) =>
+      M()
+        .rect(x - 1, y - 4, 6, 10)
+        .paint(g(), R('#5a4a40'), { hi: 1, ink: INK }),
+    );
+    // the rat track: three lanes behind a low board
+    M()
+      .rect(146, S + bot - 6, 76, 16)
+      .paint(g(), R('#8a6a48'), { hi: 1, ink: INK });
+    [0, 1, 2].forEach(i => r(150, S + bot - 3 + i * 4, 68, 2, i % 2 ? '#5a3a24' : '#6a4a30'));
+    [
+      [160, 0],
+      [184, 1],
+      [204, 2],
+    ].forEach(([x, i]) => PX.rows(g(), x, S + bot - 4 + i * 4, ['oo.', 'ooo'], { o: '#4a4040' }));
+    M()
+      .rect(158, S + bot + 34, 40, 6)
+      .paint(g(), R('#7a5434'), { hi: 1, ink: INK });
+    [160, 192].forEach(x =>
+      M()
+        .rect(x, S + bot + 40, 4, 8)
+        .paint(g(), R('#5a3a24'), { ink: INK }),
+    );
+    K.solid(158, S + bot + 34, 40, 14);
+    M()
+      .oval(214, S + 78, 14, 6)
+      .paint(g(), R('#2a6a3a'), { hi: 1, ink: INK });
+    [
+      [208, S + 76],
+      [216, S + 78],
+    ].forEach(([x, y]) => M().rect(x, y, 4, 5).paint(g(), R('#f0e8d8'), { ink: INK }));
+    g().fillStyle = 'rgba(255,90,170,0.1)';
+    g().fillRect(70, S, 100, 40);
+  },
+  things: [
+    [16, 288 + 130, 100, 52, /The pit/i],
+    [146, 288 + 122, 76, 16, /rat races/i],
+    [200, 288 + 72, 28, 12, /Cards/i],
+  ],
+};
