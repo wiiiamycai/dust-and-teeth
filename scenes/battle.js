@@ -322,9 +322,11 @@ function battleStop() {
 // ---- the menu: FIGHT, BAG, RUN ----
 const FIGHT_RE = /^(Hit |Shoot |Look for a weak spot|Close in|Click\. No bullets|Dodge|Brace)/;
 const BAG_RE = /^(Gut Glue|Snort Buzz|Throw meat|Light a flare|Throw a molotov|Switch to)/;
+const BATTLE_ON = false;
 const _fightBattle = SC.fight;
 SC.fight = () => {
-  if (!walkOn() || !S.fight) return _fightBattle();
+  // v9.23: walking is back, but fights stay the text screen (the status bar and the moves agreed in v9.6)
+  if (!walkOn() || !S.fight || !BATTLE_ON) return _fightBattle();
   let v = null;
   const _show = show;
   show = x => {

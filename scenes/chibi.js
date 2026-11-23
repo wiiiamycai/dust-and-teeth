@@ -1,5 +1,5 @@
 'use strict';
-// ================= CHIBI: the walking people, 24 x 32 (v9.16, a preview, not loaded by the game yet) =================
+// ================= CHIBI: the walking people, 24 x 32 (v9.16) =================
 // Will: "thinking about trying to do the 2D one again, look at how the characters are drawn, do it in similar style".
 // Big heads, small bodies, a dark outline, two or three shades lit from the top left, four ways and two steps.
 // Our own designs, coloured like their portraits (scenes/portraits.js). Drawn with the portrait toolkit (PX).

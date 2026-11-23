@@ -37,6 +37,17 @@ try {
 } catch (e) {
   ok('walking: maps are well formed, everyone fits, and the valley connects', false, String(e.stdout || e.message).trim().slice(0, 600));
 }
+for (const [f, name] of [
+  ['towns.js', 'towns: every kit town paints, and every door, person, district and exit can be reached'],
+  ['portraits.js', 'portraits: all 38 detailed portraits draw and blink'],
+  ['endings.js', 'endings: everyone you kill gets a slide'],
+])
+  try {
+    run(f, []);
+    ok(name, true);
+  } catch (e) {
+    ok(name, false, String(e.stdout || e.message).trim().slice(0, 600));
+  }
 try {
   run('care.js', []);
   ok('care: every character offers something on a first meeting', true);

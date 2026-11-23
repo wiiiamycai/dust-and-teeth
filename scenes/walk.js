@@ -5,7 +5,7 @@
 // scenes. A place with a map (data/maps.js) is walked; a place without one is the text screen, as before.
 // Talking, shops and everything else open as the usual screen; Back returns you to where you stood.
 // No canvas (the headless tests), or the footer switch set to text: everything plays as text, exactly as before.
-const TILE = 16;
+let TILE = 16; // 16 on the old tile maps, 24 in the kit towns (v9.23): set when a screen opens
 // The screen fills the phone: 11 tiles across, and as many down as the phone is tall (set when the screen opens).
 let VW = 15,
   VH = 10;
@@ -17,9 +17,9 @@ const walkSize = () => {
 };
 const WALK_KEY = 'dust_teeth_walk';
 // Walking is the only mode wherever the game can draw (Will, v7.4). No canvas (the headless tests): text.
-// v9.0 (Will: "forget about all the 2D thing, turn it back into text based"): walking is off. The engine stays,
-// unused, in case it ever comes back; every screen is the text screen again.
-const walkOn = () => false;
+// v9.0 (Will: "forget about all the 2D thing, turn it back into text based"): walking was off.
+// v9.23 (Will: "game becomes always in walking mode"): on again, in the towns, wherever the game can draw.
+const walkOn = () => typeof canDraw === 'function' && canDraw();
 // ---- palette and tiles, drawn once ----
 const WPAL = {
   sand: '#e8d4a0',
@@ -355,6 +355,7 @@ const valleyTown = (x, y) =>
 let WK = null; // the live screen: canvas, map, people, timers
 function walkMap(loc, opts, ids) {
   if (loc === 'valley') return { rows: valleyRows(), use: {}, spots: {}, valley: 1 };
+  if (typeof townBuild === 'function' && TOWNMAP[townOf(loc)] && canDraw()) return townBuild(townOf(loc));
   const M = MAPS[loc] || genMap(loc, opts || [], ids || []);
   if (M.decorated || typeof decorate !== 'function') return M;
   // things against the walls: never where somebody stands, where you come in, or in front of something you use
@@ -447,16 +448,17 @@ function genMap(loc, opts, ids) {
 SC.walk = (loc, ids, opts, text) => {
   const M = walkMap(loc, opts, ids);
   S.wk = S.wk || {};
+  const key = M.kit ? 'town:' + M.town : loc; // in a kit town you keep your spot as you cross its districts
   // a spot saved on an older, bigger map may now be off the map or inside a wall: start at the way in
-  const st = S.wk.loc === loc && TILEDEF[(M.rows[S.wk.y] || '')[S.wk.x]];
-  if (S.wk.loc === loc && !(st && st.walk)) S.wk.loc = null;
-  if (S.wk.loc !== loc) {
+  const st = S.wk.loc === key && TILEDEF[(M.rows[S.wk.y] || '')[S.wk.x]];
+  if (S.wk.loc === key && !(st && st.walk)) S.wk.loc = null;
+  if (S.wk.loc !== key) {
     let sp = M.spawn;
     if (M.valley) {
       const L = LOC[S.here] || LOC.scrapwell;
       sp = [vx(L), vy(L) + 2];
     }
-    S.wk = { loc, x: sp[0], y: sp[1], d: M.valley ? 'd' : 'u' };
+    S.wk = { loc: key, x: sp[0], y: sp[1], d: M.valley ? 'd' : 'u' };
   }
   const title = M.valley ? 'The Wasteland' : LOC[loc].n;
   show({
@@ -470,7 +472,14 @@ SC.walk = (loc, ids, opts, text) => {
 };
 function walkMount(loc, M, ids) {
   walkStop();
+  TILE = M.T || 16;
   walkSize();
+  if (M.kit) {
+    VW = M.W; // a kit town is about one phone wide: all of it across, and it scrolls up and down
+    const w = (typeof window !== 'undefined' && window.innerWidth) || 390,
+      h = (typeof window !== 'undefined' && window.innerHeight) || 844;
+    VH = Math.max(7, Math.round((VW * h) / w));
+  }
   document.body.classList.add('walking');
   document.body.classList.remove('walkmenu', 'overlay');
   const vw = $('view');
@@ -501,110 +510,117 @@ function walkMount(loc, M, ids) {
   const rows = M.rows,
     H = rows.length,
     W = rows[0].length;
-  // the map, painted once into one big picture
-  const big = document.createElement('canvas');
-  big.width = W * TILE;
-  big.height = H * TILE;
-  const bg = big.getContext('2d');
-  // each building (a joined block of roof, wall and door) gets its own number, so its own variant of the style
-  const block = {},
-    blocks = [];
-  for (let y = 0; y < H; y++)
-    for (let x = 0; x < W; x++) {
-      if (!'HhD'.includes(rows[y][x]) || block[x + ',' + y] != null) continue;
-      const id = blocks.length,
-        q = [[x, y]],
-        cells = [];
-      block[x + ',' + y] = id;
-      while (q.length) {
-        const [cx, cy] = q.shift();
-        cells.push([cx, cy]);
-        for (const [dx, dy] of [
-          [1, 0],
-          [-1, 0],
-          [0, 1],
-          [0, -1],
-        ]) {
-          const nx = cx + dx,
-            ny = cy + dy;
-          if ('HhD'.includes((rows[ny] || '')[nx] || '#') && block[nx + ',' + ny] == null) {
-            block[nx + ',' + ny] = id;
-            q.push([nx, ny]);
+  // the map, painted once into one big picture (a kit town brings its own, painted once and kept)
+  let big,
+    fx = { smoke: [], flag: null };
+  if (M.kit) big = M.big;
+  else {
+    big = document.createElement('canvas');
+    big.width = W * TILE;
+    big.height = H * TILE;
+    const bg = big.getContext('2d');
+    // each building (a joined block of roof, wall and door) gets its own number, so its own variant of the style
+    const block = {},
+      blocks = [];
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++) {
+        if (!'HhD'.includes(rows[y][x]) || block[x + ',' + y] != null) continue;
+        const id = blocks.length,
+          q = [[x, y]],
+          cells = [];
+        block[x + ',' + y] = id;
+        while (q.length) {
+          const [cx, cy] = q.shift();
+          cells.push([cx, cy]);
+          for (const [dx, dy] of [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ]) {
+            const nx = cx + dx,
+              ny = cy + dy;
+            if ('HhD'.includes((rows[ny] || '')[nx] || '#') && block[nx + ',' + ny] == null) {
+              block[nx + ',' + ny] = id;
+              q.push([nx, ny]);
+            }
           }
         }
+        blocks.push(cells);
       }
-      blocks.push(cells);
-    }
-  for (let y = 0; y < H; y++)
-    for (let x = 0; x < W; x++) {
-      const t = TILEDEF[rows[y][x]] || TILEDEF['.'];
-      const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
-      if (block[x + ',' + y] != null && typeof villageStyle === 'function')
-        BPAINT = villageStyle(loc, block[x + ',' + y]);
-      bg.save();
-      bg.translate(x * TILE, y * TILE);
-      t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
-      bg.restore();
-    }
-  // chimneys on some roofs (they smoke), and a flag over the biggest building
-  const fx = { smoke: [], flag: null };
-  const SMOKY = ['scrapwell', 'rustwater', 'farm', 'diner', 'saltpan', 'green', 'chainfield'];
-  blocks.forEach((cells, i) => {
-    const roofs = cells.filter(([cx, cy]) => rows[cy][cx] === 'H');
-    if (!roofs.length) return;
-    const top = Math.min(...roofs.map(c => c[1])),
-      right = Math.max(...roofs.filter(c => c[1] === top).map(c => c[0]));
-    if (SMOKY.includes(loc) && i % 2 === 0) {
-      const px = right * TILE + 8,
-        py = top * TILE + 2;
-      bg.fillStyle = GP.ink;
-      bg.fillRect(px - 1, py - 6, 7, 9);
-      bg.fillStyle = '#9a5a3a';
-      bg.fillRect(px, py - 5, 5, 7);
-      bg.fillStyle = '#b87050';
-      bg.fillRect(px, py - 5, 5, 1);
-      fx.smoke.push([px + 2, py - 6]);
-    }
-  });
-  if (blocks.length) {
-    const bigB = blocks.reduce((a, b) => (b.length > a.length ? b : a));
-    const roofs = bigB.filter(([cx, cy]) => rows[cy][cx] === 'H');
-    if (roofs.length) {
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++) {
+        const t = TILEDEF[rows[y][x]] || TILEDEF['.'];
+        const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
+        if (block[x + ',' + y] != null && typeof villageStyle === 'function')
+          BPAINT = villageStyle(loc, block[x + ',' + y]);
+        bg.save();
+        bg.translate(x * TILE, y * TILE);
+        t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
+        bg.restore();
+      }
+    // chimneys on some roofs (they smoke), and a flag over the biggest building
+
+    const SMOKY = ['scrapwell', 'rustwater', 'farm', 'diner', 'saltpan', 'green', 'chainfield'];
+    blocks.forEach((cells, i) => {
+      const roofs = cells.filter(([cx, cy]) => rows[cy][cx] === 'H');
+      if (!roofs.length) return;
       const top = Math.min(...roofs.map(c => c[1])),
-        xs = roofs.filter(c => c[1] === top).map(c => c[0]);
-      fx.flag = [Math.round(((Math.min(...xs) + Math.max(...xs)) / 2) * TILE + 4), top * TILE];
+        right = Math.max(...roofs.filter(c => c[1] === top).map(c => c[0]));
+      if (SMOKY.includes(loc) && i % 2 === 0) {
+        const px = right * TILE + 8,
+          py = top * TILE + 2;
+        bg.fillStyle = GP.ink;
+        bg.fillRect(px - 1, py - 6, 7, 9);
+        bg.fillStyle = '#9a5a3a';
+        bg.fillRect(px, py - 5, 5, 7);
+        bg.fillStyle = '#b87050';
+        bg.fillRect(px, py - 5, 5, 1);
+        fx.smoke.push([px + 2, py - 6]);
+      }
+    });
+    if (blocks.length) {
+      const bigB = blocks.reduce((a, b) => (b.length > a.length ? b : a));
+      const roofs = bigB.filter(([cx, cy]) => rows[cy][cx] === 'H');
+      if (roofs.length) {
+        const top = Math.min(...roofs.map(c => c[1])),
+          xs = roofs.filter(c => c[1] === top).map(c => c[0]);
+        fx.flag = [Math.round(((Math.min(...xs) + Math.max(...xs)) / 2) * TILE + 4), top * TILE];
+      }
     }
+    // water moves: its tiles are redrawn on the big map every half second (v8.3)
+    const wet = [];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (rows[y][x] === '~') wet.push([x, y]);
+    if (wet.length)
+      setTimeout(() => {
+        if (!WK || WK.big !== big) return;
+        WK.timers.push(
+          setInterval(() => {
+            const t = Date.now();
+            for (const [x, y] of wet) {
+              const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
+              bg.save();
+              bg.translate(x * TILE, y * TILE);
+              TILEDEF['~'].draw(bg, x, y, (x * 73 + y * 151) % 97, at, t);
+              bg.restore();
+            }
+          }, 500),
+        );
+      }, 0);
+    // each place on the valley map is drawn as itself (scenes/townart.js)
+    if (M.valley && typeof valleyIcons === 'function') valleyIcons(bg);
   }
-  // water moves: its tiles are redrawn on the big map every half second (v8.3)
-  const wet = [];
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (rows[y][x] === '~') wet.push([x, y]);
-  if (wet.length)
-    setTimeout(() => {
-      if (!WK || WK.big !== big) return;
-      WK.timers.push(
-        setInterval(() => {
-          const t = Date.now();
-          for (const [x, y] of wet) {
-            const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
-            bg.save();
-            bg.translate(x * TILE, y * TILE);
-            TILEDEF['~'].draw(bg, x, y, (x * 73 + y * 151) % 97, at, t);
-            bg.restore();
-          }
-        }, 500),
-      );
-    }, 0);
-  // each place on the valley map is drawn as itself (scenes/townart.js)
-  if (M.valley && typeof valleyIcons === 'function') valleyIcons(bg);
   // people stand on their own spots, or on the free p spots in order
   const free = [];
   rows.forEach((r, y) => [...r].forEach((c, x) => c === 'p' && free.push([x, y])));
   const taken = new Set(Object.values(M.spots || {}).map(s => s.join(',')));
   const pool = free.filter(s => !taken.has(s.join(',')));
-  const ppl = ids.map(id => {
-    const s = (M.spots || {})[id] || pool.shift() || [1, 1];
-    return { id, x: s[0], y: s[1], d: 'd', look: walkerLook(id), home: s };
-  });
+  const ppl = M.kit
+    ? townPeople(M)
+    : ids.map(id => {
+        const s = (M.spots || {})[id] || pool.shift() || [1, 1];
+        return { id, x: s[0], y: s[1], d: 'd', look: walkerLook(id), home: s };
+      });
   WK = {
     loc,
     M,
@@ -690,28 +706,29 @@ function walkMount(loc, M, ids) {
   const look = ($('text').textContent || '').trim();
   if (said || (look && S.wk.seen !== loc + S.day)) setTimeout(() => walkMsg(said || look), 0);
   S.wk.seen = loc + S.day; // a place describes itself once a day
-  // a few people wander a step or two from their spot
-  WK.timers.push(
-    setInterval(() => {
-      if (!WK || WK.busy) return;
-      for (const q of WK.ppl) {
-        if (Math.random() > 0.25) continue;
-        const [dx, dy, d] = pick([
-          [1, 0, 'r'],
-          [-1, 0, 'l'],
-          [0, 1, 'd'],
-          [0, -1, 'u'],
-        ]);
-        const nx = q.x + dx,
-          ny = q.y + dy;
-        q.d = d;
-        if (Math.abs(nx - q.home[0]) + Math.abs(ny - q.home[1]) <= 1 && walkFree(nx, ny)) {
-          q.x = nx;
-          q.y = ny;
+  // a few people wander a step or two from their spot (not in a kit town: there they stand at their doors)
+  if (!M.kit)
+    WK.timers.push(
+      setInterval(() => {
+        if (!WK || WK.busy) return;
+        for (const q of WK.ppl) {
+          if (Math.random() > 0.25) continue;
+          const [dx, dy, d] = pick([
+            [1, 0, 'r'],
+            [-1, 0, 'l'],
+            [0, 1, 'd'],
+            [0, -1, 'u'],
+          ]);
+          const nx = q.x + dx,
+            ny = q.y + dy;
+          q.d = d;
+          if (Math.abs(nx - q.home[0]) + Math.abs(ny - q.home[1]) <= 1 && walkFree(nx, ny)) {
+            q.x = nx;
+            q.y = ny;
+          }
         }
-      }
-    }, 900),
-  );
+      }, 900),
+    );
   const near = walkNear();
   if (near) walkSay(near);
   walkLoop();
@@ -814,8 +831,11 @@ function walkDraw(now) {
   // the camera keeps you in the middle, and stops at the edges of the map
   const SW = VW * TILE,
     SH = VH * TILE;
+  // a kit town shorter than the screen sits under the top bar, not in the middle (v9.23)
   const cam = (f, n, view) =>
-    n * TILE <= view ? -(view - n * TILE) / 2 : clamp(f * TILE - (view - TILE) / 2, 0, n * TILE - view);
+    n * TILE <= view
+      ? -(WK.M.kit && view === SH ? Math.min((view - n * TILE) / 2, 3 * TILE) : (view - n * TILE) / 2)
+      : clamp(f * TILE - (view - TILE) / 2, 0, n * TILE - view);
   const cx = cam(fx, W, SW),
     cy = cam(fy, H, SH);
   g.fillStyle = GP.ink;
@@ -873,10 +893,12 @@ function walkDraw(now) {
   // people are taller than a tile, so the ones further down the screen are drawn last
   const step = WK.moving ? 1 + (Math.floor(now / (STEP_MS / 2)) % 2) : 0;
   const all = [
-    ...WK.ppl.map(q => ({ x: q.x, y: q.y, look: q.look, d: q.d, s: 0 })),
-    { x: fx, y: fy, look: WK.me, d: S.wk.d, s: step },
+    ...WK.ppl.map(q => ({ id: q.id, x: q.x, y: q.y, look: q.look, d: q.d, s: 0, cage: q.cage })),
+    { id: null, x: fx, y: fy, look: WK.me, d: S.wk.d, s: step },
   ].sort((a, b) => a.y - b.y);
-  for (const q of all) drawWalkerGBA(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, q.s);
+  for (const q of all)
+    if (WK.M.kit) townWalker(g, q, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy));
+    else drawWalkerGBA(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, q.s);
   // warm light: a sun-baked glow from the top, and a soft vignette (v8.3)
   if (!WK.light || WK.light.w !== SW || WK.light.h !== SH) {
     const lc = document.createElement('canvas');
@@ -1022,6 +1044,7 @@ function walkPathStep() {
   walkMsg(null);
 }
 function walkArrive() {
+  if (WK.M.kit && townArrive()) return;
   const t = TILEDEF[walkTile(S.wk.x, S.wk.y)];
   if (t && t.exit) {
     // out of town and onto the valley road; out of the well or the vats, back up to the place above
@@ -1051,6 +1074,7 @@ function walkNear() {
 }
 function walkUse() {
   if (!WK || WK.moving) return;
+  if (WK.M.kit) return townUse();
   const [x, y] = walkFacing();
   const q = WK.ppl.find(p => p.x === x && p.y === y);
   if (q) {
@@ -1102,7 +1126,9 @@ const walkSay = t => walkMsg(t);
 // and what it would have shown becomes the people you can find and the things you can use.
 const _hubWalk = SC.hub;
 SC.hub = loc => {
-  if (!walkOn() || S.crater[loc] || !LOC[loc]) return _hubWalk(loc);
+  // v9.23: only the towns drawn with the kit are walked; the rest stay text screens until theirs is drawn
+  if (!walkOn() || S.crater[loc] || !LOC[loc] || typeof TOWNMAP === 'undefined' || !TOWNMAP[townOf(loc)])
+    return _hubWalk(loc);
   if ((typeof TOWNS !== 'undefined' && TOWNS[loc]) || loc === 'gully') return go('town', loc); // the lost towns have their own screen
   let v = null;
   const _show = show;
@@ -1126,7 +1152,7 @@ SC.hub = loc => {
 };
 // Name boards over the things on a hand-drawn map that do something here today.
 function handBoards(M, opts) {
-  if (M.gen || M.valley) return [];
+  if (M.gen || M.valley || M.kit) return []; // a kit town has its signs painted on
   const out = [];
   for (const key in M.use || {}) {
     const u = M.use[key];
@@ -1142,14 +1168,14 @@ function handBoards(M, opts) {
 }
 const _mapWalk = SC.map;
 SC.map = () => {
-  if (!walkOn()) return _mapWalk();
-  SC.walk('valley', [], []);
+  // v9.23: the travel map is the valley picture (scenes/valley.js), walking or not; the walked valley is retired
+  return _mapWalk();
 };
 // The lost towns (scenes/beasts.js) are walked too: each stage is a building you go into.
 if (typeof SC.town === 'function') {
   const _townWalk = SC.town;
   SC.town = k => {
-    if (!walkOn() || S.crater[k]) return _townWalk(k);
+    if (!walkOn() || S.crater[k] || typeof TOWNMAP === 'undefined' || !TOWNMAP[townOf(k)]) return _townWalk(k);
     let v = null;
     const _show = show;
     show = x => {
@@ -1169,12 +1195,14 @@ if (typeof SC.town === 'function') {
 }
 // Leaving the walking screen for any other screen stops the walking loop.
 const _goWalk = go;
-const NO_OVERLAY = ['title', 'intro', 'ending', 'restart'];
+const NO_OVERLAY = ['title', 'intro', 'ending', 'restart'],
+  OVERLAY_ON = false;
 go = (id, ...args) => {
   if (typeof document !== 'undefined' && document.body) {
     document.body.classList.remove('panel'); // a new screen closes the ☰ panel
     // every screen but walking (and the title and the end) sits over the map: Pokemon style
-    document.body.classList.toggle('overlay', walkOn() && !NO_OVERLAY.includes(id));
+    // v9.23: off. Talking, shops and fights keep the look they have now; only the towns are walked
+    document.body.classList.toggle('overlay', OVERLAY_ON && walkOn() && !NO_OVERLAY.includes(id));
   }
   if (id !== 'walk') walkStop();
   return _goWalk(id, ...args);
