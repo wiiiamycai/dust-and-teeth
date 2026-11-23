@@ -274,7 +274,13 @@ function valleyRows() {
       my = vy(LOC.mall);
     for (let y = my - 3; y <= my + 3; y++)
       for (let x = mx - 5; x <= mx + 5; x++)
-        if (g[y] && g[y][x] !== '=' && (x - mx) ** 2 / 25 + (y - my) ** 2 / 9 <= 1) set(x, y, '~');
+        if (
+          g[y] &&
+          g[y][x] !== '=' &&
+          !(Math.abs(x - mx) <= 2 && y >= my - 1 && y <= my + 3) && // never round the way in
+          (x - mx) ** 2 / 25 + (y - my) ** 2 / 9 <= 1
+        )
+          set(x, y, '~');
   }
   // each place: a block of roofs, with its way in at the bottom middle
   for (const k in LOC) {
@@ -283,7 +289,12 @@ function valleyRows() {
       y = vy(LOC[k]);
     for (let dy = -1; dy <= 0; dy++) for (let dx = -1; dx <= 1; dx++) set(x + dx, y + dy, 'o');
     set(x, y + 1, 'O');
-    set(x, y + 2, '=');
+    // a small dirt square round the way in, so you always come out with ground on three sides,
+    // joined to the road (Will got stuck at the Mall: up walked him back in, everything else was water)
+    for (let dx = -1; dx <= 1; dx++) set(x + dx, y + 2, '=');
+    set(x - 1, y + 1, '=');
+    set(x + 1, y + 1, '=');
+    set(x, y + 3, '=');
   }
   return g.map(r => r.join(''));
 }

@@ -44,9 +44,13 @@ const r = vm.runInContext(`(() => {
   const places = Object.keys(LOC).filter(k => !LOC[k].sub && onMap(k));
   const ins = places.map(k => [k, vx(LOC[k]), vy(LOC[k]) + 1]);
   ins.forEach(([k, x, y]) => { if (V[y][x] !== 'O') out.push('valley (' + tag + '): no way into ' + k); });
-  const seen = new Set([ins[0][1] + ',' + ins[0][2]]), q = [[ins[0][1], ins[0][2]]];
-  while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = x + dx, ny = y + dy, key = nx + ',' + ny; if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen.has(key) || !walk(V[ny][nx])) continue; seen.add(key); q.push([nx, ny]); } }
-  ins.forEach(([k, x, y]) => { if (!seen.has(x + ',' + y)) out.push('valley (' + tag + '): you cannot walk to ' + k); });
+  // you come out of a place one tile below its way in, and stepping on any way in takes you inside, so the
+  // walk must go round them: from where you come out of the first place to where you come out of every other
+  const outOf = ([k, x, y]) => [x, y + 1];
+  const [sx, sy] = outOf(ins[0]);
+  const seen = new Set([sx + ',' + sy]), q = [[sx, sy]];
+  while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = x + dx, ny = y + dy, key = nx + ',' + ny; if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen.has(key) || !walk(V[ny][nx]) || V[ny][nx] === 'O') continue; seen.add(key); q.push([nx, ny]); } }
+  ins.forEach(i => { const [x, y] = outOf(i); if (!seen.has(x + ',' + y)) out.push('valley (' + tag + '): coming out of ' + i[0] + ' you cannot walk anywhere else'); });
   };
   check('start');
   Object.keys(LOC).forEach(k => { if (LOC[k].hidden) S.f[LOC[k].hidden === 1 ? 'knowSilo' : LOC[k].hidden] = 1; });
