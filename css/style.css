@@ -901,3 +901,17 @@ body.walking .walk .wmsg.top {
   top: calc(env(safe-area-inset-top) + 64px);
   bottom: auto;
 }
+/* The column only ever scrolls up and down. The frame's rivets and name plate stick out a few pixels, and on an
+   iPhone that let the whole page slide left and right while you talked to people. */
+#wrap {
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+/* On a phone the frame is thin, and its rivets and name plate (which reach 14px outside it) made the column wider
+   than the screen, so it could be dragged left and right. They go. */
+@media (max-width: 560px) {
+  #wrap::before,
+  #wrap::after {
+    display: none;
+  }
+}
