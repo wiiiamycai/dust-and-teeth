@@ -210,7 +210,18 @@ function walkerLook(id) {
       plate: '#9aa0a8',
     };
   if (NPC[id] && NPC[id].animal) return { beast: 1, body: p.c || '#d89a90', skin: p.s || '#e8b0a8' };
-  return { hair: p.h || '#3a2a1c', shirt: p.c || '#6a5a7a', legs: p.d || '#4a4034', skin: p.s || '#c8986c' };
+  // everyone else, from their portrait: body shape, what they wear and carry (SNPC in data/sprites.js)
+  const sp = (typeof SNPC !== 'undefined' && SNPC[id]) || {};
+  return {
+    hair: p.h || '#3a2a1c',
+    shirt: p.c || '#6a5a7a',
+    legs: p.d || '#4a4034',
+    skin: p.s || '#c8986c',
+    body: sp.body || (NPC[id] && NPC[id].g === 'f' ? 'woman' : 'man'),
+    add: sp.add || [],
+    item: sp.item || null,
+    extra: p.v || p.a || null,
+  };
 }
 function drawWalker(g, ox, oy, look, dir, step) {
   const P = (x, y, c, w, h) => px(g, ox + x, oy + y, c, w, h);
@@ -325,7 +336,7 @@ function valleyRows() {
       const h = (x * 928371 + y * 1237) % 101;
       if (keep.has(x + ',' + y)) {
         if (!TILEDEF[c] || !TILEDEF[c].walk) g[y][x] = h < 60 ? ',' : '.'; // the verge: scrub and sand
-      } else g[y][x] = h < 16 ? 'T' : '#';
+      } else g[y][x] = '#';
     }
   return g.map(r => r.join(''));
 }
@@ -484,6 +495,25 @@ function walkMount(loc, M, ids) {
       t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
       bg.restore();
     }
+  // water moves: its tiles are redrawn on the big map every half second (v8.3)
+  const wet = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (rows[y][x] === '~') wet.push([x, y]);
+  if (wet.length)
+    setTimeout(() => {
+      if (!WK || WK.big !== big) return;
+      WK.timers.push(
+        setInterval(() => {
+          const t = Date.now();
+          for (const [x, y] of wet) {
+            const at = (dx, dy) => (rows[y + dy] || '')[x + dx] || '#';
+            bg.save();
+            bg.translate(x * TILE, y * TILE);
+            TILEDEF['~'].draw(bg, x, y, (x * 73 + y * 151) % 97, at, t);
+            bg.restore();
+          }
+        }, 500),
+      );
+    }, 0);
   // each place on the valley map is drawn as itself (scenes/townart.js)
   if (M.valley && typeof valleyIcons === 'function') valleyIcons(bg);
   // people stand on their own spots, or on the free p spots in order
@@ -730,6 +760,26 @@ function walkDraw(now) {
     { x: fx, y: fy, look: WK.me, d: S.wk.d, s: step },
   ].sort((a, b) => a.y - b.y);
   for (const q of all) drawWalkerGBA(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, q.s);
+  // warm light: a sun-baked glow from the top, and a soft vignette (v8.3)
+  if (!WK.light || WK.light.w !== SW || WK.light.h !== SH) {
+    const lc = document.createElement('canvas');
+    lc.width = SW;
+    lc.height = SH;
+    const lg = lc.getContext('2d');
+    const top = lg.createLinearGradient(0, 0, 0, SH);
+    top.addColorStop(0, 'rgba(255,214,140,0.16)');
+    top.addColorStop(0.5, 'rgba(255,214,140,0)');
+    top.addColorStop(1, 'rgba(90,40,10,0.12)');
+    lg.fillStyle = top;
+    lg.fillRect(0, 0, SW, SH);
+    const v = lg.createRadialGradient(SW / 2, SH / 2, Math.min(SW, SH) * 0.35, SW / 2, SH / 2, Math.max(SW, SH) * 0.75);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(1, 'rgba(40,20,8,0.28)');
+    lg.fillStyle = v;
+    lg.fillRect(0, 0, SW, SH);
+    WK.light = { c: lc, w: SW, h: SH };
+  }
+  g.drawImage(WK.light.c, 0, 0);
   WK.sy = fy * TILE - cy; // where you are on screen, so a message never covers you
   WK.cx = cx;
   WK.cy = cy;

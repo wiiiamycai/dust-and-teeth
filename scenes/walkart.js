@@ -101,6 +101,69 @@ const GTILE = {
       R1(g, x + 3, y + 1, 1, 2, GP.scrub);
     }
   },
+  // Mesa (v8.3): blocked ground is raised sandstone. Its top is lit and cracked, with a rim where it ends; where it
+  // drops to walkable ground it shows a striped cliff face with a shadow at the foot. Routes read as canyon trails.
+  mesa: (g, n, at) => {
+    const solid = c => c === '#' || c === 'T';
+    const below = at(0, 1);
+    if (!solid(below)) {
+      // the cliff face
+      R1(g, 0, 0, 16, 16, '#9a6a44');
+      for (let x = (n % 3) + 1; x < 16; x += 4) R1(g, x, 2, 1, 12, '#845838');
+      for (let x = (n % 4) + 3; x < 16; x += 5) R1(g, x, 3, 1, 9, '#b07a4e');
+      R1(g, 0, 0, 16, 3, '#c89a64'); // the lip of the top above it
+      R1(g, 0, 3, 16, 1, '#7a5034');
+      R1(g, 0, 14, 16, 2, '#5a3a24');
+      if (!solid(at(-1, 0))) R1(g, 0, 0, 2, 16, '#6a4430');
+      if (!solid(at(1, 0))) R1(g, 14, 0, 2, 16, '#6a4430');
+      return;
+    }
+    // the top
+    R1(g, 0, 0, 16, 16, '#c89a64');
+    speck(g, n, '#b88a56', 6);
+    speck(g, n + 5, '#d8aa74', 4);
+    if (n % 3 === 0) {
+      R1(g, ((n * 5) % 10) + 2, ((n * 3) % 9) + 3, 4, 1, '#a87a4a');
+      R1(g, ((n * 5) % 10) + 5, ((n * 3) % 9) + 4, 1, 2, '#a87a4a');
+    }
+    // a bright rim where the top ends beside a path or the edge of a drop
+    if (!solid(at(0, -1))) R1(g, 0, 0, 16, 2, '#e4bc84');
+    if (!solid(at(-1, 0))) R1(g, 0, 0, 2, 16, '#dcb07a');
+    if (!solid(at(1, 0))) R1(g, 14, 0, 2, 16, '#a87a4a');
+    // things on top: a cactus, a boulder, bleached bones
+    const k = n % 17;
+    if (k === 3) {
+      R1(g, 6, 3, 4, 10, GP.ink);
+      R1(g, 7, 4, 2, 9, '#5a9a3a');
+      R1(g, 3, 6, 3, 2, GP.ink);
+      R1(g, 3, 6, 2, 4, '#5a9a3a');
+      R1(g, 10, 5, 3, 2, GP.ink);
+      R1(g, 11, 4, 2, 4, '#5a9a3a');
+      R1(g, 7, 4, 1, 8, '#7aba5a');
+      R1(g, 5, 13, 7, 1, 'rgba(60,30,10,0.3)');
+    } else if (k === 8) {
+      R1(g, 3, 6, 10, 7, GP.ink);
+      R1(g, 4, 6, 8, 6, GP.rock);
+      R1(g, 4, 6, 5, 2, GP.rockHi);
+      R1(g, 3, 13, 10, 1, 'rgba(60,30,10,0.3)');
+    } else if (k === 5 || k === 11) {
+      // a dead tree, rooted in the rock
+      R1(g, 4, 13, 9, 2, 'rgba(60,30,10,0.3)');
+      R1(g, 7, 4, 3, 10, GP.ink);
+      R1(g, 8, 4, 1, 10, GP.wood);
+      R1(g, 3, 5, 5, 2, GP.ink);
+      R1(g, 4, 5, 3, 1, GP.wood);
+      R1(g, 9, 2, 5, 2, GP.ink);
+      R1(g, 10, 2, 3, 1, GP.wood);
+      R1(g, 3, 3, 1, 3, GP.ink);
+      R1(g, 13, 0, 1, 3, GP.ink);
+    } else if (k === 13) {
+      R1(g, 4, 8, 6, 4, '#f4ecd8');
+      R1(g, 5, 9, 1, 1, GP.ink);
+      R1(g, 8, 9, 1, 1, GP.ink);
+      R1(g, 10, 10, 4, 1, '#f4ecd8');
+    }
+  },
   rock: (g, n, at) => {
     sandBase(g, n);
     // a boulder with an outline, a lit top and a shadowed foot
@@ -280,7 +343,7 @@ const GMAP = {
   E: 'path',
   O: 'path',
   s: 'mud',
-  '#': 'rock',
+  '#': 'mesa',
   T: 'tree',
   '~': 'water',
   f: 'fence',
@@ -303,111 +366,246 @@ for (const k in GMAP) {
 }
 // ---- people: 16 wide and 24 tall, outlined, shaded, three steps ----
 function drawWalkerGBA(g, ox, oy, look, dir, step) {
+  // v8.3: rounder heads, their own hair and hats, dresses and robes, aprons and coats, boots, and what they carry.
   const P = (x, y, w, h, c) => R1(g, ox + x, oy + y - 8, w, h, c);
   const dark = c => shadeHex(c, -0.35),
-    lite = c => shadeHex(c, 0.25);
+    lite = c => shadeHex(c, 0.25),
+    has = k => (look.add || []).includes(k);
   // shadow on the ground
   g.fillStyle = 'rgba(40,20,10,0.3)';
   g.beginPath();
   g.ellipse(ox + 8, oy + 15, 6, 2.2, 0, 0, Math.PI * 2);
   g.fill();
   if (look.beast) {
+    // a pig, or another animal: a round body, a snout, little legs
     const b = look.body;
-    const f = dir === 'l' ? -1 : 1;
     P(2, 13, 12, 9, GP.ink);
     P(3, 14, 10, 7, b);
     P(3, 14, 10, 2, lite(b));
-    P(dir === 'l' ? 0 : 11, 10, 5, 6, GP.ink);
-    P(dir === 'l' ? 1 : 12, 11, 3, 4, b);
-    P(dir === 'l' ? 1 : 14, 12, 1, 1, GP.ink);
+    P(dir === 'l' ? 0 : 11, 12, 5, 6, GP.ink);
+    P(dir === 'l' ? 1 : 12, 13, 3, 4, b);
+    P(dir === 'l' ? 0 : 14, 15, 2, 2, dark(b));
+    P(dir === 'l' ? 2 : 13, 13, 1, 1, GP.ink);
     P(4, 21, 2, 2 - (step % 2), GP.ink);
     P(10, 21, 2, 1 + (step % 2), GP.ink);
-    P(dir === 'l' ? 13 : 1, 15, 2, 1, dark(b));
-    return f;
+    return;
   }
-  const s = step; // 0 stand, 1 left foot, 2 right foot
-  const lift = s === 0 ? 0 : 1;
-  // legs
-  const lx = s === 1 ? -1 : 0,
-    rx = s === 2 ? 1 : 0;
-  if (dir === 'l' || dir === 'r') {
-    P(5 + lx, 17, 3, 6, GP.ink);
-    P(8 + rx, 17, 3, 6, GP.ink);
-    P(6 + lx, 17, 1, 5, look.legs);
-    P(9 + rx, 17, 1, 5, dark(look.legs));
-  } else {
-    P(4, 17, 4, 6 - (s === 1 ? 1 : 0), GP.ink);
-    P(8, 17, 4, 6 - (s === 2 ? 1 : 0), GP.ink);
-    P(5, 17, 2, 5 - (s === 1 ? 1 : 0), look.legs);
-    P(9, 17, 2, 5 - (s === 2 ? 1 : 0), dark(look.legs));
+  const big = look.body === 'big',
+    woman = look.body === 'woman',
+    w0 = big ? 2 : 3,
+    bw = big ? 12 : woman ? 9 : 10; // body width
+  const s = step,
+    lift = s ? 1 : 0,
+    side = dir === 'l' || dir === 'r';
+  const long = has('robe') || has('coat') || woman;
+  // legs and boots (hidden under a robe)
+  if (!has('robe')) {
+    const lx = s === 1 ? -1 : 0,
+      rx = s === 2 ? 1 : 0;
+    if (side) {
+      P(5 + lx, 17, 3, 6, GP.ink);
+      P(8 + rx, 17, 3, 6, GP.ink);
+      P(6 + lx, 17, 1, 4, look.legs);
+      P(9 + rx, 17, 1, 4, dark(look.legs));
+    } else {
+      P(4, 17, 4, 6 - (s === 1 ? 1 : 0), GP.ink);
+      P(8, 17, 4, 6 - (s === 2 ? 1 : 0), GP.ink);
+      P(5, 17, 2, 4 - (s === 1 ? 1 : 0), look.legs);
+      P(9, 17, 2, 4 - (s === 2 ? 1 : 0), dark(look.legs));
+    }
   }
-  // body
-  P(3, 10, 10, 8, GP.ink);
-  P(4, 11, 8, 6, look.shirt);
-  P(4, 11, 3, 6, lite(look.shirt));
-  P(10, 11, 2, 6, dark(look.shirt));
+  // the body, rounded at the shoulders
+  const bx = 8 - Math.round(bw / 2);
+  P(bx, 10, bw, long ? 12 : 8, GP.ink);
+  P(bx + 1, 9, bw - 2, 1, GP.ink);
+  P(bx + 1, 11, bw - 2, long ? 10 : 6, look.shirt);
+  P(bx + 1, 11, 3, long ? 10 : 6, lite(look.shirt));
+  P(bx + bw - 3, 11, 2, long ? 10 : 6, dark(look.shirt));
+  if (woman && !has('robe')) {
+    // a skirt that flares, swaying as she walks
+    P(bx, 17, bw, 4, GP.ink);
+    P(bx - 1 + (s === 1 ? -1 : s === 2 ? 1 : 0), 19, bw + 2, 2, GP.ink);
+    P(bx + 1, 17, bw - 2, 3, look.extra || look.shirt);
+  }
+  if (!woman && !long) P(bx + 1, 16, bw - 2, 1, GP.woodLo); // a belt
+  if (has('apron') && dir !== 'u') {
+    P(bx + 2, 12, bw - 4, 8, '#f0ead8');
+    P(bx + 2, 12, bw - 4, 1, '#d8d0b8');
+    if (has('blood')) {
+      P(bx + 3, 15, 2, 2, '#a8201a');
+      P(bx + 5, 17, 1, 1, '#a8201a');
+    }
+  }
+  if (has('vest') && dir !== 'u') P(bx + 1, 11, 2, 6, dark(look.shirt));
+  if (has('star') && dir !== 'u') P(bx + 2, 12, 2, 2, '#f0d040');
+  if (has('necklace') || has('chains')) P(bx + 2, 11, bw - 4, 1, has('chains') ? '#b0b0b8' : '#f8f4e0');
+  if (has('bowtie') && dir === 'd') P(7, 10, 2, 1, '#c02020');
+  if ((has('spikes') || has('spikesBig')) && !side) {
+    P(bx - 1, 9, 2, 2, '#c8c8d0');
+    P(bx + bw - 1, 9, 2, 2, '#c8c8d0');
+  }
+  if (has('backpack') && dir === 'u') P(bx + 2, 11, bw - 4, 6, '#7a5a3a');
   // arms swing with the step
   const al = s === 1 ? 1 : s === 2 ? -1 : 0;
   if (dir !== 'r') {
-    P(2, 11 + al, 2, 6, GP.ink);
-    P(2, 12 + al, 1, 4, look.skin);
+    P(bx - 1, 11 + al, 2, 6, GP.ink);
+    P(bx - 1, 12 + al, 1, 4, look.skin);
   }
   if (dir !== 'l') {
-    P(12, 11 - al, 2, 6, GP.ink);
-    P(13, 12 - al, 1, 4, look.skin);
+    P(bx + bw - 1, 11 - al, 2, 6, GP.ink);
+    P(bx + bw, 12 - al, 1, 4, look.skin);
   }
-  // head
-  P(3, 2 - lift * 0, 10, 9, GP.ink);
-  P(4, 3, 8, 7, look.skin);
-  P(4, 3, 8, 1, lite(look.skin));
-  P(10, 4, 2, 6, dark(look.skin));
-  // hair, and which way you're looking
-  P(3, 1, 10, 3, GP.ink);
-  P(4, 2, 8, 2, look.hair);
-  P(4, 2, 8, 1, lite(look.hair));
-  if (dir === 'u') P(4, 3, 8, 6, look.hair);
-  else if (dir === 'l') {
-    P(9, 3, 3, 4, look.hair);
-    P(5, 6, 1, 2, GP.ink);
+  // what they carry, in the right hand
+  if (look.item && dir !== 'u' && dir !== 'l') {
+    const hx = bx + bw + 1,
+      hy = 12 - al;
+    const longItem = ['hoe', 'fork', 'pick', 'longgun', 'shotgun', 'cane', 'paddle', 'torch', 'sunflower'].includes(
+      look.item,
+    );
+    P(hx, hy - (longItem ? 6 : 1), 2, longItem ? 10 : 4, GP.ink);
+    P(hx, hy - (longItem ? 5 : 0), 1, longItem ? 8 : 2, look.item === 'torch' ? '#f0a020' : GP.wood);
+    if (look.item === 'torch') P(hx - 1, hy - 8, 3, 3, '#f8c040');
+    if (look.item === 'sunflower') P(hx - 1, hy - 8, 4, 3, '#f0c020');
+  }
+  // the head: rounded, with a light side and a shadowed side
+  const glow = has('glowhead');
+  const skin = glow ? '#9ae05a' : look.skin;
+  P(4, 1 - lift * 0, 8, 1, GP.ink);
+  P(3, 2, 10, 8, GP.ink);
+  P(4, 10, 8, 1, GP.ink);
+  P(4, 2, 8, 8, skin);
+  P(4, 2, 8, 1, lite(skin));
+  P(10, 3, 2, 7, dark(skin));
+  if (glow) {
+    g.fillStyle = 'rgba(160,240,100,0.25)';
+    g.fillRect(ox + 1, oy - 8, 14, 14);
+  }
+  // hair
+  const bald = has('tonsure') || glow;
+  if (!bald) {
+    P(3, 1, 10, 3, GP.ink);
+    P(4, 1, 8, 2, look.hair);
+    P(4, 1, 8, 1, lite(look.hair));
+    if (dir === 'u') P(4, 2, 8, 7, look.hair);
+    else if (dir === 'l') P(9, 2, 3, 5, look.hair);
+    else if (dir === 'r') P(4, 2, 3, 5, look.hair);
+    else {
+      P(4, 2, 1, 3, look.hair);
+      P(11, 2, 1, 3, look.hair);
+    }
+    if (woman && !has('bun')) {
+      // long hair down the back and the sides
+      if (dir === 'u') P(4, 2, 8, 10, look.hair);
+      else {
+        P(3, 3, 2, 7, GP.ink);
+        P(11, 3, 2, 7, GP.ink);
+        P(3, 3, 1, 6, look.hair);
+        P(12, 3, 1, 6, look.hair);
+      }
+    }
+  } else if (has('tonsure')) {
+    P(3, 4, 1, 3, look.hair);
+    P(12, 4, 1, 3, look.hair);
+  }
+  if (has('bun')) {
+    P(6, -2, 4, 4, GP.ink);
+    P(7, -1, 2, 2, look.hair);
+  }
+  // the face
+  if (dir === 'd') {
+    P(6, 5, 1, 2, GP.ink);
+    P(9, 5, 1, 2, GP.ink);
+    P(6, 5, 1, 1, '#fbf8ec');
+    P(9, 5, 1, 1, '#fbf8ec');
+    if (has('lips') || woman) P(7, 8, 2, 1, has('lips') ? '#c02040' : dark(skin));
+    else P(7, 8, 2, 1, dark(skin));
+    if (woman) {
+      P(5, 7, 1, 1, '#e89a8a');
+      P(10, 7, 1, 1, '#e89a8a');
+    }
+    if (has('beard')) {
+      P(4, 7, 8, 3, look.hair);
+      P(7, 8, 2, 1, dark(look.hair));
+    }
+    if (has('gummy')) P(6, 8, 4, 1, '#f8f4e0');
+  } else if (dir === 'l') {
+    P(5, 5, 1, 2, GP.ink);
+    if (has('beard')) P(4, 7, 4, 3, look.hair);
   } else if (dir === 'r') {
-    P(4, 3, 3, 4, look.hair);
-    P(10, 6, 1, 2, GP.ink);
-  } else {
-    P(4, 3, 1, 3, look.hair);
-    P(11, 3, 1, 3, look.hair);
-    P(6, 6, 1, 2, GP.ink);
-    P(9, 6, 1, 2, GP.ink);
-    P(7, 9, 2, 1, dark(look.skin));
+    P(10, 5, 1, 2, GP.ink);
+    if (has('beard')) P(8, 7, 4, 3, look.hair);
+  }
+  if (has('goggles')) {
+    P(3, 4, 10, 2, GP.ink);
+    if (dir !== 'u') {
+      P(5, 4, 2, 2, '#8ac8e0');
+      P(9, 4, 2, 2, '#8ac8e0');
+    }
+  }
+  if (has('visor')) P(3, 3, 10, 1, '#2a6a8a');
+  // hats
+  const hat = look.hat
+    ? 'brim'
+    : has('tophat')
+      ? 'top'
+      : has('cap')
+        ? 'cap'
+        : has('straw')
+          ? 'straw'
+          : has('hat')
+            ? 'brim'
+            : has('paperhat')
+              ? 'paper'
+              : has('crown')
+                ? 'crown'
+                : null;
+  const hc = look.hat || '#5a4030';
+  if (hat === 'brim' || hat === 'straw') {
+    const c = hat === 'straw' ? '#e0c070' : hc;
+    P(1, 1, 14, 2, GP.ink);
+    P(2, 1, 12, 1, c);
+    P(4, -2, 8, 4, GP.ink);
+    P(5, -1, 6, 2, c);
+    P(5, -1, 6, 1, lite(c));
+  } else if (hat === 'top') {
+    P(2, 1, 12, 2, GP.ink);
+    P(4, -5, 8, 7, GP.ink);
+    P(5, -4, 6, 5, '#2a2a2a');
+    P(5, -1, 6, 1, '#a8201a');
+  } else if (hat === 'cap') {
+    P(3, 0, 10, 3, GP.ink);
+    P(4, 0, 8, 2, look.extra || '#4a6a8a');
+    if (dir === 'd') P(4, 2, 8, 1, GP.ink);
+    else if (dir === 'r') P(11, 2, 3, 1, GP.ink);
+    else if (dir === 'l') P(2, 2, 3, 1, GP.ink);
+  } else if (hat === 'paper') {
+    P(4, -2, 8, 3, GP.ink);
+    P(5, -1, 6, 2, '#f8f4e0');
+  } else if (hat === 'crown') {
+    P(4, -2, 8, 3, GP.ink);
+    P(5, -1, 6, 2, '#f0d040');
+    P(5, -2, 1, 1, '#f8f4e0');
+    P(7, -2, 1, 1, '#f8f4e0');
+    P(10, -2, 1, 1, '#f8f4e0');
   }
   // Scrapwell coveralls: patched knees, a dust scarf, a scrap shoulder plate, and the tooth on the back
   if (look.me) {
     if (dir === 'u' || dir === 'd') {
       P(5, 19, 2, 2, look.patch);
       P(9, 19, 2, 2, look.patch);
-    } else P(dir === 'l' ? 6 + lx : 9 + rx, 19, 1, 2, look.patch);
-    P(4, 10, 8, 2, look.scarf);
-    P(4, 10, 8, 1, lite(look.scarf));
+    } else P(dir === 'l' ? 6 : 9, 19, 1, 2, look.patch);
+    P(bx + 1, 10, bw - 2, 2, look.scarf);
+    P(bx + 1, 10, bw - 2, 1, lite(look.scarf));
     if (dir !== 'l') {
-      P(11, 10, 3, 3, GP.ink);
-      P(12, 11, 2, 1, look.plate);
+      P(bx + bw - 2, 10, 3, 3, GP.ink);
+      P(bx + bw - 1, 11, 2, 1, look.plate);
     }
     if (dir === 'u') {
-      // the tooth, stitched on the back
       P(6, 12, 4, 3, '#fbf8ec');
       P(6, 15, 1, 1, '#fbf8ec');
       P(9, 15, 1, 1, '#fbf8ec');
       P(7, 12, 2, 1, '#e8e0c8');
-    } else if (dir === 'd') {
-      P(9, 12, 2, 2, '#fbf8ec'); // a small tooth badge on the chest
-    }
-    if (dir === 'd') P(4, 11, 8, 1, look.scarf); // the scarf hangs at the front
-  }
-  if (look.hat) {
-    P(1, 1, 14, 2, GP.ink);
-    P(2, 1, 12, 1, look.hat);
-    P(4, -2, 8, 4, GP.ink);
-    P(5, -1, 6, 2, look.hat);
-    P(5, -1, 6, 1, lite(look.hat));
+    } else if (dir === 'd') P(9, 12, 2, 2, '#fbf8ec');
   }
 }
 function shadeHex(c, k) {
