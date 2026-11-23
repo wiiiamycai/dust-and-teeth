@@ -62,11 +62,22 @@ function sprPixels(letters, h, pal) {
 // Found from the screen's title and icon, so no scene needs to ask for one. Blinks now and then.
 function sprPortraitId(v) {
   if (!v || !v.title || typeof NPC === 'undefined') return null;
-  for (const id in NPC) if (NPC[id].n === v.title && NPC[id].i === v.icon && SNPC[id]) return id;
+  for (const id in NPC)
+    if (
+      NPC[id].n === v.title &&
+      NPC[id].i === v.icon &&
+      (SNPC[id] || (typeof PORTRAIT !== 'undefined' && PORTRAIT[id]))
+    )
+      return id;
   return null;
 }
 const SPORT = { rows: 17, cell: 5 }; // head and shoulders, from the top of the tallest hat
 function sprPortraitDraw(cv, id, shut) {
+  // the detailed portrait (scenes/portraits.js), when there is one
+  if (typeof portraitDraw === 'function' && portraitDraw(cv, id, shut)) {
+    if (cv.classList) cv.classList.add('big');
+    return;
+  }
   const spec = SNPC[id],
     h = 32,
     L = sprLetters(spec),

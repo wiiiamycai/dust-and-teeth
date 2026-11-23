@@ -1382,3 +1382,14 @@ body.inbattle #opts {
   line-height: 1.25;
   padding-bottom: 1px;
 }
+
+/* the detailed portraits (scenes/portraits.js): big, framed, at the top of the talk screen */
+#head .portrait.big {
+  width: 128px;
+  height: 128px;
+  border: 2px solid #6a5238;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 3px #1a120a,
+    0 0 16px rgba(255, 150, 0, 0.22);
+}
