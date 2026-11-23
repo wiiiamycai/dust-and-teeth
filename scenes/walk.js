@@ -446,6 +446,8 @@ function walkMount(loc, M, ids) {
       t.draw(bg, x, y, (x * 73 + y * 151) % 97, at, 0);
       bg.restore();
     }
+  // each place on the valley map is drawn as itself (scenes/townart.js)
+  if (M.valley && typeof valleyIcons === 'function') valleyIcons(bg);
   // people stand on their own spots, or on the free p spots in order
   const free = [];
   rows.forEach((r, y) => [...r].forEach((c, x) => c === 'p' && free.push([x, y])));

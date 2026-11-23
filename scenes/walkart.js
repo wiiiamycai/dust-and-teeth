@@ -293,7 +293,7 @@ const GMAP = {
   W: 'well',
   P: 'pump',
   S: 'sign',
-  o: 'house',
+  o: 'sand',
 };
 for (const k in GMAP) {
   if (!TILEDEF[k]) continue;
