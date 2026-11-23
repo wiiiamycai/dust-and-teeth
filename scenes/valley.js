@@ -701,6 +701,22 @@ mapPaint = mp => {
         .oval(x + 1, y + 1, 9, 5)
         .paint(g, PX.ramp('#1e2a1a'), { line: false, hi: 1 });
     }
+  // a place you haven't heard of is lost in the dust: no picture, no name
+  for (const k in VALLEY_P)
+    if (LOC[k] && !onMap(k)) {
+      const x = valleyX(k),
+        y = valleyY(k);
+      const hz = (a, b) =>
+        ((((a * 374761393 + b * 668265263) ^ ((a * 374761393 + b * 668265263) >>> 13)) >>> 0) % 1000) / 1000;
+      for (let j = -18; j <= 18; j++)
+        for (let i = -30; i <= 30; i++) {
+          const wob = 0.25 * Math.sin(i / 4 + j / 3) + 0.2 * Math.sin(j / 2.5 - i / 7),
+            d = (i / 28) ** 2 + (j / 15) ** 2 + wob * 0.4;
+          if (d > 1 || (d > 0.7 && hz(x + i, y + j) < (d - 0.7) * 3.3)) continue;
+          const n = hz(i + 99, j + 7) + 0.3 * Math.sin((i + j) / 3);
+          PX.p(g, x + i, y + j - 4, n < 0.35 ? '#7a6c5a' : n < 0.8 ? '#8c7c68' : '#a49480');
+        }
+    }
   mp.prepend(cv);
   [...mp.querySelectorAll('.node')].forEach(b => {
     const k = b.stop;
