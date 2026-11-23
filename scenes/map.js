@@ -24,6 +24,7 @@ function drawMap(mp) {
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
       b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(STOP_N[k] || L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc && townOf(S.f.gutLoc) === k && 'tremors', townOf(S.here) === k ? 'you' : (d => `${d} day${d > 1 ? 's' : ''}`)(tripDays(k))) || '&nbsp;'}</span>`;
+      b.stop = k; // which stop: the valley picture moves the button onto its town
       b.onclick = () => travel(k); // your own town: a walk across it to the square
       mp.appendChild(b);
     });
@@ -37,7 +38,7 @@ SC.map = () => {
     title: 'The Wasteland',
     icon: '🏜️',
     sub: `Day ${S.day}`,
-    text: 'Tap a place. The road goes through the towns between, and each one is a day.',
+    text: 'Tap a stop. Each road is a day, through the towns between. The roads out go further than you know.',
     map: true,
     opts: [
       S.trip && S.trip !== S.here && LOC[S.trip] && onMap(S.trip)

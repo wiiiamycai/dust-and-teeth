@@ -1523,3 +1523,51 @@ canvas,
 .card .ci {
   filter: sepia(0.5) saturate(0.75);
 }
+
+/* ---- the valley: the travel map of the 10 stops (scenes/valley.js) ---- */
+#map.valley,
+#map.valley[style] {
+  aspect-ratio: 2/3 !important;
+  width: min(100%, 62vh, 520px) !important;
+  height: auto !important;
+  max-height: none !important;
+  flex-shrink: 0 !important;
+  margin: 6px auto 10px;
+  background: #0c0904;
+  overflow: hidden;
+}
+#map.valley canvas.land {
+  image-rendering: pixelated;
+}
+#map.valley .node {
+  padding: 0 3px;
+  font-weight: bold;
+  font-size: 10px !important;
+  line-height: 1.15;
+}
+#map.valley .node .ni {
+  display: none;
+}
+#map.valley .node .nl {
+  font-weight: normal;
+  font-size: 8px !important;
+}
+#map.valley .node.lost {
+  border-color: #a8302a;
+  color: #ff6a4d;
+}
+#map.valley .node.here {
+  border-color: var(--grn);
+  color: var(--grn);
+}
+.vexit {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  font-style: italic;
+  color: #c8b8a0;
+  background: rgba(12, 9, 4, 0.6);
+  padding: 1px 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
