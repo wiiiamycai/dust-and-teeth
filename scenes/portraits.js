@@ -2025,3 +2025,275 @@ PORTRAIT.teo = (g, PX, o) => {
   PX.mask().rect(52, 30, 3, 34).paint(g, PX.ramp('#7a5434'), { hi: 1 });
   PX.mask().oval(53, 44, 4, 4).paint(g, S, { hi: 1 });
 };
+
+// ================= Snake Eyes =================
+// Mister Pips: a grin, a tuxedo older than the bombs, and a ring on every finger
+PORTRAIT.pips = (g, PX, o) => {
+  PX.bg(g, 'snakeeyes');
+  const S = PX.ramp('#c8a080'),
+    H = PX.ramp('#1e1612'),
+    C = PX.ramp('#2a2430'),
+    Sh = PX.ramp('#c8bca0'),
+    V = PX.ramp('#6a2a4a'),
+    Au = PX.ramp('#d8b040'),
+    Cd = PX.ramp('#e8e0d0');
+  PX.torso(g, C, 43, 14, 50, 0, 63);
+  PX.mask().trap(43, 63, 24, 40, 20, 44).paint(g, Sh);
+  PX.mask()
+    .trap(48, 63, 22, 42, 18, 46)
+    .cut((x, y) => Math.abs(x - 32) < 3 + (y - 48) * 0.3)
+    .paint(g, V, { hi: 1 });
+  PX.mask()
+    .rows(26, 43, ['ooo.....ooo', 'ooooo.ooooo', 'ooooooooooo', 'ooooo.ooooo', 'ooo.....ooo'])
+    .paint(g, PX.ramp('#8a1a2a'), { hi: 1 });
+  PX.mask().rect(28, 37, 8, 6).paint(g, S, { t: 0.55 });
+  // slicked black hair with a widow's peak, a long narrow face
+  PX.ear(g, 21, 27, S);
+  PX.ear(g, 43, 27, S);
+  PX.mask().oval(32, 22, 12, 9).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 12, S, 30, 0.9);
+  PX.mask()
+    .spans(14, [
+      [24, 40],
+      [22, 42],
+      [22, 42],
+      [22, 31],
+      [22, 29],
+      [22, 24],
+      [22, 23],
+    ])
+    .rect(33, 17, 9, 1)
+    .rect(38, 18, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.r(g, 25, 15, 12, 1, H.h);
+  // a snake's eyes and a snake's grin, a pencil moustache
+  PX.brows(g, 24, 22, 11, 'arch', H.m);
+  PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, iris: '#a8a030', pupil: '#0a0a04', lid: 1 });
+  PX.nose(g, 32, 27, 'hook', S);
+  PX.rows(g, 27, 32, ['aaaa..aaaa'], { a: H.m });
+  PX.mouth(g, 32, 33, ['oooooooooooo', '.owwwwwwwwo.', '..oooooooo..'], S, '#3a1418', '#e8e0c8');
+  PX.p(g, 29, 34, '#d8b040');
+  PX.rows(g, 25, 31, ['d..........d', '.d........d.'], { d: S.d });
+  // a fan of cards in a hand with a ring on every finger
+  PX.mask().oval(50, 58, 6, 5).paint(g, S, { hi: 1 });
+  [-2, -1, 0, 1, 2].forEach(i => {
+    const x = 50 + i * 4;
+    PX.mask()
+      .rect(x - 2, 44 + Math.abs(i), 5, 9)
+      .paint(g, Cd, { hi: 1, t: 0.85 });
+    PX.p(g, x - 1, 45 + Math.abs(i), i % 2 ? '#c82a2a' : '#1a1a1a');
+  });
+  [
+    [46, 56],
+    [49, 55],
+    [52, 55],
+    [55, 56],
+  ].forEach(([x, y]) => PX.mask().rect(x, y, 2, 1).paint(g, Au, { line: false, hi: 1 }));
+  PX.p(g, 52, 55, '#e84050');
+};
+
+// Dice: a dealer who shuffles without looking. Her eyes are on the door, always. Opal's sister, planning a way out.
+PORTRAIT.dice = (g, PX, o) => {
+  PX.bg(g, 'snakeeyes');
+  const S = PX.ramp('#c89a7a'),
+    H = PX.ramp('#8a2e24'),
+    C = PX.ramp('#3a5a4a'),
+    Sh = PX.ramp('#d8d0c0'),
+    Vz = PX.ramp('#4a9a5a'),
+    Cd = PX.ramp('#e8e0d0');
+  PX.torso(g, Sh, 44, 18, 46, 4, 60);
+  PX.mask().trap(46, 63, 16, 27, 6, 27).paint(g, C);
+  PX.mask().trap(46, 63, 37, 48, 37, 58).paint(g, C);
+  PX.mask().rect(19, 52, 8, 2).rect(37, 52, 8, 2).paint(g, PX.ramp('#8a1a2a'), { line: false });
+  PX.mask().rect(28, 37, 8, 7).paint(g, S, { t: 0.55 });
+  PX.mask().rows(28, 43, ['oo..oo', '.oooo.', 'oo..oo']).paint(g, { o: '#1a1a1a', m: '#1a1a1a' }, { flat: true });
+  // red hair cut short and sharp, at the jaw
+  PX.mask().oval(32, 25, 13, 12).rect(19, 25, 5, 12).rect(40, 25, 5, 12).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 27, 10, 12, S, 31, 1);
+  PX.mask()
+    .spans(17, [
+      [23, 41],
+      [22, 42],
+      [22, 42],
+      [36, 42],
+      [38, 42],
+      [40, 42],
+    ])
+    .rect(22, 20, 3, 8)
+    .rect(40, 20, 3, 8)
+    .paint(g, H, { hi: 1 });
+  // eyes slid to the door, a straight mouth
+  PX.brows(g, 25, 23, 10, 'flat', H.d);
+  PX.eyes(g, o, 25, 26, 10, { w: 4, skin: S, iris: '#4a7a5a', lash: 1, look: 1 });
+  PX.nose(g, 32, 28, 'small', S);
+  PX.mouth(g, 32, 33, ['.ooooo.'], S, '#8a3a34');
+  PX.r(g, 31, 34, 3, 1, '#b0605a');
+  // the dealer's green visor
+  PX.mask()
+    .rows(19, 18, [
+      '......oooooooooooo......',
+      '..oooooooooooooooooooo..',
+      'oooooooooooooooooooooooo',
+      '.oooooooooooooooooooooo.',
+    ])
+    .paint(
+      g,
+      { o: '#1a3a1a', d: '#2a6a3a', m: 'rgba(74,154,90,0.85)', l: 'rgba(120,200,130,0.85)', h: '#a8e8b0' },
+      { hi: 1 },
+    );
+  PX.r(g, 21, 22, 22, 1, '#2a6a3a');
+  PX.r(g, 22, 22, 20, 3, 'rgba(40,120,60,0.3)');
+  PX.r(g, 22, 17, 20, 1, '#1a1a1a');
+  // cards running from hand to hand
+  PX.mask().oval(14, 58, 5, 4).oval(50, 58, 5, 4).paint(g, S, { hi: 1 });
+  for (let i = 0; i < 7; i++)
+    PX.mask()
+      .rect(17 + i * 4, 50 - Math.round(Math.sin((i / 6) * Math.PI) * 6), 4, 6)
+      .paint(g, Cd, { t: 0.9 });
+};
+
+// Big Tam: the pit champion. Scars on scars. Gus's brother: he looks like someone you know, around the eyes.
+PORTRAIT.tam = (g, PX, o) => {
+  PX.bg(g, 'snakeeyes');
+  const S = PX.ramp('#b07a58'),
+    H = PX.ramp('#2a1e14'),
+    Gv = PX.ramp('#a82a24'),
+    Wr = PX.ramp('#c8bca0');
+  // a bare, scarred chest and huge shoulders
+  PX.mask().trap(38, 63, 8, 56, 0, 63).oval(8, 44, 10, 8).oval(56, 44, 10, 8).paint(g, S, { t: 0.7, hi: 1 });
+  PX.rows(g, 16, 48, ['...ddddddd..........ddddddd', '..d.......d........d.......d', '............................'], {
+    d: S.d,
+  });
+  PX.r(g, 31, 44, 1, 16, S.d);
+  [
+    [12, 52, 20, 46],
+    [40, 50, 50, 58],
+    [24, 56, 30, 62],
+    [6, 42, 10, 48],
+  ].forEach(([a, b, c, d]) => PX.line(g, a, b, c, d, S.l));
+  PX.mask().rect(24, 32, 16, 8).paint(g, S, { t: 0.62 });
+  // a lumpy, broken face: flat nose, cauliflower ear, a split brow
+  PX.ear(g, 19, 25, S, 3);
+  PX.mask().oval(45, 25, 2, 3).paint(g, S, { hi: 1 });
+  PX.p(g, 45, 24, S.d);
+  PX.head(g, 32, 23, 12, 12, S, 27, 0.5);
+  PX.mask()
+    .spans(11, [
+      [26, 38],
+      [23, 41],
+      [22, 42],
+      [21, 43],
+    ])
+    .paint(g, H, { hi: 1 });
+  PX.dots(15, 14, (x, y) => PX.p(g, 23 + (x % 19), 11 + (y % 3), H.l));
+  // Gus's eyes, under a swollen brow
+  PX.mask().oval(28, 20, 4, 2).paint(g, S, { line: false, hi: 1 });
+  PX.brows(g, 24, 19, 11, 'thick', H.m);
+  PX.eyes(g, o, 25, 22, 10, { w: 4, skin: S, iris: '#4a3a2a', bag: 1 });
+  PX.r(g, 35, 22, 4, 1, '#7a3a3a');
+  PX.line(g, 37, 17, 39, 21, S.l);
+  PX.nose(g, 32, 24, ['.ll..', 'lldd.', 'lmmmd', 'oo.oo'], S);
+  PX.mouth(g, 32, 30, ['oooooo', '.w.ww.'], S, '#3a1a14', '#d8c8a0');
+  PX.r(g, 28, 33, 8, 1, S.d);
+  // fists in red gloves, up
+  PX.mask().oval(10, 54, 8, 9).paint(g, Gv, { hi: 1 });
+  PX.mask().oval(54, 54, 8, 9).paint(g, Gv, { hi: 1 });
+  PX.mask().rect(5, 61, 10, 3).rect(49, 61, 10, 3).paint(g, Wr);
+  PX.r(g, 6, 50, 3, 1, Gv.h);
+  PX.r(g, 50, 50, 3, 1, Gv.h);
+};
+
+// Sweet Nan: a tiny old woman knitting something that might be a noose. Your aunt's smile, if your aunt was a shark.
+PORTRAIT.nan = (g, PX, o) => {
+  PX.bg(g, 'snakeeyes');
+  const S = PX.ramp('#c8a088'),
+    H = PX.ramp('#c8c0b8'),
+    C = PX.ramp('#b07a8a'),
+    Rp = PX.ramp('#b8a070'),
+    Mt = PX.ramp('#b0b0b8');
+  // a pink cardigan with pearl buttons, a lace collar
+  PX.torso(g, C, 44, 18, 46, 6, 58);
+  for (let y = 48; y < 64; y += 2) for (let x = 8 + (y % 4); x < 56; x += 4) PX.p(g, x, y, C.d);
+  PX.mask().rows(23, 43, ['oooooooooooooooooo', '.o.o.o.o..o.o.o.o.']).paint(g, PX.ramp('#e8e0d0'), { flat: true });
+  [47, 51, 55].forEach(y => PX.mask().rect(32, y, 1, 1).paint(g, PX.ramp('#e8e0d0'), { line: false }));
+  PX.mask().rect(28, 37, 8, 6).paint(g, S, { t: 0.55 });
+  // a small old head with a tight bun and big spectacles
+  PX.mask().oval(32, 24, 11, 11).oval(32, 12, 5, 4).paint(g, H, { hi: 1 });
+  PX.head(g, 32, 28, 9, 11, S, 31, 0.9);
+  PX.mask()
+    .spans(17, [
+      [26, 38],
+      [24, 40],
+      [23, 41],
+      [23, 27],
+      [23, 25],
+    ])
+    .rect(37, 20, 4, 2)
+    .paint(g, H, { hi: 1 });
+  PX.rows(g, 25, 18, ['.a..a..a..a..a', 'a..a..a..a..a.'], { a: H.d });
+  PX.r(g, 28, 22, 8, 1, S.d);
+  PX.eyes(g, o, 26, 26, 9, { w: 3, skin: S, iris: '#2a2a3a', lash: 1 });
+  PX.rows(g, 24, 25, ['.ooooo...ooooo.', 'o.....ooo.....o', 'o.....o.o.....o', '.ooooo...ooooo.'], { o: '#c8b060' });
+  PX.p(g, 25, 26, 'rgba(255,255,255,0.6)');
+  PX.p(g, 34, 26, 'rgba(255,255,255,0.6)');
+  PX.line(g, 24, 26, 22, 28, '#c8b060');
+  PX.nose(g, 32, 28, 'small', S);
+  // the shark smile: far too many teeth
+  PX.mouth(g, 32, 33, ['ooooooooooo', '.owwwwwwwo.', '..ooooooo..'], S, '#8a2a3a', '#f0ece0');
+  PX.rows(g, 28, 34, ['.o.o.o.o.'], { o: '#c8b8a0' });
+  PX.r(g, 24, 31, 2, 1, '#e08a90');
+  PX.r(g, 38, 31, 2, 1, '#e08a90');
+  // needles, and a rope with a slip knot in it
+  PX.line(g, 18, 58, 30, 46, Mt.m);
+  PX.line(g, 46, 58, 36, 46, Mt.m);
+  PX.mask()
+    .rect(20, 50, 24, 8)
+    .cut((x, y) => (x + y) % 3 === 0)
+    .paint(g, Rp, { line: false });
+  PX.mask()
+    .oval(32, 54, 3, 4)
+    .cut((x, y) => (x - 32) ** 2 + (y - 54) ** 2 < 4)
+    .paint(g, Rp, { hi: 1 });
+  PX.mask().oval(18, 59, 4, 3).oval(46, 59, 4, 3).paint(g, S, { hi: 1 });
+};
+
+// Rook: Pips's doorman. He fills the door. He does not move out of it. He does not need to. Grey, square, still.
+PORTRAIT.rook = (g, PX, o) => {
+  PX.bg(g, 'snakeeyes');
+  const S = PX.ramp('#9a948a'),
+    C = PX.ramp('#2a262a'),
+    Sh = PX.ramp('#d0ccc0'),
+    Gl = PX.ramp('#1a1a20');
+  // a black suit stretched over a wall of a man
+  PX.torso(g, C, 38, 4, 60, 0, 63, { hi: 1 });
+  PX.mask().trap(38, 63, 26, 38, 22, 42).paint(g, Sh);
+  PX.mask().trap(40, 63, 30, 34, 29, 35).paint(g, PX.ramp('#1a1a1a'));
+  PX.line(g, 22, 40, 30, 63, C.o);
+  PX.line(g, 42, 40, 34, 63, C.o);
+  PX.mask().rect(22, 32, 20, 8).paint(g, S, { t: 0.62 });
+  // a curly wire in one ear
+  PX.line(g, 44, 26, 46, 38, '#3a3a3a');
+  // a square stone head
+  PX.ear(g, 19, 24, S, 3);
+  PX.ear(g, 45, 24, S, 3);
+  PX.mask()
+    .rect(20, 10, 25, 25)
+    .cut((x, y) => (x === 20 || x === 44) && (y === 10 || y === 34))
+    .paint(g, S, { t: 0.7, hi: 1 });
+  PX.r(g, 22, 10, 21, 1, S.o);
+  // a heavy brow, small dark glasses, a mouth like a crack in a wall
+  PX.mask().rect(21, 18, 23, 3).paint(g, S, { line: false, hi: 1, t: 0.75 });
+  PX.r(g, 21, 20, 23, 1, S.d);
+  PX.mask().rect(22, 21, 9, 4).rect(34, 21, 9, 4).rect(30, 21, 5, 1).paint(g, Gl, { hi: 1 });
+  PX.r(g, 23, 22, 3, 1, '#5a5a6a');
+  PX.r(g, 35, 22, 3, 1, '#5a5a6a');
+  if (o.shut) {
+    PX.r(g, 23, 22, 3, 1, '#2a2a30');
+    PX.r(g, 35, 22, 3, 1, '#2a2a30');
+  }
+  PX.nose(g, 32, 24, 'flat', S);
+  PX.mouth(g, 32, 30, ['ooooooooo'], S);
+  PX.r(g, 27, 33, 11, 1, S.d);
+  // the King's tooth, tattooed small on his neck
+  PX.rows(g, 25, 35, ['ooo', 'o.o'], { o: '#3a4a6a' });
+};
