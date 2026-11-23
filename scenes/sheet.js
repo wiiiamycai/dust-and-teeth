@@ -193,7 +193,7 @@ function dollDraw(cv, k) {
     }
 }
 // ---- the panel ----
-let sheetOpen = true;
+let sheetOpen = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth > 560 : true; // folded on a phone, so each screen stays short
 function sheetDraw() {
   const el = $('sheet');
   if (!el) return;

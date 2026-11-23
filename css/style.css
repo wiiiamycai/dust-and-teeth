@@ -601,6 +601,7 @@ body::before {
 
 /* ---- walking (scenes/walk.js): a 160 x 144 screen, blown up with hard edges, and a pad for thumbs ---- */
 .walk {
+  -webkit-touch-callout: none;
   position: relative;
   max-width: 480px;
   margin: 8px auto;
@@ -637,6 +638,7 @@ body::before {
   font-size: 15px;
   line-height: 1.35;
   box-shadow: inset 0 0 0 2px #c8d4e8;
+  pointer-events: none; /* a tap goes through to the screen, which closes the box and walks */
 }
 .walk .wmsg::after {
   content: '▼';
@@ -652,50 +654,15 @@ body::before {
     opacity: 0;
   }
 }
-.walk .pad,
-.walk .ab {
-  display: inline-grid;
-  margin-top: 10px;
-}
-.walk .pad {
-  grid-template: 44px 44px 44px / 44px 44px 44px;
-}
-.walk .pad .pu {
-  grid-area: 1 / 2;
-}
-.walk .pad .pl {
-  grid-area: 2 / 1;
-}
-.walk .pad .pr {
-  grid-area: 2 / 3;
-}
-.walk .pad .pd {
-  grid-area: 3 / 2;
-}
-.walk .ab {
-  float: right;
-  grid-template-columns: 56px 56px;
-  gap: 12px;
-  margin-top: 44px;
-}
-.walk button {
-  font: inherit;
-  background: #3a2a1c;
-  color: #f8f4e0;
-  border: 2px solid #8a6038;
-  border-radius: 8px;
-  padding: 0;
-  touch-action: none;
-}
-.walk .ab button {
-  height: 56px;
-  border-radius: 50%;
-  font-weight: bold;
-}
+
 .walksw {
   margin-left: 8px;
   font: inherit;
   font-size: 12px;
+  background: none;
+  color: var(--a);
+  border: 1px solid var(--dim);
+  padding: 2px 8px;
 }
 
 /* ---- phones (v6.7): Will plays on his phone now ---- */
@@ -789,30 +756,45 @@ body.walking #head .sub {
   min-width: 240px;
   margin: 0 auto;
 }
-.walk .ctl {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 420px;
-  margin: 10px auto 0;
+
+/* ---- an iPhone app, not a web page (v6.9) ---- */
+/* The game fills the screen. Only the game's own column scrolls, never the page, so a thumb on the walking
+   screen walks instead of dragging the page about. */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
-.walk .pad {
-  grid-template: 50px 50px 50px / 50px 50px 50px;
-  margin: 0;
+#wrap {
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  max-width: 520px;
+  box-sizing: border-box;
 }
-.walk .ab {
-  float: none;
-  grid-template-columns: 64px 64px;
-  gap: 14px;
-  margin: 0;
+/* walking: the game screen is pinned under the status bar, and the words and buttons scroll beneath it */
+body.walking #view {
+  position: sticky;
+  top: 40px;
+  z-index: 2;
+  background: var(--bg);
+  padding-bottom: 4px;
 }
-.walk .ab button {
-  height: 64px;
-  font-size: 18px;
+.walk {
+  margin: 4px auto 0;
+  max-width: 100%;
 }
-.walk .pad button {
-  font-size: 18px;
+.walk canvas {
+  width: min(100%, calc((100dvh - 240px) * 240 / 160));
+  cursor: pointer;
+  touch-action: none;
 }
-.walk .ab .ka {
-  transform: translateY(-14px);
+/* No text selection and no long-press menu anywhere: on an iPhone a held thumb otherwise selects the words
+   ("Copy, Find Selection, Look Up") instead of playing. */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }

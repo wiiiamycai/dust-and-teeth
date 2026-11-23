@@ -308,7 +308,7 @@ SC.walk = (loc, ids, opts, text) => {
   show({
     title,
     icon: M.valley ? '🏜️' : LOC[loc].i,
-    sub: `Day ${S.day} · A to talk or use`,
+    sub: `Day ${S.day} · tap to walk, tap someone to talk`,
     text: M.valley ? 'Walk into a place to go there. Each trip takes a day.' : text || '',
     opts: [...(opts || []), M.valley ? ['The old map (pick a place)', () => go('map', 'text')] : null, charOpt()],
   });
@@ -320,9 +320,7 @@ function walkMount(loc, M, ids) {
   const vw = $('view');
   vw.hidden = false;
   vw.innerHTML =
-    '<div class="walk"><div class="scr"><canvas id="wcv" width="240" height="160"></canvas><div id="wmsg" class="wmsg" hidden></div></div>' +
-    '<div class="ctl"><div class="pad"><button data-k="u" class="pu">▲</button><button data-k="l" class="pl">◀</button><button data-k="r" class="pr">▶</button><button data-k="d" class="pd">▼</button></div>' +
-    '<div class="ab"><button data-k="b" class="kb">B</button><button data-k="a" class="ka">A</button></div></div></div>';
+    '<div class="walk"><div class="scr"><canvas id="wcv" width="240" height="160"></canvas><div id="wmsg" class="wmsg" hidden></div></div></div>';
   const cv = $('wcv');
   const rows = M.rows,
     H = rows.length,
@@ -370,20 +368,17 @@ function walkMount(loc, M, ids) {
   };
   WK.g.imageSmoothingEnabled = false;
   // input: the pad and A/B on screen, arrows or WASD and Z/X on a keyboard
-  vw.querySelectorAll('button[data-k]').forEach(b => {
-    const k = b.dataset.k;
-    const down = e => {
-      e.preventDefault();
-      walkKey(k, true);
-    };
-    const up = e => {
-      e.preventDefault();
-      walkKey(k, false);
-    };
-    b.addEventListener('pointerdown', down);
-    b.addEventListener('pointerup', up);
-    b.addEventListener('pointerleave', up);
-    b.addEventListener('pointercancel', up);
+  // Tap to walk: tap the ground and you walk there; tap a person and you go and talk; tap a door, well, pump
+  // or sign and you go and use it.
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    if (!WK || WK.busy) return;
+    walkMsg(null);
+    const b = cv.getBoundingClientRect(),
+      sc = b.width / (VW * TILE);
+    const tx = Math.floor(((e.clientX - b.left) / sc + (WK.cx || 0)) / TILE),
+      ty = Math.floor(((e.clientY - b.top) / sc + (WK.cy || 0)) / TILE);
+    walkTo(tx, ty);
   });
   // a few people wander a step or two from their spot
   WK.timers.push(
@@ -429,8 +424,10 @@ const DIRV = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0] };
 function walkKey(k, down) {
   if (!WK) return;
   if (DIRV[k]) {
-    if (down) WK.held = k;
-    else if (WK.held === k) WK.held = null;
+    if (down) {
+      WK.held = k;
+      WK.path = null;
+    } else if (WK.held === k) WK.held = null;
     return;
   }
   if (!down) return;
@@ -473,6 +470,8 @@ function walkLoop() {
     walkArrive();
     if (!WK) return;
   }
+  if (!WK.moving && !WK.held && WK.path && !WK.busy) walkPathStep();
+  if (!WK) return;
   if (!WK.moving && WK.held && !WK.busy) {
     const [dx, dy] = DIRV[WK.held];
     S.wk.d = WK.held;
@@ -511,6 +510,15 @@ function walkDraw(now) {
   ].sort((a, b) => a.y - b.y);
   for (const q of all) drawWalkerGBA(g, Math.round(q.x * TILE - cx), Math.round(q.y * TILE - cy), q.look, q.d, q.s);
   WK.sy = fy * TILE - cy; // where you are on screen, so a message never covers you
+  WK.cx = cx;
+  WK.cy = cy;
+  // where a tap is taking you: a small blinking marker
+  if (WK.path && WK.path.length && Math.floor(now / 300) % 2) {
+    const [mx, my] = WK.goal;
+    g.strokeStyle = GP.white;
+    g.lineWidth = 1;
+    g.strokeRect(Math.round(mx * TILE - cx) + 3.5, Math.round(my * TILE - cy) + 3.5, 9, 9);
+  }
   // in the valley, a name board for the place you're standing at, like a route sign
   if (WK.M.valley && !WK.moving) {
     const t = valleyTown(S.wk.x, S.wk.y - 1) || valleyTown(S.wk.x, S.wk.y);
@@ -528,6 +536,93 @@ function walkDraw(now) {
       g.fillText(name, 10, 12);
     }
   }
+}
+// ---- tap to walk ----
+// The shortest way round walls and people (a breadth-first search over the tiles).
+function walkRoute(tx, ty) {
+  const key = (x, y) => x + ',' + y,
+    from = new Map([[key(S.wk.x, S.wk.y), null]]),
+    q = [[S.wk.x, S.wk.y]];
+  while (q.length) {
+    const [x, y] = q.shift();
+    if (x === tx && y === ty) break;
+    for (const d of ['u', 'd', 'l', 'r']) {
+      const nx = x + DIRV[d][0],
+        ny = y + DIRV[d][1],
+        k = key(nx, ny);
+      if (from.has(k) || !walkFree(nx, ny)) continue;
+      from.set(k, [x, y, d]);
+      q.push([nx, ny]);
+    }
+  }
+  if (!from.has(key(tx, ty))) return null;
+  const path = [];
+  for (let c = [tx, ty]; from.get(key(c[0], c[1])); ) {
+    const p = from.get(key(c[0], c[1]));
+    path.unshift(p[2]);
+    c = [p[0], p[1]];
+  }
+  return path;
+}
+function walkTo(tx, ty) {
+  const q = WK.ppl.find(p => p.x === tx && p.y === ty),
+    c = walkTile(tx, ty),
+    t = TILEDEF[c];
+  WK.then = null;
+  if (q || (t && t.use) || (WK.M.use || {})[`${tx},${ty}`]) {
+    // a person or a thing: walk to the nearest side of it, then face it and talk or use it
+    let best = null;
+    for (const d of ['d', 'u', 'l', 'r']) {
+      const sx = tx - DIRV[d][0],
+        sy = ty - DIRV[d][1];
+      if (sx === S.wk.x && sy === S.wk.y) best = { path: [], d };
+      else if (walkFree(sx, sy)) {
+        const p = walkRoute(sx, sy);
+        if (p && (!best || p.length < best.path.length)) best = { path: p, d };
+      }
+    }
+    if (!best) return walkSay("You can't get to that from here.");
+    WK.path = best.path;
+    WK.goal = [tx, ty];
+    WK.then = best.d;
+    if (!best.path.length) walkPathStep();
+    return;
+  }
+  const p = walkRoute(tx, ty);
+  if (!p) return;
+  WK.path = p;
+  WK.goal = [tx, ty];
+}
+function walkPathStep() {
+  if (!WK.path.length) {
+    WK.path = null;
+    if (WK.then) {
+      S.wk.d = WK.then;
+      WK.then = null;
+      walkUse();
+    }
+    return;
+  }
+  const d = WK.path[0],
+    nx = S.wk.x + DIRV[d][0],
+    ny = S.wk.y + DIRV[d][1];
+  S.wk.d = d;
+  if (!walkFree(nx, ny)) {
+    // somebody wandered into the way: find another way to the same place
+    const [gx, gy] = WK.goal,
+      then = WK.then;
+    WK.path = null;
+    walkTo(gx, gy);
+    if (WK && WK.path && WK.then == null) WK.then = then;
+    return;
+  }
+  WK.path.shift();
+  WK.from = [S.wk.x, S.wk.y];
+  S.wk.x = nx;
+  S.wk.y = ny;
+  WK.moving = 1;
+  WK.t0 = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  walkMsg(null);
 }
 function walkArrive() {
   const t = TILEDEF[walkTile(S.wk.x, S.wk.y)];

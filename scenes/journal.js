@@ -301,7 +301,7 @@ function journalNotice() {
       if (!q.done) pend.push(['m', `New in your journal: ${q.t}.`]);
     }
 }
-let journalOpen = true;
+let journalOpen = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth > 560 : true; // folded on a phone
 function journalDraw() {
   const el = $('journal');
   if (!el) return;
