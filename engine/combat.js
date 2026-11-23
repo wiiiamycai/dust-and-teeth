@@ -274,17 +274,17 @@ SC.fight = () => {
       op = F.opening ? 15 : 0;
     o.push(
       [`${v} ${t.n}${pct(hit(t, op))}${matchTxt(matchOf(t, dtype(S.weapon)))}`, () => atk(0, null)],
-      [`${v} for the eyes${pct(hit(t, ea + op))}: hard, but it can end it`, () => atk(ea, 'eyes')],
-      [`${v} for the groin${pct(hit(t, ga + op))}: a good one stuns`, () => atk(ga, 'groin')],
-      [`${v} for the legs${pct(hit(t, la + op))}: it slows, and you can run`, () => atk(la, 'legs')],
-      [`${v} for the ${t.beast ? 'jaws' : 'arms'}${pct(hit(t, aa + op))}: it hits softer`, () => atk(aa, 'arms')],
+      [`Eyes${pct(hit(t, ea + op))}: can end it`, () => atk(ea, 'eyes')],
+      [`Groin${pct(hit(t, ga + op))}: stuns`, () => atk(ga, 'groin')],
+      [`Legs${pct(hit(t, la + op))}: slows it, so you can run`, () => atk(la, 'legs')],
+      [`${t.beast ? 'Jaws' : 'Arms'}${pct(hit(t, aa + op))}: softer hits`, () => atk(aa, 'arms')],
     );
   }
   // Something is winding up: get out of the way, or brace for it.
   if (winding())
     o.push(
       [
-        `Dodge${pct(dodgeP())}: if it works, the big one misses, and you get an opening`,
+        `Dodge${pct(dodgeP())}: the big one misses`,
         () => {
           F.log = [];
           F.dodged = roll(dodgeP());
@@ -293,7 +293,7 @@ SC.fight = () => {
         },
       ],
       [
-        'Brace: take half of everything this round',
+        'Brace: half damage this round',
         () => {
           F.log = ['You set your feet and tuck your chin.'];
           F.brace = true;
@@ -305,7 +305,7 @@ SC.fight = () => {
   const beasts = F.en.some(e => e.hp > 0 && e.beast);
   if (has('meat') && beasts)
     o.push([
-      `Throw meat (${S.inv.meat} left): the beasts go for it, not you`,
+      `Throw meat (${S.inv.meat}): beasts go for it`,
       () => {
         take('meat');
         F.log = ['You throw the meat. Every beast in the fight forgets you exist.'];
@@ -317,7 +317,7 @@ SC.fight = () => {
     ]);
   if (has('flare'))
     o.push([
-      `Light a flare (${S.inv.flare} left): everything here is dazzled`,
+      `Light a flare (${S.inv.flare}): dazzles them all`,
       () => {
         take('flare');
         F.log = ['You crack a flare. Red light, and a lot of squinting.'];
@@ -332,7 +332,7 @@ SC.fight = () => {
     ]);
   if (has('molotov'))
     o.push([
-      `Throw a molotov (${S.inv.molotov} left): fire on all of them, and loud`,
+      `Throw a molotov (${S.inv.molotov}): burns them all`,
       () => {
         take('molotov');
         F.loud = true;
@@ -372,14 +372,14 @@ SC.fight = () => {
   show({
     title: `Fight · round ${F.round}`,
     icon: '⚔️',
-    sub: `${w.n}${gun ? ` · ${ammoTxt(S.weapon)}` : ''} · ${F.close ? 'up close' : 'at range'}${F.en.filter(e => e.hp > 0).length > 1 ? ' · click an enemy to target it' : ''}`,
+    sub: `${w.n}${gun ? ` · ${ammoTxt(S.weapon)}` : ''} · ${F.close ? 'up close' : 'at range'}${F.en.filter(e => e.hp > 0).length > 1 ? ' · tap one to target it' : ''}`,
     text: F.log.join('\n'),
     cards,
     opts: [
       ...o,
       has('gutglue')
         ? [
-            `Gut Glue, back to full (${S.inv.gutglue} left)`,
+            `Gut Glue, back to full (${S.inv.gutglue})`,
             () => {
               take('gutglue');
               F.log = [

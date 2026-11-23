@@ -207,11 +207,20 @@ SC.restart = () => {
     if (e.target && e.target.closest && e.target.closest('#rstb')) restartAsk();
   });
 })();
+// The ☰ on the status bar: journal, character panel, sound, a new life, the walking switch. On a phone they
+// live here, so every other screen fits in one, pinned.
+function togglePanel(on) {
+  const b = document.body;
+  b.classList.toggle('panel', on == null ? !b.classList.contains('panel') : on);
+  if (b.classList.contains('panel'))
+    document.querySelectorAll('#journal details, #sheet details').forEach(d => (d.open = true));
+  $('wrap').scrollTop = 0;
+}
 function hud() {
   const h = $('hud');
   if (!S) {
     h.innerHTML = '<b>DUST &amp; TEETH</b>';
     return;
   }
-  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span class="hx">🛡️ ${A[S.armor].n}</span><span class="hx">⚔️ ${W[S.weapon].n}</span><span class="hx">${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div>`;
+  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span class="hx">🛡️ ${A[S.armor].n}</span><span class="hx">⚔️ ${W[S.weapon].n}</span><span class="hx">${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div><button class="hpanel" onclick="togglePanel()" aria-label="Journal and character">☰</button>`;
 }

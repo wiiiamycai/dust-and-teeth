@@ -915,3 +915,193 @@ body.walking .walk .wmsg.top {
     display: none;
   }
 }
+/* iOS lets the whole page rubber-band (dragged up, down and sideways) even when nothing scrolls. Pin the page;
+   only the game's column scrolls, only up and down, and it doesn't bounce either. */
+html,
+body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+#wrap {
+  overscroll-behavior: none;
+}
+/* ---- pinned (v7.3, Will: "pin everything"): on a phone every screen is one fixed screen ---- */
+.hpanel {
+  display: none;
+}
+@media (max-width: 560px), (pointer: coarse) {
+  #wrap {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #hud {
+    position: static;
+    flex: none;
+    grid-template-columns: auto 1fr auto;
+  }
+  .hpanel {
+    display: block;
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    font: inherit;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--a);
+    background: none;
+    border: 1px solid var(--dim);
+    border-radius: 6px;
+    padding: 6px 10px;
+    touch-action: manipulation;
+  }
+  #head,
+  #log {
+    flex: none;
+  }
+  #log p:not(:nth-last-child(-n + 3)) {
+    display: none; /* the last three things that happened */
+  }
+  #text {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  #cards {
+    flex: 0 1 auto;
+    min-height: 0;
+    max-height: 34%;
+    overflow-y: auto;
+  }
+  /* only a long list of options scrolls, inside its own box, and never bounces or slides */
+  #opts {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: none;
+    touch-action: pan-y;
+  }
+  #text,
+  #cards {
+    overscroll-behavior: none;
+    touch-action: pan-y;
+  }
+  #journal,
+  #sheet,
+  #foot {
+    display: none;
+  }
+  /* the ☰ panel: journal, character, sound, new life, the walking switch */
+  body.panel #wrap {
+    overflow-y: auto;
+    touch-action: pan-y;
+  }
+  body.panel #head,
+  body.panel #log,
+  body.panel #text,
+  body.panel #cards,
+  body.panel #map,
+  body.panel #view,
+  body.panel #opts {
+    display: none;
+  }
+  body.panel #journal,
+  body.panel #sheet,
+  body.panel #foot {
+    display: block;
+  }
+}
+/* ---- the phone, tidied (v7.3) ---- */
+@media (max-width: 560px), (pointer: coarse) {
+  /* the status bar on one line: name, health, teeth, day, and the ☰ */
+  #hud {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+  }
+  #hud > b {
+    flex: none;
+    font-size: 12px;
+  }
+  #hud > div:not(#hudx) {
+    flex: 1;
+    min-width: 30px;
+  }
+  #hudx {
+    flex: none;
+    grid-column: auto;
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .hpanel {
+    flex: none;
+    padding: 4px 9px;
+    font-size: 18px;
+  }
+  /* the title: a smaller icon and a single line under it */
+  #head .ic {
+    font-size: 30px;
+  }
+  #head h1 {
+    font-size: 19px;
+    margin: 0;
+  }
+  #head .sub {
+    font-size: 11px;
+  }
+  #text {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  /* people and enemies: compact two-up tiles */
+  #cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  #cards .card {
+    margin: 0;
+    padding: 6px 8px;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 6px;
+    align-items: center;
+    text-align: left;
+  }
+  #cards .card .ci {
+    grid-row: 1 / span 3;
+    font-size: 22px;
+  }
+  #cards .card .cn {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #cards .card .cs {
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #cards .card .bar {
+    grid-column: 2;
+  }
+  /* options: tighter, so most screens' choices fit without scrolling */
+  #opts button {
+    font-size: 15px;
+    line-height: 1.3;
+    padding: 8px 6px;
+    min-height: 40px;
+  }
+  #foot .tip {
+    display: none; /* there are no number keys on a phone */
+  }
+}

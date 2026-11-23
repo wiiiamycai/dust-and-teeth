@@ -167,7 +167,7 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 - `tests/paths.json` holds the scripted consequence tests that `all.js` runs. Add one for each new consequence chain.
 - `node tests/sprites.js index.html` checks the portraits: every grid uses palette letters and fits its box, every person has a portrait, it is found from their talk screen, and it draws both open-eyed and blinking.
 - `node tests/golden.js index.html` replays 300 fixed-seed games (with reloads) and compares a fingerprint of every screen and save against `tests/golden.json`. It must match after any refactor. When a change is meant to alter gameplay it will mismatch: re-record with `node tests/golden.js index.html record` and commit the new `golden.json` with that change.
-- The live build is at https://beautiful-valkyrie-9f63d9.netlify.app. Netlify deploys it from `main`, so a push to `main` updates it.
+- The live build is at https://wiiiamycai.github.io/dust-and-teeth/ (GitHub Pages, from `main`), so a push to `main` updates it. Will plays on his iPhone, installed to the home screen; design for that first.
 - For a browser check, `.claude/launch.json` serves the folder at `http://localhost:8137` (`python -m http.server`). The browser caches the scripts: force fresh copies before checking a change.
 
 - `npm run audit` (`tools/audit.js`) is the depth audit, not a test: it writes `tools/AUDIT.md`, listing facts a check needs that nothing teaches, flags set but never read, secrets with no one to tell, events nobody reacts to, plots with under three ways to change, and a depth score per person, thinnest first. Run it to find where to add depth next.

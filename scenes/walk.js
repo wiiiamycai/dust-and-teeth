@@ -798,6 +798,7 @@ SC.map = mode => {
 // Leaving the walking screen for any other screen stops the walking loop.
 const _goWalk = go;
 go = (id, ...args) => {
+  if (typeof document !== 'undefined' && document.body) document.body.classList.remove('panel'); // a new screen closes the ☰ panel
   if (id !== 'walk') walkStop();
   return _goWalk(id, ...args);
 };
