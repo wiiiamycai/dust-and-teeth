@@ -1290,3 +1290,62 @@ body.overlay #opts button .n {
 body.overlay #opts button .n::before {
   font-size: 12px;
 }
+/* ---- the battle screen (v7.6) ---- */
+body.inbattle #cards {
+  display: none; /* the enemies are on the battle screen */
+}
+body.inbattle #view {
+  display: block;
+  margin: 6px 0;
+  padding: 0;
+  border: 3px solid #2a1e18;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #2a1e18;
+}
+.battle canvas {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+/* the top menu: FIGHT, BAG, RUN, two by two, like the handheld */
+body.inbattle.bmain #opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+body.inbattle.bmain #opts button {
+  font-weight: bold;
+  font-size: 17px;
+  text-align: center;
+  border: 2px solid #e4dcc4;
+  border-radius: 8px;
+  padding: 12px 6px;
+}
+body.inbattle.bmain #opts button.bfight {
+  color: #a8281a;
+}
+body.inbattle.bmain #opts button.bbag {
+  color: #8a6a10;
+}
+body.inbattle.bmain #opts button.brun {
+  color: #3a5a8a;
+}
+body.inbattle.bmain #opts button .n {
+  display: none;
+}
+/* the dialogue box holds what just happened, and stays short */
+body.inbattle #text {
+  max-height: 22vh;
+  font-size: 14px;
+}
+body.inbattle #head .ic {
+  display: none;
+}
+body.inbattle #view {
+  flex: none; /* the battle picture never gets squashed by a long menu; the menu scrolls instead */
+}
+body.inbattle #opts {
+  max-height: 34vh;
+}
