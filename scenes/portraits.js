@@ -106,7 +106,8 @@ Object.assign(PX, {
   // a mask: pixels added by shapes, then painted in one go with an ink outline and top-left light
   mask() {
     const s = new Set(),
-      K = (x, y) => (y + 32) * 256 + x + 32,
+      // room for big drawings too (a town is 384 wide): 4096 across, from -512
+      K = (x, y) => (y + 512) * 4096 + x + 512,
       M = {
         s,
         has: (x, y) => s.has(K(x, y)),
@@ -159,7 +160,7 @@ Object.assign(PX, {
         },
         // take pixels out: (x, y) => true removes it
         cut(f) {
-          for (const k of [...s]) if (f((k % 256) - 32, Math.floor(k / 256) - 32)) s.delete(k);
+          for (const k of [...s]) if (f((k % 4096) - 512, Math.floor(k / 4096) - 512)) s.delete(k);
           return M;
         },
         // keep only what is also in another mask
@@ -172,7 +173,7 @@ Object.assign(PX, {
           return M;
         },
         each(f) {
-          for (const k of s) f((k % 256) - 32, Math.floor(k / 256) - 32);
+          for (const k of s) f((k % 4096) - 512, Math.floor(k / 4096) - 512);
         },
         // paint: R is a ramp. o.line false skips the outline, o.t is where the shadow side starts (0..1 across
         // each row), o.flat paints just R.m, o.hi adds a highlight rim, o.ink a different outline colour
