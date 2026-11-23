@@ -547,11 +547,20 @@ const CHIBI_HAIR = {
   ],
 };
 function chibiDraw(g, id, dir, fr) {
+  g.save();
+  g.translate(0, 3);
+  try {
+    return chibiFig(g, id, dir, fr);
+  } finally {
+    g.restore();
+  }
+}
+function chibiFig(g, id, dir, fr) {
   if (dir === 'right') {
     g.save();
     g.translate(CHIBI_W, 0);
     g.scale(-1, 1);
-    chibiDraw(g, id, 'left', fr);
+    chibiFig(g, id, 'left', fr);
     g.restore();
     return;
   }
@@ -578,7 +587,7 @@ function chibiDraw(g, id, dir, fr) {
     bx1 = big ? 19 : small ? 16 : 17,
     old = s.build === 'old' ? 1 : 0;
   // a shadow and a glow
-  PX.oval(g, 12, 30, 7, 1, 'rgba(0,0,0,0.25)');
+  PX.oval(g, 12, 27, 7, 1, 'rgba(0,0,0,0.25)');
   if (has('glow')) PX.oval(g, 12, 14, 11, 14, 'rgba(168,224,124,0.16)');
   const o = { t: 0.72, hi: 1 };
   // ---- legs and shoes ----
@@ -586,24 +595,24 @@ function chibiDraw(g, id, dir, fr) {
     const L = PX.mask(),
       F = PX.mask(),
       legs = wear === 'dress' ? Sk : B;
+    // the legs barely show: just the feet, peeking out under the body, one tucked up on each step
     if (side) {
-      const a = fr === 1 ? -2 : fr === 2 ? 2 : 0;
-      L.rect(10 + a, 25, 3, 2).rect(11 - a, 25, 3, 2);
-      F.rect(9 + a, 27, 4, 2).rect(10 - a, 27, 4, 2);
+      const a = fr === 1 ? -1 : fr === 2 ? 1 : 0;
+      F.rect(9 + a, 24, 4, 3).rect(11 - a, 24, 4, 3);
     } else {
       const l = fr === 1 ? -1 : 0,
         r = fr === 2 ? -1 : 0;
-      L.rect(8, 25, 3, 2 + l).rect(13, 25, 3, 2 + r);
-      F.rect(7, 27 + l, 4, 2).rect(13, 27 + r, 4, 2);
+      F.rect(8, 24, 3, 3 + l).rect(13, 24, 3, 3 + r);
     }
-    L.paint(g, wear === 'shorts' ? Sk : legs, o);
+    if (wear === 'shorts' || wear === 'dress') L.rect(9, 24, 6, 1);
+    L.paint(g, Sk, o);
     F.paint(g, Sh, o);
   }
   // ---- the body ----
   const y0 = 18 + bob + old;
   const body = PX.mask();
-  if (side) body.rect(8, y0, 9, 25 - y0 + (wear === 'robe' ? 4 : 0));
-  else body.rect(bx0, y0, bx1 - bx0 + 1, 25 - y0 + (wear === 'robe' ? 4 : 0));
+  if (side) body.rect(8, y0, 9, 25 - y0 + (wear === 'robe' ? 1 : 0));
+  else body.rect(bx0, y0, bx1 - bx0 + 1, 25 - y0 + (wear === 'robe' ? 1 : 0));
   body.cut((x, y) => y === y0 && (x === (side ? 8 : bx0) || x === (side ? 16 : bx1)));
   body.paint(g, T, o);
   // trousers up to the belt, a skirt, a long coat
@@ -613,27 +622,27 @@ function chibiDraw(g, id, dir, fr) {
       .paint(g, B, o);
   if (wear === 'dress')
     PX.mask()
-      .trap(22 + bob, 27, side ? 8 : bx0, side ? 16 : bx1, side ? 7 : bx0 - 1, side ? 17 : bx1 + 1)
+      .trap(22 + bob, 25, side ? 8 : bx0, side ? 16 : bx1, side ? 7 : bx0 - 1, side ? 17 : bx1 + 1)
       .paint(g, B, o);
   if (wear === 'robe') {
     PX.mask()
-      .trap(19 + bob, 28, side ? 8 : bx0, side ? 16 : bx1, side ? 6 : bx0 - 2, side ? 18 : bx1 + 2)
+      .trap(19 + bob, 25, side ? 8 : bx0, side ? 16 : bx1, side ? 6 : bx0 - 2, side ? 18 : bx1 + 2)
       .paint(g, T, o);
-    PX.r(g, side ? 7 : 9, 28, 3, 1, Sh.o);
-    PX.r(g, side ? 11 : 13, 28, 3, 1, Sh.o);
+    PX.r(g, side ? 7 : 9, 26, 3, 1, Sh.o);
+    PX.r(g, side ? 11 : 13, 26, 3, 1, Sh.o);
   }
   if (wear === 'coat') {
     const C = R(s.coat);
     if (side)
       PX.mask()
-        .rect(9, y0, 8, 28 - y0)
+        .rect(9, y0, 8, 25 - y0)
         .paint(g, C, o);
     else {
       PX.mask()
-        .rect(bx0, y0, 4, 28 - y0)
+        .rect(bx0, y0, 4, 25 - y0)
         .paint(g, C, o);
       PX.mask()
-        .rect(bx1 - 3, y0, 4, 28 - y0)
+        .rect(bx1 - 3, y0, 4, 25 - y0)
         .paint(g, C, o);
     }
   }
