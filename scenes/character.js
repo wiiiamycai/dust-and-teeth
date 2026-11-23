@@ -1,9 +1,8 @@
 'use strict';
 // ================= CHARACTER =================
-SC.char = () => {
-  const st = S.stats,
-    sk = S.skills,
-    o = [];
+// 🎒 the bag: what you wield and wear, and what you carry, with using it
+SC.inv = () => {
+  const o = [];
 
   S.weapons
     .filter(w => w !== S.weapon)
@@ -12,7 +11,7 @@ SC.char = () => {
         `Wield ${W[w].n} (${W[w].t}, ${W[w].d[0]}-${W[w].d[1]})`,
         () => {
           S.weapon = w;
-          go('char');
+          go('inv');
         },
       ]),
     );
@@ -23,7 +22,7 @@ SC.char = () => {
         `Wear ${A[a].n} (armour ${A[a].dr}${A[a].tw ? ', twitch ' + A[a].tw : ''})`,
         () => {
           S.armor = a;
-          go('char');
+          go('inv');
         },
       ]),
     );
@@ -33,7 +32,7 @@ SC.char = () => {
       () => {
         take('gutglue');
         say(`+${heal(GLUE())} HP.`);
-        go('char');
+        go('inv');
       },
     ]);
   if (has('meat') && S.hp < S.maxhp)
@@ -42,7 +41,7 @@ SC.char = () => {
       () => {
         take('meat');
         say(`+${heal(15)} HP. Don't wonder.`);
-        go('char');
+        go('inv');
       },
     ]);
   if (has('beer') && S.hp < S.maxhp)
@@ -51,9 +50,35 @@ SC.char = () => {
       () => {
         take('beer');
         say(`+${heal(8)} HP.`);
-        go('char');
+        go('inv');
       },
     ]);
+  o.push(['Close', () => panelClose()]);
+  const items = Object.keys(S.inv)
+    .filter(k => S.inv[k] > 0)
+    .map(k => `${ITEMS[k] || k}${S.inv[k] > 1 ? ' x' + S.inv[k] : ''}`);
+  const wp = W[S.weapon],
+    gun = isGun(S.weapon) && !wp.free;
+  show({
+    title: 'Bag',
+    icon: '🎒',
+    sub: `🦷 ${S.teeth} teeth`,
+    text: `IN YOUR HANDS
+${modName(S.weapon)}${gun ? ` (${S.inv.ammo || 0} bullets)` : ''}
+
+ON YOUR BACK
+${modName(S.armor)}
+
+CARRYING
+${items.join(', ') || 'Regret.'}`,
+    opts: o,
+  });
+};
+// 🧍 you: body, skills, perks, and what the valley calls you
+SC.char = () => {
+  const st = S.stats,
+    sk = S.skills,
+    o = [];
   if (S.spouse)
     o.push([
       `Murder your spouse, ${NPC[S.spouse].n}`,
@@ -64,9 +89,6 @@ SC.char = () => {
       'danger',
     ]);
   o.push(['Close', () => panelClose()]);
-  const items = Object.keys(S.inv)
-    .filter(k => S.inv[k] > 0)
-    .map(k => `${ITEMS[k] || k}${S.inv[k] > 1 ? ' x' + S.inv[k] : ''}`);
   const kn = keen(),
     stl = Object.keys(st)
       .map(k => `${cap(k)}: ${kn ? (k === 'twitch' ? ptw() : st[k]) : statWord(k === 'twitch' ? ptw() : st[k])}`)
@@ -74,20 +96,11 @@ SC.char = () => {
     skl = Object.keys(sk)
       .map(k => `${cap(k)}: ${skillWord(k)}${kn ? ' (' + sk[k] + ')' : ''}`)
       .join(', ');
-  const wp = W[S.weapon],
-    gun = isGun(S.weapon) && !wp.free;
   show({
     title: 'You',
-    icon: '🎒',
-    sub: `HP ${S.hp}/${S.maxhp} · 🦷 ${S.teeth} · ${S.kills} kills`,
-    text: `GEAR
-Weapon: ${modName(S.weapon)}${gun ? ` (${S.inv.ammo || 0} bullets)` : ''}
-Armour: ${modName(S.armor)}
-
-CARRYING
-${items.join(', ') || 'Regret.'}
-
-BODY
+    icon: '🧍',
+    sub: `HP ${S.hp}/${S.maxhp} · Day ${S.day} · ${S.kills} kills`,
+    text: `BODY
 ${stl}
 
 SKILLS

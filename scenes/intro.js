@@ -210,14 +210,14 @@ SC.restart = () => {
 // ---- the status bar (v9.6, Will: "character and inventory in one, journals in one, as icons under the XP bar;
 // audit the HUD, a lot of it doesn't make sense") ----
 // Health, then the experience bar towards your next perk, teeth and the day; under them three buttons:
-// 🎒 you (stats, gear, what you carry, perks, reputation), 📜 the journal, ⚙️ sound and a new life.
+// 🧍 you (body, skills, perks, reputation), 🎒 your bag (gear and what you carry, v9.8: Will wanted them apart),
+// 📜 the journal, ⚙️ sound and a new life.
 // Your name (always Nobody), your gear and your reputation were crammed into the bar and cut off on a phone:
 // they live in 🎒 now. The ☰ panel, the side panels and the footer are gone.
-const PANELS = ['char', 'journal', 'settings'];
 function openPanel(k) {
   if (!S || S.fight || S.end || !SC[k]) return;
-  if (S.scene === k) return panelClose();
-  if (!PANELS.includes(S.scene)) S.ret = { scene: S.scene, args: S.args };
+  if (PANEL === k) return panelClose();
+  if (!PANEL) S.ret = { scene: S.scene, args: S.args };
   go(k);
 }
 function panelClose() {
@@ -240,5 +240,5 @@ function hud() {
       ? `<div class="bar xp"><i style="width:${Math.round(pb.frac * 100)}%"></i><span>★ ${esc(pb.txt)}</span></div>`
       : '') +
     `</div><div class="hstat"><span>🦷 ${S.teeth}</span><span>Day ${S.day}</span></div></div>` +
-    `<div class="hicons">${btn('char', '🎒 You')}${btn('journal', `📜 Journal${q ? ` (${q})` : ''}`)}${btn('settings', '⚙️')}</div>`;
+    `<div class="hicons">${btn('char', '🧍 You')}${btn('inv', '🎒 Bag')}${btn('journal', `📜 Journal${q ? ` (${q})` : ''}`)}${btn('settings', '⚙️')}</div>`;
 }

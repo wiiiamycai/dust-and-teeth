@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v9.7 (23 Nov 2026)';
+const VERSION = 'v9.8 (23 Nov 2026)';
 // The calendar (v9.5, Will: "set the nuke day to say 120 days instead of 25"). Every date and every wait in the
 // story goes through DAYS: the old 25-day calendar, stretched 4.8 times, now that each town on a road is a day.
 const TIME = 4.8;
@@ -144,11 +144,16 @@ document.addEventListener('keydown', e => {
   if (/^[0-9]$/.test(e.key)) choose(e.key === '0' ? 9 : +e.key - 1);
 });
 const SC = {};
+// Screens laid over the game (the status bar's buttons, and the new-life question): they don't become where
+// you are, so a reload or Close goes back to the screen under them.
+const OVER = ['char', 'inv', 'journal', 'settings', 'restart'];
+let PANEL = null;
 function go(id, ...args) {
-  if (S && id !== 'char' && id !== 'restart') {
+  if (S && !OVER.includes(id)) {
     S.scene = id;
     S.args = args;
   }
+  PANEL = OVER.includes(id) ? id : null;
   SC[id](...args);
 }
 const goHere = () => go('hub', S.here || 'scrapwell');
