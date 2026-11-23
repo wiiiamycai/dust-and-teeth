@@ -805,10 +805,10 @@ function chibiFig(g, id, dir, fr) {
   } else hm.rows(3, hy - 10, deep(CHIBI_HAIR[s.hs] || []));
   hm.paint(g, H, o);
   // from the side, an ear, unless the hair hides it
-  if (side && !['long', 'bob', 'curly', 'bunches'].includes(s.hs))
-    PX.mask()
-      .rect(hx + 2, fy, 3, 3)
-      .paint(g, Sk, { t: 0.6 });
+  if (side && !['long', 'bob', 'curly', 'bunches'].includes(s.hs)) {
+    PX.r(g, hx + 2, fy + 1, 2, 2, Sk.d);
+    PX.p(g, hx + 2, fy + 1, Sk.m);
+  }
   if (s.hs === 'braid')
     PX.mask()
       .rect(side ? hx + 5 : 17, hy + 4, 3, 9)
