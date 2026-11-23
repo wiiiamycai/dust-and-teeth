@@ -571,3 +571,9 @@ Will: "balance the weapons as well and leveling, balance everything". Measured w
 ## A home-screen app (v7.0)
 
 265. **It installs like an app and works offline** (Will: "Is there any way to make this an app?"). Add to Home Screen already opened it full screen with its own icon; now a service worker (`sw.js`) keeps a copy of every file, so it opens instantly from the icon and plays with no signal. The page is fetched fresh whenever there is signal, and every script carries its version in `?v=`, so a new build arrives by itself. An App Store build (Capacitor and Xcode) was considered and dropped: it needs a Mac and Apple's yearly developer fee, and would feel no different. The bump in `sw.js`'s cache name goes with VERSION.
+
+## Full-screen walking with a hidden pad (v7.1)
+
+266. **A hidden D-pad** (Will: "the hidden d pad is the way to go"). Put a thumb down anywhere on the screen and drag: you walk that way while it's down, slide to steer, let go to stop. A faint ring shows where the thumb landed. A quick tap with no drag still walks to the spot, or talks to whoever is there.
+267. **The whole iPhone screen** (Will: "utilise the full iPhone screen"). While walking, the map fills the phone: 11 tiles across and as many down as the phone is tall. A slim bar over the top shows the place, teeth, day and health, and a Menu button opens the ordinary page (the place's words and options, journal, character), with "Back to walking" first. What just happened shows in the message box when you arrive. Small maps sit centred on the screen.
+268. **Smoother steps:** each tile starts exactly where the last one ended, so there is no hitch between tiles, and steps are a little quicker (165 ms).

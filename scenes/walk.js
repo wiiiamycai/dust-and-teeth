@@ -5,9 +5,16 @@
 // scenes. A place with a map (data/maps.js) is walked; a place without one is the text screen, as before.
 // Talking, shops and everything else open as the usual screen; Back returns you to where you stood.
 // No canvas (the headless tests), or the footer switch set to text: everything plays as text, exactly as before.
-const TILE = 16,
-  VW = 15,
-  VH = 10; // the screen is 15 x 10 tiles, 240 x 160, like the GBA
+const TILE = 16;
+// The screen fills the phone: 11 tiles across, and as many down as the phone is tall (set when the screen opens).
+let VW = 15,
+  VH = 10;
+const walkSize = () => {
+  const w = (typeof window !== 'undefined' && window.innerWidth) || 390,
+    h = (typeof window !== 'undefined' && window.innerHeight) || 844;
+  VW = w < h ? 11 : 17;
+  VH = Math.max(7, Math.round((VW * h) / w));
+};
 const WALK_KEY = 'dust_teeth_walk';
 const walkOn = () => {
   try {
@@ -310,17 +317,38 @@ SC.walk = (loc, ids, opts, text) => {
     icon: M.valley ? '🏜️' : LOC[loc].i,
     sub: `Day ${S.day} · tap to walk, tap someone to talk`,
     text: M.valley ? 'Walk into a place to go there. Each trip takes a day.' : text || '',
-    opts: [...(opts || []), M.valley ? ['The old map (pick a place)', () => go('map', 'text')] : null, charOpt()],
+    opts: [
+      ['Back to walking', () => document.body.classList.remove('walkmenu')],
+      ...(opts || []),
+      M.valley ? ['The old map (pick a place)', () => go('map', 'text')] : null,
+      charOpt(),
+    ],
   });
   walkMount(loc, M, ids || []);
 };
 function walkMount(loc, M, ids) {
   walkStop();
+  walkSize();
   document.body.classList.add('walking');
+  document.body.classList.remove('walkmenu');
   const vw = $('view');
   vw.hidden = false;
+  const L = LOC[loc],
+    hp = clamp((S.hp * 100) / S.maxhp, 0, 100);
+  // the full screen: the map, a slim bar over the top, the message box, and the ring under your thumb
   vw.innerHTML =
-    '<div class="walk"><div class="scr"><canvas id="wcv" width="240" height="160"></canvas><div id="wmsg" class="wmsg" hidden></div></div></div>';
+    `<div class="walk"><canvas id="wcv" width="${VW * TILE}" height="${VH * TILE}"></canvas>` +
+    `<div class="whud"><div class="wl"><b>${esc(M.valley ? 'The Wasteland' : L.n)}</b><span>🦷 ${S.teeth} · Day ${S.day}</span></div>` +
+    `<div class="whp"><i style="width:${hp}%"></i></div><button class="wmenu">Menu</button></div>` +
+    '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div></div>';
+  vw.querySelector('.wmenu').addEventListener('pointerdown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    WK.path = null;
+    WK.held = null;
+    document.body.classList.add('walkmenu');
+    $('wrap').scrollTop = 0;
+  });
   const cv = $('wcv');
   const rows = M.rows,
     H = rows.length,
@@ -368,18 +396,60 @@ function walkMount(loc, M, ids) {
   };
   WK.g.imageSmoothingEnabled = false;
   // input: the pad and A/B on screen, arrows or WASD and Z/X on a keyboard
-  // Tap to walk: tap the ground and you walk there; tap a person and you go and talk; tap a door, well, pump
-  // or sign and you go and use it.
+  // The hidden pad: put a thumb down anywhere and drag the way you want to go. You keep walking while it's
+  // down, slide to steer, let go to stop. A quick tap with no drag walks to that spot, or talks to whoever is there.
+  const ring = $('wring');
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
     if (!WK || WK.busy) return;
+    try {
+      cv.setPointerCapture(e.pointerId);
+    } catch (x) {}
+    WK.touch = { x: e.clientX, y: e.clientY, t: Date.now(), drag: false };
+  });
+  cv.addEventListener('pointermove', e => {
+    const T = WK && WK.touch;
+    if (!T) return;
+    const dx = e.clientX - T.x,
+      dy = e.clientY - T.y;
+    if (!T.drag && Math.hypot(dx, dy) < 14) return;
+    if (!T.drag) {
+      T.drag = true;
+      WK.path = null;
+      walkMsg(null);
+      const b = $('view').getBoundingClientRect();
+      ring.style.left = T.x - b.left + 'px';
+      ring.style.top = T.y - b.top + 'px';
+      ring.hidden = false;
+    }
+    WK.held = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'r' : 'l') : dy > 0 ? 'd' : 'u';
+  });
+  const lift = (e, cancel) => {
+    const T = WK && WK.touch;
+    if (!T) return;
+    WK.touch = null;
+    ring.hidden = true;
+    if (T.drag || cancel) {
+      WK.held = null;
+      return;
+    }
+    if (Date.now() - T.t > 500) return;
     walkMsg(null);
     const b = cv.getBoundingClientRect(),
       sc = b.width / (VW * TILE);
-    const tx = Math.floor(((e.clientX - b.left) / sc + (WK.cx || 0)) / TILE),
-      ty = Math.floor(((e.clientY - b.top) / sc + (WK.cy || 0)) / TILE);
-    walkTo(tx, ty);
-  });
+    walkTo(
+      Math.floor(((e.clientX - b.left) / sc + (WK.cx || 0)) / TILE),
+      Math.floor(((e.clientY - b.top) / sc + (WK.cy || 0)) / TILE),
+    );
+  };
+  cv.addEventListener('pointerup', e => lift(e, false));
+  cv.addEventListener('pointercancel', e => lift(e, true));
+  // A message from the place (what just happened) shows in the box when you arrive.
+  const said = [...($('log').querySelectorAll('p') || [])]
+    .slice(-2)
+    .map(p => p.textContent)
+    .join(' ');
+  if (said) setTimeout(() => walkMsg(said), 0);
   // a few people wander a step or two from their spot
   WK.timers.push(
     setInterval(() => {
@@ -461,15 +531,18 @@ if (typeof document !== 'undefined' && document.addEventListener) {
   });
 }
 // ---- moving: one tile at a time, smooth, and the camera follows ----
-const STEP_MS = 190;
+const STEP_MS = 165;
 function walkLoop() {
   if (!WK) return;
   const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  let carry = now;
   if (WK.moving && now - WK.t0 >= STEP_MS) {
+    carry = Math.min(now, WK.t0 + STEP_MS); // the next step starts where this one ended, so there's no hitch
     WK.moving = 0;
     walkArrive();
     if (!WK) return;
   }
+  WK.carry = carry;
   if (!WK.moving && !WK.held && WK.path && !WK.busy) walkPathStep();
   if (!WK) return;
   if (!WK.moving && WK.held && !WK.busy) {
@@ -482,7 +555,7 @@ function walkLoop() {
       S.wk.x = nx;
       S.wk.y = ny;
       WK.moving = 1;
-      WK.t0 = now;
+      WK.t0 = carry;
       walkMsg(null);
     }
   }
@@ -497,11 +570,13 @@ function walkDraw(now) {
   // the camera keeps you in the middle, and stops at the edges of the map
   const SW = VW * TILE,
     SH = VH * TILE;
-  const cx = clamp(fx * TILE - 7 * TILE, 0, Math.max(0, W * TILE - SW)),
-    cy = clamp(fy * TILE - 4.5 * TILE, 0, Math.max(0, H * TILE - SH));
+  const cam = (f, n, view) =>
+    n * TILE <= view ? -(view - n * TILE) / 2 : clamp(f * TILE - (view - TILE) / 2, 0, n * TILE - view);
+  const cx = cam(fx, W, SW),
+    cy = cam(fy, H, SH);
   g.fillStyle = GP.ink;
   g.fillRect(0, 0, SW, SH);
-  g.drawImage(big, Math.round(cx), Math.round(cy), SW, SH, 0, 0, SW, SH);
+  g.drawImage(big, Math.round(-cx), Math.round(-cy)); // the whole map, shifted; the canvas clips it
   // people are taller than a tile, so the ones further down the screen are drawn last
   const step = WK.moving ? 1 + (Math.floor(now / (STEP_MS / 2)) % 2) : 0;
   const all = [
@@ -621,7 +696,7 @@ function walkPathStep() {
   S.wk.x = nx;
   S.wk.y = ny;
   WK.moving = 1;
-  WK.t0 = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  WK.t0 = WK.carry || (typeof performance !== 'undefined' ? performance.now() : Date.now());
   walkMsg(null);
 }
 function walkArrive() {
@@ -687,9 +762,8 @@ function walkMsg(t) {
   m.hidden = !t;
   m.textContent = t || '';
   // the box sits at the bottom, like the handheld, unless you're standing down there
-  const low = WK && WK.sy != null ? WK.sy > 80 : true;
-  m.style.top = low ? '3px' : 'auto';
-  m.style.bottom = low ? 'auto' : '3px';
+  const low = WK && WK.sy != null ? WK.sy > (VH * TILE) / 2 : true;
+  m.classList.toggle('top', low);
 }
 const walkSay = t => walkMsg(t);
 
