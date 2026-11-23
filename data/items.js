@@ -59,6 +59,7 @@ const ITEMS = {
   ammo: 'Bullets',
   krugbook: "Krug's notebook",
   core: 'Fusion core',
+  cell: 'Plasma cell',
   // parts for Sprocket's bench at the Drowned Mall
   lens: 'Pre-war lens',
   tube: 'Steel tube',

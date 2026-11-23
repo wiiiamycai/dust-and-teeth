@@ -736,7 +736,6 @@ function kill(id, how, loud) {
   }
   if (id === 'nigel' && !S.f.nigel) S.f.nigel = 'dead';
   if (id === 'bess' && S.n.bess.loc === 'wastes') S.f.queenFate = 'killed';
-  if (id === 'elder') S.end = { type: 'elder' };
   // A quiet kill with nobody else in the room stays secret. A gunshot never does.
   const nobody = !IDS.some(x => x !== id && alive(x) && !NPC[x].animal && S.n[x].loc === S.here);
   if ((how === 'murder' || how === 'slain') && !loud && nobody) event(how, id, { secret: true });

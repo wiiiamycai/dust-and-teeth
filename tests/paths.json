@@ -981,24 +981,26 @@
   ]
  },
  {
-  "name": "Heist: lift the Mayor's Plasma Rifle, and it never needs bullets",
+  "name": "Heist: the Plasma Rifle needs the cell from round Ma Thistle's neck, then it never needs bullets",
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:say = () => {}; kill('elder', 'murder', true)",
+   "EXPECT:has('cell') && !S.end",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "EVAL:S.n.mayor.op = 30",
    "Mayor Fenwick",
    "What's in the parlour",
    "RAND:0",
-   "Lift the Plasma Rifle",
-   "EXPECT:S.weapons.includes('plasma') && S.weapon === 'plasma'",
+   "Slot Ma's plasma cell",
+   "EXPECT:S.weapons.includes('plasma') && S.weapon === 'plasma' && !has('cell')",
    "EVAL:S.inv.ammo = 5; fight([spawn('raider')], {}); atk(0, null)",
    "EXPECT:S.inv.ammo >= 5 && !dry('plasma')"
   ]
  },
  {
-  "name": "Heist: a fusion core from the Sky-Bus brings the Power Armour to life",
+  "name": "Heist: the fusion core comes only off Crane's body, and brings the Power Armour to life",
   "steps": [
    "Crawl out of bed",
    "Go",
@@ -1006,9 +1008,11 @@
    "Leave (map)",
    "TRAVEL:The Sky-Bus",
    "Pry open the cargo hold",
-   "EXPECT:has('core')",
+   "EXPECT:!has('core')",
    "Leave (map)",
    "TRAVEL:Rustwater",
+   "EVAL:say = () => {}; kill('sheriff', 'murder', true)",
+   "EXPECT:has('core')",
    "Mayor Fenwick",
    "What's in the parlour",
    "RAND:0",
@@ -1021,13 +1025,14 @@
   "steps": [
    "Crawl out of bed",
    "Go",
+   "EVAL:give('cell')",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Mayor Fenwick",
    "What's in the parlour",
-   "EXPECT:!cur.some(o => /Lift the Plasma Rifle/.test(o[0]))",
+   "EXPECT:!cur.some(o => /Plasma Rifle off the wall/.test(o[0]))",
    "EVAL:S.n.mayor.op = 30; go('talk', 'mayor')",
-   "SAY:Lift the Plasma Rifle"
+   "SAY:Slot Ma's plasma cell"
   ]
  },
  {
@@ -1035,7 +1040,7 @@
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.dead.mayor = 1; give('core')",
+   "EVAL:S.dead.mayor = 1; give('core'); give('cell')",
    "Leave (map)",
    "TRAVEL:Rustwater",
    "Search Fenwick's empty house",
@@ -5226,6 +5231,30 @@
    "EXPECT:knew('gus.secret') && !cur.some(o => /^\"I know /.test(o[0]))",
    "EVAL:know('crumb.secret'); go('talk', 'crumb')",
    "EXPECT:cur.some(o => /^\"I know /.test(o[0]))"
+  ]
+ },
+ {
+  "name": "Heist: without their hearts, the Mayor's toys stay dead, even with Fenwick gone",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:S.dead.mayor = 1",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EXPECT:!cur.some(o => /Fenwick's empty house/.test(o[0]))",
+   "EXPECT:!S.weapons.includes('plasma') && !S.armors.includes('power')"
+  ]
+ },
+ {
+  "name": "Crane: carrying no longer protects her; you can attack her",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Leave (map)",
+   "TRAVEL:Rustwater",
+   "EVAL:S.f.cranePreg = S.day; S.f.pregTold = 1",
+   "Sheriff Crane",
+   "EXPECT:cur.some(o => /^Attack Sheriff Crane/.test(o[0]))"
   ]
  }
 ]

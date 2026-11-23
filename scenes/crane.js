@@ -354,8 +354,8 @@ QUESTS.krugbounty.done = () =>
 //    and costs her standing in Rustwater. Fade to black.
 // 5. Pregnancy. Every man she's been with goes in a log (you, Krug, her clients). Some days in, she's pregnant,
 //    and the father is drawn from the log, weighted to the recent nights. Nobody knows who. That's the quest.
-// 6. Will lifted the "no children" rule for this. The child stays offstage, and nothing can harm Crane while
-//    she's carrying: no murder, no sale, no Thursday special, no hired Molar, no suicide raid.
+// 6. Will lifted the "no children" rule for this. The child stays offstage. Since v9.14 nothing protects Crane
+//    while she's carrying (Will: "forget about the pregnancy rule"), except that she won't ride on a raid.
 const RAD_MEN = ['mayor', 'jeb', 'moe', 'doc', 'pips', 'gus', 'tam', 'rook', 'hector', 'vane', 'gums', 'pete'];
 function craneWith(who) {
   S.f.craneWith = S.f.craneWith || [];
@@ -537,7 +537,6 @@ world = function () {
     f.craneDad = pick(pool)[0];
     f.craneSuspects = [...new Set(f.craneWith.map(([w]) => w))];
   }
-  if (cranePregnant()) S.n.sheriff.op = Math.max(S.n.sheriff.op, -55); // never an enemy you could fight
   return r;
 };
 SC.cranePreg = () => {
@@ -708,26 +707,8 @@ LATER.dadLie = () => {
   rx('sheriff', `"I found out whose it really is. You lied to me about my own child. Of everything, that."`);
 };
 
-// ---- 7. nothing harms her while she carries ----
-const _talkPregGuard = SC.talk;
-SC.talk = id => {
-  _talkPregGuard(id);
-  if (id === 'sheriff' && cranePregnant() && S.scene === 'talk')
-    drawOpts(cur.filter(o => !/^(Attack|Murder) Sheriff Crane/.test(o[0])));
-};
-const _charPregGuard = SC.char;
-SC.char = (...a) => {
-  _charPregGuard(...a);
-  if (cranePregnant()) drawOpts(cur.filter(o => !/^Murder your spouse/.test(o[0])));
-};
-const _thursdayPreg = LATER.thursday;
-LATER.thursday = x => {
-  if (x === 'sheriff' && cranePregnant()) {
-    rx('lou', '"She\'s carrying, honey. Even I have rules. One rule."');
-    return;
-  }
-  return _thursdayPreg(x);
-};
+// ---- 7. Will dropped the rule that nothing harms her while she carries (v9.14). She can be killed, sold or
+// served like anyone else. Only her own choice stays: she won't ride on Chainfield while she's carrying. ----
 const _raidPreg = raidOutcome;
 raidOutcome = mod => {
   if (cranePregnant()) {
@@ -737,36 +718,6 @@ raidOutcome = mod => {
   }
   return _raidPreg(mod);
 };
-const _worldHitPreg = world;
-world = function () {
-  const f = S.f;
-  if (
-    cranePregnant() &&
-    f.mayorJob &&
-    !f.mayorPaid &&
-    !f.hitDone &&
-    alive('mayor') &&
-    S.day >= f.mayorJobDay + DAYS(6)
-  ) {
-    f.hitDone = 1;
-    rx(
-      'mayor',
-      '"The Molar I hired saw she was carrying and walked off. Molars have scruples now. What is the world coming to."',
-    );
-  }
-  return _worldHitPreg.apply(this, arguments);
-};
-// The sale is off while she carries.
-const _krugPreg = TALK.krug;
-TALK.krug = () => {
-  const r = _krugPreg();
-  if (cranePregnant()) {
-    r.o = r.o.filter(o => !o || !String(o[0]).includes('Your ex-wife'));
-    if (following('sheriff')) r.t += ' He looks at Crane, then at her stomach, and for once says nothing at all.';
-  }
-  return r;
-};
-
 // ---- the journal ----
 QUESTS.dad = Q(
   'Whose baby is it?',

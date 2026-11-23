@@ -2,8 +2,10 @@
 // ================= THE MAYOR'S TOYS: power armour and a plasma rifle =================
 // Fenwick keeps two pre-war treasures in his parlour "for show": a Plasma Rifle over the fireplace
 // and a suit of Power Armour standing in the corner like a butler.
-// The rifle can be lifted (Steal). The suit is dead metal until you bring it a fusion core
-// from the Sky-Bus cargo hold, then you climb in and walk out (Sneak). Kill Fenwick and both are just lying there.
+// Both are dead metal. The rifle wants a plasma cell and the suit a fusion core, and there is one of each left in
+// the valley (Will, v9.14): the cell round Ma Thistle's neck, the core on a chain under Crane's vest. The only way
+// to either is to kill the woman wearing it. Then the rifle can be lifted (Steal) and you can walk out in the suit
+// (Sneak). Kill Fenwick and both are just lying there, still dead without their hearts.
 // Get caught and his guards come for you, and the whole town hears you robbed the Mayor.
 const fenwickGuards = () => [spawn('guard'), spawn('guard')];
 function caughtByFenwick(what) {
@@ -30,17 +32,34 @@ TALK.mayor = () => {
   else {
     if (!S.weapons.includes('plasma'))
       r.o.push(
-        chkOpt('mayor.plasma', null, 'Lift the Plasma Rifle off the wall while he pours a drink', () => {
-          if (attempt('mayor.plasma')) {
-            S.weapons.push('plasma');
-            S.weapon = 'plasma';
-            f.plasmaStolen = 1;
-            say(
-              'Into your coat. It hums against your ribs. Not dead after all: it charges itself. Fenwick toasts you and has no idea.',
-            );
-            go('talk', 'mayor');
-          } else caughtByFenwick('rifle');
-        }),
+        has('cell')
+          ? chkOpt(
+              'mayor.plasma',
+              null,
+              "Slot Ma's plasma cell into the rifle and lift it off the wall while he pours a drink",
+              () => {
+                if (attempt('mayor.plasma')) {
+                  take('cell');
+                  S.weapons.push('plasma');
+                  S.weapon = 'plasma';
+                  f.plasmaStolen = 1;
+                  say(
+                    'The cell clicks home. The rifle hums against your ribs, and it charges itself. Fenwick toasts you and has no idea.',
+                  );
+                  go('talk', 'mayor');
+                } else caughtByFenwick('rifle');
+              },
+            )
+          : [
+              'Look the Plasma Rifle over',
+              () => {
+                f.rifleSeen = 1;
+                say(
+                  "A slot for a plasma cell, empty. You have seen one. Ma Thistle wears it on a string round her neck, her fourth husband's last gift. He glowed too, near the end. She won't take it off while she's breathing.",
+                );
+                go('talk', 'mayor');
+              },
+            ],
       );
     if (!S.armors.includes('power'))
       r.o.push(
@@ -59,7 +78,7 @@ TALK.mayor = () => {
               () => {
                 f.suitSeen = 1;
                 say(
-                  'A socket in the back, empty. It wants a fusion core. Planes used to carry them. There is a dead plane out east.',
+                  "A socket in the back, empty. It wants a fusion core. You have seen one. Sheriff Crane wears it on a chain under her vest: Krug's wedding present. She has never taken it off. Not while she's breathing.",
                 );
                 go('talk', 'mayor');
               },
@@ -74,35 +93,54 @@ function wearSuit() {
   S.armor = 'power';
   addTitle('The Walking Tank');
 }
-// The core: in the Sky-Bus cargo hold, once the rad-moles are dead.
+// The Sky-Bus cargo hold: somebody got to the core first, a long time ago.
 const _huboSky = HUBO.skybus;
 HUBO.skybus = () => {
   const o = _huboSky();
-  if (S.f.molesDead && !S.f.coreGot)
+  if (S.f.molesDead && !S.f.holdSeen)
     o.push([
       'Pry open the cargo hold',
       () => {
-        S.f.coreGot = 1;
-        give('core');
+        S.f.holdSeen = 1;
         say(
-          'Crates of nothing, and one crate stencilled FUSION CORE: DO NOT LICK. It is warm. It is the warmest thing for a hundred miles.' +
-            (S.f.suitSeen || S.f.parlour ? ' The Mayor has a suit with an empty socket.' : ''),
+          "Crates of nothing, and one crate stencilled FUSION CORE: DO NOT LICK. Empty. Somebody scratched a sheriff's star into the lid, a long time ago.",
         );
         goHere();
       },
     ]);
   return o;
 };
+// The two hearts: only from the women wearing them, and only by your hand.
+const _killHearts = kill;
+kill = (id, how, loud) => {
+  const was = !S.dead[id];
+  _killHearts(id, how, loud);
+  if (!was || !S.dead[id]) return;
+  if (id === 'sheriff' && !S.f.coreGot) {
+    S.f.coreGot = 1;
+    give('core');
+    say("Under her vest, on a chain, still warm: a fusion core. Krug's wedding present. She never took it off.");
+  }
+  if (id === 'elder' && !S.f.cellGot) {
+    S.f.cellGot = 1;
+    give('cell');
+    say("Round her neck, on a bit of string: a plasma cell, glowing faintly. Her fourth husband's last gift.");
+  }
+};
 // Fenwick dead: his house is just a house now.
 const _huboRust = HUBO.rustwater;
 HUBO.rustwater = () => {
   const o = _huboRust();
-  if (!alive('mayor') && (!S.weapons.includes('plasma') || (!S.armors.includes('power') && has('core'))))
+  if (
+    !alive('mayor') &&
+    ((!S.weapons.includes('plasma') && has('cell')) || (!S.armors.includes('power') && has('core')))
+  )
     o.push([
       "Search Fenwick's empty house",
       () => {
         const got = [];
-        if (!S.weapons.includes('plasma')) {
+        if (!S.weapons.includes('plasma') && has('cell')) {
+          take('cell');
           S.weapons.push('plasma');
           got.push('a Plasma Rifle that charges itself');
         }

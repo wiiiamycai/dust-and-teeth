@@ -93,8 +93,9 @@ function dive(where) {
       gain(t);
       if (!S.f.mallCore && roll(25)) {
         S.f.mallCore = 1;
-        give('core');
-        say("In the security office, a fusion core, still humming. Somebody's power armour would love that.");
+        say(
+          "In the security office, a socket where a fusion core used to sit. Empty. The only one left in the valley is on a chain under Crane's vest.",
+        );
       }
       return go('dive');
     }
