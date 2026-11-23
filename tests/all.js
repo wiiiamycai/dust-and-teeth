@@ -32,6 +32,12 @@ try {
   ok('portraits: every grid is well formed, and everyone has one', false, String(e.stdout || e.message).trim().slice(0, 600));
 }
 try {
+  run('walk.js', []);
+  ok('walking: maps are well formed, everyone fits, and the valley connects', true);
+} catch (e) {
+  ok('walking: maps are well formed, everyone fits, and the valley connects', false, String(e.stdout || e.message).trim().slice(0, 600));
+}
+try {
   run('care.js', []);
   ok('care: every character offers something on a first meeting', true);
 } catch (e) {
