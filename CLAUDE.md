@@ -11,4 +11,4 @@ Rules:
 - Never use em dashes, in game text or in replies.
 - After every change, run the tests in `tests/` (see section 13 of the brief). All must pass.
 - Commit to git after each working step.
-- After a full `node tests/all.js` prints ALL PASS, merge to `main` and push, so the live build updates (Will, 23 Nov 2026).
+- Work on `main` and push straight to it, so the live build updates. No feature branches (Will, 23 Nov 2026). Push after a full `node tests/all.js` prints ALL PASS.
