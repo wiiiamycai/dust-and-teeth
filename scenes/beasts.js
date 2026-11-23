@@ -890,6 +890,7 @@ SC.town = k => {
         },
         'danger',
       ],
+      ...streetOpts('gully'),
       ['Leave (map)', () => go('map')],
       charOpt(),
     ],

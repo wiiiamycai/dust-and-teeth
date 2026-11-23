@@ -362,11 +362,19 @@ SC.hub = loc => {
     opts: [
       ...(HUBO[loc] ? HUBO[loc]() : []),
       corpseOpt(),
+      ...streetOpts(loc),
       L.up ? ['Climb back up', () => go('hub', L.up)] : ['Leave (map)', () => go('map')],
       charOpt(),
     ],
   });
 };
+// across town to another district: a short walk, no day (the 10 stops, v9.21)
+const streetOpts = loc =>
+  LOC[loc] && LOC[loc].sub
+    ? []
+    : districts(loc)
+        .filter(onMap)
+        .map(k => [`Walk to ${LOC[k].n}`, () => go('hub', k)]);
 SC.ambush = loc => {
   const hs = IDS.filter(x => hostile(x) && S.n[x].loc === loc);
   if (!hs.length) return go('hub', loc);

@@ -26,7 +26,10 @@ travel = k => {
     // the road to the Sky-Bus first, like any road; the pass itself turns you back
     if (S.here !== 'skybus') {
       _travelGreen('skybus');
-      if (S.end || S.here !== 'skybus' || S.trip) return;
+      if (S.end || S.here !== 'skybus' || S.trip) {
+        if (S.trip) S.trip = 'green'; // stopped on the way: carrying on still means the pass
+        return;
+      }
     }
     S.trip = null;
     if (tick()) return go('ending');

@@ -22,9 +22,7 @@ const onMap = k => !LOC[k].hidden || !!(S && S.f[LOC[k].hidden === 1 ? 'knowSilo
 // Saltpan and Fanghill, added in scenes/beasts.js), north by Rustwater (Snake Eyes, Chainfield, then Kettle or
 // the Silo) and east by Mama Lou's (the Sky-Bus, the Mall, the pass to the Green). Gossip and the Gutmaw follow them.
 const ROADS = [
-  ['scrapwell', 'farm'],
   ['scrapwell', 'rustwater'],
-  ['scrapwell', 'diner'],
   ['farm', 'rustwater'],
   ['diner', 'rustwater'],
   ['rustwater', 'snakeeyes'],
@@ -35,6 +33,17 @@ const ROADS = [
   ['skybus', 'mall'],
   ['skybus', 'green'],
 ];
+// ---- the 10 stops (v9.21, Will: "10 stops look decent") ----
+// Small places are districts of a bigger town: a short walk across it, no day, no road. Each keeps its own name,
+// people and screen, so the story, the gossip and the checks are unchanged. The stop is named after its first
+// place; the North Road and the Old Airport have names of their own on the map.
+const TOWN_OF = { gully: 'scrapwell', farm: 'rustwater', diner: 'rustwater', chainfield: 'snakeeyes', skybus: 'mall' };
+const STOP_N = { snakeeyes: 'The North Road', mall: 'The Old Airport' };
+const townOf = k => (LOC[k] && LOC[k].up ? townOf(LOC[k].up) : TOWN_OF[k] || k);
+// a road between two places of the same town is a street: no time, nothing on the way
+const street = (a, b) => townOf(a) === townOf(b);
+// the other districts of where you are, nearest first
+const districts = k => Object.keys(LOC).filter(o => o !== k && !LOC[o].sub && townOf(o) === townOf(k));
 const REL = {
   family: [
     ['hector', 'bess'],

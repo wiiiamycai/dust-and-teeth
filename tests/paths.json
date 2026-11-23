@@ -2372,7 +2372,7 @@
    "Back",
    "ENCOUNTERS",
    "Leave (map)",
-   "TRAVEL:Rustwater",
+   "TRAVEL:Scrapwell",
    "EXPECT:S.f.wardenMet"
   ]
  },
@@ -5184,13 +5184,13 @@
   ]
  },
  {
-  "name": "Map: the further from Scrapwell by road, the harder: the gully is next door, the lost towns go out in order, the Silo is furthest",
+  "name": "Map: the further from Scrapwell by road, the harder: the gully is part of town, the lost towns go out in order, the Silo is as far as the far north",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EVAL:S.f.knowSilo = 1; S.f.knowGreen = 1; S.here = 'scrapwell'; globalThis.far = k => route('scrapwell', k).length",
-   "EXPECT:far('gully') === 1 && far('gully') < far('gristmill') && far('gristmill') < far('saltpan') && far('saltpan') < far('fanghill') && far('fanghill') <= far('kettle')",
-   "EXPECT:['farm', 'rustwater', 'diner'].every(k => far(k) === 1) && Object.keys(LOC).filter(k => !LOC[k].sub).every(k => far(k) <= far('silo'))"
+   "EVAL:S.f.knowSilo = 1; S.f.knowGreen = 1; S.here = 'scrapwell'; globalThis.far = k => tripDays(k)",
+   "EXPECT:far('gully') === 0 && far('gristmill') > 0 && far('gristmill') < far('saltpan') && far('saltpan') < far('fanghill') && far('kettle') <= far('silo')",
+   "EXPECT:['farm', 'rustwater', 'diner'].every(k => far(k) === 1) && Object.keys(LOC).filter(k => !LOC[k].sub && k !== 'fanghill').every(k => far(k) <= far('silo'))"
   ]
  },
  {
@@ -5207,21 +5207,22 @@
   ]
  },
  {
-  "name": "Roads: a day a town; Scrapwell to Chainfield is three days through Rustwater and Snake Eyes",
+  "name": "Roads: a day a town, streets are free; Scrapwell to Chainfield is two days, through Rustwater to the North Road",
   "steps": [
    "Crawl out of bed",
    "Go",
-   "EXPECT:route('scrapwell', 'chainfield').join() === 'rustwater,snakeeyes,chainfield'",
-   "EXPECT:route('scrapwell', 'saltpan').join() === 'farm,gristmill,saltpan'",
-   "EXPECT:route('scrapwell', 'mall').length === 3 && route('scrapwell', 'green').join() === 'diner,skybus,green'",
+   "EXPECT:route('scrapwell', 'chainfield').join() === 'rustwater,snakeeyes,chainfield' && tripDays('chainfield') === 2",
+   "EXPECT:route('scrapwell', 'saltpan').join() === 'rustwater,farm,gristmill,saltpan' && tripDays('saltpan') === 3",
+   "EXPECT:tripDays('mall') === 2 && route('scrapwell', 'green').join() === 'rustwater,diner,skybus,green' && tripDays('green') === 3 && tripDays('gully') === 0",
    "EXPECT:ROADS.every(([a, b]) => Math.hypot(LOC[a].x - LOC[b].x, (LOC[a].y - LOC[b].y) * 1.25) < (a === 'skybus' && b === 'green' ? 52 : 34))",
    "Leave (map)",
-   "SAY:3 days",
+   "SAY:The North Road2 days",
    "EVAL:pickEnc = () => null; S.n.moe.rx = []; S.n.dice.rx = []; S.n.pips.rx = []",
    "TRAVEL:Chainfield",
-   "EXPECT:S.here === 'chainfield' && S.day === 4",
+   "EXPECT:S.here === 'chainfield' && S.day === 3",
    "SAY:You pass through Rustwater",
-   "SAY:You pass through Snake Eyes"
+   "Walk to Snake Eyes",
+   "EXPECT:S.here === 'snakeeyes' && S.day === 3"
   ]
  },
  {
@@ -5235,9 +5236,9 @@
    "EXPECT:S.here === 'rustwater' && S.day === 2 && S.trip === 'chainfield'",
    "SAY:You stop in Rustwater: Moe wants a word",
    "Leave (map)",
-   "SAY:Carry on to Chainfield (2 days)",
+   "SAY:Carry on to Chainfield (1 day)",
    "Carry on to Chainfield",
-   "EXPECT:S.here === 'chainfield' && S.day === 4 && !S.trip"
+   "EXPECT:S.here === 'chainfield' && S.day === 3 && !S.trip"
   ]
  },
  {

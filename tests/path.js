@@ -18,7 +18,9 @@ const god=()=>vm.runInContext(realSkills?'if(S){S.hp=S.maxhp=999}':'if(S){S.hp=S
 // a trip can stop on the way (something on the road, someone with a word for you, a lost town that sees you):
 // carry on, like a player would, until you get there or something else needs you
 function travel(dest){travel1(dest);for(let leg=0;leg<12;leg++){if(vm.runInContext("S&&S.scene==='fight'",ctx))fightOut();if(!vm.runInContext("S&&!S.end&&S.trip&&S.trip!==S.here&&['hub','town','map'].includes(S.scene)",ctx))break;vm.runInContext("go('map')",ctx);click('Carry on to')}}
-function travel1(dest){click(dest);// may hit encounter
+function travel1(dest){// a district (the 10 stops) is not on the map: go there the way the game does, through travel()
+ const dk=vm.runInContext(`(k=>k&&(TOWN_OF[k]||STOP_N[k])?k:null)(Object.keys(LOC).find(k=>LOC[k].n===${JSON.stringify(dest)}))`,ctx);
+ if(dk)vm.runInContext(`travel('${dk}')`,ctx);else click(dest);// may hit encounter
  for(let k=0;k<3;k++){const h=strip(els.head.innerHTML);if(/Heading to|A survivor/.test(h)){const b=clickables();const f=b.find(x=>/Fight|Leave him|Pay|Loot him|Leave them|Decline|Buy it|government is gone/.test(strip(x.innerHTML)))||b[0];f.onclick();fightOut();}}}
 const steps=JSON.parse(process.argv[3]);
 for(const s of steps){god();if(process.env.V)console.log('>>',s,'::',screen().slice(0,250));

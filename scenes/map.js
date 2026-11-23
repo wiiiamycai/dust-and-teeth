@@ -1,9 +1,15 @@
 'use strict';
 // ================= MAP & TRAVEL =================
 function drawMap(mp) {
-  const vis = k => !LOC[k].sub && onMap(k);
+  const vis = k => !LOC[k].sub && !TOWN_OF[k] && onMap(k); // the 10 stops: districts are inside their towns
   let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">';
-  ROADS.forEach(([a, b]) => {
+  const drawn = new Set();
+  ROADS.forEach(([a0, b0]) => {
+    const a = townOf(a0),
+      b = townOf(b0),
+      key = [a, b].sort().join();
+    if (a === b || drawn.has(key)) return;
+    drawn.add(key);
     if (vis(a) && vis(b))
       svg += `<line x1="${LOC[a].x}" y1="${LOC[a].y}" x2="${LOC[b].x}" y2="${LOC[b].y}" stroke="#8a5f00" stroke-width=".5" stroke-dasharray="1.4 1.2" vector-effect="non-scaling-stroke"/>`;
   });
@@ -17,8 +23,8 @@ function drawMap(mp) {
       b.className = 'node' + (S.here === k ? ' here' : '');
       b.style.left = L.x + '%';
       b.style.top = L.y + '%';
-      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc === k && 'tremors', S.here === k ? 'you' : (d => `${d} day${d > 1 ? 's' : ''}`)(tripDays(k))) || '&nbsp;'}</span>`;
-      b.onclick = () => travel(k);
+      b.innerHTML = `<span class="ni">${c ? '☢️' : L.i}</span>${esc(STOP_N[k] || L.n)}<span class="nl">${subJoin(c ? 'crater' : k === 'green' && S.day < GREEN_DAY && 'dust storms', !S.f.gutDead && S.f.gutLoc && townOf(S.f.gutLoc) === k && 'tremors', townOf(S.here) === k ? 'you' : (d => `${d} day${d > 1 ? 's' : ''}`)(tripDays(k))) || '&nbsp;'}</span>`;
+      b.onclick = () => travel(k); // your own town: a walk across it to the square
       mp.appendChild(b);
     });
   try {
@@ -51,20 +57,34 @@ SC.map = () => {
 function route(from, to) {
   if (!LOC[from] || LOC[from].sub) from = (LOC[from] && LOC[from].up) || 'scrapwell';
   if (from === to) return [to];
+  // fewest days first (a street costs none), then fewest steps
   const ok = k => LOC[k] && !LOC[k].sub && (onMap(k) || k === to),
+    cost = { [from]: 0 },
     prev = { [from]: null },
     q = [from];
   while (q.length) {
+    q.sort((a, b) => cost[a] - cost[b]);
     const c = q.shift();
     if (c === to) break;
-    for (const n of neighbours(c)) if (ok(n) && !(n in prev)) (prev[n] = c), q.push(n);
+    for (const n of neighbours(c)) {
+      if (!ok(n)) continue;
+      const d = cost[c] + (street(c, n) ? 0 : 1) + 0.001;
+      if (!(n in cost) || d < cost[n]) (cost[n] = d), (prev[n] = c), q.includes(n) || q.push(n);
+    }
   }
   if (!(to in prev)) return [to]; // no known road: you strike out across the sand, one long day
   const path = [];
   for (let c = to; c !== from; c = prev[c]) path.unshift(c);
   return path;
 }
-const tripDays = k => route(S.here, k).length;
+// the days a trip takes: one a road, none a street
+const tripDays = k => {
+  const path = route(S.here, k);
+  let d = 0,
+    at = S.here;
+  for (const p of path) (d += street(at, p) && LOC[p] && LOC[at] ? 0 : 1), (at = p);
+  return d;
+};
 // a reason to stop on the way: somebody there has something to say to you
 function stopWhy(k) {
   const who = IDS.find(id => alive(id) && S.n[id].loc === k && S.n[id].rx.length);
@@ -78,10 +98,22 @@ function passLine(k) {
   return `Day ${S.day}. You pass through ${LOC[k].n}. ${bit}`;
 }
 function travel(k) {
+  if (street(S.here, k) && LOC[S.here] && !LOC[S.here].sub && townOf(S.here) === townOf(k)) {
+    S.trip = null;
+    return go('hub', k); // across town: a short walk, no day
+  }
   S.trip = k; // where you're going, until you get there: a trip cut short can carry on from the map
   const path = route(S.here, k);
+  let from = S.here;
   for (let i = 0; i < path.length; i++) {
-    const at = path[i];
+    const at = path[i],
+      walk = LOC[from] && street(from, at);
+    from = at;
+    if (walk) {
+      // a street: across town, no day and nothing on the way
+      if (i === path.length - 1) break;
+      continue;
+    }
     if (tick()) return go('ending');
     const e = pickEnc(at);
     if (e) {

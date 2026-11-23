@@ -191,3 +191,13 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 
 - In a fight: attack (with its hit chance), or look for a weak spot (30%, costs the turn; found, every later hit does 150 to 200%). No aimed shots, no dodge, no brace. Items and running as before.
 - The status bar: health, the perk bar, teeth and the day, and under them 🎒 You (gear, inventory, body, skills, perks), 📜 Journal and ⚙️ Settings.
+
+### The 10 stops and walking (v9.21, agreed with Will on 23 Nov 2026)
+
+1. **Walking is always on** wherever the game can draw. The headless tests still play it as text.
+2. **10 stops.** The small places are districts of a bigger town: Scrapwell (the village, the well, Rattle Gully), Rustwater (the square, Hector's farm, Mama Lou's), the North Road (Snake Eyes, Krug's pens at Chainfield) and the Old Airport (the Drowned Mall, the Sky-Bus). The Green, Silo 9 and the four lost towns stand alone. Each district keeps its own name, people and screen, so the story, gossip and checks are unchanged. `TOWN_OF`, `townOf()`, `street()` and `districts()` are in `data/world.js`.
+3. **Streets cost nothing.** Going between districts of one town takes no day and nothing happens on the way ("Walk to ..." on the place screen). A road between towns is a day, as before. `route()` finds the fewest days.
+4. **Timers.** A few trips got a day shorter (Snake Eyes to the pens, Rustwater to the farm or the diner). Left as they are for now: they make Pete and the pens a little easier to save.
+5. **People stand still at their doors.** No wandering, nobody on a roof.
+6. **The look.** Towns are compact and drawn in the approved mock-up style (`kit` tiles and buildings), with the chibi walking sprites, the beasts as approved, bleak colours, and sharp, large text.
+7. **The travel map** is the valley with topography: tap a stop to go by road. Five roads lead off the edge of the map as hints of a bigger world. Districts are not on it; you only see the farm, the diner, the casino, the pens, the mall and the plane once you walk into their towns.
