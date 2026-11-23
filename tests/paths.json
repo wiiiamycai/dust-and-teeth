@@ -5202,5 +5202,19 @@
    "EVAL:go('map')",
    "EXPECT:!knowsOf('moe')"
   ]
+ },
+ {
+  "name": "Bag: what's in your hands shows its damage and what's on your back its armour; bullets only under Carrying",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "Ma Thistle",
+   "going past the fence",
+   "EVAL:openPanel('inv')",
+   "SAY:Zip Gun (gun, 5-12)",
+   "SAY:Leather Jacket (armour 2)",
+   "SAY:Bullets x8",
+   "EXPECT:!/Zip Gun \\(\\d+ bullets/.test(document.getElementById('text').innerHTML)"
+  ]
  }
 ]

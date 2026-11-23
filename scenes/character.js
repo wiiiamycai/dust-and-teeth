@@ -57,17 +57,19 @@ SC.inv = () => {
   const items = Object.keys(S.inv)
     .filter(k => S.inv[k] > 0)
     .map(k => `${ITEMS[k] || k}${S.inv[k] > 1 ? ' x' + S.inv[k] : ''}`);
+  // what's in your hands shows its damage, what's on your back its armour, as the Wield and Wear lines do (v9.9)
   const wp = W[S.weapon],
-    gun = isGun(S.weapon) && !wp.free;
+    dm = modSum(S.weapon, 'dmg'),
+    ar = A[S.armor];
   show({
     title: 'Bag',
     icon: '🎒',
     sub: `🦷 ${S.teeth} teeth`,
     text: `IN YOUR HANDS
-${modName(S.weapon)}${gun ? ` (${S.inv.ammo || 0} bullets)` : ''}
+${modName(S.weapon)} (${wp.t === 'guns' ? 'gun' : 'melee'}, ${wp.d[0] + dm}-${wp.d[1] + dm})
 
 ON YOUR BACK
-${modName(S.armor)}
+${modName(S.armor)} (armour ${ar.dr + modSum(S.armor, 'dr')}${ar.tw ? ', twitch ' + ar.tw : ''})
 
 CARRYING
 ${items.join(', ') || 'Regret.'}`,
