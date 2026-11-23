@@ -314,10 +314,12 @@ const THEME = {
   kettle: { fill: '.', deco: 'x', n: 6 },
   fanghill: { fill: '.', deco: 'T', n: 8 },
 };
-const optLabel = o => o[0].split(' (')[0].replace(/^"|"$/g, '').slice(0, 18);
+const optLabel = o => o[0].split(' (')[0].split(',')[0].replace(/^"|"$/g, '').slice(0, 15);
 function genMap(loc, opts, ids) {
   const T = THEME[loc] || { fill: '.', deco: 'x', n: 5 };
-  const acts = opts.filter(o => o && !/^Back to walking/.test(o[0]));
+  const sub = LOC[loc] && LOC[loc].sub;
+  // in the well or the vats, the way back up is the exit, not a building
+  const acts = opts.filter(o => o && !/^Back to walking/.test(o[0]) && !(sub && /^Climb|back up/i.test(o[0])));
   const perRow = 4,
     houseRows = Math.max(1, Math.ceil(acts.length / perRow));
   const W = 22,
@@ -658,7 +660,7 @@ function walkDraw(now) {
   g.fillRect(0, 0, SW, SH);
   g.drawImage(big, Math.round(-cx), Math.round(-cy)); // the whole map, shifted; the canvas clips it
   // name boards over the buildings of a generated place
-  for (const bd of WK.M.boards || []) {
+  for (const bd of [...(WK.M.boards || []), ...(WK.boards || [])]) {
     g.font = 'bold 7px monospace';
     const w = Math.ceil(g.measureText(bd.t).width) + 6,
       bx = Math.round(bd.x * TILE + 8 - w / 2 - cx),
@@ -795,10 +797,11 @@ function walkPathStep() {
 function walkArrive() {
   const t = TILEDEF[walkTile(S.wk.x, S.wk.y)];
   if (t && t.exit) {
-    // out of town and onto the valley road
+    // out of town and onto the valley road; out of the well or the vats, back up to the place above
+    const up = LOC[WK.loc] && LOC[WK.loc].sub ? LOC[WK.loc].up : null;
     walkStop();
     S.wk.loc = null;
-    return go('map');
+    return up ? go('hub', up) : go('map');
   }
   if (WK.M.valley && t && t.town) {
     const k = valleyTown(S.wk.x, S.wk.y);
@@ -889,8 +892,27 @@ SC.hub = loc => {
   // the place's own options, without the map (you walk out) and without the people (you find them)
   const opts = (v.opts || []).filter(o => o && !/^Leave \(map\)$/.test(o[0]) && !/^Character/.test(o[0]));
   SC.walk(loc, v.ids, opts, v.text);
-  if (WK) WK.opts = opts;
+  if (WK) {
+    WK.opts = opts;
+    WK.boards = handBoards(WK.M, opts);
+  }
 };
+// Name boards over the things on a hand-drawn map that do something here today.
+function handBoards(M, opts) {
+  if (M.gen || M.valley) return [];
+  const out = [];
+  for (const key in M.use || {}) {
+    const u = M.use[key];
+    if (!(u instanceof RegExp)) continue;
+    const op = opts.find(o => o && u.test(o[0]));
+    if (!op) continue;
+    const at = key.includes(',')
+      ? [key.split(',').map(Number)]
+      : M.rows.flatMap((row, y) => [...row].map((c, x) => (c === key ? [x, y] : null)).filter(Boolean));
+    at.forEach(([x, y]) => out.push({ x, y: y - (M.rows[y][x] === 'D' ? 1 : 0), t: optLabel(op) }));
+  }
+  return out;
+}
 const _mapWalk = SC.map;
 SC.map = () => {
   if (!walkOn()) return _mapWalk();
