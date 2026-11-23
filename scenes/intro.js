@@ -213,5 +213,5 @@ function hud() {
     h.innerHTML = '<b>DUST &amp; TEETH</b>';
     return;
   }
-  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span>🛡️ ${A[S.armor].n}</span><span>⚔️ ${W[S.weapon].n}</span><span>${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div>`;
+  h.innerHTML = `<b>${esc(S.name)}</b><div><div class="bl">HP ${S.hp}/${S.maxhp}</div><div class="bar hp"><i style="width:${clamp((S.hp * 100) / S.maxhp, 0, 100)}%"></i></div></div><div id="hudx"><span>🦷 ${S.teeth}</span><span>☀️ Day ${S.day}</span><span class="hx">🛡️ ${A[S.armor].n}</span><span class="hx">⚔️ ${W[S.weapon].n}</span><span class="hx">${karmaTitle()}</span>${S.spouse ? `<span>💍 ${NPC[S.spouse].n}</span>` : ''}${S.addicted ? '<span class="bang">Addicted</span>' : ''}</div>`;
 }

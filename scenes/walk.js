@@ -308,7 +308,7 @@ SC.walk = (loc, ids, opts, text) => {
   show({
     title,
     icon: M.valley ? '🏜️' : LOC[loc].i,
-    sub: `Day ${S.day} · walk with the arrows or the pad · A to talk or use`,
+    sub: `Day ${S.day} · A to talk or use`,
     text: M.valley ? 'Walk into a place to go there. Each trip takes a day.' : text || '',
     opts: [...(opts || []), M.valley ? ['The old map (pick a place)', () => go('map', 'text')] : null, charOpt()],
   });
@@ -316,12 +316,13 @@ SC.walk = (loc, ids, opts, text) => {
 };
 function walkMount(loc, M, ids) {
   walkStop();
+  document.body.classList.add('walking');
   const vw = $('view');
   vw.hidden = false;
   vw.innerHTML =
     '<div class="walk"><div class="scr"><canvas id="wcv" width="160" height="144"></canvas><div id="wmsg" class="wmsg" hidden></div></div>' +
-    '<div class="pad"><button data-k="u" class="pu">▲</button><button data-k="l" class="pl">◀</button><button data-k="r" class="pr">▶</button><button data-k="d" class="pd">▼</button></div>' +
-    '<div class="ab"><button data-k="b" class="kb">B</button><button data-k="a" class="ka">A</button></div></div>';
+    '<div class="ctl"><div class="pad"><button data-k="u" class="pu">▲</button><button data-k="l" class="pl">◀</button><button data-k="r" class="pr">▶</button><button data-k="d" class="pd">▼</button></div>' +
+    '<div class="ab"><button data-k="b" class="kb">B</button><button data-k="a" class="ka">A</button></div></div></div>';
   const cv = $('wcv');
   const rows = M.rows,
     H = rows.length,
@@ -410,6 +411,7 @@ function walkMount(loc, M, ids) {
   walkLoop();
 }
 function walkStop() {
+  if (typeof document !== 'undefined' && document.body) document.body.classList.remove('walking');
   if (!WK) return;
   cancelAnimationFrame(WK.raf);
   WK.timers.forEach(t => clearInterval(t));
@@ -578,8 +580,8 @@ function walkMsg(t) {
   m.textContent = t || '';
   // the box sits at the bottom, like the handheld, unless you're standing down there
   const low = WK && WK.sy != null ? WK.sy > 72 : true;
-  m.style.top = low ? '3px' : '';
-  m.style.bottom = low ? '' : '3px';
+  m.style.top = low ? '3px' : 'auto';
+  m.style.bottom = low ? 'auto' : '3px';
 }
 const walkSay = t => walkMsg(t);
 
