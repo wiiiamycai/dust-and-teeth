@@ -5104,5 +5104,16 @@
    "SAY:chewed through",
    "EXPECT:!/Rough|Dangerous|Deadly|Built for/.test(document.getElementById('head').innerHTML + document.getElementById('text').innerHTML)"
   ]
+ },
+ {
+  "name": "Map: the further from Scrapwell, the harder: the gully is next door, the lost towns go out in order, the Silo is furthest",
+  "steps": [
+   "Crawl out of bed",
+   "Go",
+   "EVAL:globalThis.far = k => Math.hypot(LOC[k].x - LOC.scrapwell.x, (LOC[k].y - LOC.scrapwell.y) * 1.25)",
+   "EXPECT:far('gully') < far('gristmill') && far('gristmill') < far('saltpan') && far('saltpan') < far('fanghill') && far('fanghill') < far('kettle')",
+   "EXPECT:Object.keys(LOC).filter(k => !LOC[k].sub && k !== 'silo').every(k => far(k) < far('silo'))",
+   "EXPECT:['gully', 'farm', 'rustwater', 'diner'].every(k => far(k) < far('gristmill'))"
+  ]
  }
 ]

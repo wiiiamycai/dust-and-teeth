@@ -1,17 +1,17 @@
 'use strict';
 // ================= DATA: PLACES & RELATIONSHIPS =================
 const LOC = {
-  scrapwell: { n: 'Scrapwell', i: '🏚️', lvl: 1, x: 13, y: 72 },
-  farm: { n: "Hector's Farm", i: '🌾', lvl: 3, x: 30, y: 36 },
-  diner: { n: "Mama Lou's", i: '🍲', lvl: 5, x: 37, y: 86 },
-  rustwater: { n: 'Rustwater', i: '🚰', lvl: 2, x: 55, y: 58 },
-  chainfield: { n: 'Chainfield', i: '⛓️', lvl: 6, x: 70, y: 24 },
-  skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 86, y: 70 },
-  silo: { n: 'Silo 9', i: '☢️', lvl: 9, x: 91, y: 14, hidden: 1 },
-  snakeeyes: { n: 'Snake Eyes', i: '🎲', lvl: 4, x: 48, y: 10 },
-  mall: { n: 'The Drowned Mall', i: '🏬', lvl: 4, x: 61, y: 90 },
+  scrapwell: { n: 'Scrapwell', i: '🏚️', lvl: 1, x: 50, y: 92 },
+  farm: { n: "Hector's Farm", i: '🌾', lvl: 2, x: 38, y: 74 },
+  diner: { n: "Mama Lou's", i: '🍲', lvl: 2, x: 74, y: 90 },
+  rustwater: { n: 'Rustwater', i: '🚰', lvl: 2, x: 62, y: 74 },
+  chainfield: { n: 'Chainfield', i: '⛓️', lvl: 6, x: 60, y: 32 },
+  skybus: { n: 'The Sky-Bus', i: '✈️', lvl: 3, x: 90, y: 70 },
+  silo: { n: 'Silo 9', i: '☢️', lvl: 9, x: 88, y: 8, hidden: 1 },
+  snakeeyes: { n: 'Snake Eyes', i: '🎲', lvl: 3, x: 50, y: 56 },
+  mall: { n: 'The Drowned Mall', i: '🏬', lvl: 4, x: 84, y: 48 },
   // hidden: the flag that puts it on your map (1 means the old knowSilo flag). sub: a place inside another (up).
-  green: { n: 'The Green', i: '🌳', lvl: 6, x: 96, y: 46, hidden: 'knowGreen' },
+  green: { n: 'The Green', i: '🌳', lvl: 6, x: 90, y: 26, hidden: 'knowGreen' },
   well: { n: 'The Well', i: '🕳️', lvl: 1, sub: 1, up: 'scrapwell' },
   vats: { n: 'The vat room', i: '🧪', lvl: 2, sub: 1, up: 'green' },
 };

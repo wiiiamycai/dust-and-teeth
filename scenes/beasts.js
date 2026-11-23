@@ -284,8 +284,8 @@ const TOWNS = {
     n: 'Gristmill',
     i: '🌾',
     lvl: 3,
-    x: 10,
-    y: 50,
+    x: 14,
+    y: 72,
     lost: 'The grain town. Doors chewed through. Everything that was food is gone, and something is still eating.',
     clear:
       'Gristmill is quiet. The millwheel turns, slowly, for the first time in a year. A family has moved back into the end house.',
@@ -326,8 +326,8 @@ const TOWNS = {
     n: 'Saltpan',
     i: '🧂',
     lvl: 4,
-    x: 17,
-    y: 88,
+    x: 16,
+    y: 48,
     lost: 'White salt flats, a pan-works, empty houses. The salt crunches. Then something under it moves.',
     clear:
       'The pans are working again. Two salt-boilers came back from the coast, and the first thing they did was put up a price list.',
@@ -358,14 +358,14 @@ const TOWNS = {
       S.f.crabsDiner = 1;
       rx('lou', '"Crabs on my road. Big ones. I tried one. Needs salt, honey. Everything needs salt."');
     },
-    road: ['diner', 'scrapwell'],
+    road: ['gristmill', 'snakeeyes'],
   },
   kettle: {
     n: 'Kettle',
     i: '🗼',
     lvl: 7, // the hardest of the four: reads 'deadly' on the map
-    x: 82,
-    y: 44,
+    x: 50,
+    y: 16,
     lost: 'A dead town round a water tower that still has water in it. The tower hums. The hum has wings.',
     clear:
       'The tower is quiet. Somebody has painted FREE on the tank, in letters ten feet high, and people walk here from Rustwater with buckets.',
@@ -397,14 +397,14 @@ const TOWNS = {
       rx('sheriff', '"Stingers on the east road. Two dead this week. Kettle\'s hive is getting bigger."');
       rx('mayor', '"Stingers? On the Kettle road? Terrible. Terrible for Kettle. Water, citizen?"');
     },
-    road: ['rustwater', 'skybus'],
+    road: ['snakeeyes', 'chainfield'],
   },
   fanghill: {
     n: 'Fanghill',
     i: '🦴',
     lvl: 5,
-    x: 14,
-    y: 12,
+    x: 22,
+    y: 30,
     lost: 'A caravan stop the Molars hit last year. They took the people and left the bodies, and the bodies brought the dogs.',
     clear:
       'Fanghill has a well, a fence and a sign again. The caravans stop here on the north road. Somebody buried the bones.',
@@ -847,7 +847,7 @@ Object.assign(ENEMY, {
     moves: [mv('Big Mo, the lizard as big as a dog, opens a mouth full of old teeth.', 'big bite', 2, 10)],
   },
 });
-LOC.gully = { n: 'Rattle Gully', i: '🦎', lvl: 1, x: 31, y: 56 };
+LOC.gully = { n: 'Rattle Gully', i: '🦎', lvl: 1, x: 26, y: 90 };
 ROADS.push(['gully', 'scrapwell']);
 const GULLY_HUNTS = 3;
 const gullyLeft = () => (S.f.gullyDay === S.day ? GULLY_HUNTS - (S.f.gullyN || 0) : GULLY_HUNTS);
