@@ -1395,7 +1395,8 @@ PORTRAIT.gloria = (g, PX, o) => {
     .paint(g, H, { hi: 1 });
   PX.brows(g, 24, 22, 11, 'raised', H.d);
   // eyes squeezed shut with laughing, or wide open, counting
-  if (o.shut || (o.mood || 0) >= 0) {
+  if (o.shut) PX.eyes(g, o, 25, 25, 10, { w: 4, skin: S, lash: 1 });
+  else if ((o.mood || 0) >= 0) {
     PX.rows(g, 25, 25, ['.aa.', 'a..a'], { a: S.o });
     PX.rows(g, 35, 25, ['.aa.', 'a..a'], { a: S.o });
     PX.p(g, 24, 25, S.o);
