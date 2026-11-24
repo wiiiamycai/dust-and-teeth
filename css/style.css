@@ -1641,3 +1641,253 @@ canvas,
 body.walking .walk:has(.wleave) .wmsg:not(.top) {
   bottom: calc(env(safe-area-inset-bottom) + 78px); /* above the Leave button, never over it */
 }
+
+/* ---- the battle screen, v9.32: the approved art, white boxes, white buttons ---- */
+body.inbattle #view {
+  border: 3px solid #2a1e18;
+  border-radius: 10px;
+  background: #2a1e18;
+}
+.bt {
+  position: relative;
+}
+.bt canvas {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+}
+.bt.shake {
+  animation: btshake 0.4s;
+}
+@keyframes btshake {
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+.bt .bfoes {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 44%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bt .bme {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 52%;
+}
+.bt .bx {
+  background: #f8f2e0;
+  border: 2px solid #2a1e18;
+  border-radius: 8px;
+  padding: 3px 7px 4px;
+  box-shadow: 0 2px 0 #2a1e18;
+  color: #2a1e18;
+  cursor: pointer;
+}
+.bt .bx.sel {
+  outline: 3px solid #ffb000;
+}
+.bt .bx.gone {
+  opacity: 0.45;
+}
+.bt .bn {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+.bt .bn b {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bt .bn span {
+  font-size: 10px;
+  color: #8a3a2a;
+  white-space: nowrap;
+}
+.bt .bb {
+  height: 6px;
+  background: #3a3028;
+  border-radius: 3px;
+  margin-top: 3px;
+  overflow: hidden;
+}
+.bt .bb i {
+  display: block;
+  height: 100%;
+  background: #5ab04a;
+  transition: width 0.6s ease-out;
+}
+.bt .bb.bl i {
+  background: #3a8ae0;
+}
+.bt .bs {
+  font-size: 10px;
+  color: #5a4a3a;
+  margin-top: 2px;
+}
+/* the words: a white dialogue box */
+body.inbattle #log,
+body.inbattle #text {
+  background: #fbf8ec;
+  color: #2a1e18;
+  text-shadow: none;
+  margin: 0 !important;
+  border-left: 3px solid #5a6a8a;
+  border-right: 3px solid #5a6a8a;
+  padding: 2px 12px;
+  font-size: 15px;
+}
+body.inbattle #log {
+  border-top: 3px solid #5a6a8a;
+  border-radius: 10px 10px 0 0;
+  padding-top: 8px;
+  margin-top: 8px !important;
+}
+body.inbattle #log p {
+  color: #7a3a1a;
+}
+body.inbattle #text {
+  border-bottom: 3px solid #5a6a8a;
+  border-radius: 0 0 10px 10px;
+  padding-bottom: 8px;
+}
+/* the buttons: white, two by two, a label and a hint */
+body.inbattle #opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  border-top: 0;
+  padding-top: 10px;
+}
+body.inbattle #opts button {
+  background: #fbf8ec !important;
+  color: #2a1e18 !important;
+  border: 2px solid #2a1e18 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 3px 0 #2a1e18;
+  padding: 10px 10px !important;
+  text-align: left !important;
+  font-size: 15px !important;
+}
+body.inbattle #opts button b {
+  display: block;
+  font-size: 16px;
+}
+body.inbattle #opts button small {
+  display: block;
+  font-size: 11px;
+  color: #6a5a4a;
+  margin-top: 2px;
+}
+body.inbattle #opts button .n {
+  display: none;
+}
+body.inbattle #opts button.danger b {
+  color: #a8281a;
+}
+/* in a fight, top to bottom: the picture, what just happened, the buttons */
+body.inbattle #view {
+  order: 2;
+}
+body.inbattle #log {
+  order: 3;
+}
+body.inbattle #text {
+  order: 4;
+}
+body.inbattle #opts {
+  order: 5;
+  max-height: 46vh;
+}
+body.inbattle #text:empty,
+body.inbattle #log:empty {
+  display: none;
+}
+body.inbattle #log:empty + #text,
+body.inbattle #text:only-child {
+  border-top: 3px solid #5a6a8a;
+  border-radius: 10px;
+}
+body.inbattle:not(.bmain) #opts {
+  grid-template-columns: 1fr; /* the attacks have long names: one to a row */
+}
+body.inbattle #opts button {
+  height: auto !important;
+  min-height: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+body.inbattle #wrap {
+  display: flex;
+  flex-direction: column;
+}
+body.inbattle #hud {
+  order: 0;
+}
+body.inbattle #head {
+  order: 1;
+}
+body.inbattle #log:has(+ #text:empty) {
+  border-bottom: 3px solid #5a6a8a;
+  border-radius: 10px;
+  padding-bottom: 8px;
+}
+body.inbattle #opts {
+  grid-auto-rows: min-content;
+  align-content: start;
+}
+body.inbattle #opts button {
+  flex-shrink: 0;
+  line-height: 1.25 !important;
+}
+/* room for the buttons: the heading goes (the round is on the picture), the words keep to three lines */
+body.inbattle #head {
+  display: none !important;
+}
+body.inbattle #log {
+  max-height: 4.3em;
+  overflow-y: auto;
+  line-height: 1.35;
+}
+body.inbattle #log p {
+  margin: 0;
+}
+body.inbattle #text {
+  max-height: 2.8em !important;
+  overflow-y: auto;
+  line-height: 1.35;
+}
+.bt .bround {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffcf4a;
+  background: rgba(20, 12, 6, 0.7);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+body.inbattle #text {
+  max-height: 4.2em !important;
+}
+body.inbattle #text.more::after,
+body.inbattle #log.more::after {
+  display: none; /* the white words box scrolls to the newest line itself */
+}

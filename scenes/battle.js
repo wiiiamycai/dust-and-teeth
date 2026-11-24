@@ -174,28 +174,152 @@ function drawBeast(g, kind, cx, by, s, hurt) {
   }
 }
 // ---- the screen ----
+// ---- v9.32: the battle screen again, in the approved art (Will: "start drawing pokemon combat UI again") ----
+// The ground is the place you're in (the town kit's own ground), the beasts are the approved beast sprites,
+// people are chibis (named people as themselves, the rest in a few stock looks), and you are your chibi from
+// behind, big, bottom left. Names and health are sharp HTML boxes over the picture; a hit flashes the sprite,
+// health slides down, the beaten fall, and you shake when you're hurt. The fight's rules are unchanged.
+const BT_W = 240,
+  BT_H = 176;
+// stock looks for people with no name of their own
+const BT_STOCK = {
+  slaver: { skin: '#c89a78', hair: '#2a1e14', hs: 'buzz', top: '#5a4a3a', bot: '#3a3028', x: ['chains', 'beard'] },
+  molar: { skin: '#b08a6a', hair: '#1a1210', hs: 'buzz', top: '#6a2a2a', bot: '#2a2420', x: ['spikes', 'necklace'] },
+  raider: { skin: '#a87a5a', hair: '#6a4a2a', hs: 'messy', top: '#6a3a2a', bot: '#3a3028', x: ['scarf'] },
+  drifter: { skin: '#c8a07a', hair: '#8a7a6a', hs: 'long', top: '#7a6a50', bot: '#4a4030', x: ['pack'] },
+};
+for (const k in BT_STOCK) CHIBI['_' + k] = BT_STOCK[k];
+const btLook = e =>
+  e.npc && CHIBI[e.npc]
+    ? e.npc
+    : /slaver|Krug/i.test(e.n)
+      ? '_slaver'
+      : /Molar|Incisor|Molar|Tooth|Fang/i.test(e.n)
+        ? '_molar'
+        : /wander|drifter|salesman|taxman|cult/i.test(e.n)
+          ? '_drifter'
+          : '_raider';
+// which approved beast sprite: the bosses get the big ones
+const btBeast = (e, kind) =>
+  ({
+    rat: e.boss ? 'ratQueen' : 'rat',
+    crab: e.boss ? (/shell/i.test(e.n) ? 'oldShell' : 'crabBig') : /saltback|pincer/i.test(e.n) ? 'saltback' : 'crab',
+    hound: e.boss ? 'alpha' : 'hound',
+    bee: 'stinger',
+    lizard: 'lizard',
+    bird: 'bird',
+    worm: 'worm',
+    cow: 'cow',
+  })[kind];
+// the place's own ground and colours, from its town
+function btGround() {
+  const t = typeof TOWNMAP !== 'undefined' && (TOWNMAP[S.here] || TOWNMAP[townOf(S.here)]);
+  if (!t) return { c: ',', pal: {} };
+  const n = {};
+  t.rows
+    .join('')
+    .replace(/[=~]/g, '')
+    .split('')
+    .forEach(c => (n[c] = (n[c] || 0) + 1));
+  return { c: Object.keys(n).sort((a, b) => n[b] - n[a])[0] || '.', pal: t.pal || {} };
+}
+let BT_BG = {};
+function btBack() {
+  const gr = btGround(),
+    key = gr.c + JSON.stringify(gr.pal);
+  if (BT_BG[key]) return BT_BG[key];
+  const P = TK.paintTown(Array(8).fill(gr.c.repeat(10)), gr.pal, () => {
+    const g = TK.g;
+    g.fillStyle = 'rgba(60,40,20,0.22)';
+    g.beginPath();
+    g.ellipse(176, 86, 70, 14, 0, 0, 7);
+    g.fill();
+    g.beginPath();
+    g.ellipse(62, 170, 70, 16, 0, 0, 7);
+    g.fill();
+    TK.props.rock(8, 30, 1);
+  });
+  return (BT_BG[key] = P.c);
+}
+// one sprite, on its own small canvas; white when it's just been hit
+function btSprite(e, hurt) {
+  const c = document.createElement('canvas');
+  c.width = 64;
+  c.height = 64;
+  const g = c.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  const kind = kindOf(e),
+    bk = kind !== 'man' && btBeast(e, kind);
+  if (kind === 'man') chibiDraw(g, btLook(e), 'down', 0);
+  else if (bk && BEAST[bk]) BEAST[bk](g, 8, 12);
+  else drawBeast(g, kind, 32, 52, e.boss ? 1.6 : 1, false);
+  if (hurt) {
+    g.globalCompositeOperation = 'source-atop';
+    g.fillStyle = 'rgba(255,250,235,0.85)';
+    g.fillRect(0, 0, 64, 64);
+  }
+  return { c, man: kind === 'man', big: !!e.boss };
+}
 function battleArt(F) {
   const vw = $('view');
   vw.hidden = false;
-  vw.innerHTML = `<div class="battle"><canvas id="bcv" width="${BW}" height="${BH}"></canvas></div>`;
+  const prev = BK && BK.F === F ? BK : null,
+    hp0 = prev ? prev.hp : F.en.map(e => e.hp),
+    me0 = prev ? prev.me : S.hp;
+  vw.innerHTML = `<div class="bt"><canvas id="bcv" width="${BT_W}" height="${BT_H}"></canvas><div class="bfoes"></div><div class="bme"></div><div class="bround">Round ${F.round || 1}</div></div>`;
+  // the newest words in view
+  ['log', 'text'].forEach(id => {
+    const el = $(id);
+    if (el) requestAnimationFrame(() => (el.scrollTop = el.scrollHeight));
+  });
   const cv = $('bcv'),
     g = cv.getContext('2d');
   g.imageSmoothingEnabled = false;
-  const prev = BK && BK.hp ? BK.hp : [];
-  BK = {
-    cv,
-    g,
-    F,
-    hp: F.en.map(e => e.hp),
-    hit: F.en.map((e, i) => prev[i] != null && e.hp < prev[i]),
-    t0: Date.now(),
-  };
-  // tap an enemy to target it
-  cv.addEventListener('pointerdown', e => {
+  BK = { cv, g, F, hp: F.en.map(e => e.hp), me: S.hp, t0: Date.now(), hit: F.en.map((e, i) => e.hp < hp0[i]), raf: 0 };
+  const kn = keen();
+  // the boxes: theirs top left (tap one to target it), yours bottom right
+  const bar = f => `<div class="bb"><i style="width:${Math.max(0, f) * 100}%"></i></div>`;
+  const shown = F.en.map((e, i) => [e, i]).filter(([e, i]) => e.hp > 0 || BK.hit[i]);
+  const fo = vw.querySelector('.bfoes');
+  shown.forEach(([e, i]) => {
+    const d = document.createElement('div');
+    d.className = 'bx' + (i === F.t && e.hp > 0 ? ' sel' : '') + (e.hp <= 0 ? ' gone' : '');
+    const extra = kn
+      ? `${Math.max(0, e.hp)}/${e.max}`
+      : e.tele && e.hp > 0
+        ? 'winding up!'
+        : e.lvl
+          ? 'Lv ' + e.lvl
+          : '';
+    d.innerHTML = `<div class="bn"><b>${esc(e.n)}</b><span>${esc(extra)}</span></div>${bar(hp0[i] / e.max)}`;
+    d.onclick = () => {
+      if (e.hp > 0 && F.t !== i) {
+        F.t = i;
+        go('fight');
+      }
+    };
+    fo.appendChild(d);
+    requestAnimationFrame(() => (d.querySelector('.bb i').style.width = (Math.max(0, e.hp) / e.max) * 100 + '%'));
+  });
+  const pb = perkBar(),
+    me = vw.querySelector('.bme');
+  me.innerHTML =
+    `<div class="bx"><div class="bn"><b>You</b><span>${S.hp}/${S.maxhp}</span></div>${bar(me0 / S.maxhp)}` +
+    `<div class="bs">${esc(W[S.weapon].n)}${F.range ? ' · at range' : ''}</div>` +
+    (pb
+      ? `<div class="bs bp">★ ${esc(pb.txt)}<div class="bb bl"><i style="width:${Math.round(pb.frac * 100)}%"></i></div></div>`
+      : '') +
+    '</div>';
+  requestAnimationFrame(() => (me.querySelector('.bb i').style.width = (Math.max(0, S.hp) / S.maxhp) * 100 + '%'));
+  if (S.hp < me0) {
+    vw.querySelector('.bt').classList.add('shake'); // you were hurt
+  }
+  // tap a sprite to target it
+  cv.addEventListener('pointerdown', ev => {
     const b = cv.getBoundingClientRect(),
-      x = ((e.clientX - b.left) / b.width) * BW,
-      y = ((e.clientY - b.top) / b.height) * BH;
-    const i = (BK.spots || []).findIndex(s => s && Math.abs(x - s[0]) < 22 && y < s[1] + 4 && y > s[1] - 44);
+      x = ((ev.clientX - b.left) / b.width) * BT_W,
+      y = ((ev.clientY - b.top) / b.height) * BT_H;
+    const i = (BK.spots || []).findIndex(s => s && x > s[0] && x < s[0] + s[2] && y > s[1] && y < s[1] + s[3]);
     if (i >= 0 && F.en[i].hp > 0 && F.t !== i) {
       F.t = i;
       go('fight');
@@ -204,116 +328,58 @@ function battleArt(F) {
   const loop = () => {
     if (!BK || BK.cv !== cv) return;
     battleDraw();
-    BK.raf = requestAnimationFrame(loop);
+    if (Date.now() - BK.t0 < 1200) BK.raf = requestAnimationFrame(loop); // the hit and the fall, then it holds still
   };
   loop();
 }
-function infoBox(g, x, y, w, name, frac, sel, extra) {
-  g.fillStyle = GP.ink;
-  g.fillRect(x - 1, y - 1, w + 2, 20);
-  g.fillStyle = '#fbf8ec';
-  g.fillRect(x, y, w, 18);
-  g.fillStyle = sel ? '#c4583a' : '#5a6a8a';
-  g.fillRect(x, y, 2, 18);
-  g.fillStyle = GP.ink;
-  g.font = 'bold 7px monospace';
-  g.fillText(name.slice(0, 18), x + 5, y + 8);
-  // the health bar: green, then amber, then red
-  const bw = w - 10;
-  g.fillStyle = '#3a3028';
-  g.fillRect(x + 5, y + 11, bw, 4);
-  g.fillStyle = frac > 0.5 ? '#58b048' : frac > 0.2 ? '#e0a030' : '#d83a2a';
-  g.fillRect(x + 5, y + 11, Math.round(bw * Math.max(0, frac)), 4);
-  if (extra) {
-    g.font = '6px monospace';
-    g.fillStyle = '#6a5a4a';
-    g.fillText(extra, x + w - g.measureText(extra).width - 3, y + 8);
-  }
-}
 function battleDraw() {
   const { g, F } = BK,
-    now = Date.now(),
-    flash = now - BK.t0 < 450 && Math.floor((now - BK.t0) / 75) % 2 === 0;
-  // ground: sand, a far ridge, and two worn patches where you and they stand
-  const sky = g.createLinearGradient(0, 0, 0, 70);
-  sky.addColorStop(0, '#f0d8a0');
-  sky.addColorStop(1, '#e8c890');
-  g.fillStyle = sky;
-  g.fillRect(0, 0, BW, BH);
-  g.fillStyle = '#d4b07a';
-  g.fillRect(0, 48, BW, BH - 48);
-  g.fillStyle = '#c8a06a';
-  for (let x = 0; x < BW; x += 9) g.fillRect(x, 48 + ((x * 7) % 5), 4, 1);
-  g.fillStyle = 'rgba(120,80,40,0.25)';
-  g.beginPath();
-  g.ellipse(170, 74, 64, 12, 0, 0, Math.PI * 2);
-  g.fill();
-  g.beginPath();
-  g.ellipse(64, 134, 58, 11, 0, 0, Math.PI * 2);
-  g.fill();
-  // them, top right: up to three, the target a little forward
-  const live = F.en.map((e, i) => [e, i]).filter(([e]) => e.hp > 0 || BK.hit[F.en.indexOf(e)]);
+    t = Date.now() - BK.t0;
+  g.drawImage(btBack(), 0, 0, BT_W, BT_H, 0, 0, BT_W, BT_H);
+  // them, back right, on their rise: the target a step forward
+  const live = F.en.map((e, i) => [e, i]).filter(([e, i]) => e.hp > 0 || (BK.hit[i] && t < 900));
   const n = Math.max(1, live.length);
   BK.spots = [];
-  const kn = keen();
   live.forEach(([e, i], k) => {
-    const cx = n === 1 ? 172 : 128 + (k * 92) / Math.max(1, n - 1),
-      by = 74 + (i === F.t ? 4 : 0);
-    BK.spots[i] = [cx, by];
-    const kind = kindOf(e),
-      s = e.boss ? 1.9 : 1;
-    const hurt = BK.hit[i] && flash;
-    if (kind === 'man') {
-      g.save();
-      g.translate(cx - 24, by - 56);
-      g.scale(3, 3);
-      if (!hurt)
-        drawWalkerGBA(
-          g,
-          0,
-          8,
-          e.npc ? walkerLook(e.npc) : { hair: '#3a2a1c', shirt: '#6a4a3a', legs: '#3a3028', skin: '#c8986c' },
-          'd',
-          0,
-        );
-      g.restore();
-    } else drawBeast(g, kind, cx, by, s, hurt);
+    const flash = BK.hit[i] && t < 450 && Math.floor(t / 75) % 2 === 0,
+      sp = btSprite(e, flash),
+      cx = n === 1 ? 176 : 134 + (k * 84) / Math.max(1, n - 1),
+      fwd = i === F.t ? 4 : 0;
+    let w = sp.man ? 36 : 56,
+      h = sp.man ? 54 : 56;
+    if (sp.big) (w *= 1.4), (h *= 1.4);
+    const x = Math.round(cx - w / 2),
+      y = Math.round(84 + fwd - h);
+    BK.spots[i] = [x, y, w, h];
+    g.save();
+    if (e.hp <= 0) {
+      // beaten: it keels over and fades
+      const k2 = Math.min(1, Math.max(0, (t - 300) / 600));
+      g.globalAlpha = 1 - k2;
+      g.translate(cx, 84);
+      g.rotate((k2 * Math.PI) / 2.2);
+      g.translate(-cx, -84);
+    }
+    // a person is the whole chibi; a beast, the 40 x 40 around it (so it stands as big as a person)
+    if (sp.man) g.drawImage(sp.c, 0, 0, 24, 36, x, y, w, h);
+    else g.drawImage(sp.c, 4, 8, 48, 48, x, y, w, h);
+    g.restore();
     if (e.tele && e.hp > 0) {
       g.fillStyle = '#d83a2a';
-      g.font = 'bold 10px monospace';
-      g.fillText('!', cx - 2, by - 48);
+      g.fillRect(cx - 1, y - 9, 3, 6);
+      g.fillRect(cx - 1, y - 2, 3, 2);
     }
   });
-  // their info boxes, top left
-  live.forEach(([e, i], k) => {
-    const extra = kn ? `${Math.max(0, e.hp)}/${e.max}` : e.tele ? 'winding up' : '';
-    infoBox(g, 4, 4 + k * 23, 104, e.n, e.hp / e.max, i === F.t, extra);
-  });
-  // you, bottom left, from behind
-  g.save();
-  g.translate(40, 82);
-  g.scale(3, 3);
-  drawWalkerGBA(g, 0, 8, walkerLook(null), 'u', 0);
-  g.restore();
-  // you: health, and under it the blue bar to your next perk, in one box
-  const pb = perkBar(),
-    py = pb ? BH - 37 : BH - 26;
-  infoBox(g, BW - 112, py, 108, `You · ${W[S.weapon].n}`, S.hp / S.maxhp, false, `${S.hp}/${S.maxhp}`);
-  if (pb) {
-    g.fillStyle = GP.ink;
-    g.fillRect(BW - 113, py + 18, 110, 15);
-    g.fillStyle = '#fbf8ec';
-    g.fillRect(BW - 112, py + 18, 108, 14);
-    g.fillStyle = '#5a6a8a';
-    g.fillRect(BW - 112, py + 18, 2, 14);
-    g.fillStyle = '#2a3a5a';
-    g.font = 'bold 6px monospace';
-    g.fillText('★ ' + pb.txt, BW - 107, py + 25);
-    g.fillStyle = '#3a3028';
-    g.fillRect(BW - 107, py + 27, 98, 3);
-    g.fillStyle = '#3a8ae0';
-    g.fillRect(BW - 107, py + 27, Math.round(98 * pb.frac), 3);
+  // you, from behind, big, bottom left
+  const me = document.createElement('canvas');
+  me.width = 24;
+  me.height = 36;
+  me.getContext('2d').imageSmoothingEnabled = false;
+  if (!BK.meC) {
+    chibiDraw(me.getContext('2d'), null, 'up', 0);
+    BK.meC = me;
   }
+  g.drawImage(BK.meC, 26, 74, 72, 108);
 }
 function battleStop() {
   if (BK && BK.raf) cancelAnimationFrame(BK.raf);
@@ -322,10 +388,9 @@ function battleStop() {
 // ---- the menu: FIGHT, BAG, RUN ----
 const FIGHT_RE = /^(Hit |Shoot |Look for a weak spot|Close in|Click\. No bullets|Dodge|Brace)/;
 const BAG_RE = /^(Gut Glue|Snort Buzz|Throw meat|Light a flare|Throw a molotov|Switch to)/;
-const BATTLE_ON = false;
+const BATTLE_ON = true; // v9.32: on again, in the approved art
 const _fightBattle = SC.fight;
 SC.fight = () => {
-  // v9.23: walking is back, but fights stay the text screen (the status bar and the moves agreed in v9.6)
   if (!walkOn() || !S.fight || !BATTLE_ON) return _fightBattle();
   let v = null;
   const _show = show;
@@ -390,6 +455,25 @@ function battleMenu(v) {
   document.body.classList.add('inbattle');
   document.body.classList.toggle('bmain', BM === 'main');
   battleArt(F);
+  // each button: what it is, and under it the odds or what it does
+  const HINT = { FIGHT: 'hit, or find a weak spot', BAG: 'meds, throwables, weapons', Back: '' };
+  $('opts')
+    .querySelectorAll('button')
+    .forEach(b => {
+      const n = b.querySelector('.n'),
+        txt = b.textContent.replace(n ? n.textContent : '', '').trim(),
+        m = txt.match(/^(.*?)\s*\(([^)]*)\)[:,.]?\s*(.*)$/),
+        main = m ? m[1] : txt,
+        hint = m
+          ? m[1] === 'RUN'
+            ? m[2] + ' to get away'
+            : [m[2], m[3]].filter(Boolean).join(' · ')
+          : HINT[txt] || '';
+      b.innerHTML =
+        (n ? n.outerHTML : '') +
+        `<b>${esc(main.replace(/^RUN$/, 'RUN'))}</b>` +
+        (hint ? `<small>${esc(hint)}</small>` : '');
+    });
 }
 // Leaving the fight stops the battle screen and resets the menu.
 const _goBattle = go;
