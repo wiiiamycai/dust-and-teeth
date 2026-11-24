@@ -24,10 +24,10 @@ if (typeof window !== 'undefined' && typeof canDraw === 'function' && canDraw())
     const r = _showCue(v);
     try {
       scrollCue();
-      requestAnimationFrame(scrollCue); // again once it's laid out (pictures, the map)
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(scrollCue); // again once it's laid out (pictures, the map)
       setTimeout(scrollCue, 250);
     } catch (e) {}
     return r;
   };
-  window.addEventListener('resize', () => scrollCue());
+  if (window.addEventListener) window.addEventListener('resize', () => scrollCue());
 }
