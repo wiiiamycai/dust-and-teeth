@@ -28,16 +28,20 @@ const VALLEY_EXITS = [
   ['fanghill', -6, 8, 'The caravan road', 32, 2, 'left'],
   ['scrapwell', -6, 300, 'The old highway', 34, 312, 'left'],
 ];
-let VALLEY = null;
-function valleyLand() {
-  if (VALLEY) return VALLEY;
+// ox: extra land painted on each side, so the map can fill a screen wider than 2 to 3
+const VALLEY = {}; // painted lands, by the extra each side and above and below
+function valleyLand(ox = 0, oy = 0) {
+  if (VALLEY[ox + ',' + oy]) return VALLEY[ox + ',' + oy];
+  const OX = ox,
+    OY = oy;
   const W = VAL_W,
     H = VAL_H,
     c = document.createElement('canvas');
-  c.width = W;
-  c.height = H;
+  c.width = W + 2 * OX;
+  c.height = H + 2 * OY;
   const g = c.getContext('2d');
   g.imageSmoothingEnabled = false;
+  g.translate(OX, OY);
   const R = PX.ramp,
     INK = '#2a1810',
     M = () => PX.mask(),
@@ -136,9 +140,10 @@ function valleyLand() {
     const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)));
     return [Math.hypot(px - ax - t * dx, py - ay - t * dy), t];
   };
-  const HT = new Float32Array(W * H);
-  for (let y = 0; y < H; y++)
-    for (let x = 0; x < W; x++) {
+  const WW = W + 2 * OX,
+    HT = new Float32Array(WW * (H + 2 * OY));
+  for (let y = -OY; y < H + OY; y++)
+    for (let x = -OX; x < W + OX; x++) {
       let h = fbm(x, y) * 0.7;
       // the eastern range: high, ridged, snowy
       const east = Math.max(0, (x - 150) / 90);
@@ -176,9 +181,9 @@ function valleyLand() {
         if (ELEV[k] >= 2 && dd < 40 && dd > 9) h = Math.max(h, TG(k) - (dd - 9) * 0.011);
         if (ELEV[k] === 0 && dd < 40 && dd > 12 && best[0] > 6) h = Math.max(h, (dd - 12) * 0.009);
       });
-      HT[y * W + x] = h;
+      HT[(y + OY) * WW + x + OX] = h;
     }
-  const ht = (x, y) => HT[Math.max(0, Math.min(H - 1, y)) * W + Math.max(0, Math.min(W - 1, x))];
+  const ht = (x, y) => HT[Math.max(0, Math.min(H + 2 * OY - 1, y + OY)) * WW + Math.max(0, Math.min(WW - 1, x + OX))];
   const BANDS = ['#dcc08a', '#d2b07c', '#c89e6a', '#b6865a', '#a2704e', '#8e6450', '#7e6a62', '#8e8682', '#e8e4dc'];
   const RED = ['#dcc08a', '#d4a878', '#c88a60', '#b47050', '#a05a44', '#8a4a3a', '#7a4a3e', '#8a6a5e', '#e0d4cc'];
   const GREEN = ['#8aa850', '#7a9a44', '#6a8a3a', '#5a7a34', '#a2704e', '#8e6450', '#7e6a62', '#8e8682', '#e8e4dc'];
@@ -186,8 +191,8 @@ function valleyLand() {
     band = h => Math.max(0, Math.min(8, Math.floor(h / STEP)));
   const gx = X('green'),
     gy = Y('green');
-  for (let y = 0; y < H; y++)
-    for (let x = 0; x < W; x++) {
+  for (let y = -OY; y < H + OY; y++)
+    for (let x = -OX; x < W + OX; x++) {
       const h = ht(x, y),
         bi = band(h),
         sl = ht(x + 1, y) - ht(x - 1, y) + (ht(x, y + 1) - ht(x, y - 1));
@@ -207,8 +212,8 @@ function valleyLand() {
       p(x, y, c);
     }
   // wind ripples on the valley floor
-  for (let y = 2; y < H; y += 6)
-    for (let x = 0; x < W; x++)
+  for (let y = 2 - OY; y < H + OY; y += 6)
+    for (let x = -OX; x < W + OX; x++)
       if (band(ht(x, y)) === 0 && hash((x >> 3) + y, y, 3) > 0.5)
         p(x, y + Math.round(Math.sin(x / 6 + y / 9) * 2), '#ccae78');
   // salt flats round Saltpan, and the reservoir in the low ground by the airport
@@ -272,10 +277,10 @@ function valleyLand() {
   for (let i = 0; i < 28; i++) {
     const a = 0.02 * (28 - i);
     g.fillStyle = `rgba(232,220,196,${a})`;
-    g.fillRect(0, i, W, 1);
-    g.fillRect(0, H - 1 - i, W, 1);
-    g.fillRect(i, 0, 1, H);
-    g.fillRect(W - 1 - i, 0, 1, H);
+    g.fillRect(-OX, i - OY, W + 2 * OX, 1);
+    g.fillRect(-OX, H + OY - 1 - i, W + 2 * OX, 1);
+    g.fillRect(i - OX, -OY, 1, H + 2 * OY);
+    g.fillRect(W + OX - 1 - i, -OY, 1, H + 2 * OY);
   }
 
   // ---- bleaker: scars of the war, smoke, ash, haze, and a grade that drains the colour ----
@@ -621,17 +626,17 @@ function valleyLand() {
   // vignette
   for (let i = 0; i < 16; i++) {
     g.fillStyle = `rgba(20,10,0,${0.016 * (16 - i)})`;
-    g.fillRect(0, i, W, 1);
-    g.fillRect(0, H - 1 - i, W, 1);
-    g.fillRect(i, 0, 1, H);
-    g.fillRect(W - 1 - i, 0, 1, H);
+    g.fillRect(-OX, i - OY, W + 2 * OX, 1);
+    g.fillRect(-OX, H + OY - 1 - i, W + 2 * OX, 1);
+    g.fillRect(i - OX, -OY, 1, H + 2 * OY);
+    g.fillRect(W + OX - 1 - i, -OY, 1, H + 2 * OY);
   }
 
   if (BLEAK) {
     // dust haze, then the grade: half the colour drained, pushed to ochre and ash, sick green-grey shadows
     g.fillStyle = 'rgba(120,100,70,0.18)';
-    g.fillRect(0, 0, W, H);
-    const im = g.getImageData(0, 0, W, H),
+    g.fillRect(-OX, -OY, W + 2 * OX, H + 2 * OY);
+    const im = g.getImageData(0, 0, W + 2 * OX, H + 2 * OY),
       d = im.data;
     for (let i = 0; i < d.length; i += 4) {
       let [rr, gg, bb] = [d[i], d[i + 1], d[i + 2]];
@@ -655,42 +660,65 @@ function valleyLand() {
     g.putImageData(im, 0, 0);
     for (let i = 0; i < 260; i++)
       p(
-        (hash(i, 21) * W) | 0,
-        (hash(i, 22) * H) | 0,
+        ((hash(i, 21) * (W + 2 * OX)) | 0) - OX,
+        ((hash(i, 22) * (H + 2 * OY)) | 0) - OY,
         hash(i, 23) < 0.5 ? 'rgba(200,196,190,0.7)' : 'rgba(80,76,72,0.6)',
       );
     for (let i = 0; i < 40; i++) {
       const a = 0.018 * (40 - i);
       g.fillStyle = `rgba(14,10,6,${a})`;
-      g.fillRect(0, i, W, 1);
-      g.fillRect(0, H - 1 - i, W, 1);
-      g.fillRect(i, 0, 1, H);
-      g.fillRect(W - 1 - i, 0, 1, H);
+      g.fillRect(-OX, i - OY, W + 2 * OX, 1);
+      g.fillRect(-OX, H + OY - 1 - i, W + 2 * OX, 1);
+      g.fillRect(i - OX, -OY, 1, H + 2 * OY);
+      g.fillRect(W + OX - 1 - i, -OY, 1, H + 2 * OY);
     }
   }
-  VALLEY = c;
+  VALLEY[ox + ',' + oy] = c;
   return c;
 }
 // The map screen (scenes/map.js) builds its buttons, then calls mapPaint: here it gets the valley instead of the
 // old painted land, and each button moves to sit under its town on the picture.
 const _mapPaintValley = mapPaint;
+// The room the map has: the width of the page, and the height left under the bar over any choices.
+function valleyRoom(mp) {
+  const opts = $('opts'),
+    below = opts && opts.children.length ? Math.min(opts.scrollHeight, 140) + 10 : 0,
+    wrap = mp.parentElement ? mp.parentElement.clientWidth : window.innerWidth,
+    h = Math.max(260, window.innerHeight - mp.getBoundingClientRect().top - below - 14);
+  return { w: Math.min(wrap, 900), h };
+}
 mapPaint = mp => {
   if (!canDraw() || !mp) return;
+  mp.classList.add('valley');
+  mp.querySelectorAll('canvas.land, .vexit, .vcap').forEach(e => e.remove()); // painted again: no doubles
+  // once the screen has settled (the words gone, the choices in), measure again and fit properly
+  if (!mp.refit) {
+    mp.refit = 1;
+    requestAnimationFrame(() => mp.isConnected && mapPaint(mp));
+  }
+  // as much extra land each side as the screen's shape needs (in steps of 8, so it's painted a few times at most)
+  const room = valleyRoom(mp),
+    ox = Math.max(0, Math.min(160, Math.round(((VAL_H * room.w) / room.h - VAL_W) / 16) * 8)),
+    oy = Math.max(0, Math.min(120, Math.round(((VAL_W * room.h) / room.w - VAL_H) / 16) * 8)),
+    TW = VAL_W + 2 * ox,
+    TH = VAL_H + 2 * oy;
   let land;
   try {
-    land = valleyLand();
+    land = valleyLand(ox, oy);
   } catch (e) {
     return _mapPaintValley(mp);
   }
-  mp.classList.add('valley');
+  mp.style.setProperty('aspect-ratio', TW + ' / ' + TH, 'important');
+  mp.style.setProperty('width', Math.floor(Math.min(room.w, (room.h * TW) / TH)) + 'px', 'important');
   const svg = mp.querySelector('svg');
   if (svg) svg.remove(); // the roads are in the picture
   const cv = document.createElement('canvas');
   cv.className = 'land';
-  cv.width = VAL_W;
-  cv.height = VAL_H;
+  cv.width = TW;
+  cv.height = TH;
   const g = cv.getContext('2d');
   g.drawImage(land, 0, 0);
+  g.translate(ox, oy);
   // a crater where a town was nuked
   for (const k in S.crater || {})
     if (S.crater[k] && VALLEY_P[k]) {
@@ -721,16 +749,21 @@ mapPaint = mp => {
   [...mp.querySelectorAll('.node')].forEach(b => {
     const k = b.stop;
     if (!k || !VALLEY_P[k]) return;
-    b.style.left = (valleyX(k) / VAL_W) * 100 + '%';
-    b.style.top = ((valleyY(k) + 15) / VAL_H) * 100 + '%';
+    b.style.left = ((valleyX(k) + ox) / TW) * 100 + '%';
+    b.style.top = ((valleyY(k) + 15 + oy) / TH) * 100 + '%';
     if (typeof TOWNS !== 'undefined' && TOWNS[k]) b.classList.add('lost');
   });
+  // the screen's words, moved onto the map so the map can be bigger
+  const cap = document.createElement('span');
+  cap.className = 'vcap';
+  cap.textContent = 'Tap a stop. Each road is a day.';
+  mp.appendChild(cap);
   VALLEY_EXITS.forEach(([, , , t, lx, ly, way]) => {
     const s = document.createElement('span');
     s.className = 'vexit';
     s.textContent = { left: '< ', right: '', up: '^ ' }[way] + t + (way === 'right' ? ' >' : '');
-    s.style.left = (lx / VAL_W) * 100 + '%';
-    s.style.top = ((ly + 3) / VAL_H) * 100 + '%';
+    s.style.left = ((lx + ox) / TW) * 100 + '%';
+    s.style.top = ((ly + 3 + oy) / TH) * 100 + '%';
     mp.appendChild(s);
   });
 };

@@ -1571,3 +1571,26 @@ canvas,
   white-space: nowrap;
   pointer-events: none;
 }
+/* the map screen: the words go onto the map, empty boxes go, and the map takes the rest of the phone */
+#wrap:has(#map.valley) #text,
+#wrap:has(#map.valley) #head,
+#wrap:has(#map.valley) #cards:empty,
+#wrap:has(#map.valley) #log:empty,
+#wrap:has(#map.valley) #opts:empty {
+  display: none !important;
+}
+#map.valley {
+  margin-top: 4px !important;
+}
+.vcap {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--a);
+  background: rgba(12, 9, 4, 0.75);
+  padding: 2px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}

@@ -38,7 +38,7 @@ SC.map = () => {
     title: 'The Wasteland',
     icon: '🏜️',
     sub: `Day ${S.day}`,
-    text: 'Tap a stop. Each road is a day, through the towns between. The roads out go further than you know.',
+    text: 'Tap a stop. Each road is a day.',
     map: true,
     opts: [
       S.trip && S.trip !== S.here && LOC[S.trip] && onMap(S.trip)
