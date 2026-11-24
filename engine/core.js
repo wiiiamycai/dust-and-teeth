@@ -2,7 +2,7 @@
 // ================= ENGINE =================
 const SAVE = 'dust_teeth_v2';
 // Bump VERSION with every update Will can play, so he can see at a glance he has the new build.
-const VERSION = 'v9.25 (23 Nov 2026)';
+const VERSION = 'v9.26 (23 Nov 2026)';
 // The calendar (v9.5, Will: "set the nuke day to say 120 days instead of 25"). Every date and every wait in the
 // story goes through DAYS: the old 25-day calendar, stretched 4.8 times, now that each town on a road is a day.
 const TIME = 4.8;
