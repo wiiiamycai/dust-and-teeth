@@ -86,7 +86,7 @@ SC.char = () => {
       `Murder your spouse, ${NPC[S.spouse].n}`,
       () => {
         const r = S.ret || { scene: 'map', args: [] };
-        fight([foe(S.spouse)], { started: true, win: 'go', args: [r.scene, ...r.args] });
+        fight([foe(S.spouse)], { started: true, win: 'go', args: [r.scene, ...r.args], back: [r.scene, ...r.args] });
       },
       'danger',
     ]);

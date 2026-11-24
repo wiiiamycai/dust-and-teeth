@@ -907,12 +907,12 @@ function walkDraw(now) {
   g.drawImage(WK.light.c, 0, 0);
   // the way out: a bobbing arrow on each exit tile, pointing off the map (v9.31, Will: "a clearer exit")
   if (WK.M.kit)
-    for (const [x, y] of WK.M.D.exits || []) {
+    for (const [x, y] of townExitArrows(WK.M.D.exits || [])) {
       const out = y >= WK.H - 1 ? 'd' : y === 0 ? 'u' : x === 0 ? 'l' : 'r',
         b = Math.round(Math.sin(now / 260) * 2),
         [dx, dy] = DIRV[out],
-        X = Math.round(x * TILE - cx + 12 + dx * b),
-        Y = Math.round(y * TILE - cy + 12 + dy * b);
+        X = Math.round(x * TILE - cx + TILE / 2 + dx * b),
+        Y = Math.round(y * TILE - cy + TILE / 2 + dy * b);
       g.fillStyle = 'rgba(20,12,6,0.55)';
       g.fillRect(X - 9, Y - 9, 18, 18);
       g.fillStyle = '#ffcf4a';
@@ -1017,6 +1017,19 @@ function walkTo(tx, ty) {
   if (!p) return;
   WK.path = p;
   WK.goal = [tx, ty];
+}
+// One arrow for each road out, in the middle of it: exit tiles side by side are one road (v9.33, Will)
+function townExitArrows(ex) {
+  const left = ex.map(e => [...e]),
+    out = [];
+  while (left.length) {
+    const grp = [left.shift()];
+    for (let i = 0; i < left.length; i++)
+      if (grp.some(([x, y]) => Math.abs(x - left[i][0]) + Math.abs(y - left[i][1]) === 1))
+        grp.push(...left.splice(i--, 1));
+    out.push([grp.reduce((a, e) => a + e[0], 0) / grp.length, grp.reduce((a, e) => a + e[1], 0) / grp.length]);
+  }
+  return out;
 }
 // Where on the town a tap landed, and what's there: a person (their head stands a tile above their feet),
 // a door, a thing you can use, or a road out. Anything else: nothing.

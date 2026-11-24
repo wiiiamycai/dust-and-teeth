@@ -216,7 +216,8 @@ function fight(en, o) {
     started: !!o.started,
     win: o.win || 'back',
     args: o.args || [],
-    back: o.back || null,
+    // a fight on the road can always be run from: you get away towards where you were going (v9.33, Will)
+    back: o.back || (o.win === 'enc' && o.args && o.args[0] ? ['hub', o.args[0]] : null),
     t: 0,
     round: 1,
     stun: [],

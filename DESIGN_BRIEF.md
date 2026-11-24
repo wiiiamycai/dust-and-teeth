@@ -213,3 +213,7 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 ### The battle screen (v9.32)
 
 Will chose option 1: the fight rules stay as agreed in v9.6, shown Pokemon-style (`scenes/battle.js`). The ground is the town you're in, beasts are the approved sprites (`scenes/beastart.js`, plus lizards, vultures, rad-moles and cows in `scenes/beastart2.js`), people are chibis (named people as themselves, nameless ones in stock looks), and you are your chibi from behind, big, bottom left. Names and health are white boxes over the picture (tap one to target), the words are a white box, and the buttons are white: FIGHT, BAG, RUN, each with a hint. A hit flashes the sprite, health slides, the beaten keel over, and the screen shakes when you're hurt. Pokemon-style moves (option 2) can come later.
+
+### Running away (v9.34)
+
+Will: only storyline fights have no retreat. Every fight offers Run, except the final fight at Silo 9. A fight on the road (`win: 'enc'`) runs you on towards where you were going; any other fight needs a `back` to run to, and a new fight must have one unless it is a storyline fight.
