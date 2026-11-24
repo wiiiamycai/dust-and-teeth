@@ -498,9 +498,6 @@ function walkMount(loc, M, ids) {
       : '') +
     '</div><button class="wmenu">Menu</button></div>' +
     '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div>' +
-    (M.kit && (M.D.exits || []).length
-      ? `<button class="wleave">${L && L.sub ? '\u2934 Climb up' : '\u2934 Leave town'}</button>`
-      : '') +
     '</div>';
   vw.querySelector('.wmenu').addEventListener('pointerdown', e => {
     e.preventDefault();
