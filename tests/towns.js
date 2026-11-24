@@ -71,6 +71,7 @@ const path = require('path');
         uses.set(String(u), (uses.get(String(u)) || false) || near(x, y));
       }
       if (!M.D.key) for (const [u, ok] of uses) if (!ok) out.push(`${t}: you can't get to the thing for ${u}`);
+      for (const k in M.D.from || {}) walk(...M.D.from[k]) && near(...M.D.from[k]) || out.push(`${t}: you come up out of ${k} somewhere you can't stand`);
       for (const id in M.spots) {
         const [x, y] = M.spots[id];
         if (!NPC[id]) out.push(`${t}: a spot for unknown ${id}`);
@@ -85,7 +86,7 @@ const path = require('path');
         if (!any) out.push(`${t}: you can't walk into ${k}`);
       }
       // everyone who could be in this town fits: its own people, plus room for a few who move in
-      const places = Object.keys(LOC).filter(k => !LOC[k].sub && townOf(k) === t);
+      const places = LOC[t] && LOC[t].sub ? [t] : Object.keys(LOC).filter(k => !LOC[k].sub && townOf(k) === t);
       const own = IDS.filter(id => places.includes(NPC[id].loc));
       const spare = (M.D.extra || []).length;
       own.forEach(id => M.spots[id] || out.push(`${t}: ${id} lives here but has no spot`));

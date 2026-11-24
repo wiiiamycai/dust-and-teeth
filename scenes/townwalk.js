@@ -82,7 +82,8 @@ function townLive(M) {
 }
 // Everyone in the town's districts, each at their own spot (or the next free one), facing you.
 function townPeople(M) {
-  const places = Object.keys(LOC).filter(k => !LOC[k].sub && townOf(k) === M.town),
+  const places =
+      LOC[M.town] && LOC[M.town].sub ? [M.town] : Object.keys(LOC).filter(k => !LOC[k].sub && townOf(k) === M.town),
     used = new Set(),
     out = [];
   const ok = s => s && M.rows[s[1]] && M.rows[s[1]][s[0]] === '.' && !used.has(s.join(','));
@@ -147,7 +148,14 @@ function townArrive() {
     walkStop();
     S.wk.loc = null;
     save();
-    go('map');
+    // out of the well or the vat room: back up into the town; out of a town: the valley map
+    if (LOC[S.here] && LOC[S.here].sub) {
+      const up = LOC[S.here].up,
+        U = TOWNMAP[townOf(up)],
+        at = U && U.from && U.from[S.here];
+      if (at) S.wk = { loc: 'town:' + townOf(up), x: at[0], y: at[1], d: 'd' }; // you come up where you went down
+      go('hub', up);
+    } else go('map');
     return true;
   }
   const d = M.area(S.wk.x, S.wk.y);

@@ -330,6 +330,7 @@ TOWNMAP.rustwater = {
 };
 // ---- Scrapwell: home. The village, the well in the middle of it, and Rattle Gully on the rocks to the east ----
 TOWNMAP.scrapwell = {
+  from: { well: [6, 3] }, // climbing out of the well, you're beside it
   rows: [
     ',,,,,,,,,,,,,,',
     '..........,,,,',
@@ -764,6 +765,7 @@ TOWNMAP.mall = {
 
 // ---- the Green: the glasshouse, the beds and the wall. Outside the wall you only meet who is at the gate ----
 TOWNMAP.green = {
+  from: { vats: [5, 3] }, // up from the vat room, at the glasshouse door
   rows: [
     'gggggggggg',
     'gggggggggg',
@@ -1497,4 +1499,132 @@ TOWNMAP.fanghill = {
       [136, 94, 52, 44, /bone pits/i],
       [10, 6, 70, 46, /long barn|den/i],
     ].filter((t, i) => townStage('fanghill') <= i),
+};
+// ---- the places under a town: the well under Scrapwell, the vat room under the Green ----
+// Their own small maps. The rope (or the ladder) is the way out, back up to the town.
+TOWNMAP.well = {
+  rows: [
+    '..........',
+    '..........',
+    '..........',
+    '..........',
+    '......~~~.',
+    '.....~~~~.',
+    '......~~..',
+    '..........',
+    '..........',
+    '..........',
+  ],
+  pal: { sand: ['#3a3430', '#2e2a26', '#46403a', '#24201c'] },
+  spawn: [4, 1],
+  exits: [[4, 0]],
+  doors: [],
+  spots: { nigel: [5, 6] },
+  extra: [
+    [2, 3],
+    [3, 7],
+    [7, 8],
+    [8, 2],
+  ],
+  paint(K) {
+    const R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      M = () => PX.mask(),
+      g = () => K.g;
+    // the walls of the shaft: wet rock all round, closing in
+    const rock = (x, y, w, h) => {
+      M().rect(x, y, w, h).paint(g(), R('#4a4038'), { t: 0.7, hi: 1, ink: '#140e0a' });
+      K.solid(x, y, w, h);
+    };
+    rock(0, 0, 72, 22);
+    rock(132, 0, 108, 22);
+    rock(0, 0, 18, 240);
+    rock(222, 0, 18, 240);
+    rock(0, 222, 240, 18);
+    rock(18, 150, 40, 24);
+    rock(170, 24, 50, 30);
+    // drips, moss, bones of chickens
+    for (let i = 0; i < 40; i++)
+      K.p(20 + ((K.hash(i, 3) * 200) | 0), 24 + ((K.hash(i, 4) * 190) | 0), K.hash(i, 5) < 0.5 ? '#2a4a2a' : '#5a5048');
+    K.props.skull(60, 196);
+    PX.rows(g(), 150, 190, ['o...o', '.ooo.', 'o...o'], { o: '#c8c0b0' });
+    // the rope down from the light, and the light itself
+    r(100, 0, 2, 26, '#c8b890');
+    g().fillStyle = 'rgba(230,220,180,0.10)';
+    g().fillRect(80, 0, 44, 48);
+    // the pool, and its glow: whatever is in the water is why the chickens go
+    g().fillStyle = 'rgba(120,255,120,0.10)';
+    for (let k = 0; k < 5; k++) {
+      g().beginPath();
+      g().arc(172, 128, 30 + k * 10, 0, 7);
+      g().fill();
+    }
+  },
+  things: [],
+};
+TOWNMAP.vats = {
+  rows: [
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+    '##########',
+  ],
+  pal: {},
+  spawn: [4, 8],
+  exits: [[4, 9]],
+  doors: [],
+  spots: { moss: [4, 4] },
+  extra: [
+    [2, 6],
+    [7, 6],
+    [1, 8],
+    [8, 8],
+  ],
+  paint(K) {
+    const R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      M = () => PX.mask(),
+      g = () => K.g;
+    g().fillStyle = 'rgba(20,40,30,0.35)';
+    g().fillRect(0, 0, 240, 240);
+    // the vats: big tanks of green, pipes between them
+    const vat = (x, y) => {
+      K.shadow(x - 2, y + 44, 40, 8);
+      M()
+        .rect(x, y + 6, 36, 38)
+        .oval(x + 18, y + 6, 18, 6)
+        .paint(g(), R('#6a7a70'), { t: 0.72, hi: 1, ink: INK });
+      M()
+        .oval(x + 18, y + 6, 14, 4)
+        .paint(g(), R('#6ac85a'), { hi: 1, ink: '#2a4a2a' });
+      r(x + 6, y + 18, 24, 3, '#4a5a50');
+      K.solid(x, y, 36, 44);
+    };
+    [
+      [12, 10],
+      [102, 10],
+      [192, 10],
+      [12, 120],
+      [192, 120],
+    ].forEach(([x, y]) => vat(x, y));
+    PX.line(g(), 48, 30, 102, 30, '#5a6a60');
+    PX.line(g(), 138, 30, 192, 30, '#5a6a60');
+    PX.line(g(), 30, 54, 30, 120, '#5a6a60');
+    PX.line(g(), 210, 54, 210, 120, '#5a6a60');
+    // the way up, a ladder in the corner of the floor
+    for (let y = 222; y < 240; y += 4) r(98, y, 20, 1, '#8a6a44');
+    r(98, 220, 2, 20, '#7a5a3a');
+    r(116, 220, 2, 20, '#7a5a3a');
+    g().fillStyle = 'rgba(120,220,100,0.08)';
+    g().fillRect(0, 0, 240, 240);
+  },
+  things: [],
 };

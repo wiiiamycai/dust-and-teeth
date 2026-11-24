@@ -355,7 +355,8 @@ const valleyTown = (x, y) =>
 let WK = null; // the live screen: canvas, map, people, timers
 function walkMap(loc, opts, ids) {
   if (loc === 'valley') return { rows: valleyRows(), use: {}, spots: {}, valley: 1 };
-  if (typeof townBuild === 'function' && TOWNMAP[townOf(loc)] && canDraw()) return townLive(townBuild(townOf(loc)));
+  const tk = LOC[loc] && LOC[loc].sub ? loc : townOf(loc);
+  if (typeof townBuild === 'function' && TOWNMAP[tk] && canDraw()) return townLive(townBuild(tk));
   const M = MAPS[loc] || genMap(loc, opts || [], ids || []);
   if (M.decorated || typeof decorate !== 'function') return M;
   // things against the walls: never where somebody stands, where you come in, or in front of something you use
@@ -1129,14 +1130,13 @@ const walkSay = t => walkMsg(t);
 const _hubWalk = SC.hub;
 SC.hub = loc => {
   // v9.23: only the towns drawn with the kit are walked; the rest stay text screens until theirs is drawn
-  // and a place inside one (the well, the vat room) is its own text screen
+  // and a place inside one (the well, the vat room) has its own small map
   if (
     !walkOn() ||
     S.crater[loc] ||
     !LOC[loc] ||
-    LOC[loc].sub ||
     typeof TOWNMAP === 'undefined' ||
-    !TOWNMAP[townOf(loc)]
+    !TOWNMAP[LOC[loc].sub ? loc : townOf(loc)]
   )
     return _hubWalk(loc);
   if ((typeof TOWNS !== 'undefined' && TOWNS[loc]) || loc === 'gully') return go('town', loc); // the lost towns have their own screen
