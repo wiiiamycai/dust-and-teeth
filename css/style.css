@@ -1619,3 +1619,25 @@ canvas,
     padding-top: 18px;
   }
 }
+
+/* ---- the way out of a walking town (v9.31) ---- */
+.walk .wleave {
+  position: absolute;
+  left: 14px;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  z-index: 3;
+  font: inherit;
+  font-size: 15px;
+  font-weight: bold;
+  color: #2a1e18;
+  background: #ffcf4a;
+  border: 2px solid #2a1e18;
+  border-radius: 10px;
+  padding: 10px 16px;
+  box-shadow:
+    0 3px 0 #8a5f00,
+    0 0 14px rgba(255, 190, 60, 0.35);
+}
+body.walking .walk:has(.wleave) .wmsg:not(.top) {
+  bottom: calc(env(safe-area-inset-bottom) + 78px); /* above the Leave button, never over it */
+}

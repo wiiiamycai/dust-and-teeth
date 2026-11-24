@@ -498,6 +498,9 @@ function walkMount(loc, M, ids) {
       : '') +
     '</div><button class="wmenu">Menu</button></div>' +
     '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div>' +
+    (M.kit && (M.D.exits || []).length
+      ? `<button class="wleave">${L && L.sub ? '\u2934 Climb up' : '\u2934 Leave town'}</button>`
+      : '') +
     '</div>';
   vw.querySelector('.wmenu').addEventListener('pointerdown', e => {
     e.preventDefault();
@@ -507,6 +510,29 @@ function walkMount(loc, M, ids) {
     document.body.classList.add('walkmenu');
     $('wrap').scrollTop = 0;
   });
+  // Leave: walk to the nearest way out, and out (the valley map, or back up into the town)
+  const lv = vw.querySelector('.wleave');
+  if (lv)
+    lv.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!WK || WK.busy) return;
+      walkMsg(null);
+      let best = null;
+      for (const [x, y] of M.D.exits) {
+        const p = x === S.wk.x && y === S.wk.y ? [] : walkRoute(x, y);
+        if (p && (!best || p.length < best.p.length)) best = { p, x, y };
+      }
+      if (!best) {
+        walkStop();
+        S.wk.loc = null;
+        return L && L.sub ? go('hub', L.up) : go('map');
+      }
+      if (!best.p.length) return walkArrive();
+      WK.path = best.p;
+      WK.goal = [best.x, best.y];
+      WK.then = null;
+    });
   const cv = $('wcv');
   const rows = M.rows,
     H = rows.length,
@@ -882,6 +908,26 @@ function walkDraw(now) {
     WK.light = { c: lc, w: SW, h: SH };
   }
   g.drawImage(WK.light.c, 0, 0);
+  // the way out: a bobbing arrow on each exit tile, pointing off the map (v9.31, Will: "a clearer exit")
+  if (WK.M.kit)
+    for (const [x, y] of WK.M.D.exits || []) {
+      const out = y >= WK.H - 1 ? 'd' : y === 0 ? 'u' : x === 0 ? 'l' : 'r',
+        b = Math.round(Math.sin(now / 260) * 2),
+        [dx, dy] = DIRV[out],
+        X = Math.round(x * TILE - cx + 12 + dx * b),
+        Y = Math.round(y * TILE - cy + 12 + dy * b);
+      g.fillStyle = 'rgba(20,12,6,0.55)';
+      g.fillRect(X - 9, Y - 9, 18, 18);
+      g.fillStyle = '#ffcf4a';
+      for (let i = 0; i < 6; i++) {
+        // a chevron of six rows, widest at the back
+        const w = 2 * (6 - i);
+        if (out === 'd') g.fillRect(X - w / 2, Y - 3 + i, w, 1);
+        if (out === 'u') g.fillRect(X - w / 2, Y + 3 - i, w, 1);
+        if (out === 'r') g.fillRect(X - 3 + i, Y - w / 2, 1, w);
+        if (out === 'l') g.fillRect(X + 3 - i, Y - w / 2, 1, w);
+      }
+    }
   WK.sy = fy * TILE - cy; // where you are on screen, so a message never covers you
   WK.cx = cx;
   WK.cy = cy;
