@@ -62,6 +62,15 @@ const path = require('path');
           if (!reach(x, y + 1)) out.push(`${t}: the door at ${x},${y} can't be reached from below`);
         }),
       );
+      // every thing you can use (a pump, a cage, a pack of beasts) has a side you can stand at
+      const uses = new Map();
+      for (const k in M.use) {
+        const u = M.use[k];
+        if (!u || u === 'menu' || M.rows[+k.split(',')[1]][+k.split(',')[0]] === 'D') continue;
+        const [x, y] = k.split(',').map(Number);
+        uses.set(String(u), (uses.get(String(u)) || false) || near(x, y));
+      }
+      if (!M.D.key) for (const [u, ok] of uses) if (!ok) out.push(`${t}: you can't get to the thing for ${u}`);
       for (const id in M.spots) {
         const [x, y] = M.spots[id];
         if (!NPC[id]) out.push(`${t}: a spot for unknown ${id}`);
@@ -81,6 +90,32 @@ const path = require('path');
       const spare = (M.D.extra || []).length;
       own.forEach(id => M.spots[id] || out.push(`${t}: ${id} lives here but has no spot`));
       if (spare < 4) out.push(`${t}: only ${spare} spare spots for people who move in`);
+    }
+    // a lost town, stage by stage: the pack you're up to stands somewhere you can reach, and it is that stage
+    for (const t in TOWNMAP) {
+      if (!TOWNMAP[t].key || !TOWNS[t]) continue;
+      for (let n = 0; n < TOWNS[t].stages.length; n++) {
+        S.f['town_' + t] = n;
+        const M = townLive(townBuild(t)),
+          walk = (x, y) => M.rows[y] && ['.', 'E'].includes(M.rows[y][x]),
+          seen = new Set([M.spawn.join(',')]),
+          q = [M.spawn];
+        while (q.length) {
+          const [x, y] = q.shift();
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const k = x + dx + ',' + (y + dy);
+            if (!seen.has(k) && walk(x + dx, y + dy)) seen.add(k), q.push([x + dx, y + dy]);
+          }
+        }
+        const label = TOWNS[t].stages[n][0];
+        const ok = Object.keys(M.use).some(k => {
+          const u = M.use[k],
+            [x, y] = k.split(',').map(Number);
+          return u instanceof RegExp && u.test(label) && [[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => seen.has(x + dx + ',' + (y + dy)));
+        });
+        if (!ok) out.push(`${t}: stage ${n + 1} ("${label}") has no pack you can walk up to`);
+      }
+      S.f['town_' + t] = 0;
     }
     return out;
   });

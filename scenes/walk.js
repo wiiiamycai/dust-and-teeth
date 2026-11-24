@@ -1117,7 +1117,9 @@ function walkMsg(t) {
   m.textContent = t || '';
   // the box sits at the bottom, like the handheld, unless you're standing down there
   const low = WK && WK.sy != null ? WK.sy > (VH * TILE) / 2 : true;
-  m.classList.toggle('top', low);
+  // a kit town shorter than the screen has room under it: the box goes there, off the town (v9.23)
+  const short = WK && WK.M && WK.M.kit && (WK.M.H + 9) * TILE <= VH * TILE;
+  m.classList.toggle('top', !short && low);
 }
 const walkSay = t => walkMsg(t);
 

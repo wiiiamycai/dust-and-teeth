@@ -8,11 +8,13 @@
 const TOWNB = {}; // town id -> its walking map, built once
 const townTileAt = (D, x, y) => (D.rows[y] || '')[x] || '.';
 function townBuild(t) {
-  if (TOWNB[t]) return TOWNB[t];
   const D = TOWNMAP[t],
-    T = TK.T;
+    T = TK.T,
+    key = D.key ? D.key() : 0; // a lost town is painted again as its stages are cleared
+  if (TOWNB[t] && TOWNB[t].key === key) return TOWNB[t];
   const P = TK.paintTown(D.rows, D.pal, () => D.paint(TK));
-  (D.things || []).forEach(([x, y, w, h]) => P.solid.push([x, y, w, h]));
+  const things = typeof D.things === 'function' ? D.things() : D.things || [];
+  things.forEach(([x, y, w, h]) => P.solid.push([x, y, w, h]));
   const W = P.W,
     H = P.H,
     inside = (px, py, rects) => rects.some(([x, y, w, h]) => px >= x && px < x + w && py >= y && py < y + h);
@@ -33,7 +35,7 @@ function townBuild(t) {
     g[ty][tx] = 'D';
     use[tx + ',' + ty] = D.doors && i < D.doors.length ? D.doors[i] : null;
   });
-  (D.things || []).forEach(([x, y, w, h, u]) => {
+  things.forEach(([x, y, w, h, u]) => {
     let n = 0;
     for (let ty = 0; ty < H; ty++)
       for (let tx = 0; tx < W; tx++)
@@ -67,6 +69,7 @@ function townBuild(t) {
     big: P.c,
     area,
     D,
+    key,
   });
 }
 // The town as it is today: a shut gate is solid, and knocking on it is the place's own choices
@@ -193,6 +196,7 @@ function townUse() {
       walkStop();
       return op[1]();
     }
+    if (M.D.nope) return walkSay(M.D.nope);
     // nothing to do in there today: say who's about instead
     const by = WK.ppl.find(p => !p.cage && Math.abs(p.x - x) <= 2 && Math.abs(p.y - y) <= 2);
     walkSay(

@@ -201,3 +201,11 @@ The look is set by `ART_STYLE.md`. All of it is looks only, drawn in code, and s
 5. **People stand still at their doors.** No wandering, nobody on a roof.
 6. **The look.** Towns are compact and drawn in the approved mock-up style (`kit` tiles and buildings), with the chibi walking sprites, the beasts as approved, bleak colours, and sharp, large text.
 7. **The travel map** is the valley with topography: tap a stop to go by road. Five roads lead off the edge of the map as hints of a bigger world. Districts are not on it; you only see the farm, the diner, the casino, the pens, the mall and the plane once you walk into their towns.
+
+### How walking is built (v9.23)
+
+- Every one of the 10 stops is a town painted once with the town kit (`scenes/townkit.js`), laid out in `scenes/townmaps.js` from the approved mock-ups. `scenes/townwalk.js` turns the painting into a walking map: what it paints solid blocks you, its doors are knocked on from below, and `things` are solid props you can use. `scenes/walk.js` is the engine (movement, the A/B pad, tap to walk, messages).
+- A door or thing does the first of the place's options its pattern matches; the Menu button always has every option. `'menu'` (a shut gate) opens the place's own choices.
+- People stand at their `spots` (or the next `extra` spot). `who` hides people you can't meet yet (inside the Green's wall, past the Silo's guards); `held` puts the people in Krug's pens inside the wire; `caged` puts Pete in Lou's cage. `live()` changes a town with the story (a shut gate), and `key()` repaints it (a lost town, as its packs are beaten).
+- Districts are `areas`: stepping onto one is arriving there (its own screen runs quietly), and talking or knocking in another district arrives there first. A place inside a town (the well, the vat room) is still its own text screen, and so are talking, shops and fights.
+- `node tests/towns.js` (in `all.js`) needs Playwright: every town paints, and every exit, district, door, person, thing and lost-town stage can be reached.

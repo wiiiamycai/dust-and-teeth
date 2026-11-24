@@ -1013,3 +1013,488 @@ TOWNMAP.silo = {
   },
   things: [[56, 62, 128, 60, /hatch|launch|Tooth|key|sabotage|King/i]],
 };
+
+// ---- the lost towns: each stage of the way in is a pack of beasts standing where it lives ----
+TOWNMAP.gristmill = {
+  rows: [
+    ',,,,,,,,,,',
+    ',,,,,,,,,,',
+    ',,,,,,,,,,',
+    '==========',
+    '==========',
+    ',,,,,,~~,,',
+    ',,,,,,~~,,',
+    ',,,,,,~~,,',
+    '======~~==',
+    ',,..==..,,',
+    ',,..==..,,',
+    ',,,.==.,,,',
+  ],
+  pal: {},
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  key: () => townStage('gristmill'),
+  nope: 'Not that way yet. Clear what is in front of you first.',
+  doors: [],
+  spots: {},
+  extra: [
+    [1, 9],
+    [8, 9],
+    [2, 6],
+    [9, 5],
+  ],
+  paint(K) {
+    const { building, door, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      st = townStage('gristmill');
+    const ruinRoof = (x, y, w, h) =>
+      [
+        [0.2, 0.3],
+        [0.65, 0.5],
+      ].forEach(([a, b2]) =>
+        M()
+          .rows(Math.round(x + w * a), Math.round(y + h * b2 - 3), [
+            '..oooo.',
+            '.oooooo',
+            'ooooooo',
+            '.ooooo.',
+            '..oo...',
+          ])
+          .paint(g(), R('#1a120c'), { line: false, flat: true }),
+      );
+    const boarded = (x, y) => {
+      r(x, y, 12, 10, '#1a120c');
+      PX.line(g(), x - 1, y + 2, x + 13, y + 5, '#9a7a50');
+      PX.line(g(), x - 1, y + 7, x + 13, y + 4, '#8a6a44');
+    };
+    const gone = (x, y, w = 12) => {
+      r(x, y, w, 20, '#140c08');
+      PX.rows(g(), x, y + 14, ['o.o.oo.o.o.o', '.o.o..o.o.o.'], { o: '#6a4a30' });
+    };
+    const B = {
+      hive: (x, y, w, h) => {
+        const C = R('#c8a050');
+        M()
+          .oval(Math.round(x + w / 2), Math.round(y + h / 2), Math.round(w / 2), Math.round(h / 2))
+          .paint(g(), C, { t: 0.7, hi: 1, ink: INK });
+        for (let yy = y + 4; yy < y + h - 2; yy += 5) PX.line(g(), x + 4, yy, x + w - 4, yy + 1, C.d);
+      },
+    };
+    building(4, top + 6, 60, 16, 28, '#7a6a50', '#9a7a54', { thatch: 1, planks: 1 });
+    ruinRoof(4, top + 6, 60, 16);
+    gone(29, top + 30);
+    boarded(10, top + 26);
+    // the mill: tall, with a wheel on the race
+    building(150, top - 4, 50, 30, 92, '#6a5a44', '#a88a5a', { thatch: 1, planks: 1 });
+    ruinRoof(150, top - 4, 50, 30);
+    gone(170, top + 98, 12);
+    boarded(160, top + 40);
+    boarded(178, top + 66);
+    M().oval(210, 100, 16, 16).paint(g(), R('#6a4a2e'), { hi: 1, ink: INK });
+    for (let a = 0; a < 8; a++)
+      PX.line(g(), 210, 100, 210 + Math.cos(a * 0.785) * 15, 100 + Math.sin(a * 0.785) * 15, '#4a3020');
+    building(72, top + 8, 60, 14, 26, '#8a7a5a', '#b8985a', { planks: 1 });
+    gone(97, top + 28);
+    M()
+      .rows(84, top + 48, ['.y.y..y.y.yy.y..y', 'y.yy.y.yy..y.yy.y'])
+      .paint(g(), R('#e0c060'), { line: false });
+    for (let i = 0; i < 30; i++) p(60 + ((K.hash(i, 1) * 120) | 0), 70 + ((K.hash(i, 2) * 40) | 0), '#e0c060');
+    // the stages: rats in the outer houses, the granary, the race; the Queen at the top of the mill
+    if (st < 1)
+      [
+        [22, 66],
+        [58, 76],
+        [6, 90],
+      ].forEach(([x, y]) => BEAST.rat(g(), x, y));
+    if (st < 2)
+      [
+        [98, 62],
+        [118, 84],
+      ].forEach(([x, y]) => BEAST.rat(g(), x, y));
+    if (st < 3) BEAST.rat(g(), 196, 150);
+    if (st < 4) BEAST.ratQueen(g(), 146, 112);
+  },
+  // each stage's pack, where it stands; once beaten it is gone and so is the way it blocked
+  things: () =>
+    [
+      [0, 64, 84, 44, /outer houses/i],
+      [96, 60, 44, 44, /granary/i],
+      [190, 144, 30, 26, /mill race/i],
+      [146, 112, 48, 40, /nest/i],
+    ].filter((t, i) => townStage('gristmill') <= i),
+};
+TOWNMAP.saltpan = {
+  rows: [
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    'ssssssssss',
+    '====ssssss',
+    ',,..==..,,',
+    ',,..==..,,',
+    ',,,.==.,,,',
+  ],
+  pal: { road: ['#c8b890', '#b8a880', '#d8c8a0', '#9a8a68', '#7a6a50', '#e8dcc0'] },
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  key: () => townStage('saltpan'),
+  nope: 'Not that way yet. Clear what is in front of you first.',
+  doors: [],
+  spots: {},
+  extra: [
+    [1, 9],
+    [8, 9],
+    [2, 6],
+    [7, 7],
+  ],
+  paint(K) {
+    const { building, door, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      st = townStage('saltpan');
+    const ruinRoof = (x, y, w, h) =>
+      [
+        [0.2, 0.3],
+        [0.65, 0.5],
+      ].forEach(([a, b2]) =>
+        M()
+          .rows(Math.round(x + w * a), Math.round(y + h * b2 - 3), [
+            '..oooo.',
+            '.oooooo',
+            'ooooooo',
+            '.ooooo.',
+            '..oo...',
+          ])
+          .paint(g(), R('#1a120c'), { line: false, flat: true }),
+      );
+    const boarded = (x, y) => {
+      r(x, y, 12, 10, '#1a120c');
+      PX.line(g(), x - 1, y + 2, x + 13, y + 5, '#9a7a50');
+      PX.line(g(), x - 1, y + 7, x + 13, y + 4, '#8a6a44');
+    };
+    const gone = (x, y, w = 12) => {
+      r(x, y, w, 20, '#140c08');
+      PX.rows(g(), x, y + 14, ['o.o.oo.o.o.o', '.o.o..o.o.o.'], { o: '#6a4a30' });
+    };
+    const B = {
+      hive: (x, y, w, h) => {
+        const C = R('#c8a050');
+        M()
+          .oval(Math.round(x + w / 2), Math.round(y + h / 2), Math.round(w / 2), Math.round(h / 2))
+          .paint(g(), C, { t: 0.7, hi: 1, ink: INK });
+        for (let yy = y + 4; yy < y + h - 2; yy += 5) PX.line(g(), x + 4, yy, x + w - 4, yy + 1, C.d);
+      },
+    };
+    building(4, top + 4, 64, 16, 30, '#8a8a84', '#b8b0a0', { tin: 1, rust: 1 });
+    ruinRoof(4, top + 4, 64, 16);
+    gone(30, top + 30);
+    boarded(10, top + 26);
+    // the pan-works: a boiling shed and its chimney
+    M()
+      .rect(118, top - 6, 10, 26)
+      .paint(g(), R('#7a6a5e'), { hi: 1, ink: INK });
+    building(90, top + 4, 70, 18, 32, '#7a7468', '#9a8a78', { tin: 1, rust: 1 });
+    gone(116, top + 34, 16);
+    // drying racks, cut to pieces
+    for (let i = 0; i < 4; i++) {
+      const x = 176 + i * 15;
+      M().rect(x, 20, 3, 34).paint(g(), R('#8a6a44'), { ink: INK });
+    }
+    PX.line(g(), 176, 26, 224, 30, '#8a6a44');
+    PX.line(g(), 176, 40, 206, 46, '#8a6a44');
+    // the deep pan, which is a back
+    M().oval(170, 140, 60, 26).paint(g(), R('#d8d2c4'), { line: false });
+    if (st < 1)
+      [
+        [12, 64],
+        [46, 78],
+        [30, 140],
+      ].forEach(([x, y]) => BEAST.crab(g(), x, y));
+    if (st < 2) BEAST.saltback(g(), 88, 50);
+    if (st < 3) BEAST.saltback(g(), 180, 46);
+    if (st < 4) BEAST.oldShell(g(), 138, 124);
+  },
+  // each stage's pack, where it stands; once beaten it is gone and so is the way it blocked
+  things: () =>
+    [
+      [8, 60, 72, 40, /outer flats/i],
+      [84, 46, 40, 26, /pan-works/i],
+      [176, 42, 40, 26, /drying racks/i],
+      [130, 118, 80, 40, /deep pan/i],
+    ].filter((t, i) => townStage('saltpan') <= i),
+};
+TOWNMAP.kettle = {
+  rows: [
+    ',,,,,,,,,,',
+    '..........',
+    '..........',
+    '==========',
+    '==========',
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    ',,..==..,,',
+    ',,..==..,,',
+    ',,,.==.,,,',
+  ],
+  pal: {},
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  key: () => townStage('kettle'),
+  nope: 'Not that way yet. Clear what is in front of you first.',
+  doors: [],
+  spots: {},
+  extra: [
+    [1, 9],
+    [8, 9],
+    [0, 7],
+    [9, 6],
+  ],
+  paint(K) {
+    const { building, door, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      st = townStage('kettle');
+    const ruinRoof = (x, y, w, h) =>
+      [
+        [0.2, 0.3],
+        [0.65, 0.5],
+      ].forEach(([a, b2]) =>
+        M()
+          .rows(Math.round(x + w * a), Math.round(y + h * b2 - 3), [
+            '..oooo.',
+            '.oooooo',
+            'ooooooo',
+            '.ooooo.',
+            '..oo...',
+          ])
+          .paint(g(), R('#1a120c'), { line: false, flat: true }),
+      );
+    const boarded = (x, y) => {
+      r(x, y, 12, 10, '#1a120c');
+      PX.line(g(), x - 1, y + 2, x + 13, y + 5, '#9a7a50');
+      PX.line(g(), x - 1, y + 7, x + 13, y + 4, '#8a6a44');
+    };
+    const gone = (x, y, w = 12) => {
+      r(x, y, w, 20, '#140c08');
+      PX.rows(g(), x, y + 14, ['o.o.oo.o.o.o', '.o.o..o.o.o.'], { o: '#6a4a30' });
+    };
+    const B = {
+      hive: (x, y, w, h) => {
+        const C = R('#c8a050');
+        M()
+          .oval(Math.round(x + w / 2), Math.round(y + h / 2), Math.round(w / 2), Math.round(h / 2))
+          .paint(g(), C, { t: 0.7, hi: 1, ink: INK });
+        for (let yy = y + 4; yy < y + h - 2; yy += 5) PX.line(g(), x + 4, yy, x + w - 4, yy + 1, C.d);
+      },
+    };
+    building(4, top + 4, 60, 16, 30, '#8a8478', '#a88a64', { planks: 1, tin: 1 });
+    ruinRoof(4, top + 4, 60, 16);
+    boarded(10, top + 26);
+    gone(30, top + 30);
+    building(176, top + 4, 60, 16, 30, '#8a8478', '#b89a6a', { adobe: 1, flat: 1 });
+    boarded(184, top + 26);
+    gone(206, top + 30);
+    // the water tower, wrapped in hive
+    shadow(80, 176, 84, 12);
+    [
+      [88, 90],
+      [148, 90],
+    ].forEach(([x, y]) => M().rect(x, y, 5, 88).paint(g(), R('#6a5a4a'), { hi: 1, ink: INK }));
+    PX.line(g(), 92, 110, 148, 160, '#4a3a2a');
+    PX.line(g(), 148, 110, 92, 160, '#4a3a2a');
+    M().rect(76, 40, 88, 52).oval(120, 92, 44, 8).paint(g(), R('#6e9090'), { t: 0.78, hi: 1, ink: INK });
+    M().oval(120, 40, 44, 9).paint(g(), R('#80a2a0'), { hi: 1, ink: INK });
+    B.hive(84, 56, 30, 34);
+    B.hive(126, 48, 40, 46);
+    B.hive(100, 86, 28, 20);
+    M()
+      .rect(20, bot + 6, 48, 34)
+      .paint(g(), R('#8a7a64'), { hi: 1, ink: INK });
+    B.hive(24, bot + 2, 22, 18);
+    gone(38, bot + 20, 14);
+    if (st < 1)
+      [
+        [22, 62],
+        [52, 48],
+        [176, 68],
+        [204, 56],
+      ].forEach(([x, y]) => BEAST.stinger(g(), x, y));
+    if (st < 2) BEAST.stinger(g(), 62, 124);
+    if (st < 3) BEAST.stinger(g(), 158, 110);
+    if (st < 4) BEAST.stinger(g(), 120, 4);
+  },
+  // each stage's pack, where it stands; once beaten it is gone and so is the way it blocked
+  things: () =>
+    [
+      [20, 46, 210, 40, /main street/i],
+      [56, 118, 24, 24, /pump house/i],
+      [150, 104, 24, 24, /tower ladder/i],
+      [110, 0, 24, 24, /tank|hive/i],
+    ].filter((t, i) => townStage('kettle') <= i),
+};
+TOWNMAP.fanghill = {
+  rows: [
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    '==========',
+    '..........',
+    '..........',
+    '..........',
+    '==========',
+    '....==....',
+    '....==....',
+    '....==....',
+  ],
+  pal: { sand: ['#c8a478', '#b48e62', '#d8b488', '#9a7850'] },
+  spawn: [4, 10],
+  exits: [
+    [4, 11],
+    [5, 11],
+  ],
+  key: () => townStage('fanghill'),
+  nope: 'Not that way yet. Clear what is in front of you first.',
+  doors: [],
+  spots: {},
+  extra: [
+    [1, 9],
+    [8, 9],
+    [0, 6],
+    [9, 6],
+  ],
+  paint(K) {
+    const { building, door, win, props: P, shadow } = K,
+      R = K.R,
+      INK = K.INK,
+      r = (...a) => K.r(...a),
+      p = (...a) => K.p(...a),
+      M = () => PX.mask(),
+      g = () => K.g,
+      top = 6,
+      bot = 128,
+      st = townStage('fanghill');
+    const ruinRoof = (x, y, w, h) =>
+      [
+        [0.2, 0.3],
+        [0.65, 0.5],
+      ].forEach(([a, b2]) =>
+        M()
+          .rows(Math.round(x + w * a), Math.round(y + h * b2 - 3), [
+            '..oooo.',
+            '.oooooo',
+            'ooooooo',
+            '.ooooo.',
+            '..oo...',
+          ])
+          .paint(g(), R('#1a120c'), { line: false, flat: true }),
+      );
+    const boarded = (x, y) => {
+      r(x, y, 12, 10, '#1a120c');
+      PX.line(g(), x - 1, y + 2, x + 13, y + 5, '#9a7a50');
+      PX.line(g(), x - 1, y + 7, x + 13, y + 4, '#8a6a44');
+    };
+    const gone = (x, y, w = 12) => {
+      r(x, y, w, 20, '#140c08');
+      PX.rows(g(), x, y + 14, ['o.o.oo.o.o.o', '.o.o..o.o.o.'], { o: '#6a4a30' });
+    };
+    const B = {
+      hive: (x, y, w, h) => {
+        const C = R('#c8a050');
+        M()
+          .oval(Math.round(x + w / 2), Math.round(y + h / 2), Math.round(w / 2), Math.round(h / 2))
+          .paint(g(), C, { t: 0.7, hi: 1, ink: INK });
+        for (let yy = y + 4; yy < y + h - 2; yy += 5) PX.line(g(), x + 4, yy, x + w - 4, yy + 1, C.d);
+      },
+    };
+    building(10, top + 4, 70, 16, 30, '#5a4a3a', '#7a5a3a', { planks: 1 });
+    ruinRoof(10, top + 4, 70, 16);
+    gone(40, top + 30);
+    boarded(16, top + 26);
+    boarded(60, top + 26);
+    // the burned caravan: wagons on their sides, a hoop of canvas gone black
+    [
+      [120, 20],
+      [176, 34],
+    ].forEach(([x, y]) => {
+      shadow(x, y + 30, 54, 8);
+      M()
+        .rect(x, y + 10, 50, 18)
+        .paint(g(), R('#4a3a2e'), { hi: 1, ink: INK });
+      M()
+        .oval(x + 25, y + 8, 22, 8)
+        .cut((a, b2) => K.hash(a, b2) < 0.35)
+        .paint(g(), R('#3a2a24'), { ink: INK });
+      M()
+        .oval(x + 8, y + 30, 6, 6)
+        .paint(g(), R('#3a2a1e'), { hi: 1, ink: INK });
+    });
+    // the hill of graves: bones, skulls, a Molar flag left in the ground
+    M().oval(160, 150, 60, 22).paint(g(), R('#a88a64'), { t: 0.7, hi: 1, ink: INK });
+    [
+      [120, 140],
+      [150, 136],
+      [180, 144],
+      [200, 150],
+      [140, 156],
+    ].forEach(([x, y]) => P.skull(x, y));
+    for (let i = 0; i < 10; i++)
+      PX.line(g(), 110 + i * 10, 150 + (i % 3) * 3, 116 + i * 10, 152 + (i % 3) * 3, '#ece4d4');
+    r(206, 118, 2, 20, '#5a4a40');
+    r(208, 118, 10, 6, '#c82a2a');
+    if (st < 1)
+      [
+        [16, 66],
+        [56, 80],
+        [96, 60],
+      ].forEach(([x, y]) => BEAST.hound(g(), x, y));
+    if (st < 2)
+      [
+        [176, 74],
+        [20, 138],
+      ].forEach(([x, y]) => BEAST.hound(g(), x, y));
+    if (st < 3) BEAST.alpha(g(), 140, 98);
+  },
+  // each stage's pack, where it stands; once beaten it is gone and so is the way it blocked
+  things: () =>
+    [
+      [10, 60, 110, 44, /burned wagons/i],
+      [170, 68, 40, 30, /stockade/i],
+      [136, 94, 52, 44, /bone pits/i],
+      [10, 6, 70, 46, /long barn|den/i],
+    ].filter((t, i) => townStage('fanghill') <= i),
+};
