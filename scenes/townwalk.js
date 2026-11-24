@@ -159,6 +159,8 @@ function townArrive() {
     return true;
   }
   const d = M.area(S.wk.x, S.wk.y);
+  // still on the way somewhere: keep walking; you arrive in a district when you stop there (or use something in it)
+  if ((WK.path && WK.path.length) || WK.then) return false;
   if (d !== S.here && LOC[d] && !LOC[S.here].sub) {
     save();
     walkStop();

@@ -465,7 +465,7 @@ SC.walk = (loc, ids, opts, text) => {
   show({
     title,
     icon: M.valley ? '🏜️' : LOC[loc].i,
-    sub: `Day ${S.day} · tap to walk, tap someone to talk`,
+    sub: `Day ${S.day} · tap someone or something to go to it`,
     text: M.valley ? 'Walk into a place to go there. Each trip takes a day.' : text || '',
     opts: [['Back to walking', () => document.body.classList.remove('walkmenu')], ...(opts || []), charOpt()],
   });
@@ -498,7 +498,7 @@ function walkMount(loc, M, ids) {
       : '') +
     '</div><button class="wmenu">Menu</button></div>' +
     '<div id="wmsg" class="wmsg" hidden></div><div id="wring" class="wring" hidden></div>' +
-    '<div class="wab"><button class="wb" data-k="b">B</button><button class="wa" data-k="a">A</button></div></div>';
+    '</div>';
   vw.querySelector('.wmenu').addEventListener('pointerdown', e => {
     e.preventDefault();
     e.stopPropagation();
@@ -642,63 +642,24 @@ function walkMount(loc, M, ids) {
     timers: [],
   };
   WK.g.imageSmoothingEnabled = false;
-  // input: the pad and A/B on screen, arrows or WASD and Z/X on a keyboard
-  // The hidden pad: put a thumb down anywhere and drag the way you want to go. You keep walking while it's
-  // down, slide to steer, let go to stop. A tap alone does nothing (Will: "remove the touch to walk"): A and B do the rest.
-  const ring = $('wring');
+  // input (v9.28, Will: "just touch screen, but it only touches the characters, no more manual moving"):
+  // tap a person, a door, a thing or a road out, and you walk there by yourself; only when you get there does
+  // the talk or the thing open. A tap on anything else does nothing. A tap anywhere closes a message.
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
     if (!WK || WK.busy) return;
-    try {
-      cv.setPointerCapture(e.pointerId);
-    } catch (x) {}
-    WK.touch = { x: e.clientX, y: e.clientY, t: Date.now(), drag: false };
+    WK.touch = { x: e.clientX, y: e.clientY };
   });
-  cv.addEventListener('pointermove', e => {
-    const T = WK && WK.touch;
-    if (!T) return;
-    const dx = e.clientX - T.x,
-      dy = e.clientY - T.y;
-    if (!T.drag && Math.hypot(dx, dy) < 14) return;
-    if (!T.drag) {
-      T.drag = true;
-      WK.path = null;
-      walkMsg(null);
-      const b = $('view').getBoundingClientRect();
-      ring.style.left = T.x - b.left + 'px';
-      ring.style.top = T.y - b.top + 'px';
-      ring.hidden = false;
-    }
-    WK.held = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'r' : 'l') : dy > 0 ? 'd' : 'u';
-  });
-  const lift = (e, cancel) => {
+  cv.addEventListener('pointerup', e => {
     const T = WK && WK.touch;
     if (!T) return;
     WK.touch = null;
-    ring.hidden = true;
-    WK.held = null;
-  };
-  // A talks to or uses whatever you're facing. B closes a message, or opens the menu.
-  $('view')
-    .querySelectorAll('.wab button')
-    .forEach(btn =>
-      btn.addEventListener('pointerdown', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!WK || WK.busy) return;
-        const m = $('wmsg');
-        if (btn.dataset.k === 'a') {
-          if (m && !m.hidden) return walkMsg(null);
-          return walkUse();
-        }
-        if (m && !m.hidden) return walkMsg(null);
-        WK.held = null;
-        document.body.classList.add('walkmenu');
-        $('wrap').scrollTop = 0;
-      }),
-    );
-  cv.addEventListener('pointerup', e => lift(e, false));
-  cv.addEventListener('pointercancel', e => lift(e, true));
+    if (Math.hypot(e.clientX - T.x, e.clientY - T.y) > 24) return; // a swipe is not a tap
+    const m = $('wmsg');
+    if (m && !m.hidden) return walkMsg(null);
+    walkTap(e.clientX, e.clientY);
+  });
+  cv.addEventListener('pointercancel', () => WK && (WK.touch = null));
   // A message from the place (what just happened) shows in the box when you arrive.
   const said = [...($('log').querySelectorAll('p') || [])]
     .slice(-2)
@@ -756,6 +717,7 @@ const DIRV = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0] };
 function walkKey(k, down) {
   if (!WK) return;
   if (DIRV[k]) {
+    return; // v9.28: no moving by hand; you tap where to go
     if (down) {
       WK.held = k;
       WK.path = null;
@@ -1012,6 +974,36 @@ function walkTo(tx, ty) {
   if (!p) return;
   WK.path = p;
   WK.goal = [tx, ty];
+}
+// Where on the town a tap landed, and what's there: a person (their head stands a tile above their feet),
+// a door, a thing you can use, or a road out. Anything else: nothing.
+function walkTap(clientX, clientY) {
+  if (!WK || WK.busy) return;
+  const cv = WK.cv,
+    r = cv.getBoundingClientRect(),
+    k = Math.max(r.width / cv.width, r.height / cv.height), // the canvas covers the screen
+    px = (clientX - r.left - (r.width - cv.width * k) / 2) / k + (WK.cx || 0),
+    py = (clientY - r.top - (r.height - cv.height * k) / 2) / k + (WK.cy || 0),
+    tx = Math.floor(px / TILE),
+    ty = Math.floor(py / TILE);
+  const has = (x, y) =>
+    WK.ppl.some(q => q.x === x && q.y === y && !q.cage) ||
+    (WK.M.use || {})[`${x},${y}`] !== undefined ||
+    walkTile(x, y) === 'E';
+  const hit = [
+    [tx, ty],
+    [tx, ty + 1],
+  ].find(([x, y]) => has(x, y));
+  if (!hit) return;
+  if (walkTile(...hit) === 'E') {
+    const p = hit[0] === S.wk.x && hit[1] === S.wk.y ? [] : walkRoute(...hit);
+    if (!p) return walkSay("You can't get there from here.");
+    WK.path = p;
+    WK.goal = hit;
+    WK.then = null;
+    return;
+  }
+  walkTo(...hit);
 }
 function walkPathStep() {
   if (!WK.path.length) {
